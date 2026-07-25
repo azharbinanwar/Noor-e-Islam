@@ -18,7 +18,7 @@ actual object ShareService {
         })
     }
 
-    actual fun shareImage(byteArray: ByteArray, fileName: String) {
+    actual fun shareImage(byteArray: ByteArray, fileName: String, caption: String) {
         val context = AppCtx.context
         val cacheFile = File(context.cacheDir, fileName)
         FileOutputStream(cacheFile).use { it.write(byteArray) }
@@ -32,6 +32,7 @@ actual object ShareService {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
             putExtra(Intent.EXTRA_STREAM, uri)
+            if (caption.isNotBlank()) putExtra(Intent.EXTRA_TEXT, caption)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

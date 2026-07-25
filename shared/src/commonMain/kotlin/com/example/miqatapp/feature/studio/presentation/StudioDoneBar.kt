@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Maximize
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Share
 import com.example.miqatapp.config.theme.AppTheme
@@ -25,24 +24,26 @@ internal fun BoxScope.StudioDoneBar(
     onSaveToGallery: () -> Unit,
     onShare: () -> Unit,
     onExport: () -> Unit,
+    sharing: Boolean = false,
+    savingToGallery: Boolean = false,
 ) {
     val colors = AppTheme.colors
     Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 64.dp)) {
         Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
             StudioButton(Lucide.Pencil, onClick = onEdit)
             Spacer(Modifier.size(16.dp))
-            StudioButton(Lucide.Download, onClick = onSaveToGallery)
+            StudioButton(Lucide.Download, onClick = onSaveToGallery, isProcessing = savingToGallery)
             Spacer(Modifier.size(16.dp))
             StudioButton(
                 Lucide.Share,
-                size = 64.dp,
-                iconSize = 28.dp,
                 containerColor = colors.primary,
                 contentColor = colors.onPrimary,
                 onClick = onShare,
+                isProcessing = sharing,
             )
-            Spacer(Modifier.size(16.dp))
-            StudioButton(Lucide.Maximize, onClick = onExport)
+            // TODO(studio): "export more" (pick size/quality) not ready — re-enable when the export sheet is built
+            // Spacer(Modifier.size(16.dp))
+            // StudioButton(Lucide.Maximize, onClick = onExport)
         }
     }
 }

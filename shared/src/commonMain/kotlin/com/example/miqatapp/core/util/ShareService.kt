@@ -4,6 +4,6 @@ package com.example.miqatapp.core.util
 expect object ShareService {
     fun shareText(text: String)
 
-    // Image sharing: takes raw bytes. UI capture is handled by the platform view host.
-    fun shareImage(byteArray: ByteArray, fileName: String)
+    // Image sharing: raw bytes + an optional caption (ayah text, reference, app mention) sent alongside.
+    fun shareImage(byteArray: ByteArray, fileName: String, caption: String)
 }

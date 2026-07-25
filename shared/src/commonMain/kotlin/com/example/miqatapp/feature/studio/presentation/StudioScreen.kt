@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,16 +26,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.AppBottomSheet
 import com.example.miqatapp.core.constants.defaults.StudioDefaults
 import com.example.miqatapp.core.navigation.LocalAppNavigator
+import com.example.miqatapp.core.util.GalleryService
 import com.example.miqatapp.core.util.ShareService
+import com.example.miqatapp.core.util.toPngBytes
 import com.example.miqatapp.feature.quran.data.Ayah
 import com.example.miqatapp.feature.studio.data.GradientStore
 import com.example.miqatapp.feature.studio.data.ImageStore
@@ -52,7 +62,10 @@ import com.example.miqatapp.feature.studio.presentation.panels.DatesPanel
 import com.example.miqatapp.feature.studio.presentation.panels.EffectsPanel
 import com.example.miqatapp.feature.studio.presentation.panels.TextSizePanel
 import com.example.miqatapp.feature.studio.presentation.panels.TextStylePanel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 
 // StudioMode moved to StudioMode.kt
@@ -98,6 +111,13 @@ fun StudioScreen(
     val cardSwatches = palColors + palOnColors // base color first for card bg
 
     val colors = AppTheme.colors
+
+    // captures the artboard at its native resolution (unscaled by the preview zoom) for share / export
+    val captureLayer = rememberGraphicsLayer()
+    var sharing by remember { mutableStateOf(false) }   // spinner on Share while we capture + encode
+    var savingToGallery by remember { mutableStateOf(false) }   // spinner on the Download button
+    var galleryHint by remember { mutableStateOf<String?>(null) }   // transient "Saved to gallery" pill
+    var shareSheetOpen by remember { mutableStateOf(false) }   // review/edit caption before sharing
 
     fun updateConfig(newConfig: StudioConfig) = store.update(newConfig)
     fun undo() = store.undo()
@@ -153,6 +173,11 @@ fun StudioScreen(
                             .graphicsLayer { scaleX = internalScale; scaleY = internalScale }
                             .requiredWidth(CANVAS_BASE_WIDTH)
                             .aspectRatio(activeRatio)
+                            // record the design (at native res, before the preview scale) into the capture layer
+                            .drawWithContent {
+                                captureLayer.record { this@drawWithContent.drawContent() }
+                                drawLayer(captureLayer)
+                            }
                     ) {
                         DesignCanvas(config, Modifier.fillMaxSize(), isEditing, onImageRatio = { imageRatio = it }) { store.updateLive(it) }
                     }
@@ -214,17 +239,40 @@ fun StudioScreen(
             } else if (!isEditing) {
                 StudioDoneBar(
                     onEdit = { isEditing = true },
-                    onSaveToGallery = { /* placeholder: save to gallery */ },
-                    onShare = {
-                        val text =
-                            "${config.ayahs.joinToString("\n") { it.text }}\n\n— (${config.ayahs.first().surah}:${
-                                config.ayahs.joinToString(",") { it.ayah.toString() }
-                            })"
-                        ShareService.shareText(text)
-                        saveCurrent()
+                    savingToGallery = savingToGallery,
+                    onSaveToGallery = {
+                        if (!savingToGallery) {
+                            savingToGallery = true
+                            scope.launch {
+                                try {
+                                    val bitmap = captureLayer.toImageBitmap()
+                                    val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
+                                    galleryHint = if (GalleryService.saveImage(bytes, "miqat_ayah_${config.ayahs.first().surah}.png"))
+                                        "Saved to gallery" else "Couldn't save"
+                                } finally {
+                                    savingToGallery = false
+                                }
+                            }
+                        }
                     },
+                    sharing = sharing,
+                    onShare = { if (!sharing) shareSheetOpen = true },
                     onExport = { /* placeholder: export sizes + preview */ },
                 )
+
+                // transient confirmation for save-to-gallery (share has the system sheet as its own signal)
+                galleryHint?.let {
+                    Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 132.dp)) {
+                        Text(
+                            it,
+                            color = colors.onSurface,
+                            fontSize = 12.sp,
+                            modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(colors.surface.copy(alpha = 0.9f))
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                    }
+                    LaunchedEffect(it) { delay(1600); galleryHint = null }
+                }
             }
 
             // tools hidden → floating pen (our style) to bring the panel back
@@ -232,6 +280,30 @@ fun StudioScreen(
                 Box(Modifier.align(Alignment.BottomEnd).navigationBarsPadding().padding(20.dp)) {
                     StudioButton(icon = Lucide.Pencil, onClick = { toolsVisible = true })
                 }
+            }
+
+            if (shareSheetOpen) {
+                ShareSheet(
+                    // ayah text + its reference travel together — hiding the ayah hides the number too
+                    ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
+                            "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
+                    otherText = "Shared with Miqat",
+                    onDismiss = { shareSheetOpen = false },
+                    onShare = { caption ->
+                        shareSheetOpen = false
+                        sharing = true
+                        scope.launch {
+                            try {
+                                val bitmap = captureLayer.toImageBitmap()
+                                val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
+                                ShareService.shareImage(bytes, "miqat_ayah.png", caption)
+                            } finally {
+                                sharing = false
+                            }
+                        }
+                        saveCurrent()
+                    },
+                )
             }
 
             if (galleryOpen) {

@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Studio: save a generated ayah image to the gallery. API 29+ uses MediaStore (no permission needed). -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <!-- Notifications: prayer reminders + the Prayer Focus service notification. Runtime-requested on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Prayer Focus: needed to set the ringer to Silent (the Vibrate mode needs nothing). Granted in Settings. -->
