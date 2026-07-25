@@ -4,13 +4,10 @@ import android.content.Context
 import android.widget.RemoteViews
 import androidx.compose.ui.graphics.toArgb
 import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
-import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import androidx.glance.layout.fillMaxSize
 
 // Current Prayer (design 19d) — 2×2. Centred NOW / current prayer / time.
 class PrayerNextWidget : GlanceAppWidget() {
@@ -18,10 +15,10 @@ class PrayerNextWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val style = WidgetConfig.claim(styleId(context, id))
         val rv = loadSnapshot()?.let { nextRemoteViews(context, it, style) }
-        provideContent { if (rv != null) AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
+        provideContent { if (rv != null) SquareRemoteViews(rv) }
     }
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
-        provideContent { AndroidRemoteViews(nextRemoteViews(context, sampleSnapshot(), WidgetStyle()), GlanceModifier.fillMaxSize()) }
+        provideContent { SquareRemoteViews(nextRemoteViews(context, sampleSnapshot(), WidgetStyle())) }
     }
 }
 

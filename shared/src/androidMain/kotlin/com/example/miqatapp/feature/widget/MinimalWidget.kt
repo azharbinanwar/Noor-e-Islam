@@ -6,13 +6,10 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.compose.ui.graphics.toArgb
 import androidx.glance.GlanceId
-import androidx.glance.GlanceModifier
-import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import androidx.glance.layout.fillMaxSize
 
 // Minimal widget (2×2). Native RemoteViews, current prayer + live countdown. Shares the card's colour + opacity.
 class MinimalWidget : GlanceAppWidget() {
@@ -21,12 +18,12 @@ class MinimalWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val style = WidgetConfig.claim(styleId(context, id))
         val rv = loadSnapshot()?.let { minimalRemoteViews(context, it, live = true, style) }
-        provideContent { if (rv != null) AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
+        provideContent { if (rv != null) SquareRemoteViews(rv) }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
         val rv = minimalRemoteViews(context, sampleSnapshot(), live = false, WidgetStyle())
-        provideContent { AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
+        provideContent { SquareRemoteViews(rv) }
     }
 }
 

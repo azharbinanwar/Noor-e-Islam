@@ -38,7 +38,6 @@ class PrayerCardWidgetReceiver : GlanceAppWidgetReceiver() {
 internal fun prayerCardRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boolean, style: WidgetStyle): RemoteViews {
     val now = System.currentTimeMillis()
     val head = headState(snap, now) // header = the real current segment (Fajr → Sunrise/Ishraq → Dhuhr …)
-    val foot = wstate(snap, now)    // footer = the five obligatory prayers; drop the current one
     val rv = RemoteViews(ctx.packageName, viewId(ctx, "prayer_card_widget", "layout"))
     val color = style.color
     val on = color.on.toArgb() // one text/icon colour for the whole card
@@ -47,7 +46,7 @@ internal fun prayerCardRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boo
     rv.setImageViewBitmap(viewId(ctx, "bg"), gradientBitmap(ctx, 360, 150, color.fill.toArgb(), color.fillEnd.toArgb()))
     rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (style.alpha * 255).toInt())
     rv.setInt(viewId(ctx, "divider"), "setBackgroundColor", (on and 0x00FFFFFF) or 0x24000000)  // on @ ~14%
-    rv.setInt(viewId(ctx, "badgebox"), "setBackgroundColor", (on and 0x00FFFFFF) or 0x1F000000) // on @ ~12%
+    rv.setImageViewBitmap(viewId(ctx, "badgebg"), roundedRectBitmap(ctx, 50, 15f, (on and 0x00FFFFFF) or 0x1F000000)) // rounded, on @ ~12%
     rv.setInt(viewId(ctx, "badgeicon"), "setColorFilter", on)
     rv.setInt(viewId(ctx, "watermark"), "setColorFilter", on)
     for (v in listOf("label", "name", "nextinfo", "chrono", "chronoStatic")) rv.setTextColor(viewId(ctx, v), on)
@@ -70,8 +69,8 @@ internal fun prayerCardRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boo
         rv.setTextViewText(chronoStatic, countdownLabel(head.next.atMillis - now))
     }
 
-    // Footer = the four prayers that aren't the current one (current lives in the header). One colour throughout.
-    snap.prayers.filter { it.key != foot.current.key }.take(4).forEachIndexed { i, p ->
+    // Footer = all five prayers, one colour throughout.
+    snap.prayers.take(5).forEachIndexed { i, p ->
         rv.setTextViewText(viewId(ctx, "t${i}name"), p.label)
         rv.setTextColor(viewId(ctx, "t${i}name"), on)
         rv.setTextViewText(viewId(ctx, "t${i}time"), p.timeText)

@@ -8,9 +8,21 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
 import android.widget.RemoteViews
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import androidx.glance.GlanceId
+import androidx.glance.GlanceModifier
+import androidx.glance.LocalSize
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.glance.appwidget.AndroidRemoteViews
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.cornerRadius
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
+import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.height
+import androidx.glance.layout.width
 import com.composables.icons.lucide.CloudSun
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Sun
@@ -41,6 +53,19 @@ fun widgetChrome(rv: RemoteViews, ctx: Context, color: WidgetColor, opacity: Flo
     rv.setImageViewBitmap(viewId(ctx, "bg"), gradientBitmap(ctx, 300, 160, color.fill.toArgb(), color.fillEnd.toArgb()))
     rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (opacity.coerceIn(0f, 1f) * 255).toInt())
     rv.setInt(viewId(ctx, "watermark"), "setColorFilter", color.on.toArgb())
+}
+
+// Host a native card at a centred square (the shorter side), pinned to the top with the rest left transparent —
+// so a 2×2 / 1×1 widget reads square even though the launcher hands it a rectangle.
+@Composable
+fun SquareRemoteViews(rv: RemoteViews, radius: Dp = 24.dp, align: Alignment = Alignment.TopCenter, fillLongerSide: Boolean = false) {
+    val size = LocalSize.current
+    // Default: shorter side, so the whole square fits. fillLongerSide: longer side, so it fills the cell but the
+    // overflow on the shorter axis gets cropped by the launcher.
+    val side = if (fillLongerSide) maxOf(size.width, size.height) else minOf(size.width, size.height)
+    Box(GlanceModifier.fillMaxSize(), contentAlignment = align) {
+        AndroidRemoteViews(rv, GlanceModifier.width(side).height(side).cornerRadius(radius))
+    }
 }
 
 // The stored snapshot, or a freshly-built one if none exists yet. Shared by every widget's provideGlance.
@@ -111,6 +136,17 @@ fun viewId(ctx: Context, name: String, type: String = "id") = ctx.resources.getI
 fun launchPendingIntent(ctx: Context): PendingIntent {
     val launch = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)
     return PendingIntent.getActivity(ctx, 0, launch, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+}
+
+// Solid rounded-rect chip as a bitmap — dynamic-colour badges that must keep their corners on every API
+// (setBackgroundColor would flatten to a square).
+fun roundedRectBitmap(ctx: Context, sizeDp: Int, radiusDp: Float, color: Int): Bitmap {
+    val d = ctx.resources.displayMetrics.density
+    val s = (sizeDp * d).toInt().coerceAtLeast(1)
+    val r = radiusDp * d
+    val bmp = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888)
+    Canvas(bmp).drawRoundRect(0f, 0f, s.toFloat(), s.toFloat(), r, r, Paint().apply { this.color = color; isAntiAlias = true })
+    return bmp
 }
 
 // Plain diagonal gradient (top-left → bottom-right) as a bitmap — the Prayer Card's background fill.

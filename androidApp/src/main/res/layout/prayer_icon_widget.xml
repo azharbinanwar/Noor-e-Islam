@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Prayer Icon (design 19f, time-first) — 1×1 app-icon tile. Current prayer name (small) + its end time (big).
-     Rounded to 8dp in code (setViewOutlinePreferredRadius). Colour/opacity from WidgetConfig. -->
+     Fills the cell (longer side, cropped), rounded to 16dp by the host; colour/opacity from WidgetConfig. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:scaleType="fitXY" android:src="@drawable/widget_gradient_bg" android:contentDescription="@null" />
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical" android:gravity="center" android:padding="8dp">
+        android:orientation="vertical" android:gravity="center" android:padding="0dp">
         <TextView android:id="@+id/name" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="ASR" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06" android:maxLines="1" />
         <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content"
