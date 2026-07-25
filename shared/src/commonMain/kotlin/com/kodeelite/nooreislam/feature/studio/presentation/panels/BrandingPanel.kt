@@ -18,8 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.BoxSelect
-import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
@@ -49,7 +47,7 @@ fun BrandingPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
                             .clickable { onChange(config.copy(watermarkCorner = c)) },
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(Lucide.BoxSelect, null, tint = if (isSel) colors.onPrimary else colors.primary, modifier = Modifier.size(18.dp))
+                        Icon(c.icon, null, tint = if (isSel) colors.onPrimary else colors.primary, modifier = Modifier.size(18.dp))
                     }
                 }
             }

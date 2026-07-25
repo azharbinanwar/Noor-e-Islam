@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -45,7 +44,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -67,7 +65,6 @@ import com.kodeelite.nooreislam.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.math.roundToInt
 
 // The rendered post: background (image / gradient / color) + vignette/overlay, watermark, and the ayah
 // card (surah name, bismillah, ayah text, translation, dates). Pure render from [config]; [onUpdate]
@@ -199,17 +196,33 @@ fun DesignCanvas(
 
         // AYAH CARD
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            val state = rememberTransformableState { zoom, _, _ -> onUpdate(config.copy(cardScale = (config.cardScale * zoom).coerceIn(0.5f, 2.5f))) }
+            val state = rememberTransformableState { zoom, _, _ ->
+                onUpdate(
+                    liveConfig.value.copy(
+                        cardScale = (liveConfig.value.cardScale * zoom).coerceIn(
+                            0.5f,
+                            2.5f
+                        )
+                    )
+                )
+            }
             Box(
                 Modifier
-                    .offset { IntOffset(config.cardOffsetX.roundToInt(), config.cardOffsetY.roundToInt()) }
-                    .graphicsLayer { scaleX = config.cardScale; scaleY = config.cardScale }
+                    // translation via graphicsLayer = absolute screen pixels (offset {} mirrors X in RTL), so the drag matches the finger in Arabic too
+                    .graphicsLayer {
+                        translationX = config.cardOffsetX; translationY = config.cardOffsetY; scaleX = config.cardScale; scaleY = config.cardScale
+                    }
                     .transformable(state = state)
                     .pointerInput(isEditing) {
                         if (!isEditing) return@pointerInput
                         detectDragGestures { change, drag ->
                             change.consume()
-                            onUpdate(config.copy(cardOffsetX = config.cardOffsetX + drag.x, cardOffsetY = config.cardOffsetY + drag.y))
+                            onUpdate(
+                                liveConfig.value.copy(
+                                    cardOffsetX = liveConfig.value.cardOffsetX + drag.x,
+                                    cardOffsetY = liveConfig.value.cardOffsetY + drag.y
+                                )
+                            )
                         }
                     }
                     .padding(horizontal = 24.dp).clip(RoundedCornerShape(config.cardCornerRadius.dp)).background(config.cardColor)
