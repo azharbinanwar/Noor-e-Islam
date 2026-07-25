@@ -111,7 +111,7 @@
     <string name="tasbih_no_history">لا يوجد سجل بعد</string>
     <string name="tasbih_no_history_hint">ستظهر هنا جلسات الذكر المكتملة.</string>
 
-    <string name="welcome_to_miqat">مرحباً بك في ميقات</string>
+    <string name="welcome_to_miqat">مرحباً بك في نور الإسلام</string>
     <string name="your_companion_for_every_prayer">رفيقك في كل صلاة — مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
     <string name="get_started">ابدأ</string>
     <string name="skip">تخطّي</string>
@@ -198,7 +198,7 @@
     <string name="cancel">إلغاء</string>
     <string name="open_settings">فتح الإعدادات</string>
     <string name="location_permission_needed">الوصول إلى الموقع مطلوب</string>
-    <string name="location_permission_rationale">يحتاج ميقات إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
+    <string name="location_permission_rationale">يحتاج نور الإسلام إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
     <string name="search_city">ابحث عن مدينة</string>
     <string name="saved">المحفوظة</string>
     <string name="search_city_hint_title">ابحث عن مدينتك</string>
@@ -229,7 +229,7 @@
     <string name="notif_permission_needed">تفعيل الإشعارات</string>
     <string name="notif_permission_sub">اسمح بالإشعارات لتصلك تذكيرات الصلاة</string>
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
-    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق ميقات من الإعدادات لتصلك التذكيرات.</string>
+    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق نور الإسلام من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
     <string name="remind_before">التذكير قبل</string>
     <string name="minutes_before">الدقائق قبل الوقت</string>

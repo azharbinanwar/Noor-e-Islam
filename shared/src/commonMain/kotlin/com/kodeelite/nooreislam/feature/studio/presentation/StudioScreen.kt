@@ -308,7 +308,7 @@ fun StudioScreen(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
                     ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
                             "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                    otherText = "Shared with Miqat",
+                    otherText = "Shared with Noor e Islam",
                     onDismiss = { shareSheetOpen = false },
                     onShare = { caption ->
                         shareSheetOpen = false

@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 actual object GalleryService {
-    // API 29+ writes to Pictures/Miqat via MediaStore (no permission). Pre-29 falls back to a plain insert,
+    // API 29+ writes to Pictures/Noor e Islam via MediaStore (no permission). Pre-29 falls back to a plain insert,
     // which needs WRITE_EXTERNAL_STORAGE (declared maxSdkVersion=28 in the manifest).
     actual suspend fun saveImage(bytes: ByteArray, fileName: String): Boolean = withContext(Dispatchers.IO) {
         runCatching {
@@ -18,7 +18,7 @@ actual object GalleryService {
                 put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                 put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                 if (q) {
-                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Miqat")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Noor e Islam")
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
             }

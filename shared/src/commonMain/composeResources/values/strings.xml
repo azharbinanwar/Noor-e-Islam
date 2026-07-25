@@ -112,7 +112,7 @@
     <string name="tasbih_no_history">No history yet</string>
     <string name="tasbih_no_history_hint">Completed dhikr sessions will appear here.</string>
 
-    <string name="welcome_to_miqat">Welcome to Miqat</string>
+    <string name="welcome_to_miqat">Welcome to Noor e Islam</string>
     <string name="your_companion_for_every_prayer">Your companion for every prayer — accurate times, Qibla and tracking, all offline.</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
@@ -199,7 +199,7 @@
     <string name="cancel">Cancel</string>
     <string name="open_settings">Open Settings</string>
     <string name="location_permission_needed">Location access needed</string>
-    <string name="location_permission_rationale">Miqat needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
+    <string name="location_permission_rationale">Noor e Islam needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
     <string name="search_city">Search for a city</string>
     <string name="saved">Saved</string>
     <string name="search_city_hint_title">Find your city</string>
@@ -230,7 +230,7 @@
     <string name="notif_permission_needed">Turn on notifications</string>
     <string name="notif_permission_sub">Allow notifications to get prayer reminders</string>
     <string name="notif_permission_denied_title">Notifications blocked</string>
-    <string name="notif_permission_denied_msg">Enable notifications for Miqat in Settings to receive reminders.</string>
+    <string name="notif_permission_denied_msg">Enable notifications for Noor e Islam in Settings to receive reminders.</string>
     <string name="master_switch_for_every_reminder">Master switch for every reminder</string>
     <string name="remind_before">Remind before</string>
     <string name="minutes_before">Minutes before</string>
