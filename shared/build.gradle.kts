@@ -20,12 +20,12 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     androidLibrary {
-       namespace = "com.example.miqatapp.shared"
+        namespace = "com.kodeelite.nooreislam.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
        minSdk = libs.versions.android.minSdk.get().toInt()
-    
+
        compilerOptions {
            jvmTarget = JvmTarget.JVM_11
        }
@@ -36,7 +36,7 @@ kotlin {
            isIncludeAndroidResources = true
        }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
@@ -83,7 +83,7 @@ room {
 // Pin the generated Res class package so imports are stable.
 compose.resources {
     publicResClass = true
-    packageOfResClass = "com.example.miqatapp.resources"
+    packageOfResClass = "com.kodeelite.nooreislam.resources"
 }
 
 dependencies {

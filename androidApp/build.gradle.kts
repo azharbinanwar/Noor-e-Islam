@@ -21,11 +21,11 @@ dependencies {
 }
 
 android {
-    namespace = "com.example.miqatapp"
+    namespace = "com.kodeelite.nooreislam"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.miqatapp"
+        applicationId = "com.kodeelite.nooreislam"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

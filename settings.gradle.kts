@@ -1,4 +1,4 @@
-rootProject.name = "MiqatApp"
+rootProject.name = "Noor-e-Islam"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

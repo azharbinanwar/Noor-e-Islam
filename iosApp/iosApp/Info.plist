@@ -4,6 +4,8 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>CFBundleDisplayName</key>
+	<string>Noor e Islam</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Miqat uses your location to calculate accurate prayer times and the Qibla direction.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

@@ -8,6 +8,6 @@
     android:resizeMode="horizontal"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
-    android:configure="com.example.miqatapp.PrayerCardConfigActivity"
+    android:configure="com.kodeelite.nooreislam.PrayerCardConfigActivity"
     android:previewLayout="@layout/prayer_bar_widget"
     android:initialLayout="@layout/glance_default_loading_layout" />

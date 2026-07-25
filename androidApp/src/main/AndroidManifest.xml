@@ -25,7 +25,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".MiqatApplication"
+        android:name=".NoorApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -52,20 +52,30 @@
         </activity>
 
         <!-- Prayer Focus: alarm wakes before a slot and starts the service. -->
-        <receiver android:name="com.example.miqatapp.core.focus.FocusAlarmReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.core.focus.FocusAlarmReceiver"
+            android:exported="false" />
         <!-- Prayer Focus: the notification's action buttons (+5 / prayed / unmute) and the end "restore" alarm. -->
-        <receiver android:name="com.example.miqatapp.core.focus.FocusActionReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.core.focus.FocusActionReceiver"
+            android:exported="false" />
         <!-- Prayer Focus: re-arm when the clock or timezone changes (armed alarms target stale instants). System-sent. -->
-        <receiver android:name="com.example.miqatapp.core.focus.TimeChangeReceiver" android:exported="true">
+        <receiver
+            android:name="com.kodeelite.nooreislam.core.focus.TimeChangeReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
         <!-- Prayer Focus: nightly re-arm. -->
-        <receiver android:name="com.example.miqatapp.core.focus.RescheduleReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.core.focus.RescheduleReceiver"
+            android:exported="false" />
         <!-- Prayer Focus: re-arm after reboot or an app update (both wipe scheduled alarms). System-sent. -->
-        <receiver android:name="com.example.miqatapp.core.focus.BootReceiver" android:exported="true">
+        <receiver
+            android:name="com.kodeelite.nooreislam.core.focus.BootReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -73,18 +83,26 @@
         </receiver>
 
         <!-- Notifications: posts a prayer/dhikr/surah reminder when its alarm fires. -->
-        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationReceiver"
+            android:exported="false" />
         <!-- Notifications: silent nightly wake to roll the reminder window forward. -->
-        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationRebuildReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationRebuildReceiver"
+            android:exported="false" />
         <!-- Notifications: re-arm when the clock or timezone changes. System-sent. -->
-        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationTimeReceiver" android:exported="true">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationTimeReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
         <!-- Notifications: re-arm after reboot or app update (both wipe scheduled alarms). System-sent. -->
-        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationBootReceiver" android:exported="true">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationBootReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -92,52 +110,75 @@
         </receiver>
 
         <!-- Widget: minimal 2×2 (design 2c). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.MinimalWidgetReceiver" android:exported="true" android:label="@string/widget_minimal_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.MinimalWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_minimal_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/minimal_widget_info" />
         </receiver>
         <!-- Widget: dark prayer card (design 8b) — current prayer + 5 times. -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerCardWidgetReceiver" android:exported="true" android:label="@string/widget_card_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerCardWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_card_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_card_widget_info" />
         </receiver>
         <!-- Widget: prayer times (current + next + slot strip), 1–2 rows. -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerTimesWidgetReceiver" android:exported="true" android:label="@string/widget_times_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerTimesWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_times_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_times_widget_info" />
         </receiver>
         <!-- Widget: bar 4×1 (design 23e). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerBarWidgetReceiver" android:exported="true" android:label="@string/widget_bar_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerBarWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_bar_name">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_bar_widget_info" />
         </receiver>
         <!-- Widget: current prayer 2×2 (design 19d). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerNextWidgetReceiver" android:exported="true" android:label="@string/widget_next_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerNextWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_next_name">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_next_widget_info" />
         </receiver>
         <!-- Widget: tile 2×2, Miqat icon (design 19f). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerTileWidgetReceiver" android:exported="true" android:label="@string/widget_tile_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerTileWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_tile_name">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_tile_widget_info" />
         </receiver>
         <!-- Widget: icon 1×1 round app-icon badge, time-first (design 19f). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerIconWidgetReceiver" android:exported="true" android:label="@string/widget_icon_name">
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.PrayerIconWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_icon_name">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_icon_widget_info" />
         </receiver>
         <!-- Widget: fires at each prayer transition + every ~15 min to redraw the countdown. -->
-        <receiver android:name="com.example.miqatapp.feature.widget.WidgetAlarmReceiver" android:exported="false" />
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.widget.WidgetAlarmReceiver"
+            android:exported="false" />
 
         <!-- Prayer Focus: mutes the phone for a window and restores it. -->
         <service
-            android:name="com.example.miqatapp.core.focus.PhoneSilenceService"
+            android:name="com.kodeelite.nooreislam.core.focus.PhoneSilenceService"
             android:exported="false"
             android:foregroundServiceType="specialUse">
             <property
