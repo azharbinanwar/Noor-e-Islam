@@ -30,7 +30,7 @@ import com.example.miqatapp.core.components.AppTile
 import com.example.miqatapp.core.components.TilePosition
 import com.example.miqatapp.feature.quran.data.Juz
 import com.example.miqatapp.feature.quran.data.Surah
-import com.example.miqatapp.feature.quran.toJuzKey
+import com.example.miqatapp.core.util.toJuzKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_juz
 import org.jetbrains.compose.resources.Font

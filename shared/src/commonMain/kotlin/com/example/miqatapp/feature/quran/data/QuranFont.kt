@@ -13,6 +13,7 @@ import org.jetbrains.compose.resources.FontResource
  * so switching is just a font swap, no per-font db. Saleem is IndoPak-styled so it reads slightly
  * different on Uthmani spelling; kept as an option.
  */
+@kotlinx.serialization.Serializable
 enum class QuranFont(val label: String, val sample: String, val res: FontResource) {
     Hafs("Uthmani", "بِسْمِ اللَّهِ", Res.font.tanzil_hafs),
     Naskh("Naskh", "بِسْمِ اللَّهِ", Res.font.tanzil_naskh),

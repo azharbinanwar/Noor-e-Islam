@@ -96,6 +96,7 @@ private val MORE_GROUPS = listOf(
 @Composable
 fun AyahActionSheet(
     label: String,
+    onShareAsImage: () -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -162,7 +163,10 @@ fun AyahActionSheet(
                     QuickAction(Lucide.Bookmark, "Save", Modifier.weight(1f)) {}
                     QuickAction(Lucide.Highlighter, "Highlight", Modifier.weight(1f)) {}
                     QuickAction(Lucide.Pencil, "Note", Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Share2, "Share", Modifier.weight(1f)) {}
+                    // add on tap for onShareAsImage for share
+                    QuickAction(Lucide.Share2, "Share", Modifier.weight(1f)) {
+                        onShareAsImage()
+                    }
                 }
                 // "More" affordance at the peek: tap to open (drag still works too); hidden once expanded
                 if (!atExpanded) {
@@ -179,7 +183,16 @@ fun AyahActionSheet(
                 // grouped actions fill the remaining sheet height and scroll; revealed as the sheet grows
                 Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())) {
                     MORE_GROUPS.forEach { g ->
-                        AppTileGroup(title = g.title, items = g.items.map { a -> AppTileItem(title = a.label, leadingIcon = a.icon, onClick = onDismiss) })
+                        AppTileGroup(title = g.title, items = g.items.map { a ->
+                            AppTileItem(
+                                title = a.label,
+                                leadingIcon = a.icon,
+                                onClick = {
+                                    onDismiss()
+                                    if (a.icon == Lucide.Image) onShareAsImage()
+                                }
+                            )
+                        })
                     }
                 }
             }

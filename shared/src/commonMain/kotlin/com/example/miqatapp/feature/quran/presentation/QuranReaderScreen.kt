@@ -41,17 +41,16 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.feature.quran.data.Ayah
-import com.example.miqatapp.feature.quran.data.AyahRef
-import com.example.miqatapp.feature.quran.data.QuranRepository
-import com.example.miqatapp.feature.quran.data.QuranStore
+import com.example.miqatapp.core.navigation.AppRoute
+import com.example.miqatapp.core.navigation.LocalAppNavigator
+import com.example.miqatapp.feature.quran.data.*
 import com.example.miqatapp.feature.quran.presentation.components.AyahActionSheet
 import com.example.miqatapp.feature.quran.presentation.components.QuranCalligraphy
 import com.example.miqatapp.feature.quran.presentation.components.ReaderSettingsSheet
 import com.example.miqatapp.feature.quran.presentation.components.RukuBlock
-import com.example.miqatapp.feature.quran.toArabicIndic
-import com.example.miqatapp.feature.quran.toJuzKey
-import com.example.miqatapp.feature.quran.toSurahKey
+import com.example.miqatapp.core.util.toArabicIndic
+import com.example.miqatapp.core.util.toJuzKey
+import com.example.miqatapp.core.util.toSurahKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_juz
 import com.example.miqatapp.resources.quran_surah_name
@@ -60,12 +59,15 @@ import org.jetbrains.compose.resources.Font
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
+fun QuranReaderScreen(startId: Int = 1) {
+    val nav = LocalAppNavigator.current
     val ayahs = remember { mutableStateListOf<Ayah>() }
     val listState = rememberLazyListState()
 
     // load the whole Quran once; LazyColumn only renders what's on screen, so this stays cheap
-    LaunchedEffect(Unit) { if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all()) }
+    LaunchedEffect(Unit) {
+        if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all())
+    }
 
     // stays true only after the list has loaded AND jumped to the target — the splash overlay covers until then
     var scrolled by remember { mutableStateOf(false) }
@@ -124,7 +126,7 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
                             header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 28.sp, color = colors.primary) }
                         }
                     },
-                    navigationIcon = { IconButton(onBack) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
+                    navigationIcon = { IconButton({ nav.back() }) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
                     actions = { IconButton({ showSettings = true }) { Icon(Lucide.Palette, "Reading settings", tint = colors.onSurface) } },
                 )
                 HorizontalDivider(color = colors.outlineVariant)
@@ -147,6 +149,7 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
             selected?.let { ref ->
                 AyahActionSheet(
                     label = "Surah ${ref.surah} · Ayah ${ref.ayah}",
+                    onShareAsImage = { nav.navigate(AppRoute.Studio(ref.surah, ref.ayah)) },
                     onExpandedChange = { expanded = it },
                     onDismiss = { selected = null },
                 )

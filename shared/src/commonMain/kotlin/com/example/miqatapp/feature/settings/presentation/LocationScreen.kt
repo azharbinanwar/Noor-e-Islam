@@ -1,4 +1,5 @@
 package com.example.miqatapp.feature.settings.presentation
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -90,7 +91,8 @@ private fun Place.sameAs(other: Place) = name == other.name && countryCode == ot
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocationScreen(onBack: () -> Unit = {}) {
+fun LocationScreen() {
+    val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     // Single source of truth — the repo resolves Prefs ?: MiqatDefaults and emits on every change.
     val active by LocationStore.activePlace.collectAsState()
@@ -162,7 +164,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.location)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
+                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
             )
         },
     ) { pad ->

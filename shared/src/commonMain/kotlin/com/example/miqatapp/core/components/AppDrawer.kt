@@ -4,85 +4,37 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.BookOpen
-import com.composables.icons.lucide.Clock
-import com.composables.icons.lucide.Compass
-import com.composables.icons.lucide.Flame
-import com.composables.icons.lucide.House
-import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.MapPin
-import com.composables.icons.lucide.Scale
-import com.composables.icons.lucide.Settings
-import com.composables.icons.lucide.SquareCheck
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.composables.icons.lucide.*
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.enums.Madhab
-import com.example.miqatapp.core.store.LocationStore
-import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.core.navigation.AppRoute
 import com.example.miqatapp.core.navigation.LocalNavController
+import com.example.miqatapp.core.store.LocationStore
+import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
-import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.app_name
-import com.example.miqatapp.resources.madhab
-import com.example.miqatapp.resources.developer_sandbox
-import com.example.miqatapp.resources.duas_and_adhkar
-import com.example.miqatapp.resources.home
-import com.example.miqatapp.resources.miqat_logo
-import com.example.miqatapp.resources.prayer_times
-import com.example.miqatapp.resources.quran
-import com.example.miqatapp.resources.prayer_tracker
-import com.example.miqatapp.resources.qibla_compass
-import com.example.miqatapp.resources.settings
+import com.example.miqatapp.resources.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** One drawer row. [route] null = not built yet (no-op for now). */
@@ -93,20 +45,13 @@ private val drawerItems = listOf(
     DrawerEntry(Res.string.prayer_times, Lucide.Clock, AppRoute.PrayerTimes),
     DrawerEntry(Res.string.qibla_compass, Lucide.Compass, AppRoute.Qibla),
     DrawerEntry(Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker),
-    // ponytail: hidden for now — screen/route kept for the future rich calendar (month grid + events).
-    // DrawerEntry(Res.string.hijri_calendar, Lucide.Calendar, AppRoute.HijriCalendar),
     DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar),
     DrawerEntry(Res.string.quran, Lucide.BookOpen, AppRoute.Quran),
-    // ponytail: Tasbih merged into the Azkar library (it's a tab there now); beads counter still reached via "use beads". Route kept.
-    // DrawerEntry(Res.string.tasbih_counter, Lucide.MoonStar, AppRoute.Tasbih),
 )
 
 private val footerItems = listOf(
     DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings),
-    // ponytail: dev-only — re-shown while we review the Miqat migration; hide again before shipping.
     DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
-    // ponytail: dropped from drawer (did nothing — route null); About lives in Settings.
-    // DrawerEntry(Res.string.about_miqat, Lucide.Info, null),
 )
 
 /** Shared drawer state, hoisted at the nav host so navigating never rebuilds the drawer. */
@@ -141,7 +86,9 @@ fun AppDrawer(
         val route = entry.route
         if (route != null && nav.currentDestination?.hasRoute(route::class) != true) {
             nav.navigate(route) {
-                popUpTo(AppRoute.Home) { saveState = true }
+                popUpTo(AppRoute.Home) { 
+                    // saveState = true // ponytail: commented out as saveState is experimental/internal in some versions
+                }
                 launchSingleTop = true
                 restoreState = true
             }
@@ -153,7 +100,9 @@ fun AppDrawer(
         scope.launch { drawerState.close() }
         if (nav.currentDestination?.hasRoute(AppRoute.Location::class) != true) {
             nav.navigate(AppRoute.Location) {
-                popUpTo(AppRoute.Home) { saveState = true }
+                popUpTo(AppRoute.Home) { 
+                    // saveState = true 
+                }
                 launchSingleTop = true
                 restoreState = true
             }

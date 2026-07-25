@@ -3,21 +3,16 @@ package com.example.miqatapp.core.navigation
 import kotlinx.serialization.Serializable
 
 /**
- * Type-safe routes — the auto_route equivalent. Each destination is a
- * `@Serializable` object/class; args become constructor params.
- *
- * Add a screen: declare it here, register it in [AppNavHost], navigate with the object.
- *   data class PrayerDetail(val date: String) : AppRoute   // example with args
+ * Type-safe routes for the entire app.
  */
+@Serializable
 sealed interface AppRoute {
+
     @Serializable
     data object Onboarding : AppRoute
 
     @Serializable
     data object Home : AppRoute
-
-    @Serializable
-    data object Sandbox : AppRoute
 
     @Serializable
     data object PrayerTimes : AppRoute
@@ -29,51 +24,66 @@ sealed interface AppRoute {
     data object Tracker : AppRoute
 
     @Serializable
-    data object Settings : AppRoute
-
-    @Serializable
-    data object Widgets : AppRoute
-
-    @Serializable
-    data object Notifications : AppRoute
-
-    @Serializable
-    data object PrayerFocus : AppRoute
-
-    @Serializable
-    data object MiqatCalculation : AppRoute
-
-    @Serializable
-    data object Location : AppRoute
-
-    @Serializable
-    data object HijriCalendar : AppRoute
-
-    @Serializable
-    data object Duas : AppRoute
-
-    @Serializable
     data object Azkar : AppRoute
-
-    @Serializable
-    data object Tasbih : AppRoute
-
-    @Serializable
-    data object TasbihCounter : AppRoute
-
-    @Serializable
-    data class TasbihHistory(val dhikrId: String? = null) : AppRoute
 
     @Serializable
     data object Quran : AppRoute
 
     @Serializable
-    data class QuranReader(val startId: Int = 1) : AppRoute
+    data class QuranReader(val startId: Int) : AppRoute
+
+    // canonical surah:ayah keys (one ayah now, list later); the screen loads the real Ayah
+    @Serializable
+    data class Studio(val surah: Int, val ayah: Int) : AppRoute
 
     @Serializable
-    data object HomeAlt : AppRoute
+    data object Tasbih : AppRoute
 
     @Serializable
-    data object PrayerAnimation : AppRoute
+    data class TasbihHistory(val dummy: Int = 0) : AppRoute
 
+    @Serializable
+    data object TasbihCounter : AppRoute
+
+    @Serializable
+    data object Settings : AppRoute
+
+    @Serializable
+    data object Location : AppRoute
+
+    @Serializable
+    data object PrayerCalc : AppRoute
+
+    @Serializable
+    data object Widgets : AppRoute
+
+    @Serializable
+    data object PrayerFocus : AppRoute
+
+    @Serializable
+    data object Sandbox : AppRoute
+
+    @Serializable
+    data object Calendar : AppRoute
+
+    @Serializable
+    data object NamesOfAllah : AppRoute
+
+    @Serializable
+    data object HajjUmrah : AppRoute
+
+    @Serializable
+    data object Community : AppRoute
+
+    @Serializable
+    data object Profile : AppRoute
+
+    @Serializable
+    data object Notifications : AppRoute
+
+    @Serializable
+    data object MosqueFinder : AppRoute
+
+    @Serializable
+    data object ZakatCalculator : AppRoute
 }

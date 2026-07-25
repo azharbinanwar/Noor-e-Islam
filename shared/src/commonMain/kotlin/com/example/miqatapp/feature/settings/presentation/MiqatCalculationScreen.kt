@@ -1,4 +1,5 @@
 package com.example.miqatapp.feature.settings.presentation
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
@@ -57,7 +58,8 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MiqatCalculationScreen(onBack: () -> Unit = {}) {
+fun MiqatCalculationScreen() {
+    val nav = LocalAppNavigator.current
     // the calc-settings store
     val viewModel = MiqatCalculationStore
     val method by viewModel.method.collectAsState()
@@ -75,7 +77,7 @@ fun MiqatCalculationScreen(onBack: () -> Unit = {}) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.prayer_calculation)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
+                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
             )
         },
     ) { pad ->

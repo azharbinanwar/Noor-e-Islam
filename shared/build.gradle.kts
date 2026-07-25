@@ -42,6 +42,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.glance.appwidget)
+            implementation(libs.ktorOkHttp)
+            implementation(libs.androidx.palette)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -62,6 +64,11 @@ kotlin {
             implementation(libs.sqlite.bundled)
             implementation(libs.lucide.icons)
             implementation(libs.multiplatform.settings)
+            implementation(libs.coilCompose)
+            implementation(libs.coilNetworkKtor)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktorDarwin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

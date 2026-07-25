@@ -399,6 +399,25 @@
     <string name="quran_theme_charcoal">Charcoal</string>
     <string name="quran_theme_slate">Slate</string>
     <string name="quran_theme_night">Night</string>
+    <!-- Studio (share editor) -->
+    <string name="studio_mode_templates">Templates</string>
+    <string name="studio_mode_layout">Layout</string>
+    <string name="studio_mode_background">Background</string>
+    <string name="studio_mode_gradient">Gradient</string>
+    <string name="studio_mode_fonts">Fonts</string>
+    <string name="studio_mode_size">Size</string>
+    <string name="studio_mode_style">Style</string>
+    <string name="studio_mode_align">Align</string>
+    <string name="studio_mode_content">Content</string>
+    <string name="studio_mode_stickers">Stickers</string>
+    <string name="studio_mode_card">Card</string>
+    <string name="studio_mode_effects">Effects</string>
+    <string name="studio_mode_dates">Dates</string>
+    <string name="studio_mode_presets">Presets</string>
+    <string name="studio_mode_branding">Details</string>
+    <string name="studio_pattern_none">None</string>
+    <string name="studio_pattern_grain">Grain</string>
+    <string name="studio_pattern_geometric">Geometric</string>
     <string name="quran_theme_warm_gray">Warm Gray</string>
     <string name="quran_theme_amber">Amber</string>
     <string name="quran_theme_dusty_blue">Dusty Blue</string>

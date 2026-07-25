@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.feature.quran.data.QuranStore
 import com.example.miqatapp.feature.quran.data.QuranSymbols
-import com.example.miqatapp.feature.quran.toArabicIndic
-import com.example.miqatapp.feature.quran.toJuzKey
+import com.example.miqatapp.core.util.toArabicIndic
+import com.example.miqatapp.core.util.toJuzKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_juz
 import com.example.miqatapp.resources.tanzil_hafs

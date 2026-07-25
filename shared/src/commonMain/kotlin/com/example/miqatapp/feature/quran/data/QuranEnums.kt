@@ -19,6 +19,7 @@ enum class Revelation(val labelRes: StringResource) {
 }
 
 /** A prostration (sajda) verse — obligatory or recommended. */
+@kotlinx.serialization.Serializable
 enum class Sajda(val labelRes: StringResource) {
     Recommended(Res.string.sajda_recommended),
     Obligatory(Res.string.sajda_obligatory);

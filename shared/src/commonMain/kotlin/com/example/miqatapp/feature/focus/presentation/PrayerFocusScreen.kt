@@ -1,4 +1,5 @@
 package com.example.miqatapp.feature.focus.presentation
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,14 +41,15 @@ import org.jetbrains.compose.resources.stringResource
 // Prayer Focus (Android only): mute the phone around each prayer. Just layout; the pieces own their state.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrayerFocusScreen(onBack: () -> Unit = {}) {
+fun PrayerFocusScreen() {
+    val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     var taps by remember { mutableStateOf(0) } // 7 taps on the blurb reveals the test tiles; resets on re-entry
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.prayer_focus)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
+                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
             )
         },
     ) { pad ->

@@ -8,7 +8,7 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.AppTile
 import com.example.miqatapp.core.components.TilePosition
 import com.example.miqatapp.feature.quran.data.Surah
-import com.example.miqatapp.feature.quran.toSurahKey
+import com.example.miqatapp.core.util.toSurahKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font

@@ -6,13 +6,16 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.miqatapp.core.constants.AppConst
+import com.example.miqatapp.feature.studio.data.StudioCreationDao
+import com.example.miqatapp.feature.studio.data.StudioCreationEntity
 
 // exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
-@Database(entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class], version = AppConst.DB_VERSION, exportSchema = false)
+@Database(entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class], version = AppConst.DB_VERSION, exportSchema = false)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun prayerLogDao(): PrayerLogDao
     abstract fun scheduledNotificationDao(): ScheduledNotificationDao
+    abstract fun studioCreationDao(): StudioCreationDao
 }
 
 /** The Room compiler (KSP) generates the actual implementation per platform. */

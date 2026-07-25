@@ -398,6 +398,25 @@
     <string name="quran_theme_charcoal">فحمي</string>
     <string name="quran_theme_slate">إردوازي</string>
     <string name="quran_theme_night">ليلي</string>
+    <!-- Studio (share editor) -->
+    <string name="studio_mode_templates">قوالب</string>
+    <string name="studio_mode_layout">تخطيط</string>
+    <string name="studio_mode_background">خلفية</string>
+    <string name="studio_mode_gradient">تدرج</string>
+    <string name="studio_mode_fonts">خطوط</string>
+    <string name="studio_mode_size">حجم</string>
+    <string name="studio_mode_style">نمط</string>
+    <string name="studio_mode_align">محاذاة</string>
+    <string name="studio_mode_content">محتوى</string>
+    <string name="studio_mode_stickers">ملصقات</string>
+    <string name="studio_mode_card">بطاقة</string>
+    <string name="studio_mode_effects">تأثيرات</string>
+    <string name="studio_mode_dates">تواريخ</string>
+    <string name="studio_mode_presets">إعدادات</string>
+    <string name="studio_mode_branding">تفاصيل</string>
+    <string name="studio_pattern_none">بدون</string>
+    <string name="studio_pattern_grain">حبيبات</string>
+    <string name="studio_pattern_geometric">هندسي</string>
     <string name="quran_theme_warm_gray">رمادي دافئ</string>
     <string name="quran_theme_amber">كهرماني</string>
     <string name="quran_theme_dusty_blue">أزرق باهت</string>

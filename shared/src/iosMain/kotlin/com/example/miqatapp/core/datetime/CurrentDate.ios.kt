@@ -10,6 +10,7 @@ import platform.Foundation.NSCalendarUnitMonth
 import platform.Foundation.NSCalendarUnitSecond
 import platform.Foundation.NSCalendarUnitYear
 import platform.Foundation.NSDate
+import platform.Foundation.timeIntervalSince1970
 
 actual fun currentDate(): LocalDate {
     val comps = NSCalendar.currentCalendar.components(
@@ -26,3 +27,5 @@ actual fun currentTime(): LocalTime {
     )
     return LocalTime(comps.hour.toInt(), comps.minute.toInt(), comps.second.toInt())
 }
+
+internal actual fun currentEpochMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong()

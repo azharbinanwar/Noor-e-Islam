@@ -1,5 +1,7 @@
 package com.example.miqatapp.feature.quran.data
 
+import kotlinx.serialization.Serializable
+
 // canonical keys — persist these, not the db id (which can shift)
 data class AyahRef(val surah: Int, val ayah: Int) {
     fun toKey() = "$surah:$ayah"
@@ -13,6 +15,7 @@ data class WordRef(val surah: Int, val ayah: Int, val word: Int) {
 }
 
 // one `ayah` row
+@Serializable
 data class Ayah(
     val id: Int,
     val surah: Int,

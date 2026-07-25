@@ -1,4 +1,5 @@
 package com.example.miqatapp.feature.notifications.presentation
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -98,7 +99,8 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationsScreen(onBack: () -> Unit = {}) {
+fun NotificationsScreen() {
+    val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val s by NotificationStore.settings.collectAsState()
@@ -115,7 +117,7 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.notifications)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
+                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
             )
         },
     ) { pad ->

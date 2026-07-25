@@ -12,3 +12,6 @@ expect fun currentDate(): LocalDate
 
 /** Device wall-clock time now (hour + minute), same platform-calendar approach. */
 expect fun currentTime(): LocalTime
+
+/** Wall-clock epoch millis, backing Now.epochMillis() (stored timestamps). */
+internal expect fun currentEpochMillis(): Long

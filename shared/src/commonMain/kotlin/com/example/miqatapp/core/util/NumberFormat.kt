@@ -1,4 +1,4 @@
-package com.example.miqatapp.feature.quran
+package com.example.miqatapp.core.util
 
 // number → font-ligature keys (the surah/juz fonts render these as the ornate name glyph) + Arabic-Indic digits
 fun Int.toSurahKey(): String = "surah" + toString().padStart(3, '0')   // 2 -> "surah002"

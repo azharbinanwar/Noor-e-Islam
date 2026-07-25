@@ -55,7 +55,7 @@ import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.navigation.AppRoute
-import com.example.miqatapp.core.navigation.LocalNavController
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 import com.example.miqatapp.core.components.AppBottomSheet
 import com.example.miqatapp.core.components.AppButton
 import com.example.miqatapp.core.components.AppButtonVariant
@@ -160,10 +160,10 @@ object TasbihStore {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TasbihHubScreen(onHistory: () -> Unit = {}) {
+fun TasbihHubScreen() {
     val c = AppTheme.colors
     val drawerState = LocalDrawerState.current
-    val nav = LocalNavController.current
+    val nav = LocalAppNavigator.current
     val scope = rememberCoroutineScope()
     remember { TasbihStore.ensureSeeded() }
 
@@ -195,7 +195,7 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
                     else IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.tasbih_menu)) }
                 },
                 actions = {
-                    if (!selectionMode) IconButton(onClick = onHistory) { Icon(Lucide.History, stringResource(Res.string.tasbih_history)) }
+                    if (!selectionMode) IconButton(onClick = { nav.navigate(AppRoute.TasbihHistory()) }) { Icon(Lucide.History, stringResource(Res.string.tasbih_history)) }
                 },
             )
         },
@@ -447,7 +447,7 @@ private fun ViewSetSheet(
 @Composable
 internal fun HeartIcon(filled: Boolean, tint: Color, size: Dp = 22.dp, modifier: Modifier = Modifier) {
     Icon(
-        painter = painterResource(if (filled) Res.drawable.heart_filled else Res.drawable.  heart_outline),
+        painter = painterResource(if (filled) Res.drawable.heart_filled else Res.drawable.heart_outline),
         contentDescription = null,
         tint = tint,
         modifier = modifier.size(size),

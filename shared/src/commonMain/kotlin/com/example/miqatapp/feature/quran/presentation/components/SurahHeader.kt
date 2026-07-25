@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontFamily
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.feature.quran.data.QuranStore
-import com.example.miqatapp.feature.quran.toSurahKey
+import com.example.miqatapp.core.util.toSurahKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font

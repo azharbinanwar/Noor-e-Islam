@@ -1,5 +1,8 @@
 package com.example.miqatapp.core.navigation
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
 
@@ -25,4 +28,17 @@ val LocalNavController = staticCompositionLocalOf<NavHostController> {
 /** Same navigator the UI uses, for code that prefers the interface. */
 val LocalAppNavigator = staticCompositionLocalOf<AppNavigator> {
     error("LocalAppNavigator not set — wrap content in AppNavHost.")
+}
+
+@Composable
+fun AppNavigatorHost(
+    navController: NavHostController,
+    content: @Composable () -> Unit
+) {
+    val navigator = remember(navController) { AppNavigatorImpl(navController) }
+    CompositionLocalProvider(
+        LocalNavController provides navController,
+        LocalAppNavigator provides navigator,
+        content = content
+    )
 }

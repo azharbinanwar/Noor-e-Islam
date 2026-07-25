@@ -54,4 +54,7 @@ object Now {
 
     /** Today's Hijri date with [offsetDays] applied. */
     fun hijri(offsetDays: Int = 0): HijriDate = toHijri(date().plus(offsetDays, DateTimeUnit.DAY))
+
+    /** Wall-clock epoch millis — for stored timestamps (e.g. "saved at"). */
+    fun epochMillis(): Long = currentEpochMillis()
 }

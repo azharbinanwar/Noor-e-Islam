@@ -43,6 +43,8 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.AppChip
 import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.core.components.TilePosition
+import com.example.miqatapp.core.navigation.AppRoute
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 import com.example.miqatapp.feature.quran.data.QuranRepository
 import com.example.miqatapp.feature.quran.presentation.components.BookmarkRow
 import com.example.miqatapp.feature.quran.presentation.components.HighlightRow
@@ -52,7 +54,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun QuranIndexScreen(onOpen: (Int) -> Unit) {
+fun QuranIndexScreen() {
+    val nav = LocalAppNavigator.current
     val juzs by produceState(emptyList()) { value = QuranRepository.juzs() }
     val tabs = QuranTab.entries
     val pager = rememberPagerState(pageCount = { tabs.size })
@@ -68,7 +71,7 @@ fun QuranIndexScreen(onOpen: (Int) -> Unit) {
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            ContinueCard { onOpen(1) }
+            ContinueCard { nav.navigate(AppRoute.QuranReader(1)) }
             val chipState = rememberLazyListState()
             LaunchedEffect(pager.currentPage) { chipState.animateScrollToItem(pager.currentPage) } // keep the selected chip in view
             LazyRow(
@@ -83,7 +86,7 @@ fun QuranIndexScreen(onOpen: (Int) -> Unit) {
             }
             HorizontalPager(state = pager, modifier = Modifier.fillMaxSize()) { page ->
                 when (tabs[page]) {
-                    QuranTab.Surah -> SurahTab(onOpen = onOpen)
+                    QuranTab.Surah -> SurahTab()
                     else -> LazyColumn(
                         Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
@@ -92,11 +95,11 @@ fun QuranIndexScreen(onOpen: (Int) -> Unit) {
                         when (tabs[page]) {
                             QuranTab.Juz -> items(juzs.size, key = { juzs[it].number }) { i ->
                                 val juz = juzs[i]
-                                JuzRow(juz, onOpen = { onOpen(juz.startsAt.id) }, onOpenSurah = { onOpen(it.startId) })
+                                JuzRow(juz, onOpen = { nav.navigate(AppRoute.QuranReader(juz.startsAt.id)) }, onOpenSurah = { nav.navigate(AppRoute.QuranReader(it.startId)) })
                             }
-                            QuranTab.Bookmarks -> items(DUMMY_BOOKMARKS.size) { i -> val b = DUMMY_BOOKMARKS[i]; BookmarkRow(b.surah, b.ayah, b.text, TilePosition.at(i, DUMMY_BOOKMARKS.size)) { onOpen(b.id) } }
-                            QuranTab.Notes -> items(DUMMY_NOTES.size) { i -> val n = DUMMY_NOTES[i]; NoteRow(n.surah, n.ayah, n.text, TilePosition.at(i, DUMMY_NOTES.size)) { onOpen(n.id) } }
-                            QuranTab.Highlights -> items(DUMMY_HIGHLIGHTS.size) { i -> val h = DUMMY_HIGHLIGHTS[i]; HighlightRow(h.surah, h.ayah, h.text, h.color, TilePosition.at(i, DUMMY_HIGHLIGHTS.size)) { onOpen(h.id) } }
+                            QuranTab.Bookmarks -> items(DUMMY_BOOKMARKS.size) { i -> val b = DUMMY_BOOKMARKS[i]; BookmarkRow(b.surah, b.ayah, b.text, TilePosition.at(i, DUMMY_BOOKMARKS.size)) { nav.navigate(AppRoute.QuranReader(b.id)) } }
+                            QuranTab.Notes -> items(DUMMY_NOTES.size) { i -> val n = DUMMY_NOTES[i]; NoteRow(n.surah, n.ayah, n.text, TilePosition.at(i, DUMMY_NOTES.size)) { nav.navigate(AppRoute.QuranReader(n.id)) } }
+                            QuranTab.Highlights -> items(DUMMY_HIGHLIGHTS.size) { i -> val h = DUMMY_HIGHLIGHTS[i]; HighlightRow(h.surah, h.ayah, h.text, h.color, TilePosition.at(i, DUMMY_HIGHLIGHTS.size)) { nav.navigate(AppRoute.QuranReader(h.id)) } }
                             else -> {}
                         }
                     }

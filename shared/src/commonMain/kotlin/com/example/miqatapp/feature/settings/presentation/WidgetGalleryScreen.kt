@@ -1,4 +1,5 @@
 package com.example.miqatapp.feature.settings.presentation
+import com.example.miqatapp.core.navigation.LocalAppNavigator
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,7 +50,8 @@ import org.jetbrains.compose.resources.stringResource
 // The listing never changes — every widget's style is its own, saved per appWidgetId, never shared.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WidgetGalleryScreen(onBack: () -> Unit) {
+fun WidgetGalleryScreen() {
+    val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     val sample = WidgetStyle() // neutral look for the listing previews; never edited
     var customizing by remember { mutableStateOf<WidgetKind?>(null) }
@@ -58,7 +60,7 @@ fun WidgetGalleryScreen(onBack: () -> Unit) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.widgets)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Lucide.ChevronLeft, null) } },
+                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(Lucide.ChevronLeft, null) } },
             )
         },
     ) { pad ->
