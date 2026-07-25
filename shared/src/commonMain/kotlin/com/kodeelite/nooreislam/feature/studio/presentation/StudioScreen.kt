@@ -6,15 +6,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,10 +41,15 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.Bookmark
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.Trash2
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.components.AppButton
+import com.kodeelite.nooreislam.core.components.AppButtonVariant
+import com.kodeelite.nooreislam.core.components.SystemBackHandler
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.util.GalleryService
@@ -67,6 +79,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 // StudioMode moved to StudioMode.kt
 
@@ -118,6 +131,7 @@ fun StudioScreen(
     var savingToGallery by remember { mutableStateOf(false) }   // spinner on the Download button
     var galleryHint by remember { mutableStateOf<String?>(null) }   // transient "Saved to gallery" pill
     var shareSheetOpen by remember { mutableStateOf(false) }   // review/edit caption before sharing
+    var confirmBackOpen by remember { mutableStateOf(false) }   // confirm discard before leaving with unsaved edits
 
     fun updateConfig(newConfig: StudioConfig) = store.update(newConfig)
     fun undo() = store.undo()
@@ -126,19 +140,26 @@ fun StudioScreen(
 
     LaunchedEffect(showSavedHint) {
         if (showSavedHint) {
-            delay(1500); showSavedHint = false
+            delay(1500.milliseconds); showSavedHint = false
         }
     }
 
     // auto-save the in-progress design as a draft once editing settles (only after real edits)
     LaunchedEffect(config) {
         if (config != initialConfig) {
-            delay(800); store.saveDraft()
+            delay(800.milliseconds); store.saveDraft()
         }
     }
 
     val nav = LocalAppNavigator.current
 
+    // back with unsaved edits → confirm; otherwise leave straight away
+    fun requestBack() {
+        if (config != initialConfig) confirmBackOpen = true else nav.back()
+    }
+
+    // intercept system / gesture back too (sheets keep their own back-to-dismiss)
+    SystemBackHandler(enabled = !confirmBackOpen && !shareSheetOpen && !galleryOpen) { requestBack() }
 
     Scaffold(containerColor = colors.background) { _ ->
 
@@ -188,7 +209,7 @@ fun StudioScreen(
             AnimatedVisibility(visible = isEditing, enter = fadeIn(), exit = fadeOut()) {
                 StudioTopBar(
                     savedHint = showSavedHint,
-                    onBack = { nav.back() },
+                    onBack = { requestBack() },
                     onUndo = { undo() },
                     onRedo = { redo() },
                     onSave = { saveCurrent() },
@@ -271,7 +292,7 @@ fun StudioScreen(
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                         )
                     }
-                    LaunchedEffect(it) { delay(1600); galleryHint = null }
+                    LaunchedEffect(it) { delay(1600.milliseconds); galleryHint = null }
                 }
             }
 
@@ -297,13 +318,61 @@ fun StudioScreen(
                                 val bitmap = captureLayer.toImageBitmap()
                                 val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
                                 ShareService.shareImage(bytes, "noor_ayah.png", caption)
+                                saveCurrent()
+                                nav.back()   // return to the screen the user came from
                             } finally {
                                 sharing = false
                             }
                         }
-                        saveCurrent()
                     },
                 )
+            }
+
+            if (confirmBackOpen) {
+                val thumbH = 230.dp
+                val thumbW = thumbH * activeRatio
+                val thumbScale = thumbW / CANVAS_BASE_WIDTH
+                AppBottomSheet(
+                    onDismiss = { confirmBackOpen = false },
+                    title = "Leave this design?",
+                    subtitle = "You have unsaved changes.",
+                    footer = {
+                        AppButton(
+                            "Save & exit",
+                            onClick = { confirmBackOpen = false; saveCurrent(); nav.back() },
+                            modifier = Modifier.fillMaxWidth(),
+                            leftIcon = { Icon(Lucide.Bookmark, null, Modifier.size(18.dp)) },
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            AppButton(
+                                "Cancel",
+                                variant = AppButtonVariant.Outline,
+                                onClick = { confirmBackOpen = false },
+                                modifier = Modifier.weight(1f)
+                            )
+                            AppButton(
+                                "Discard",
+                                variant = AppButtonVariant.Error,
+                                onClick = { confirmBackOpen = false; nav.back() },
+                                modifier = Modifier.weight(1f),
+                                leftIcon = { Icon(Lucide.Trash2, null, Modifier.size(18.dp)) },
+                            )
+                        }
+                    },
+                ) {
+                    // live, scaled-down preview of the design (read-only)
+                    Box(Modifier.fillMaxWidth().padding(vertical = 4.dp), contentAlignment = Alignment.Center) {
+                        Box(Modifier.size(thumbW, thumbH).clip(RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
+                            Box(
+                                Modifier.requiredWidth(CANVAS_BASE_WIDTH).aspectRatio(activeRatio)
+                                    .graphicsLayer { scaleX = thumbScale; scaleY = thumbScale }
+                            ) {
+                                DesignCanvas(config, Modifier.fillMaxSize(), isEditing = false) {}
+                            }
+                        }
+                    }
+                }
             }
 
             if (galleryOpen) {

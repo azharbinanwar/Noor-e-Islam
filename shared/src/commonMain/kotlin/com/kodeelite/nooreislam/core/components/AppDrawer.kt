@@ -126,6 +126,10 @@ fun AppDrawer(
     val nav = LocalNavController.current
     val scope = rememberCoroutineScope()
     val overlay = LocalOverlay.current
+    // edge-swipe-to-open only on the burger-icon (top-level) screens, never on pushed detail screens
+    val currentEntry by nav.currentBackStackEntryAsState()
+    val topLevelRoutes = (drawerItems + footerItems).mapNotNull { it.route }
+    val onTopLevel = topLevelRoutes.any { currentEntry?.destination?.hasRoute(it::class) == true }
     val blurred = drawerState.targetValue == DrawerValue.Open || overlay.sheetCount > 0
     val blurRadius by animateDpAsState(if (blurred) 18.dp else 0.dp, label = "blur")
 
@@ -161,7 +165,7 @@ fun AppDrawer(
     ModalNavigationDrawer(
         modifier = modifier,
         drawerState = drawerState,
-        gesturesEnabled = drawerState.targetValue == DrawerValue.Open || overlay.drawerGesturesEnabled,
+        gesturesEnabled = drawerState.targetValue == DrawerValue.Open || (onTopLevel && overlay.drawerGesturesEnabled),
         scrimColor = Color.Black.copy(alpha = 0.32f), // real dim so the panel floats (matches AppBottomSheet)
         drawerContent = {
             ModalDrawerSheet(

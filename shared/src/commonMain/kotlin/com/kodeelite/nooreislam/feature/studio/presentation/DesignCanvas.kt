@@ -52,6 +52,7 @@ import coil3.compose.AsyncImage
 import com.kodeelite.nooreislam.core.datetime.HijriMonth
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
+import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
@@ -107,7 +108,7 @@ fun DesignCanvas(
                         return@detectTransformGestures
                     }
                     // the photo always covers the frame (crop): clamp pan to the cropped-out overflow so no bg shows
-                    val cw = size.width.toFloat();
+                    val cw = size.width.toFloat()
                     val ch = size.height.toFloat()
                     val canvasR = cw / ch
                     val coverW = if (r > canvasR) ch * r else cw
@@ -215,20 +216,13 @@ fun DesignCanvas(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (config.surahPlacement == SurahPlacement.Top) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                text = "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                                color = config.textColor.copy(alpha = 0.7f),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = config.ayahs.first().surah.toSurahKey(),
-                                fontFamily = surahFont,
-                                color = config.textColor.copy(alpha = 0.85f),
-                                fontSize = 32.sp
-                            )
-                        }
+                        // Top: only the surah name here; the "Al Quran (2:5)" reference sits at the bottom
+                        Text(
+                            text = config.ayahs.first().surah.toSurahKey(),
+                            fontFamily = surahFont,
+                            color = config.textColor.copy(alpha = 0.85f),
+                            fontSize = 32.sp
+                        )
                         Spacer(Modifier.size(12.dp))
                     }
                     if (config.showBismillah) {
@@ -299,6 +293,17 @@ fun DesignCanvas(
                                 fontSize = 32.sp
                             )
                         }
+                    }
+
+                    if (config.surahPlacement == SurahPlacement.Top) {
+                        // bottom reference in Arabic, ayah font, Arabic-Indic digits: القرآن (٢:٥)
+                        Spacer(Modifier.size(16.dp))
+                        Text(
+                            text = "القرآن (${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})",
+                            fontFamily = FontFamily(Font(config.fontFamily.res)),
+                            color = config.textColor.copy(alpha = 0.75f),
+                            fontSize = 18.sp
+                        )
                     }
 
                     if (config.showHijri || config.showGregorian) {
