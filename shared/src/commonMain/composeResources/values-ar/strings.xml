@@ -61,13 +61,6 @@
     <string name="gregorian_nov">نوفمبر</string>
     <string name="gregorian_dec">ديسمبر</string>
 
-    <string name="day_mon">الاثنين</string>
-    <string name="day_tue">الثلاثاء</string>
-    <string name="day_wed">الأربعاء</string>
-    <string name="day_thu">الخميس</string>
-    <string name="day_fri">الجمعة</string>
-    <string name="day_sat">السبت</string>
-    <string name="day_sun">الأحد</string>
 
     <string name="fajr_short">فجر</string>
     <string name="sunrise_short">شروق</string>

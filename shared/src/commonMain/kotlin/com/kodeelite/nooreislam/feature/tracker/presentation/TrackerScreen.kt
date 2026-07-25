@@ -34,6 +34,7 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.datetime.Now
+import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
@@ -42,17 +43,6 @@ import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalen
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best
 import com.kodeelite.nooreislam.resources.day_streak
-import com.kodeelite.nooreislam.resources.not_tracked
-import com.kodeelite.nooreislam.resources.on_time
-import com.kodeelite.nooreislam.resources.prayer_tracker
-import com.kodeelite.nooreislam.resources.best_days_streak_and_on_time_percentage
-import com.kodeelite.nooreislam.resources.day_fri
-import com.kodeelite.nooreislam.resources.day_mon
-import com.kodeelite.nooreislam.resources.day_sat
-import com.kodeelite.nooreislam.resources.day_sun
-import com.kodeelite.nooreislam.resources.day_thu
-import com.kodeelite.nooreislam.resources.day_tue
-import com.kodeelite.nooreislam.resources.day_wed
 import com.kodeelite.nooreislam.resources.gregorian_apr
 import com.kodeelite.nooreislam.resources.gregorian_aug
 import com.kodeelite.nooreislam.resources.gregorian_dec
@@ -65,10 +55,12 @@ import com.kodeelite.nooreislam.resources.gregorian_may
 import com.kodeelite.nooreislam.resources.gregorian_nov
 import com.kodeelite.nooreislam.resources.gregorian_oct
 import com.kodeelite.nooreislam.resources.gregorian_sep
+import com.kodeelite.nooreislam.resources.not_tracked
+import com.kodeelite.nooreislam.resources.on_time
+import com.kodeelite.nooreislam.resources.prayer_tracker
 import com.kodeelite.nooreislam.resources.selected_full_date
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -207,17 +199,7 @@ private fun mockStatus(date: LocalDate, p: Miqat, today: LocalDate): PrayerTrack
 
 @Composable
 private fun formatSelected(date: LocalDate): String {
-    val day = stringResource(
-        when (date.dayOfWeek) {
-            DayOfWeek.MONDAY -> Res.string.day_mon
-            DayOfWeek.TUESDAY -> Res.string.day_tue
-            DayOfWeek.WEDNESDAY -> Res.string.day_wed
-            DayOfWeek.THURSDAY -> Res.string.day_thu
-            DayOfWeek.FRIDAY -> Res.string.day_fri
-            DayOfWeek.SATURDAY -> Res.string.day_sat
-            DayOfWeek.SUNDAY -> Res.string.day_sun
-        }
-    )
+    val day = stringResource(date.dayOfWeek.labelRes)
     val month = stringResource(
         when (date.monthNumber) {
             1 -> Res.string.gregorian_jan

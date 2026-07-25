@@ -62,13 +62,6 @@
     <string name="gregorian_nov">November</string>
     <string name="gregorian_dec">December</string>
 
-    <string name="day_mon">Monday</string>
-    <string name="day_tue">Tuesday</string>
-    <string name="day_wed">Wednesday</string>
-    <string name="day_thu">Thursday</string>
-    <string name="day_fri">Friday</string>
-    <string name="day_sat">Saturday</string>
-    <string name="day_sun">Sunday</string>
 
     <string name="fajr_short">Fajr</string>
     <string name="sunrise_short">Sunr</string>
