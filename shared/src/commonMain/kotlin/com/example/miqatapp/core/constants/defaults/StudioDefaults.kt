@@ -27,7 +27,6 @@ object StudioDefaults {
     const val VIGNETTE = 0f
     const val VIGNETTE_SPREAD = 0.5f
     const val OVERLAY_ALPHA = 0.2f
-    const val BORDER = 0f
 
     // card
     val CARD_COLOR = Color.Black.copy(alpha = 0.4f)
@@ -48,6 +47,5 @@ object StudioDefaults {
     val PERCENT_RANGE = 0f..100f       // opacity / shadow / vignette / overlay
     val CARD_RADIUS_RANGE = 0f..40f
     val BLUR_RANGE = 0f..50f
-    val BORDER_RANGE = 0f..10f
     val TRANSLATION_SIZE_RANGE = 10f..30f
 }

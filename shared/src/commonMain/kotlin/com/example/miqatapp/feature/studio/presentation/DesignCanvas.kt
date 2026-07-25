@@ -1,14 +1,15 @@
 package com.example.miqatapp.feature.studio.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,11 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -51,20 +52,20 @@ import coil3.compose.AsyncImage
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.core.datetime.format
-import com.example.miqatapp.feature.studio.data.LogoCorner
-import com.example.miqatapp.feature.studio.data.StudioAspectRatio
-import com.example.miqatapp.feature.quran.data.QuranSymbols
-import com.example.miqatapp.feature.studio.data.StudioConfig
 import com.example.miqatapp.core.util.toSurahKey
+import com.example.miqatapp.feature.quran.data.QuranSymbols
+import com.example.miqatapp.feature.studio.data.LogoCorner
+import com.example.miqatapp.feature.studio.data.StudioConfig
+import com.example.miqatapp.feature.studio.data.SurahPlacement
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.hijri_era
 import com.example.miqatapp.resources.miqat_logo
 import com.example.miqatapp.resources.quran_juz
 import com.example.miqatapp.resources.quran_surah_name
-import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.roundToInt
 
 // The rendered post: background (image / gradient / color) + vignette/overlay, watermark, and the ayah
 // card (surah name, bismillah, ayah text, translation, dates). Pure render from [config]; [onUpdate]
@@ -80,7 +81,7 @@ fun DesignCanvas(
     val today = Now.date()          // generic time service — formatting handled centrally later
     val todayHijri = Now.hijri()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name))
-    val canvasShape = if (config.aspectRatio == StudioAspectRatio.Full && !isEditing) RectangleShape else RoundedCornerShape(24.dp)
+    val canvasShape = RectangleShape   // square canvas; clip still crops panned/zoomed images to the frame
     val liveConfig = rememberUpdatedState(config)   // gesture callbacks read the latest config
     var imgRatio by remember(config.bgImageUrl) { mutableStateOf<Float?>(null) }   // photo w/h once loaded
     val liveRatio = rememberUpdatedState(imgRatio)
@@ -114,10 +115,7 @@ fun DesignCanvas(
                         )
                     )
                 }
-            }
-            .then(
-                if (config.borderSize > 0) Modifier.border(config.borderSize.dp, config.textColor.copy(alpha = 0.5f), canvasShape) else Modifier
-            ),
+            },
         contentAlignment = Alignment.Center
     ) {
         // BACKGROUND
@@ -209,13 +207,21 @@ fun DesignCanvas(
                     .padding(config.cardPadding.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    if (config.showSurahTop) {
-                        Text(
-                            text = config.ayahs.first().surah.toSurahKey(),
-                            fontFamily = surahFont,
-                            color = config.textColor.copy(alpha = 0.85f),
-                            fontSize = 32.sp
-                        )
+                    if (config.surahPlacement == SurahPlacement.Top) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
+                                color = config.textColor.copy(alpha = 0.7f),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = config.ayahs.first().surah.toSurahKey(),
+                                fontFamily = surahFont,
+                                color = config.textColor.copy(alpha = 0.85f),
+                                fontSize = 32.sp
+                            )
+                        }
                         Spacer(Modifier.size(12.dp))
                     }
                     if (config.showBismillah) {
@@ -270,20 +276,22 @@ fun DesignCanvas(
                         )
                     }
 
-                    if (config.showSurahBottom) {
+                    if (config.surahPlacement == SurahPlacement.Bottom) {
                         Spacer(Modifier.size(16.dp))
-                        Text(
-                            text = config.ayahs.first().surah.toSurahKey(),
-                            fontFamily = surahFont,
-                            color = config.textColor.copy(alpha = 0.85f),
-                            fontSize = 32.sp
-                        )
-                        Text(
-                            text = "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                            color = config.textColor.copy(alpha = 0.7f),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
+                                color = config.textColor.copy(alpha = 0.7f),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = config.ayahs.first().surah.toSurahKey(),
+                                fontFamily = surahFont,
+                                color = config.textColor.copy(alpha = 0.85f),
+                                fontSize = 32.sp
+                            )
+                        }
                     }
 
                     if (config.showHijri || config.showGregorian) {

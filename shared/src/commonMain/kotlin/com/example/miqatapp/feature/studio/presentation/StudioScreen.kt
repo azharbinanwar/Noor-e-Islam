@@ -1,36 +1,17 @@
 package com.example.miqatapp.feature.studio.presentation
 
 import androidx.compose.animation.AnimatedVisibility
-import com.example.miqatapp.core.constants.defaults.StudioDefaults
-import com.example.miqatapp.feature.studio.data.GradientStore
-import com.example.miqatapp.feature.studio.data.ImageStore
-import com.example.miqatapp.feature.studio.presentation.panels.CardPanel
-import com.example.miqatapp.feature.studio.presentation.panels.EffectsPanel
-import com.example.miqatapp.feature.studio.presentation.panels.PresetsPanel
-import com.example.miqatapp.feature.studio.presentation.panels.TextSizePanel
-import com.example.miqatapp.feature.studio.presentation.panels.TextStylePanel
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -38,90 +19,41 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.composables.icons.lucide.AlignLeft
-import com.composables.icons.lucide.BookOpen
-import com.composables.icons.lucide.Bookmark
-import com.composables.icons.lucide.BoxSelect
-import com.composables.icons.lucide.CalendarDays
-import com.composables.icons.lucide.Check
-import com.composables.icons.lucide.ChevronLeft
-import com.composables.icons.lucide.ChevronRight
-import com.composables.icons.lucide.GalleryThumbnails
-import com.composables.icons.lucide.Image
-import com.composables.icons.lucide.Info
-import com.composables.icons.lucide.Layers
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Maximize
-import com.composables.icons.lucide.Download
-import com.composables.icons.lucide.LayoutTemplate
-import androidx.compose.foundation.layout.width
-import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Pencil
-import com.composables.icons.lucide.Redo
-import com.composables.icons.lucide.Share
-import com.composables.icons.lucide.Sparkles
-import com.composables.icons.lucide.Stamp
-import com.composables.icons.lucide.Star
-import com.composables.icons.lucide.TextQuote
-import com.composables.icons.lucide.Type
-import com.composables.icons.lucide.Undo
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.AppBottomSheet
-import com.example.miqatapp.core.components.AppSwitch
-import androidx.compose.runtime.rememberCoroutineScope
-import org.koin.compose.koinInject
-import com.example.miqatapp.feature.studio.data.StudioCreationRepository
-import com.example.miqatapp.core.datetime.currentDate
-import com.example.miqatapp.core.datetime.toHijri
-import com.example.miqatapp.core.locale.tr
+import com.example.miqatapp.core.constants.defaults.StudioDefaults
 import com.example.miqatapp.core.navigation.LocalAppNavigator
 import com.example.miqatapp.core.util.ShareService
-import com.example.miqatapp.feature.studio.data.LogoCorner
-import com.example.miqatapp.feature.studio.data.PlacedSticker
-import com.example.miqatapp.feature.studio.data.StudioAspectRatio
-import com.example.miqatapp.feature.quran.data.QuranSymbols
 import com.example.miqatapp.feature.quran.data.Ayah
+import com.example.miqatapp.feature.studio.data.GradientStore
+import com.example.miqatapp.feature.studio.data.ImageStore
+import com.example.miqatapp.feature.studio.data.StudioAspectRatio
 import com.example.miqatapp.feature.studio.data.StudioConfig
-import com.example.miqatapp.feature.studio.data.StudioGradient
+import com.example.miqatapp.feature.studio.data.StudioCreationRepository
 import com.example.miqatapp.feature.studio.presentation.components.AlignmentToggle
 import com.example.miqatapp.feature.studio.presentation.components.AspectRatioStrip
 import com.example.miqatapp.feature.studio.presentation.components.FontPicker
 import com.example.miqatapp.feature.studio.presentation.components.GradientStripPicker
 import com.example.miqatapp.feature.studio.presentation.components.ImageGridPicker
-import com.example.miqatapp.feature.studio.presentation.components.StickerPicker
 import com.example.miqatapp.feature.studio.presentation.components.TemplatePicker
 import com.example.miqatapp.feature.studio.presentation.panels.BrandingPanel
+import com.example.miqatapp.feature.studio.presentation.panels.CardPanel
 import com.example.miqatapp.feature.studio.presentation.panels.ContentPanel
 import com.example.miqatapp.feature.studio.presentation.panels.DatesPanel
-import com.example.miqatapp.core.util.toSurahKey
-import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.miqat_logo
-import com.example.miqatapp.resources.quran_juz
-import com.example.miqatapp.resources.quran_surah_name
+import com.example.miqatapp.feature.studio.presentation.panels.EffectsPanel
+import com.example.miqatapp.feature.studio.presentation.panels.TextSizePanel
+import com.example.miqatapp.feature.studio.presentation.panels.TextStylePanel
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.Font
-import org.jetbrains.compose.resources.painterResource
-import kotlin.math.roundToInt
+import org.koin.compose.koinInject
 
 // StudioMode moved to StudioMode.kt
 
@@ -191,7 +123,6 @@ fun StudioScreen(
     Scaffold(containerColor = colors.background) { _ ->
 
         BoxWithConstraints(Modifier.fillMaxSize()) {
-            val isFull = config.aspectRatio == StudioAspectRatio.Full
             val screenRatio = maxWidth / maxHeight
             val activeRatio = when (config.aspectRatio) {
                 StudioAspectRatio.Full -> screenRatio
@@ -200,27 +131,26 @@ fun StudioScreen(
             }
 
             // --- WORKSPACE ---
-            Box(Modifier.fillMaxSize().padding(bottom = if (isEditing) 180.dp else 0.dp), contentAlignment = Alignment.Center) {
-                val animatedScale by animateFloatAsState(if (isEditing) 0.85f else 1f)
-                val animatedOffset by animateFloatAsState(if (isEditing) 40f else 0f)
-
-                // Artboard Scaling Engine
+            // compact = editing WITH the tools panel up: the canvas fits the area above the panel. Panel hidden
+            // (tap) or done → it fits the whole screen. Always contain-fit + centered, no dead margins.
+            val compact = isEditing && toolsVisible
+            Box(Modifier.fillMaxSize().padding(bottom = if (compact) 180.dp else 0.dp), contentAlignment = Alignment.Center) {
                 Box(
                     Modifier.fillMaxSize()
                         .pointerInput(isEditing) { if (isEditing) detectTapGestures { toolsVisible = !toolsVisible } },
                     contentAlignment = Alignment.Center,
                 ) {
-                    val currentMaxWidth = this@BoxWithConstraints.maxWidth
-                    val actualArtWidth = if (isFull && !isEditing) currentMaxWidth else (currentMaxWidth * animatedScale)
-                    val internalScale = (actualArtWidth / CANVAS_BASE_WIDTH)
+                    // contain-fit: largest artboard of ratio `activeRatio` that fits the free area (whole screen,
+                    // minus the panel's room when the tools are up). Bound by width or height, whichever binds first.
+                    val availW = this@BoxWithConstraints.maxWidth
+                    val availH = this@BoxWithConstraints.maxHeight - (if (compact) 180.dp else 0.dp)
+                    val fittedWidth = minOf(availW, availH * activeRatio)
+                    val artWidth by animateDpAsState(fittedWidth)
+                    val internalScale = artWidth / CANVAS_BASE_WIDTH
 
                     Box(
                         Modifier
-                            .graphicsLayer {
-                                translationY = animatedOffset
-                                scaleX = internalScale
-                                scaleY = internalScale
-                            }
+                            .graphicsLayer { scaleX = internalScale; scaleY = internalScale }
                             .requiredWidth(CANVAS_BASE_WIDTH)
                             .aspectRatio(activeRatio)
                     ) {
@@ -264,15 +194,17 @@ fun StudioScreen(
                         StudioMode.Align -> AlignmentToggle(config.textAlign) { updateConfig(config.copy(textAlign = it)) }
                         StudioMode.Content -> ContentPanel(config) { updateConfig(it) }
 
-                        StudioMode.Stickers -> StickerPicker { type ->
-                            updateConfig(config.copy(stickers = config.stickers + PlacedSticker(config.stickers.size, type, 0.5f, 0.5f)))
-                        }
+                        // TODO(studio): stickers not ready — re-enable with StudioMode.Stickers
+                        // StudioMode.Stickers -> StickerPicker { type ->
+                        //     updateConfig(config.copy(stickers = config.stickers + PlacedSticker(config.stickers.size, type, 0.5f, 0.5f)))
+                        // }
 
                         StudioMode.Card -> CardPanel(config, cardSwatches) { updateConfig(it) }
                         StudioMode.Effects -> EffectsPanel(config) { updateConfig(it) }
 
                         StudioMode.Templates -> TemplatePicker(config) { updateConfig(it) } // fixed looks + a Generate section
-                        StudioMode.Presets -> PresetsPanel(onReset = { updateConfig(initialConfig) }, onSave = { saveCurrent() })
+                        // TODO(studio): presets not ready — re-enable with StudioMode.Presets
+                        // StudioMode.Presets -> PresetsPanel(onReset = { updateConfig(initialConfig) }, onSave = { saveCurrent() })
 
                         StudioMode.Dates -> DatesPanel(config) { updateConfig(it) }
 

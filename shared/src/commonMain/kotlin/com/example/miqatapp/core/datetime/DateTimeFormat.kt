@@ -16,14 +16,13 @@ import kotlinx.datetime.format.byUnicodePattern
  *   date.format("dd/MM/yyyy")       -> "12/07/2026"         (date)
  *   dt.format("yyyy-MM-dd HH:mm")   -> "2026-07-12 17:08"   (date + time)
  *
- * Unicode letters: y year, M month, d day, H 24h, h 12h, m minute, s second, a AM/PM.
- * byUnicodePattern rejects locale-dependent clock letters (h hh a K k), so we pre-expand just those from
- * the receiver's hour into quoted literals and hand the rest to it. Month/day NAMES (MMM, EEE) stay
- * unsupported — use a DSL format for those.
+ * Unicode letters: y year, M month, d day, E weekday, H 24h, h 12h, m minute, s second, a AM/PM.
+ * byUnicodePattern rejects locale-dependent letters (clock h/a/K/k, month/weekday NAMES MMM/EEE), so we
+ * pre-expand just those from the receiver into quoted literals and hand the rest to it. English names.
  */
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun LocalDateTime.format(pattern: String): String =
-    LocalDateTime.Format { byUnicodePattern(expandClock(pattern, hour)) }.format(this)
+    LocalDateTime.Format { byUnicodePattern(expandNames(expandClock(pattern, hour), month.ordinal, dayOfWeek.ordinal)) }.format(this)
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun LocalTime.format(pattern: String): String =
@@ -31,7 +30,55 @@ fun LocalTime.format(pattern: String): String =
 
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun LocalDate.format(pattern: String): String =
-    LocalDate.Format { byUnicodePattern(pattern) }.format(this)
+    LocalDate.Format { byUnicodePattern(expandNames(pattern, month.ordinal, dayOfWeek.ordinal)) }.format(this)
+
+private val MONTH_SHORT = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+private val MONTH_FULL =
+    listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+private val DAY_SHORT = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+private val DAY_FULL = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+/**
+ * Rewrite month/weekday NAME runs into quoted literals (MMM->Jul, MMMM->July, EEE->Fri, EEEE->Friday) so
+ * byUnicodePattern accepts them. Runs of 1-2 M stay (numeric month, natively supported). Indices are enum
+ * ordinals: [month] Jan=0, [dow] Mon=0 — the arrays are declared in that order.
+ */
+private fun expandNames(pattern: String, month: Int, dow: Int): String {
+    val out = StringBuilder()
+    var i = 0
+    var inQuote = false
+    while (i < pattern.length) {
+        val c = pattern[i]
+        when {
+            c == '\'' -> {
+                inQuote = !inQuote; out.append(c); i++
+            }
+
+            inQuote -> {
+                out.append(c); i++
+            }
+
+            c == 'M' -> {
+                var n = 0; while (i + n < pattern.length && pattern[i + n] == 'M') n++
+                if (n >= 3) out.append('\'').append((if (n == 3) MONTH_SHORT else MONTH_FULL)[month]).append('\'')
+                else repeat(n) { out.append('M') }
+                i += n
+            }
+
+            c == 'E' -> {
+                var n = 0; while (i + n < pattern.length && pattern[i + n] == 'E') n++
+                if (n >= 3) out.append('\'').append((if (n == 3) DAY_SHORT else DAY_FULL)[dow]).append('\'')
+                else repeat(n) { out.append('E') }
+                i += n
+            }
+
+            else -> {
+                out.append(c); i++
+            }
+        }
+    }
+    return out.toString()
+}
 
 /** Rewrite 12h/AM-PM letters (h hh a K k) as quoted literals so byUnicodePattern accepts the pattern. */
 private fun expandClock(pattern: String, hour: Int): String {

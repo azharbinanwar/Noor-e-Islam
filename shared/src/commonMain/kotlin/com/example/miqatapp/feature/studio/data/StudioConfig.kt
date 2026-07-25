@@ -52,8 +52,7 @@ data class StudioConfig(
     val showTranslation: Boolean = false,
     val translationText: String = "This is a placeholder for the Ayah translation...",
     val translationSize: Float = StudioDefaults.TRANSLATION_SIZE,
-    val showSurahTop: Boolean = false,     // surah name at the top of the card
-    val showSurahBottom: Boolean = true,   // surah name + ref at the bottom
+    val surahPlacement: SurahPlacement = SurahPlacement.Bottom,   // surah name + ref block: top, bottom, or off
 
     // Background
     @Contextual val bgColor: Color = StudioDefaults.BG_COLOR,
@@ -68,7 +67,6 @@ data class StudioConfig(
     val vignetteIntensity: Float = StudioDefaults.VIGNETTE,
     val vignetteSpread: Float = StudioDefaults.VIGNETTE_SPREAD,
     val overlayAlpha: Float = StudioDefaults.OVERLAY_ALPHA,
-    val borderSize: Float = StudioDefaults.BORDER,
 
     // Container (Card)
     @Contextual val cardColor: Color = StudioDefaults.CARD_COLOR,

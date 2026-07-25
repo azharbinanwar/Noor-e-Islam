@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.FontResource
 enum class QuranFont(val label: String, val sample: String, val res: FontResource) {
     Hafs("Uthmani", "بِسْمِ اللَّهِ", Res.font.tanzil_hafs),
     Naskh("Naskh", "بِسْمِ اللَّهِ", Res.font.tanzil_naskh),
-    MeQuran("me_quran", "بِسْمِ اللَّهِ", Res.font.tanzil_me_quran),
+    MeQuran("Madani", "بِسْمِ اللَّهِ", Res.font.tanzil_me_quran),
     Scheherazade("Scheherazade", "بِسْمِ اللَّهِ", Res.font.tanzil_scheherazade),
     Indopak("IndoPak", "بِسْمِ اللَّهِ", Res.font.tanzil_saleem);
 

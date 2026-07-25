@@ -13,8 +13,6 @@ import com.composables.icons.lucide.Maximize
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Sparkles
-import com.composables.icons.lucide.Stamp
-import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.TextQuote
 import com.composables.icons.lucide.Type
 
@@ -30,11 +28,15 @@ enum class StudioMode(val label: String, val icon: ImageVector) {
     TextStyle("Style", Lucide.Pencil),
     Align("Align", Lucide.AlignLeft),
     Content("Content", Lucide.BookOpen),
-    Stickers("Stickers", Lucide.Stamp),
+
+    // TODO(studio): stickers not ready — re-enable when the sticker set + placement is done
+    // Stickers("Stickers", Lucide.Stamp),
     Card("Card", Lucide.Layers),
     Effects("Effects", Lucide.Sparkles),
     Dates("Dates", Lucide.CalendarDays),
-    Presets("Presets", Lucide.Star),
+
+    // TODO(studio): presets (save/reset) not ready — re-enable when preset management is done
+    // Presets("Presets", Lucide.Star),
     Branding("Details", Lucide.Info);
 
     companion object { val DEFAULT = Templates }

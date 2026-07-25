@@ -3,14 +3,29 @@ package com.example.miqatapp.feature.studio.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +44,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.composables.icons.lucide.*
+import com.composables.icons.lucide.AlignCenter
+import com.composables.icons.lucide.AlignLeft
+import com.composables.icons.lucide.AlignRight
+import com.composables.icons.lucide.Ban
+import com.composables.icons.lucide.CircleDot
+import com.composables.icons.lucide.Flame
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.Plus
+import com.composables.icons.lucide.SeparatorHorizontal
+import com.composables.icons.lucide.Star
+import com.composables.icons.lucide.Tent
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.colorpicker.ColorPickerSheet
 import com.example.miqatapp.core.components.colorpicker.RecentColors
-import com.example.miqatapp.feature.studio.data.CanvasPattern
 import com.example.miqatapp.feature.quran.data.QuranFont
-import com.example.miqatapp.feature.studio.data.StudioGradient
+import com.example.miqatapp.feature.studio.data.CanvasPattern
 import com.example.miqatapp.feature.studio.data.GradientStore
+import com.example.miqatapp.feature.studio.data.ImageStore
+import com.example.miqatapp.feature.studio.data.StudioGradient
+import com.example.miqatapp.feature.studio.data.StudioImage
 import org.jetbrains.compose.resources.Font
 
 /** Compact Professional Slider */
@@ -86,7 +114,28 @@ fun ImageGridPicker(imageUrls: List<String>, selected: String?, onSelect: (Strin
         title = "Background", all = imageUrls,
         isSelected = { it == selected }, noneSelected = selected == null,
         onNone = { onSelect(null) }, onPick = { onSelect(it) },
-    ) { url -> AsyncImage(url, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
+    ) { url ->
+        Box(Modifier.fillMaxSize()) {
+            AsyncImage(url, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+            ImageStore.byUrl(url)?.let { ComboSwatches(it, Modifier.align(Alignment.BottomStart).padding(6.dp)) }
+        }
+    }
+}
+
+// tiny bg+text pairs sampled from the photo — each ring is a base tone with its readable on-color inside,
+// so the card previews the color combinations it gives you before you pick it.
+@Composable
+private fun ComboSwatches(image: StudioImage, modifier: Modifier = Modifier) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        val n = minOf(3, image.colors.size, image.onColors.size)
+        repeat(n) { i ->
+            Box(
+                Modifier.size(14.dp).clip(CircleShape).background(image.colors[i])
+                    .border(1.dp, Color.White.copy(alpha = 0.65f), CircleShape),
+                contentAlignment = Alignment.Center,
+            ) { Box(Modifier.size(5.dp).clip(CircleShape).background(image.onColors[i])) }
+        }
+    }
 }
 
 @Composable
@@ -240,7 +289,7 @@ private fun SmallFontChip(font: QuranFont, selected: Boolean, onClick: () -> Uni
     val colors = AppTheme.colors
     val fam = FontFamily(Font(font.res))
     Column(
-        Modifier.width(72.dp).height(62.dp).clip(RoundedCornerShape(10.dp))
+        Modifier.width(72.dp).height(80.dp).clip(RoundedCornerShape(10.dp))
             .background(if (selected) colors.primary.copy(alpha = 0.15f) else colors.onSurface.copy(alpha = 0.08f))
             .border(1.5.dp, if (selected) colors.primary else Color.Transparent, RoundedCornerShape(10.dp))
             .clickable(onClick = onClick).padding(vertical = 6.dp),
