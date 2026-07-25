@@ -38,12 +38,14 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.MiqatTimeStatus
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
+import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.store.PrayerTrackingStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.clear
 import com.kodeelite.nooreislam.resources.mark_prayer
+import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.today
 import org.jetbrains.compose.resources.stringResource
 
@@ -53,13 +55,13 @@ fun TodayPrayers() {
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val clock by Now.now.collectAsState()
     val now = clock.time
-    val today by MiqatTimesStore.today.collectAsState()
+    val todayTimes by MiqatTimesStore.today.collectAsState()
     val tracked by PrayerTrackingStore.tracked.collectAsState()
 
-    val dailyTimes = remember(today) { today.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
+    val dailyTimes = remember(todayTimes) { todayTimes.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
     // current fard: every prayer runs to the next except Fajr, which ends at sunrise (sunrise→Dhuhr is a gap).
-    val sunriseTime = today.firstOrNull { it.miqat == Miqat.Sunrise }?.at?.time
+    val sunriseTime = todayTimes.firstOrNull { it.miqat == Miqat.Sunrise }?.at?.time
     val startedPrayer = prayerTimes.lastOrNull { it.at.time <= now } ?: prayerTimes.lastOrNull()
     val currentPrayer = when {
         startedPrayer == null -> null
@@ -70,16 +72,17 @@ fun TodayPrayers() {
 
     var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
 
-    AppTileGroup(
-        title = stringResource(Res.string.today),
-        items = dailyTimes.map { mt ->
-            val status = when (mt.miqat) {
-                currentPrayer -> MiqatTimeStatus.Current
-                nextMt?.miqat -> MiqatTimeStatus.Soon
-                else -> null
-            }
+    val items = mutableListOf<AppTileItem>()
+    for (mt in dailyTimes) {
+        val status = when (mt.miqat) {
+            currentPrayer -> MiqatTimeStatus.Current
+            nextMt?.miqat -> MiqatTimeStatus.Soon
+            else -> null
+        }
+        val localizedTitle = mt.miqat.label(clock.date)
+        items.add(
             AppTileItem(
-                title = mt.miqat.label(clock.date),
+                title = localizedTitle,
                 subtitle = mt.at.time.format(timeFormat.pattern),
                 selected = status == MiqatTimeStatus.Current,
                 leadingIcon = mt.miqat.icon,
@@ -101,7 +104,12 @@ fun TodayPrayers() {
                     { sheetPrayer = mt.miqat }
                 } else null,
             )
-        },
+        )
+    }
+
+    AppTileGroup(
+        title = stringResource(Res.string.today),
+        items = items
     )
 
     sheetPrayer?.let { p ->
@@ -136,8 +144,9 @@ private fun TrackingSheet(
     onDismiss: () -> Unit,
 ) {
     AppBottomSheet(onDismiss = onDismiss) {
+        val titleLabel = prayer.label(Now.date())
         Text(
-            stringResource(Res.string.mark_prayer, prayer.name), color = AppTheme.colors.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+            stringResource(Res.string.mark_prayer, titleLabel), color = AppTheme.colors.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
         )
         AppTileGroup(
@@ -148,20 +157,15 @@ private fun TrackingSheet(
                     selected = st == current,
                     leadingIcon = st.icon,
                     leadingColor = sc,
-                    trailing = if (st == current) {
-                        { Icon(Lucide.Check, null, tint = sc, modifier = Modifier.size(20.dp)) }
-                    } else null,
-                    onClick = { onSelect(st) },
+                    onClick = { onSelect(st) }
                 )
-            },
+            }
         )
-        if (current != null) {
-            AppTile(
-                title = stringResource(Res.string.clear),
-                leadingIcon = Lucide.X,
-                leadingColor = AppTheme.colors.onSurfaceVariant,
-                onClick = { onSelect(null) },
-            )
-        }
+        AppTileItem(
+            title = stringResource(Res.string.clear),
+            leadingIcon = Lucide.X,
+            leadingColor = AppTheme.colors.onSurfaceVariant,
+            onClick = { onSelect(null) }
+        )
     }
 }

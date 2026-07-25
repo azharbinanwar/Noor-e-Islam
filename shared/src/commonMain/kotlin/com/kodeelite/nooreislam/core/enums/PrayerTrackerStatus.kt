@@ -9,14 +9,24 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Users
 import com.composables.icons.lucide.X
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.missed_prayer
+import com.kodeelite.nooreislam.resources.on_time
+import com.kodeelite.nooreislam.resources.prayed_kaza
+import com.kodeelite.nooreislam.resources.prayed_with_jamaat
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 /** How a prayer was tracked. Icon/label here; colors live in AppColors (theme-aware). */
-enum class PrayerTrackerStatus(val label: String, val icon: ImageVector) {
-    PrayedOnTime("On time", Lucide.Check),
-    PrayedWithJamaat("Jamaat", Lucide.Users),
-    PrayedKaza("Kaza", Lucide.History),
-    Missed("Missed", Lucide.X),
+enum class PrayerTrackerStatus(val labelRes: StringResource, val icon: ImageVector) {
+    PrayedOnTime(Res.string.on_time, Lucide.Check),
+    PrayedWithJamaat(Res.string.prayed_with_jamaat, Lucide.Users),
+    PrayedKaza(Res.string.prayed_kaza, Lucide.History),
+    Missed(Res.string.missed_prayer, Lucide.X),
 }
+
+val PrayerTrackerStatus.label: String
+    @Composable get() = stringResource(this.labelRes)
 
 val PrayerTrackerStatus.color: Color
     @Composable get() = AppTheme.colors.let {

@@ -37,6 +37,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
+import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best
@@ -44,10 +45,31 @@ import com.kodeelite.nooreislam.resources.day_streak
 import com.kodeelite.nooreislam.resources.not_tracked
 import com.kodeelite.nooreislam.resources.on_time
 import com.kodeelite.nooreislam.resources.prayer_tracker
+import com.kodeelite.nooreislam.resources.best_days_streak_and_on_time_percentage
+import com.kodeelite.nooreislam.resources.day_fri
+import com.kodeelite.nooreislam.resources.day_mon
+import com.kodeelite.nooreislam.resources.day_sat
+import com.kodeelite.nooreislam.resources.day_sun
+import com.kodeelite.nooreislam.resources.day_thu
+import com.kodeelite.nooreislam.resources.day_tue
+import com.kodeelite.nooreislam.resources.day_wed
+import com.kodeelite.nooreislam.resources.gregorian_apr
+import com.kodeelite.nooreislam.resources.gregorian_aug
+import com.kodeelite.nooreislam.resources.gregorian_dec
+import com.kodeelite.nooreislam.resources.gregorian_feb
+import com.kodeelite.nooreislam.resources.gregorian_jan
+import com.kodeelite.nooreislam.resources.gregorian_jul
+import com.kodeelite.nooreislam.resources.gregorian_jun
+import com.kodeelite.nooreislam.resources.gregorian_mar
+import com.kodeelite.nooreislam.resources.gregorian_may
+import com.kodeelite.nooreislam.resources.gregorian_nov
+import com.kodeelite.nooreislam.resources.gregorian_oct
+import com.kodeelite.nooreislam.resources.gregorian_sep
+import com.kodeelite.nooreislam.resources.selected_full_date
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
@@ -126,11 +148,13 @@ fun TrackerScreen() {
                 color = AppTheme.colors.onSurface,
             )
 
-            AppTileGroup(
-                items = trackablePrayers.map { p ->
-                    val status = tracked[selected to p]
+            val items = mutableListOf<AppTileItem>()
+            for (p in trackablePrayers) {
+                val status = tracked[selected to p]
+                val localizedTitle = p.label(selected)
+                items.add(
                     AppTileItem(
-                        title = p.name,
+                        title = localizedTitle,
                         leadingIcon = p.icon,
                         leadingColor = p.color,
                         trailing = {
@@ -142,8 +166,10 @@ fun TrackerScreen() {
                         },
                         onClick = { cycle(p) },
                     )
-                },
-            )
+                )
+            }
+
+            AppTileGroup(items = items)
         }
     }
 }
@@ -179,8 +205,35 @@ private fun mockStatus(date: LocalDate, p: Miqat, today: LocalDate): PrayerTrack
     }
 }
 
+@Composable
 private fun formatSelected(date: LocalDate): String {
-    val day = date.dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() }
-    val month = Month(date.monthNumber).name.lowercase().replaceFirstChar { it.uppercase() }
-    return "$day, ${date.dayOfMonth} $month ${date.year}"
+    val day = stringResource(
+        when (date.dayOfWeek) {
+            DayOfWeek.MONDAY -> Res.string.day_mon
+            DayOfWeek.TUESDAY -> Res.string.day_tue
+            DayOfWeek.WEDNESDAY -> Res.string.day_wed
+            DayOfWeek.THURSDAY -> Res.string.day_thu
+            DayOfWeek.FRIDAY -> Res.string.day_fri
+            DayOfWeek.SATURDAY -> Res.string.day_sat
+            DayOfWeek.SUNDAY -> Res.string.day_sun
+        }
+    )
+    val month = stringResource(
+        when (date.monthNumber) {
+            1 -> Res.string.gregorian_jan
+            2 -> Res.string.gregorian_feb
+            3 -> Res.string.gregorian_mar
+            4 -> Res.string.gregorian_apr
+            5 -> Res.string.gregorian_may
+            6 -> Res.string.gregorian_jun
+            7 -> Res.string.gregorian_jul
+            8 -> Res.string.gregorian_aug
+            9 -> Res.string.gregorian_sep
+            10 -> Res.string.gregorian_oct
+            11 -> Res.string.gregorian_nov
+            12 -> Res.string.gregorian_dec
+            else -> Res.string.gregorian_jan
+        }
+    )
+    return stringResource(Res.string.selected_full_date, day, date.dayOfMonth, month, date.year)
 }

@@ -24,6 +24,8 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.home_prayer_quote
+import com.kodeelite.nooreislam.resources.home_prayer_quote_ref
 import com.kodeelite.nooreislam.resources.recite_before_sleep_after_isha
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.verse_of_the_day
@@ -50,7 +52,7 @@ fun DailyVerseCard() {
             Spacer(Modifier.width(8.dp))
             Text(stringResource(Res.string.verse_of_the_day), color = AppTheme.colors.onSurface, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
         }
-        Text("\"Indeed, prayer prohibits immorality and wrongdoing.\"", color = AppTheme.colors.onSurface, fontSize = 15.sp)
-        Text("Surah Al-'Ankabut 29:45", color = AppTheme.colors.onSurfaceVariant, fontSize = 12.sp)
+        Text(stringResource(Res.string.home_prayer_quote), color = AppTheme.colors.onSurface, fontSize = 15.sp)
+        Text(stringResource(Res.string.home_prayer_quote_ref), color = AppTheme.colors.onSurfaceVariant, fontSize = 12.sp)
     }
 }

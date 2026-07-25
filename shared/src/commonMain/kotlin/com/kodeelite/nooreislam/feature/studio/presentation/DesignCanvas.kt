@@ -62,6 +62,7 @@ import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.hijri_era
 import com.kodeelite.nooreislam.resources.miqat_logo
 import com.kodeelite.nooreislam.resources.quran_juz
+import com.kodeelite.nooreislam.resources.quran_label_arabic
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
@@ -299,7 +300,11 @@ fun DesignCanvas(
                         // bottom reference in Arabic, ayah font, Arabic-Indic digits: القرآن (٢:٥)
                         Spacer(Modifier.size(16.dp))
                         Text(
-                            text = "القرآن (${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})",
+                            text = "${stringResource(Res.string.quran_label_arabic)} (${config.ayahs.first().surah.toArabicIndic()}:${
+                                config.ayahs.joinToString(
+                                    "،"
+                                ) { it.ayah.toArabicIndic() }
+                            })",
                             fontFamily = FontFamily(Font(config.fontFamily.res)),
                             color = config.textColor.copy(alpha = 0.75f),
                             fontSize = 18.sp

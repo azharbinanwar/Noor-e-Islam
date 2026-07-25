@@ -74,10 +74,27 @@ import com.kodeelite.nooreislam.feature.studio.presentation.panels.DatesPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.EffectsPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.TextSizePanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.TextStylePanel
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.cancel
+import com.kodeelite.nooreislam.resources.discard
+import com.kodeelite.nooreislam.resources.notifications
+import com.kodeelite.nooreislam.resources.add_a_message
+import com.kodeelite.nooreislam.resources.couldnt_save
+import com.kodeelite.nooreislam.resources.discard
+import com.kodeelite.nooreislam.resources.you_have_unsaved_changes
+import com.kodeelite.nooreislam.resources.leave_this_design
+import com.kodeelite.nooreislam.resources.my_creations
+import com.kodeelite.nooreislam.resources.save_exit
+import com.kodeelite.nooreislam.resources.saved_to_gallery
+import com.kodeelite.nooreislam.resources.share
+import com.kodeelite.nooreislam.resources.shared_with
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -269,7 +286,7 @@ fun StudioScreen(
                                     val bitmap = captureLayer.toImageBitmap()
                                     val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
                                     galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png"))
-                                        "Saved to gallery" else "Couldn't save"
+                                        getString(Res.string.saved_to_gallery) else getString(Res.string.couldnt_save)
                                 } finally {
                                     savingToGallery = false
                                 }
@@ -308,7 +325,7 @@ fun StudioScreen(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
                     ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
                             "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                    otherText = "Shared with Noor e Islam",
+                    otherText = stringResource(Res.string.shared_with),
                     onDismiss = { shareSheetOpen = false },
                     onShare = { caption ->
                         shareSheetOpen = false
@@ -334,11 +351,11 @@ fun StudioScreen(
                 val thumbScale = thumbW / CANVAS_BASE_WIDTH
                 AppBottomSheet(
                     onDismiss = { confirmBackOpen = false },
-                    title = "Leave this design?",
-                    subtitle = "You have unsaved changes.",
+                    title = stringResource(Res.string.leave_this_design),
+                    subtitle = stringResource(Res.string.you_have_unsaved_changes),
                     footer = {
                         AppButton(
-                            "Save & exit",
+                            stringResource(Res.string.save_exit),
                             onClick = { confirmBackOpen = false; saveCurrent(); nav.back() },
                             modifier = Modifier.fillMaxWidth(),
                             leftIcon = { Icon(Lucide.Bookmark, null, Modifier.size(18.dp)) },
@@ -346,13 +363,13 @@ fun StudioScreen(
                         Spacer(Modifier.height(10.dp))
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             AppButton(
-                                "Cancel",
+                                stringResource(Res.string.cancel),
                                 variant = AppButtonVariant.Outline,
                                 onClick = { confirmBackOpen = false },
                                 modifier = Modifier.weight(1f)
                             )
                             AppButton(
-                                "Discard",
+                                stringResource(Res.string.discard),
                                 variant = AppButtonVariant.Error,
                                 onClick = { confirmBackOpen = false; nav.back() },
                                 modifier = Modifier.weight(1f),
@@ -376,7 +393,7 @@ fun StudioScreen(
             }
 
             if (galleryOpen) {
-                AppBottomSheet(onDismiss = { galleryOpen = false }, title = "My Creations") {
+                AppBottomSheet(onDismiss = { galleryOpen = false }, title = stringResource(Res.string.my_creations)) {
                     CreationsGrid(
                         savedCreations,
                         draft = draft,

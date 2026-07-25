@@ -86,7 +86,7 @@ import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.add_your_own
 import com.kodeelite.nooreislam.resources.added_by_you
 import com.kodeelite.nooreislam.resources.after_prayer
-import com.kodeelite.nooreislam.resources.arabic_text
+import com.kodeelite.nooreislam.resources.arabic
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.collections
 import com.kodeelite.nooreislam.resources.completed
@@ -106,7 +106,9 @@ import com.kodeelite.nooreislam.resources.search_duas
 import com.kodeelite.nooreislam.resources.start_on_tasbih
 import com.kodeelite.nooreislam.resources.tasbihat
 import com.kodeelite.nooreislam.resources.translation_optional
-import com.kodeelite.nooreislam.resources.try_a_different_search
+import com.kodeelite.nooreislam.resources.count_of_total
+import com.kodeelite.nooreislam.resources.times_count
+import com.kodeelite.nooreislam.resources.try_a_different_dua_search
 import com.kodeelite.nooreislam.resources.use_beads
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
@@ -380,7 +382,7 @@ private fun DuasHub(onOpen: (ReaderTarget) -> Unit, onStartTasbih: (List<Dua>) -
                     item {
                         StateView(
                             title = stringResource(Res.string.no_duas_found),
-                            message = stringResource(Res.string.try_a_different_search),
+                            message = stringResource(Res.string.try_a_different_dua_search),
                             modifier = Modifier.fillMaxWidth().padding(top = 32.dp)
                         )
                     }
@@ -520,7 +522,7 @@ private fun SessionProgress(done: Int, total: Int, onBeadsAll: (() -> Unit)?, on
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(Res.string.completed), color = c.primary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             } else {
-                Text("$done / $total", color = c.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(stringResource(Res.string.count_of_total, done, total), color = c.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             }
             Spacer(Modifier.weight(1f))
             if (onBeadsAll != null) {
@@ -561,7 +563,7 @@ private fun CountRing(count: Int, target: Int, done: Boolean, onTap: () -> Unit)
         }
         when {
             done -> Icon(Lucide.Check, null, tint = c.onPrimary, modifier = Modifier.size(22.dp))
-            target > 1 -> Text("$count", color = c.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            target > 1 -> Text(stringResource(Res.string.times_count, count), color = c.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             else -> Unit // ×1 unchecked = an empty ring
         }
     }
@@ -602,7 +604,7 @@ private fun AddDuaSheet(onSave: (Dua) -> Unit, onDismiss: () -> Unit) {
     ) {
         Text(stringResource(Res.string.add_your_own), fontSize = 18.sp, fontWeight = FontWeight.Bold, color = c.onSurface)
         Spacer(Modifier.height(14.dp))
-        AppTextField(arabic, { arabic = it }, placeholder = stringResource(Res.string.arabic_text))
+        AppTextField(arabic, { arabic = it }, placeholder = stringResource(Res.string.arabic))
         Spacer(Modifier.height(8.dp))
         AppTextField(meaning, { meaning = it }, placeholder = stringResource(Res.string.translation_optional))
         Spacer(Modifier.height(16.dp))
@@ -621,7 +623,14 @@ private fun CountChip(n: Int, selected: Boolean, onClick: () -> Unit) {
     Box(
         Modifier.clip(RoundedCornerShape(10.dp)).background(if (selected) c.primary else c.cardColor).clickable(onClick = onClick)
             .padding(horizontal = 15.dp, vertical = 10.dp),
-    ) { Text("×$n", color = if (selected) c.onPrimary else c.onSurface, fontWeight = FontWeight.Bold, fontSize = 14.sp) }
+    ) {
+        Text(
+            stringResource(Res.string.times_count, n),
+            color = if (selected) c.onPrimary else c.onSurface,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
+    }
 }
 
 /**
@@ -664,7 +673,7 @@ private fun DuaCard(dua: Dua, progress: Int, onAdvance: () -> Unit, onBeads: () 
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 if (target > 1) {
-                    Text("×$target", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.onSurfaceVariant)
+                    Text(stringResource(Res.string.times_count, target), fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.onSurfaceVariant)
                     Spacer(Modifier.height(6.dp))
                     // optional: hand this repetitive dhikr to the immersive bead counter
                     Row(

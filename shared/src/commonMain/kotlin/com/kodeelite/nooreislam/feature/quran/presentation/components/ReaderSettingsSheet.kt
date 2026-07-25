@@ -42,7 +42,22 @@ import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.auto_scroll
+import com.kodeelite.nooreislam.resources.content
+import com.kodeelite.nooreislam.resources.jump_to
+import com.kodeelite.nooreislam.resources.keep_screen_on
+import com.kodeelite.nooreislam.resources.line_spacing
+import com.kodeelite.nooreislam.resources.reading
+import com.kodeelite.nooreislam.resources.reading_settings
+import com.kodeelite.nooreislam.resources.script
+import com.kodeelite.nooreislam.resources.tafsir_source
+import com.kodeelite.nooreislam.resources.text_size
+import com.kodeelite.nooreislam.resources.theme
+import com.kodeelite.nooreislam.resources.translation
+import com.kodeelite.nooreislam.resources.word_by_word
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 
 // global reader/display settings — opened from the app-bar icon (not ayah-specific).
 // ponytail: all rows listed as reminders; the ones without a feature yet are placeholders (onClick = {}).
@@ -57,12 +72,12 @@ fun ReaderSettingsSheet(
     onDismiss: () -> Unit,
 ) {
     val colors = AppTheme.colors
-    AppBottomSheet(onDismiss = onDismiss, title = "Reading settings") {
+    AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings)) {
         AppTileGroup(
-            title = "Display",
+            title = "Display", // ponytail: keep simple for now or add Res.string.display_label if needed
             items = listOf(
                 AppTileItem(
-                    title = "Text size",
+                    title = stringResource(Res.string.text_size),
                     leadingIcon = Lucide.Type,
                     trailing = {
                         MiniStepper(
@@ -74,33 +89,59 @@ fun ReaderSettingsSheet(
                         )
                     },
                 ),
-                AppTileItem(title = "Line spacing", subtitle = "placeholder", leadingIcon = Lucide.AlignJustify, onClick = {}),
+                AppTileItem(
+                    title = stringResource(Res.string.line_spacing),
+                    subtitle = "placeholder",
+                    leadingIcon = Lucide.AlignJustify,
+                    onClick = {}),
             ),
         )
-        Text("Theme", color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 6.dp))
+        Text(
+            stringResource(Res.string.theme),
+            color = colors.onSurfaceVariant,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 6.dp)
+        )
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QuranTheme.entries.forEach { t -> ThemeChip(t, selected = t == theme, onClick = { onThemeSelect(t) }) }
         }
         Spacer(Modifier.size(12.dp))
-        Text("Script", color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(start = 4.dp, bottom = 6.dp))
+        Text(
+            stringResource(Res.string.script),
+            color = colors.onSurfaceVariant,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
+        )
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             QuranFont.entries.forEach { f -> FontChip(f, selected = f == font, onClick = { onFontSelect(f) }) }
         }
         Spacer(Modifier.size(12.dp))
         AppTileGroup(
-            title = "Content",
+            title = stringResource(Res.string.content),
             items = listOf(
-                AppTileItem(title = "Translation", subtitle = "on/off + pick — placeholder", leadingIcon = Lucide.Languages, onClick = {}),
-                AppTileItem(title = "Tafsir source", subtitle = "placeholder", leadingIcon = Lucide.BookOpen, onClick = {}),
-                AppTileItem(title = "Word-by-word", subtitle = "on/off — placeholder", leadingIcon = Lucide.WholeWord, onClick = {}),
+                AppTileItem(
+                    title = stringResource(Res.string.translation),
+                    subtitle = "on/off + pick — placeholder",
+                    leadingIcon = Lucide.Languages,
+                    onClick = {}),
+                AppTileItem(title = stringResource(Res.string.tafsir_source), subtitle = "placeholder", leadingIcon = Lucide.BookOpen, onClick = {}),
+                AppTileItem(
+                    title = stringResource(Res.string.word_by_word),
+                    subtitle = "on/off — placeholder",
+                    leadingIcon = Lucide.WholeWord,
+                    onClick = {}),
             ),
         )
         AppTileGroup(
-            title = "Reading",
+            title = stringResource(Res.string.reading),
             items = listOf(
-                AppTileItem(title = "Auto-scroll", subtitle = "play/pause + speed — placeholder", leadingIcon = Lucide.ChevronsDown, onClick = {}),
-                AppTileItem(title = "Keep screen on", subtitle = "placeholder", leadingIcon = Lucide.Sun, onClick = {}),
-                AppTileItem(title = "Jump to surah / juz / page", subtitle = "placeholder", leadingIcon = Lucide.Navigation, onClick = {}),
+                AppTileItem(
+                    title = stringResource(Res.string.auto_scroll),
+                    subtitle = "play/pause + speed — placeholder",
+                    leadingIcon = Lucide.ChevronsDown,
+                    onClick = {}),
+                AppTileItem(title = stringResource(Res.string.keep_screen_on), subtitle = "placeholder", leadingIcon = Lucide.Sun, onClick = {}),
+                AppTileItem(title = stringResource(Res.string.jump_to), subtitle = "placeholder", leadingIcon = Lucide.Navigation, onClick = {}),
             ),
         )
     }

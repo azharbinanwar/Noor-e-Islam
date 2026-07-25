@@ -41,7 +41,15 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranFont
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.StudioTemplate
 import com.kodeelite.nooreislam.feature.studio.data.TemplateStore
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.generate
+import com.kodeelite.nooreislam.resources.generate_again
+import com.kodeelite.nooreislam.resources.mode_templates
+import com.kodeelite.nooreislam.resources.show_less
+import com.kodeelite.nooreislam.resources.tap_generate_for_fresh_looks
+import com.kodeelite.nooreislam.resources.view_all
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 
 // one-tap look picker: header (Templates + View all / Show less), a strip that expands IN PLACE into a
 // width-filling grid. Picking collapses back to the strip; switching studio action resets it.
@@ -49,7 +57,10 @@ import org.jetbrains.compose.resources.Font
 fun TemplatePicker(current: StudioConfig, onPick: (StudioConfig) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth()) {
-        SectionHeader("Templates", actionLabel = if (expanded) "Show less" else "View all", onAction = { expanded = !expanded })
+        SectionHeader(
+            stringResource(Res.string.mode_templates),
+            actionLabel = if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all),
+            onAction = { expanded = !expanded })
         if (!expanded) {
             LazyRow(
                 Modifier.fillMaxWidth(),
@@ -91,12 +102,12 @@ private fun GenerateTemplates(current: StudioConfig, onPick: (StudioConfig) -> U
     var batch by remember { mutableStateOf<List<StudioTemplate>>(emptyList()) }
     Column(Modifier.fillMaxWidth()) {
         SectionHeader(
-            "Generate",
-            actionLabel = if (batch.isEmpty()) "Generate" else "Generate again",
+            stringResource(Res.string.generate),
+            actionLabel = if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again),
             onAction = { seed++; batch = TemplateStore.generate(seed = 1000 + seed) })
         if (batch.isEmpty()) {
             Text(
-                "Tap Generate for fresh looks",
+                stringResource(Res.string.tap_generate_for_fresh_looks),
                 color = colors.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 11.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )

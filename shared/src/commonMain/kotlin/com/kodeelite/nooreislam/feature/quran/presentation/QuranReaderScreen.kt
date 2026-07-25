@@ -38,10 +38,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
@@ -55,9 +57,13 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalli
 import com.kodeelite.nooreislam.feature.quran.presentation.components.ReaderSettingsSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.RukuBlock
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.quran_surah_name
+import com.kodeelite.nooreislam.resources.reading_settings
+import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,8 +135,24 @@ fun QuranReaderScreen(startId: Int = 1) {
                         header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 28.sp, color = colors.primary) }
                     }
                 },
-                navigationIcon = { IconButton({ nav.back() }) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
-                actions = { IconButton({ showSettings = true }) { Icon(Lucide.Palette, "Reading settings", tint = colors.onSurface) } },
+                navigationIcon = {
+                    IconButton({ nav.back() }) {
+                        Icon(
+                            tr(Lucide.ChevronLeft, Lucide.ChevronRight),
+                            stringResource(Res.string.back),
+                            tint = colors.onSurface
+                        )
+                    }
+                },
+                actions = {
+                    IconButton({ showSettings = true }) {
+                        Icon(
+                            Lucide.Palette,
+                            stringResource(Res.string.reading_settings),
+                            tint = colors.onSurface
+                        )
+                    }
+                },
             )
             HorizontalDivider(color = colors.outlineVariant)
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -151,7 +173,7 @@ fun QuranReaderScreen(startId: Int = 1) {
 
         selected?.let { ref ->
             AyahActionSheet(
-                label = "Surah ${ref.surah} · Ayah ${ref.ayah}",
+                label = stringResource(Res.string.surah_number_ayah_number, ref.surah, ref.ayah),
                 onShareAsImage = { nav.navigate(AppRoute.Studio(ref.surah, ref.ayah)) },
                 onExpandedChange = { expanded = it },
                 onDismiss = { selected = null },

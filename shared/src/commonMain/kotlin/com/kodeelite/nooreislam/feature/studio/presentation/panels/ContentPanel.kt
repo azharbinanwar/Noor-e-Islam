@@ -22,6 +22,13 @@ import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.SurahPlacement
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ArtSlider
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.bismillah
+import com.kodeelite.nooreislam.resources.surah_name
+import com.kodeelite.nooreislam.resources.trans_size
+import com.kodeelite.nooreislam.resources.translation
+import com.kodeelite.nooreislam.resources.transliteration_coming_soon
+import org.jetbrains.compose.resources.stringResource
 
 // Content toggles: bismillah, translation (+ size), surah name top/bottom, transliteration (placeholder).
 @Composable
@@ -29,21 +36,21 @@ fun ContentPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
     val colors = AppTheme.colors
     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Bismillah", color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(Res.string.bismillah), color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
             AppSwitch(config.showBismillah, { onChange(config.copy(showBismillah = it)) })
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Translation", color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(Res.string.translation), color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
             AppSwitch(config.showTranslation, { onChange(config.copy(showTranslation = it)) })
         }
         if (config.showTranslation) ArtSlider(
-            "Trans Size",
+            stringResource(Res.string.trans_size),
             config.translationSize,
             { onChange(config.copy(translationSize = it)) },
             StudioDefaults.TRANSLATION_SIZE_RANGE,
             "${config.translationSize.toInt()}px",
         )
-        Text("Surah name", color = colors.onSurface, fontSize = 12.sp)
+        Text(stringResource(Res.string.surah_name), color = colors.onSurface, fontSize = 12.sp)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             SurahPlacement.entries.forEach { p ->
                 val active = config.surahPlacement == p
@@ -59,7 +66,12 @@ fun ContentPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
         }
         // placeholder — needs a translation/transliteration source
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Transliteration (coming soon)", color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.weight(1f))
+            Text(
+                stringResource(Res.string.transliteration_coming_soon),
+                color = colors.onSurfaceVariant,
+                fontSize = 12.sp,
+                modifier = Modifier.weight(1f)
+            )
             AppSwitch(false, {})
         }
     }

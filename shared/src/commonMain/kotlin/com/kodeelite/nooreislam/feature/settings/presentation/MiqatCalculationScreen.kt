@@ -53,7 +53,10 @@ import com.kodeelite.nooreislam.resources.isha_angle
 import com.kodeelite.nooreislam.resources.madhab
 import com.kodeelite.nooreislam.resources.manual_adjustments
 import com.kodeelite.nooreislam.resources.minutes_short
+import com.kodeelite.nooreislam.resources.no_methods_found
 import com.kodeelite.nooreislam.resources.prayer_calculation
+import com.kodeelite.nooreislam.resources.search
+import com.kodeelite.nooreislam.resources.try_a_different_search
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -187,7 +190,7 @@ private fun <T> PickerSheet(
             AppTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = "Search",
+                placeholder = stringResource(Res.string.search),
                 leading = { Icon(Lucide.Search, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp)) },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -195,8 +198,8 @@ private fun <T> PickerSheet(
         }
         if (shown.isEmpty()) {
             StateView(
-                title = "No methods found",
-                message = "Try a different search",
+                title = stringResource(Res.string.no_methods_found),
+                message = stringResource(Res.string.try_a_different_search),
                 icon = { Icon(Lucide.Search, null, tint = c.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
             )

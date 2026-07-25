@@ -28,18 +28,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonSize
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.AppCard
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.feature.widget.WidgetConfig
 import com.kodeelite.nooreislam.feature.widget.WidgetKind
 import com.kodeelite.nooreislam.feature.widget.WidgetStyle
 import com.kodeelite.nooreislam.feature.widget.pinWidget
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.dimension_format
 import com.kodeelite.nooreislam.resources.widget_add
 import com.kodeelite.nooreislam.resources.widget_customize
 import com.kodeelite.nooreislam.resources.widgets
@@ -60,7 +64,14 @@ fun WidgetGalleryScreen() {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.widgets)) },
-                navigationIcon = { IconButton(onClick = { nav.back() }) { Icon(Lucide.ChevronLeft, null) } },
+                navigationIcon = {
+                    IconButton(onClick = { nav.back() }) {
+                        Icon(
+                            tr(Lucide.ChevronLeft, Lucide.ChevronRight),
+                            stringResource(Res.string.back)
+                        )
+                    }
+                },
             )
         },
     ) { pad ->
@@ -73,7 +84,11 @@ fun WidgetGalleryScreen() {
                             Modifier.clip(RoundedCornerShape(8.dp)).background(c.onSurface.copy(alpha = 0.06f))
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
-                            Text("${kind.cols} × ${kind.rows}", color = c.onSurface.copy(alpha = 0.6f), fontWeight = FontWeight.Medium)
+                            Text(
+                                stringResource(Res.string.dimension_format, kind.cols, kind.rows),
+                                color = c.onSurface.copy(alpha = 0.6f),
+                                fontWeight = FontWeight.Medium
+                            )
                         }
                     }
                     Box(Modifier.fillMaxWidth().padding(vertical = 16.dp), contentAlignment = Alignment.Center) {

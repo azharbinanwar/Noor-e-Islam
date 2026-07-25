@@ -21,6 +21,11 @@ import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTextField
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.add_a_message
+import com.kodeelite.nooreislam.resources.include_ayah_text
+import com.kodeelite.nooreislam.resources.share
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Review the share caption before sharing: an editable message field, a toggle to include/drop the ayah
@@ -40,13 +45,13 @@ internal fun ShareSheet(
 
     AppBottomSheet(
         onDismiss = onDismiss,
-        title = "Share",
+        title = stringResource(Res.string.share),
         footer = {
-            AppButton("Share", onClick = { onShare(message.trim()) }, modifier = Modifier.fillMaxWidth())
+            AppButton(stringResource(Res.string.share), onClick = { onShare(message.trim()) }, modifier = Modifier.fillMaxWidth())
         },
     ) {
         Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("Include ayah text", color = colors.onSurface, fontSize = 13.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(Res.string.include_ayah_text), color = colors.onSurface, fontSize = 13.sp, modifier = Modifier.weight(1f))
             AppSwitch(includeAyah, { checked ->
                 includeAyah = checked
                 message = if (checked) "$ayahText\n\n${message.trimStart()}"
@@ -56,7 +61,7 @@ internal fun ShareSheet(
         AppTextField(
             value = message,
             onValueChange = { message = it },
-            placeholder = "Add a message",
+            placeholder = stringResource(Res.string.add_a_message),
             singleLine = false,
             modifier = Modifier.heightIn(min = 120.dp),
         )

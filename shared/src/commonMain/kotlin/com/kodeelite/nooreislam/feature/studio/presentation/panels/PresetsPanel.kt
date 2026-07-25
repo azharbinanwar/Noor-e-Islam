@@ -11,6 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.reset_to_default
+import com.kodeelite.nooreislam.resources.save_as_creation
+import org.jetbrains.compose.resources.stringResource
 
 // Reset to default + save current as a creation.
 @Composable
@@ -20,9 +24,9 @@ fun PresetsPanel(onReset: () -> Unit, onSave: () -> Unit) {
         Button(
             onClick = onReset,
             colors = ButtonDefaults.buttonColors(containerColor = colors.onSurface.copy(0.1f), contentColor = colors.onSurface),
-        ) { Text("Reset to Default", fontSize = 11.sp) }
+        ) { Text(stringResource(Res.string.reset_to_default), fontSize = 11.sp) }
         Button(onClick = onSave, colors = ButtonDefaults.buttonColors(containerColor = colors.primary)) {
-            Text("Save current as creation", fontSize = 11.sp)
+            Text(stringResource(Res.string.save_as_creation), fontSize = 11.sp)
         }
     }
 }

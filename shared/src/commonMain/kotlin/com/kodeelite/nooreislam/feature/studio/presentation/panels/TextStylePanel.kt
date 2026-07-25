@@ -11,20 +11,24 @@ import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ArtSlider
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ColorStripPicker
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.opacity
+import com.kodeelite.nooreislam.resources.shadow
+import org.jetbrains.compose.resources.stringResource
 
 // Text opacity + shadow + color (suggested colors come from the current bg image's palette).
 @Composable
 fun TextStylePanel(config: StudioConfig, swatches: List<Color>, onChange: (StudioConfig) -> Unit) {
     Column {
         ArtSlider(
-            "Opacity",
+            stringResource(Res.string.opacity),
             config.textColor.alpha * 100f,
             { onChange(config.copy(textColor = config.textColor.copy(alpha = it / 100f))) },
             StudioDefaults.PERCENT_RANGE,
             "${(config.textColor.alpha * 100).toInt()}%"
         )
         ArtSlider(
-            "Shadow",
+            stringResource(Res.string.shadow),
             config.textShadowAlpha * 100f,
             { onChange(config.copy(textShadowAlpha = it / 100f)) },
             StudioDefaults.PERCENT_RANGE,

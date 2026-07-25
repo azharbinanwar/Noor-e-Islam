@@ -65,7 +65,16 @@ import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioGradient
 import com.kodeelite.nooreislam.feature.studio.data.StudioImage
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.generate
+import com.kodeelite.nooreislam.resources.generate_again
+import com.kodeelite.nooreislam.resources.mode_background
+import com.kodeelite.nooreislam.resources.mode_gradient
+import com.kodeelite.nooreislam.resources.show_less
+import com.kodeelite.nooreislam.resources.tap_generate_for_fresh_gradients
+import com.kodeelite.nooreislam.resources.view_all
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 
 /** Compact Professional Slider */
 @Composable
@@ -117,7 +126,7 @@ fun FontPicker(current: QuranFont, onChange: (QuranFont) -> Unit) {
 @Composable
 fun ImageGridPicker(imageUrls: List<String>, selected: String?, onSelect: (String?) -> Unit) {
     ExpandableStrip(
-        title = "Background", all = imageUrls,
+        title = stringResource(Res.string.mode_background), all = imageUrls,
         isSelected = { it == selected }, noneSelected = selected == null,
         onNone = { onSelect(null) }, onPick = { onSelect(it) },
     ) { url ->
@@ -148,7 +157,7 @@ private fun ComboSwatches(image: StudioImage, modifier: Modifier = Modifier) {
 fun GradientStripPicker(selected: StudioGradient?, onSelect: (StudioGradient?) -> Unit, gradients: List<StudioGradient>) {
     Column(Modifier.fillMaxWidth()) {
         ExpandableStrip(
-            title = "Gradient", all = gradients,
+            title = stringResource(Res.string.mode_gradient), all = gradients,
             isSelected = { it == selected }, noneSelected = selected == null,
             onNone = { onSelect(null) }, onPick = { onSelect(it) },
         ) { g ->
@@ -167,12 +176,12 @@ private fun GenerateGradients(onSelect: (StudioGradient?) -> Unit) {
     var batch by remember { mutableStateOf<List<StudioGradient>>(emptyList()) }
     Column(Modifier.fillMaxWidth()) {
         SectionHeader(
-            "Generate",
-            actionLabel = if (batch.isEmpty()) "Generate" else "Generate again",
+            stringResource(Res.string.generate),
+            actionLabel = if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again),
             onAction = { seed++; batch = GradientStore.generate(5, seed) })
         if (batch.isEmpty()) {
             Text(
-                "Tap Generate for fresh gradients",
+                stringResource(Res.string.tap_generate_for_fresh_gradients),
                 color = colors.onSurfaceVariant.copy(alpha = 0.6f), fontSize = 11.sp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
@@ -372,7 +381,7 @@ private fun <T> ExpandableStrip(
         val canExpand = all.size > STRIP_GRID_COLS
         SectionHeader(
             title,
-            actionLabel = if (canExpand) (if (expanded) "Show less" else "View all") else null,
+            actionLabel = if (canExpand) (if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all)) else null,
             onAction = if (canExpand) ({ expanded = !expanded }) else null,
         )
         if (!expanded) {

@@ -21,6 +21,9 @@
     <string name="tasbih_counter">المسبحة</string>
     <string name="settings">الإعدادات</string>
     <string name="about_miqat">حول التطبيق</string>
+    <string name="back">رجوع</string>
+    <string name="discard">تجاهل</string>
+    <string name="makkah">مكة المكرمة</string>
     <string name="developer_sandbox">بيئة التطوير</string>
 
     <string name="qibla">القبلة</string>
@@ -37,14 +40,59 @@
 
     <string name="best">الأفضل</string>
     <string name="on_time">في الوقت</string>
+    <string name="prayed_with_jamaat">جماعة</string>
+    <string name="prayed_kaza">قضاء</string>
+    <string name="missed_prayer">لم تصل</string>
     <string name="not_tracked">غير محدد</string>
     <string name="coming_soon">قريباً</string>
+    <string name="best_days_streak_and_on_time_percentage">الأفضل %1$d يوماً · %2$d%% في الوقت</string>
+    <string name="selected_full_date">%1$s، %2$d %3$s %4$d</string>
+
+    <string name="gregorian_jan">يناير</string>
+    <string name="gregorian_feb">فبراير</string>
+    <string name="gregorian_mar">مارس</string>
+    <string name="gregorian_apr">أبريل</string>
+    <string name="gregorian_may">مايو</string>
+    <string name="gregorian_jun">يونيو</string>
+    <string name="gregorian_jul">يوليو</string>
+    <string name="gregorian_aug">أغسطس</string>
+    <string name="gregorian_sep">سبتمبر</string>
+    <string name="gregorian_oct">أكتوبر</string>
+    <string name="gregorian_nov">نوفمبر</string>
+    <string name="gregorian_dec">ديسمبر</string>
+
+    <string name="day_mon">الاثنين</string>
+    <string name="day_tue">الثلاثاء</string>
+    <string name="day_wed">الأربعاء</string>
+    <string name="day_thu">الخميس</string>
+    <string name="day_fri">الجمعة</string>
+    <string name="day_sat">السبت</string>
+    <string name="day_sun">الأحد</string>
+
+    <string name="fajr_short">فجر</string>
+    <string name="sunrise_short">شروق</string>
+    <string name="dhuhr_short">ظهر</string>
+    <string name="asr_short">عصر</string>
+    <string name="maghrib_short">مغرب</string>
+    <string name="isha_short">عشاء</string>
+    <string name="yesterday">أمس</string>
 
     <string name="tasbih">المسبحة</string>
     <string name="rounds">الجولات</string>
     <string name="total">الإجمالي</string>
     <string name="reset">إعادة</string>
     <string name="tap_to_count">انقر للعد</string>
+
+    <!-- Focus feature (Test tool) -->
+    <string name="test_background_focus_logic">اختبار الخلفية</string>
+    <string name="focus_test_instructions_survive_reboot">الفتحات المحفوظة تبقى بعد إعادة التشغيل وتعمل مرة واحدة. أضف واحدة، ثم أغلق التطبيق أو أعد التشغيل.</string>
+    <string name="add_test_focus_slot">إضافة فتحة</string>
+    <string name="start_silence_after">يبدأ خلال</string>
+    <string name="silence_for_period">صمت لمدة</string>
+    <string name="choose_silence_mode">وضع الصمت</string>
+    <string name="scheduled_test_slots">المجدولة</string>
+    <string name="remove_scheduled_slot">إزالة</string>
+    <string name="silence_duration_summary">%1$s لمدة %2$d دقيقة</string>
 
     <!-- Tasbih feature -->
     <string name="tasbih_back">رجوع</string>
@@ -111,12 +159,37 @@
     <string name="tasbih_no_history">لا يوجد سجل بعد</string>
     <string name="tasbih_no_history_hint">ستظهر هنا جلسات الذكر المكتملة.</string>
 
+    <string name="tasbih_material_theme">السمة</string>
+    <string name="tasbih_material_sandal">صندل</string>
+    <string name="tasbih_material_pearl">لؤلؤ</string>
+    <string name="tasbih_material_onyx">عقيق</string>
+    <string name="tasbih_material_emerald">زمرد</string>
+    <string name="tasbih_material_amber">كهرمان</string>
+    <string name="tasbih_material_amethyst">جمشت</string>
+
     <string name="welcome_to_miqat">مرحباً بك في نور الإسلام</string>
     <string name="your_companion_for_every_prayer">رفيقك في كل صلاة — مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
     <string name="get_started">ابدأ</string>
     <string name="skip">تخطّي</string>
     <string name="next">التالي</string>
-    <string name="now">الآن</string>
+    <string name="status_now">الآن</string>
+    <string name="status_soon">قريباً</string>
+    <string name="status_upcoming">قادم</string>
+    <string name="now_caps">الآن</string>
+    <string name="next_caps">التالية</string>
+    <string name="next_prayer_name">القادمة · %1$s</string>
+    <string name="time_at_in_summary">%1$s · خلال %2$s</string>
+    <string name="prayer_and_time_summary">%1$s · %2$s</string>
+    <string name="sun_journey">رحلة الشمس</string>
+    <string name="night_sky">سماء الليل</string>
+    <string name="daytime">وقت النهار</string>
+    <string name="home_prayer_quote">"إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ"</string>
+    <string name="home_prayer_quote_ref">سورة العنكبوت 29:45</string>
+    <string name="prayer_countdown_summary">%1$s %2$s · %3$s</string>
+    <string name="countdown_hms">خلال %1$d س %2$d د %3$d ث</string>
+    <string name="countdown_ms">خلال %1$d د %2$d ث</string>
+    <string name="time_with_period">%1$s %2$s</string>
+    <string name="about_sehri">حول السحور</string>
     <string name="never_miss_a_prayer">لا تفوّت أي صلاة</string>
     <string name="accurate_times_with_live_countdown">مواقيت دقيقة لموقعك، مع عدّ تنازلي مباشر للصلاة القادمة.</string>
     <string name="find_the_qibla_and_track">اعرف القبلة وتابع صلاتك</string>
@@ -142,7 +215,7 @@
     <string name="onboarding_gps_or_city_search">‏GPS أو البحث عن مدينة</string>
     <string name="onboarding_city_presets">مكة · المدينة · كراتشي</string>
     <string name="works_fully_offline">يعمل بدون إنترنت</string>
-    <string name="continue_label">متابعة</string>
+    <string name="resume">متابعة</string>
     <string name="allow_notifications">السماح بالإشعارات</string>
     <string name="start_praying">ابدأ الصلاة</string>
 
@@ -162,7 +235,13 @@
     <string name="miqat_midnight">منتصف الليل</string>
 
     <!-- Prayer Focus -->
-    <string name="back">رجوع</string>
+    <string name="surah_number_place_ayah_count">سورة %1$d · %2$s · %3$d آية</string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="open_surah">فتح السورة</string>
+    <string name="juz_number">الجزء %1$d</string>
+    <string name="juz_start_summary">يبدأ من سورة %1$d · آية %2$d</string>
+    <string name="expand">توسيع</string>
     <string name="minutes_short">د</string>
     <string name="silence_phone_around_each_prayer_set_separately">يكتم هاتفك حول كل صلاة ثم يعيده تلقائياً. اضبط كل صلاة على حدة.</string>
     <string name="start_after">يبدأ بعد</string>
@@ -286,6 +365,7 @@
     <string name="dua_of_the_day">دعاء اليوم</string>
     <string name="collections">المجموعات</string>
     <string name="favorites">المفضّلة</string>
+    <string name="surahs">السور</string>
     <string name="n_duas">%1$d أدعية</string>
     <string name="morning">الصباح</string>
     <string name="evening">المساء</string>
@@ -296,7 +376,9 @@
     <string name="add_your_own">أضف دعاءك</string>
     <string name="search_duas">ابحث في الأدعية…</string>
     <string name="no_duas_found">لا توجد أدعية</string>
-    <string name="arabic_text">العربية</string>
+    <string name="try_a_different_dua_search">جرّب بحثاً مختلفاً</string>
+    <string name="arabic">العربية</string>
+    <string name="translation">الترجمة</string>
     <string name="translation_optional">الترجمة (اختياري)</string>
     <string name="repetitions">عدد التكرار</string>
     <string name="added_by_you">من إضافتك</string>
@@ -307,6 +389,23 @@
     <string name="dua">دعاء</string>
     <string name="zikr">ذكر</string>
     <string name="new_collection">مجموعة جديدة</string>
+    <string name="collection_name">اسم المجموعة</string>
+    <string name="create_collection_n">إنشاء مجموعة (%1$d)</string>
+    <string name="n_items">%1$d أذكار</string>
+    <string name="azkar_and_dua">الأذكار والأدعية</string>
+    <string name="continue_caps">استمرار</string>
+    <string name="today_caps">اليوم</string>
+    <string name="after_prayer_progress">%1$s · %2$d / %3$d</string>
+    <string name="tab_all">الكل</string>
+    <string name="tab_dua">دعاء</string>
+    <string name="tab_zikr">ذكر</string>
+    <string name="tab_tasbih">تسبيح</string>
+    <string name="everyday_dua">أدعية يومية</string>
+    <string name="your_collections">مجموعاتك</string>
+    <string name="see_all_n">عرض الكل (%1$d)</string>
+    <string name="count_of_total">%1$d / %2$d</string>
+    <string name="times_count">×%1$d</string>
+
     <string name="names_of_allah">أسماء الله الحسنى</string>
     <string name="azkar">الأذكار (معاينة)</string>
 
@@ -398,27 +497,127 @@
     <string name="quran_theme_charcoal">فحمي</string>
     <string name="quran_theme_slate">إردوازي</string>
     <string name="quran_theme_night">ليلي</string>
+    <string name="quran">القرآن</string>
+    <string name="continue_reading">مواصلة القراءة</string>
+    <string name="start_from_beginning">البدء من البداية</string>
+    <string name="reading_settings">إعدادات القراءة</string>
+    <string name="text_size">حجم الخط</string>
+    <string name="line_spacing">تباعد الأسطر</string>
+    <string name="script">الرسم</string>
+    <string name="theme">المظهر</string>
+    <string name="content">المحتوى</string>
+    <string name="reading">القراءة</string>
+    <string name="tafsir_source">مصدر التفسير</string>
+    <string name="word_by_word">كلمة بكلمة</string>
+    <string name="auto_scroll">التمرير التلقائي</string>
+    <string name="keep_screen_on">إبقاء الشاشة مفعلة</string>
+    <string name="jump_to">انتقال إلى سورة / جزء / صفحة</string>
+    <string name="more_actions">المزيد من الخيارات</string>
+    <string name="surah_number_ayah_number">سورة %1$d · آية %2$d</string>
+
+    <string name="action_audio">صوتيات</string>
+    <string name="action_play_recitation">تشغيل التلاوة</string>
+    <string name="action_repeat_loop">تكرار / حلقة</string>
+    <string name="action_play_from_here">تشغيل من هنا</string>
+    <string name="action_choose_reciter">اختيار القارئ</string>
+
+    <string name="action_personal">شخصي</string>
+    <string name="action_bookmark">مرجعية</string>
+    <string name="action_add_to_collection">إضافة للمجموعة</string>
+    <string name="action_add_note">إضافة ملاحظة</string>
+    <string name="action_highlight">تظليل</string>
+    <string name="action_mark_memorized">تمييز كمحفوظ</string>
+
+    <string name="action_sharing">مشاركة</string>
+    <string name="share_as_text">مشاركة كنص</string>
+    <string name="action_share_image">مشاركة كصورة</string>
+    <string name="action_share_link">مشاركة الرابط</string>
+
+    <string name="action_navigation">التنقل</string>
+    <string name="action_go_to_surah_start">الذهاب لبداية السورة</string>
+    <string name="action_set_last_read">تعيين كآخر قراءة</string>
+
+    <string name="action_study">دراسة</string>
+    <string name="action_related_ayahs">آيات ذات صلة</string>
+    <string name="action_context_revelation">سياق النزول</string>
+
+    <string name="font_uthmani">عثماني</string>
+    <string name="font_naskh">نسخ</string>
+    <string name="font_madani">مدني</string>
+    <string name="font_scheherazade">شهرزاد</string>
+    <string name="font_indopak">إندوباك</string>
     <!-- Studio (share editor) -->
-    <string name="studio_mode_templates">قوالب</string>
-    <string name="studio_mode_layout">تخطيط</string>
-    <string name="studio_mode_background">خلفية</string>
-    <string name="studio_mode_gradient">تدرج</string>
-    <string name="studio_mode_fonts">خطوط</string>
-    <string name="studio_mode_size">حجم</string>
-    <string name="studio_mode_style">نمط</string>
-    <string name="studio_mode_align">محاذاة</string>
-    <string name="studio_mode_content">محتوى</string>
-    <string name="studio_mode_stickers">ملصقات</string>
-    <string name="studio_mode_card">بطاقة</string>
-    <string name="studio_mode_effects">تأثيرات</string>
-    <string name="studio_mode_dates">تواريخ</string>
-    <string name="studio_mode_presets">إعدادات</string>
-    <string name="studio_mode_branding">تفاصيل</string>
-    <string name="studio_pattern_none">بدون</string>
-    <string name="studio_pattern_grain">حبيبات</string>
-    <string name="studio_pattern_geometric">هندسي</string>
+    <string name="mode_templates">قوالب</string>
+    <string name="mode_layout">تخطيط</string>
+    <string name="mode_background">خلفية</string>
+    <string name="mode_gradient">تدرج</string>
+    <string name="mode_fonts">خطوط</string>
+    <string name="mode_size">حجم</string>
+    <string name="mode_style">نمط</string>
+    <string name="mode_align">محاذاة</string>
+    <string name="mode_content">محتوى</string>
+    <string name="mode_stickers">ملصقات</string>
+    <string name="mode_card">بطاقة</string>
+    <string name="mode_effects">تأثيرات</string>
+    <string name="mode_dates">تواريخ</string>
+    <string name="mode_presets">إعدادات</string>
+    <string name="mode_branding">تفاصيل</string>
+    <string name="pattern_none">بدون</string>
+    <string name="pattern_grain">حبيبات</string>
+    <string name="pattern_geometric">هندسي</string>
+
+    <string name="continue_editing">مواصلة التعديل</string>
+    <string name="no_designs_saved">لا توجد تصاميم محفوظة بعد</string>
+    <string name="watermark">العلامة المائية</string>
+    <string name="position">الموقع</string>
+    <string name="bismillah">البسملة</string>
+    <string name="trans_size">حجم الترجمة</string>
+    <string name="size">الحجم</string>
+    <string name="line_height">المسافة</string>
+    <string name="opacity">الشفافية</string>
+    <string name="shadow">الظل</string>
+    <string name="radius">الاستدارة</string>
+    <string name="blur">الضبابية</string>
+    <string name="vignette">التظليل</string>
+    <string name="shadow_spread">انتشار الظل</string>
+    <string name="overlay">التراكب</string>
+    <string name="off">بدون</string>
+    <string name="top">أعلى</string>
+    <string name="bottom">أسفل</string>
+    <string name="show_less">عرض أقل</string>
+    <string name="view_all">عرض الكل</string>
+    <string name="generate">إنشاء</string>
+    <string name="generate_again">إنشاء مجدداً</string>
+    <string name="tap_generate_for_fresh_looks">اضغط إنشاء للحصول على تصاميم جديدة</string>
+    <string name="tap_generate_for_fresh_gradients">اضغط إنشاء للحصول على تدرجات جديدة</string>
+    <string name="surah_name">اسم السورة</string>
+    <string name="transliteration_coming_soon">النقحرة (قريباً)</string>
+    <string name="hijri_date">التاريخ الهجري</string>
+    <string name="gregorian">التاريخ الميلادي</string>
+    <string name="reset_to_default">إعادة للوضع الافتراضي</string>
+    <string name="save_as_creation">حفظ كعمل جديد</string>
+    <string name="share">مشاركة</string>
+    <string name="include_ayah_text">تضمين نص الآية</string>
+    <string name="add_a_message">أضف رسالة</string>
+    <string name="shared_with">تمت المشاركة عبر نور الإسلام</string>
+    <string name="leave_this_design">مغادرة التصميم؟</string>
+    <string name="you_have_unsaved_changes">لديك تغييرات غير محفوظة.</string>
+    <string name="save_exit">حفظ وخروج</string>
+    <string name="my_creations">أعمالي</string>
+    <string name="saved_to_gallery">تم الحفظ في المعرض</string>
+    <string name="couldnt_save">تعذر الحفظ</string>
+    <string name="just_now">الآن</string>
+    <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">رمادي دافئ</string>
     <string name="quran_theme_amber">كهرماني</string>
     <string name="quran_theme_dusty_blue">أزرق باهت</string>
     <string name="quran_theme_dim_gray">رمادي خافت</string>
+
+    <string name="search">بحث</string>
+    <string name="no_methods_found">لم يتم العثور على طرق</string>
+    <string name="placeholder">مكان محجوز</string>
+    <string name="display">العرض</string>
+    <string name="version_summary">الإصدار %1$s</string>
+    <string name="dimension_format">%1$d × %2$d</string>
+    <string name="percent_format">%1$d%%</string>
 </resources>

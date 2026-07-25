@@ -48,9 +48,19 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.MiqatTimeStatus
 import com.kodeelite.nooreislam.core.enums.color
+import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.enums.onColor
 import com.kodeelite.nooreislam.core.locale.tr
-import com.kodeelite.nooreislam.core.navigation.LocalNavController
+import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.day_streak
+import com.kodeelite.nooreislam.resources.makkah
+import com.kodeelite.nooreislam.resources.next_prayer_name
+import com.kodeelite.nooreislam.resources.notifications
+import com.kodeelite.nooreislam.resources.this_week
+import com.kodeelite.nooreislam.resources.today
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -68,7 +78,7 @@ private val altTimes = listOf(
 
 @Composable
 fun HomeAltScreen() {
-    val nav = LocalNavController.current
+    val nav = LocalAppNavigator.current
     Column(
         Modifier.fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -76,10 +86,10 @@ fun HomeAltScreen() {
     ) {
         // top bar
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { nav.popBackStack() }) {
+            IconButton(onClick = { nav.back() }) {
                 Icon(
                     tr(Lucide.ChevronLeft, Lucide.ChevronRight),
-                    "Back",
+                    stringResource(Res.string.back),
                     tint = AppTheme.colors.onSurface
                 )
             }
@@ -87,10 +97,10 @@ fun HomeAltScreen() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Lucide.MapPin, null, tint = AppTheme.colors.primary, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(6.dp))
-                    Text("Makkah", color = AppTheme.colors.onSurface, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(Res.string.makkah), color = AppTheme.colors.onSurface, fontWeight = FontWeight.SemiBold)
                 }
             }
-            IconButton(onClick = { /* TODO */ }) { Icon(Lucide.Bell, "Notifications", tint = AppTheme.colors.onSurface) }
+            IconButton(onClick = { /* TODO */ }) { Icon(Lucide.Bell, stringResource(Res.string.notifications), tint = AppTheme.colors.onSurface) }
         }
 
         Spacer(Modifier.height(8.dp))
@@ -105,7 +115,7 @@ fun HomeAltScreen() {
 
         Spacer(Modifier.height(24.dp))
         Text(
-            "Today", color = AppTheme.colors.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+            stringResource(Res.string.today), color = AppTheme.colors.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 20.dp),
         )
         Spacer(Modifier.height(12.dp))
@@ -118,9 +128,9 @@ fun HomeAltScreen() {
 
         Spacer(Modifier.height(24.dp))
         Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatTile(Lucide.Flame, "12", "Streak", AppTheme.colors.warning, Modifier.weight(1f))
-            StatTile(Lucide.Check, "2/5", "Today", AppTheme.colors.prayedColor, Modifier.weight(1f))
-            StatTile(Lucide.TrendingUp, "85%", "This week", AppTheme.colors.primary, Modifier.weight(1f))
+            StatTile(Lucide.Flame, "12", stringResource(Res.string.day_streak), AppTheme.colors.warning, Modifier.weight(1f))
+            StatTile(Lucide.Check, "2/5", stringResource(Res.string.today), AppTheme.colors.prayedColor, Modifier.weight(1f))
+            StatTile(Lucide.TrendingUp, "85%", stringResource(Res.string.this_week), AppTheme.colors.primary, Modifier.weight(1f))
         }
         Spacer(Modifier.height(24.dp))
     }
@@ -169,7 +179,7 @@ private fun RadialDial(next: Miqat, time: String, countdown: String, progress: F
                 Icon(next.icon, null, tint = ring, modifier = Modifier.size(24.dp))
             }
             Spacer(Modifier.height(8.dp))
-            Text("Next · ${next.name}", color = AppTheme.colors.onSurfaceVariant, fontSize = 13.sp)
+            Text(stringResource(Res.string.next_prayer_name, next.label()), color = AppTheme.colors.onSurfaceVariant, fontSize = 13.sp)
             Text(countdown, color = AppTheme.colors.onSurface, fontSize = 34.sp, fontWeight = FontWeight.Bold)
             Text(time, color = AppTheme.colors.onSurfaceVariant, fontSize = 14.sp)
         }
@@ -190,7 +200,7 @@ private fun PrayerChipCard(item: AltPrayer) {
         Box(Modifier.size(40.dp).clip(CircleShape).background(on.copy(alpha = 0.20f)), contentAlignment = Alignment.Center) {
             Icon(item.prayer.icon, null, tint = on, modifier = Modifier.size(22.dp))
         }
-        Text(item.prayer.name, color = on, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+        Text(item.prayer.label(), color = on, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
         Text(item.time.removeSuffix(" AM").removeSuffix(" PM"), color = on.copy(alpha = 0.85f), fontSize = 12.sp)
     }
 }

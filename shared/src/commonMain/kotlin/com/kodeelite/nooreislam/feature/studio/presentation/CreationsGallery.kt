@@ -36,6 +36,12 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreation
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.continue_caps
+import com.kodeelite.nooreislam.resources.continue_editing
+import com.kodeelite.nooreislam.resources.just_now
+import com.kodeelite.nooreislam.resources.no_designs_saved
+import org.jetbrains.compose.resources.stringResource
 
 // Pinterest-style 2-column masonry of saved designs (varied heights from each design's aspect ratio).
 // Non-lazy on purpose: it lives inside AppBottomSheet's scrolling body.
@@ -50,7 +56,7 @@ fun ColumnScope.CreationsGrid(
     val colors = AppTheme.colors
     if (draft == null && creations.isEmpty()) {
         Text(
-            "No designs saved yet",
+            stringResource(Res.string.no_designs_saved),
             color = colors.onSurfaceVariant,
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 40.dp),
         )
@@ -76,7 +82,7 @@ private fun DraftCard(config: StudioConfig, onResume: () -> Unit) {
     val ratio = config.aspectRatio.ratio ?: 0.64f
     Column(Modifier.fillMaxWidth().padding(bottom = 14.dp)) {
         Text(
-            "CONTINUE",
+            stringResource(Res.string.continue_caps),
             color = colors.onSurfaceVariant.copy(alpha = 0.6f),
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
@@ -104,7 +110,7 @@ private fun DraftCard(config: StudioConfig, onResume: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(Lucide.Pencil, null, tint = Color.White, modifier = Modifier.size(14.dp))
-                Text("Continue editing", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                Text(stringResource(Res.string.continue_editing), color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
             }
         }
     }
@@ -144,10 +150,11 @@ private fun CreationCard(item: StudioCreation, now: Long, onSelect: (StudioConfi
 }
 
 // compact age label, locale-free (formatting pass comes with locale)
+@Composable
 private fun relativeTime(then: Long, now: Long): String {
     val s = (now - then).coerceAtLeast(0) / 1000
     return when {
-        s < 60 -> "just now"
+        s < 60 -> stringResource(Res.string.just_now)
         s < 3600 -> "${s / 60}m"
         s < 86_400 -> "${s / 3600}h"
         else -> "${s / 86_400}d"

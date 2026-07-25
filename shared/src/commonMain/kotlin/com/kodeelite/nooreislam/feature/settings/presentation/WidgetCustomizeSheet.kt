@@ -47,6 +47,7 @@ import com.kodeelite.nooreislam.feature.widget.WidgetStyle
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.background_opacity
 import com.kodeelite.nooreislam.resources.card_color
+import com.kodeelite.nooreislam.resources.percent_format
 import com.kodeelite.nooreislam.resources.widget_add
 import com.kodeelite.nooreislam.resources.widget_bar
 import com.kodeelite.nooreislam.resources.widget_card
@@ -104,7 +105,7 @@ fun WidgetCustomizeSheet(
         Spacer(Modifier.height(16.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(Res.string.background_opacity), fontWeight = FontWeight.SemiBold, color = c.onSurface)
-            Text("${(opacity * 100).roundToInt()}%", fontWeight = FontWeight.Bold, color = c.primary)
+            Text(stringResource(Res.string.percent_format, (opacity * 100).roundToInt()), fontWeight = FontWeight.Bold, color = c.primary)
         }
         Slider(value = opacity, onValueChange = { opacity = it })
     }

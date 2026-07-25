@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellRing
 import com.composables.icons.lucide.Check
+import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
@@ -57,6 +58,7 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MoonStar
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Users
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
 import com.kodeelite.nooreislam.resources.Res
@@ -64,7 +66,7 @@ import com.kodeelite.nooreislam.resources.affects_asr_calculation
 import com.kodeelite.nooreislam.resources.allow_notifications
 import com.kodeelite.nooreislam.resources.app_name
 import com.kodeelite.nooreislam.resources.asr_time
-import com.kodeelite.nooreislam.resources.continue_label
+import com.kodeelite.nooreislam.resources.resume
 import com.kodeelite.nooreislam.resources.gentle_nudge_before_every_prayer
 import com.kodeelite.nooreislam.resources.madhab_hanafi
 import com.kodeelite.nooreislam.resources.madhab_shafi
@@ -106,8 +108,8 @@ private val skyCyan = Color(0xFF0284C7)
 private class PageStyle(val top: Color, val bottom: Color, val accent: Color, val cta: StringResource, val ctaIcon: ImageVector)
 
 private val styles = listOf(
-    PageStyle(deepNavy, purple, purple, Res.string.continue_label, Lucide.ChevronRight),
-    PageStyle(brown, asr, brown, Res.string.continue_label, Lucide.ChevronRight),
+    PageStyle(deepNavy, purple, purple, Res.string.resume, Lucide.ChevronRight),
+    PageStyle(brown, asr, brown, Res.string.resume, Lucide.ChevronRight),
     PageStyle(green, accentTeal, green, Res.string.allow_notifications, Lucide.ChevronRight),
     PageStyle(deepTeal, skyCyan, deepTeal, Res.string.start_praying, Lucide.Check),
 )
@@ -163,7 +165,13 @@ fun OnboardingScreen() {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(stringResource(style.cta), color = accent, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                        Icon(style.ctaIcon, null, tint = accent, modifier = Modifier.size(16.dp))
+                        // flip only the forward chevron in RTL; the last page's Check stays as-is
+                        Icon(
+                            tr(style.ctaIcon, if (style.ctaIcon == Lucide.ChevronRight) Lucide.ChevronLeft else style.ctaIcon),
+                            null,
+                            tint = accent,
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 }
             }

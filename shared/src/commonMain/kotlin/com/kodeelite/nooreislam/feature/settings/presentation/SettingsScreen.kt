@@ -70,6 +70,7 @@ import com.kodeelite.nooreislam.resources.prayer_card
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.time_format
+import com.kodeelite.nooreislam.resources.version_summary
 import com.kodeelite.nooreislam.resources.widgets
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -184,7 +185,11 @@ fun SettingsScreen() {
             AppTileGroup(
                 title = stringResource(Res.string.about),
                 items = listOf(
-                    AppTileItem(title = stringResource(Res.string.app_name), subtitle = "Version 1.0.0", leadingIcon = Lucide.Info),
+                    AppTileItem(
+                        title = stringResource(Res.string.app_name),
+                        subtitle = stringResource(Res.string.version_summary, "1.0.0"),
+                        leadingIcon = Lucide.Info
+                    ),
                 ),
             )
         }

@@ -93,6 +93,7 @@ import com.kodeelite.nooreislam.core.components.LocalOverlay
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.count_of_total
 import com.kodeelite.nooreislam.resources.reset
 import com.kodeelite.nooreislam.resources.tasbih
 import com.kodeelite.nooreislam.resources.tasbih_adhkar_complete
@@ -108,6 +109,13 @@ import com.kodeelite.nooreislam.resources.tasbih_finish_glossy
 import com.kodeelite.nooreislam.resources.tasbih_finish_marble
 import com.kodeelite.nooreislam.resources.tasbih_history
 import com.kodeelite.nooreislam.resources.tasbih_in_time_mashaallah
+import com.kodeelite.nooreislam.resources.tasbih_material_amber
+import com.kodeelite.nooreislam.resources.tasbih_material_amethyst
+import com.kodeelite.nooreislam.resources.tasbih_material_emerald
+import com.kodeelite.nooreislam.resources.tasbih_material_onyx
+import com.kodeelite.nooreislam.resources.tasbih_material_pearl
+import com.kodeelite.nooreislam.resources.tasbih_material_sandal
+import com.kodeelite.nooreislam.resources.tasbih_material_theme
 import com.kodeelite.nooreislam.resources.tasbih_mode_beads
 import com.kodeelite.nooreislam.resources.tasbih_mode_focus
 import com.kodeelite.nooreislam.resources.tasbih_mode_tap
@@ -123,9 +131,11 @@ import com.kodeelite.nooreislam.resources.tasbih_shape_round
 import com.kodeelite.nooreislam.resources.tasbih_size
 import com.kodeelite.nooreislam.resources.tasbih_sound
 import com.kodeelite.nooreislam.resources.tasbih_vibration
+import com.kodeelite.nooreislam.resources.times_count
 import com.kodeelite.nooreislam.resources.total
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
 import kotlin.math.abs
@@ -157,7 +167,14 @@ internal data class TasbihStyle(
 )
 
 /** The three counting styles, swapped from the Customize sheet. */
-private enum class TasbihMode(val label: String) { Beads("Beads"), Tap("Tap"), Focus("Focus") }
+private enum class TasbihMode(val labelRes: StringResource) {
+    Beads(Res.string.tasbih_mode_beads),
+    Tap(Res.string.tasbih_mode_tap),
+    Focus(Res.string.tasbih_mode_focus)
+}
+
+private val TasbihMode.label: String
+    @Composable get() = stringResource(labelRes)
 
 // Ring placement on screen (from the Figma frame) — fixed, not user-facing.
 private const val RADIUS_FACTOR = 0.6279f
@@ -452,7 +469,11 @@ private fun TapCounter(count: Int, target: Int, enabled: Boolean, onCount: () ->
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("$count", fontSize = 56.sp, fontWeight = FontWeight.Bold, color = c.onSurface)
-                Text(if (target > 0) "/ $target" else "∞", fontSize = 14.sp, color = c.onSurfaceVariant)
+                Text(
+                    if (target > 0) stringResource(Res.string.count_of_total, count, target).removePrefix("$count ") else "∞",
+                    fontSize = 14.sp,
+                    color = c.onSurfaceVariant
+                )
             }
         }
     }
@@ -531,7 +552,11 @@ private fun DhikrHeader(
                 Text("$count", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (paused) c.onSurfaceVariant else c.primary)
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    if (paused) stringResource(Res.string.tasbih_paused) else if (target <= 0) "∞" else "/ $target",
+                    if (paused) stringResource(Res.string.tasbih_paused) else if (target <= 0) "∞" else stringResource(
+                        Res.string.count_of_total,
+                        count,
+                        target
+                    ).removePrefix("$count "),
                     fontSize = 13.sp, color = c.onSurfaceVariant,
                 )
                 Spacer(Modifier.width(10.dp))
@@ -540,8 +565,8 @@ private fun DhikrHeader(
                 Text(
                     stringResource(
                         Res.string.tasbih_round_total,
-                        "$curRound/$expectedRounds",
-                        if (grandTotal > 0) "$total/$grandTotal" else "$total",
+                        stringResource(Res.string.count_of_total, curRound, expectedRounds),
+                        if (grandTotal > 0) stringResource(Res.string.count_of_total, total, grandTotal) else total.toString(),
                     ),
                     fontSize = 13.sp, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
@@ -578,7 +603,7 @@ private fun CustomizeSheet(
     onShape: (BeadShape) -> Unit,
     finish: BeadFinish,
     onFinish: (BeadFinish) -> Unit,
-    materials: List<Pair<String, TasbihStyle>>,
+    materials: List<Pair<StringResource, TasbihStyle>>,
     selectedMaterial: Int,
     onMaterial: (Int) -> Unit,
     onDismiss: () -> Unit,
@@ -700,7 +725,13 @@ private fun TasbihSuccessSheet(
     val c = AppTheme.colors
     val single = items.size == 1
     val tiles = buildList {
-        items.forEach { (title, n) -> add(AppTileItem(title = title, trailing = { Text("× $n", fontWeight = FontWeight.Bold, color = c.primary) })) }
+        items.forEach { (title, n) ->
+            add(
+                AppTileItem(
+                    title = title,
+                    trailing = { Text(stringResource(Res.string.times_count, n), fontWeight = FontWeight.Bold, color = c.primary) })
+            )
+        }
         if (!single) add(
             AppTileItem(
                 title = stringResource(Res.string.total),
@@ -807,25 +838,55 @@ private fun starPath(c: Offset, outer: Float, inner: Float): Path = Path().apply
 }
 
 /** Bead-material presets shown in the picker. First entry tracks the app theme primary. */
-private fun beadMaterials(primary: Color): List<Pair<String, TasbihStyle>> = listOf(
-    "Theme" to TasbihStyle(
+private fun beadMaterials(primary: Color): List<Pair<StringResource, TasbihStyle>> = listOf(
+    Res.string.tasbih_material_theme to TasbihStyle(
         beadLight = lerp(primary, Color.White, 0.45f),
         beadMid = primary,
         beadDark = lerp(primary, Color.Black, 0.45f),
         cord = primary
     ),
-    "Sandal" to TasbihStyle(beadLight = Color(0xFFE7C896), beadMid = Color(0xFFA9783F), beadDark = Color(0xFF5C3A1E), cord = Color(0xFF7A5532)),
-    "Pearl" to TasbihStyle(beadLight = Color(0xFFFFFFFF), beadMid = Color(0xFFE8E4DA), beadDark = Color(0xFFB4AD9E), cord = Color(0xFFCFC8BA)),
-    "Onyx" to TasbihStyle(beadLight = Color(0xFF6B6B72), beadMid = Color(0xFF2E2E33), beadDark = Color(0xFF101013), cord = Color(0xFF3A3A40)),
-    "Emerald" to TasbihStyle(beadLight = Color(0xFF6FE0A8), beadMid = Color(0xFF1E9E63), beadDark = Color(0xFF0C5436), cord = Color(0xFF14794B)),
-    "Amber" to TasbihStyle(beadLight = Color(0xFFFFE08A), beadMid = Color(0xFFE0A52E), beadDark = Color(0xFF8A5E10), cord = Color(0xFFB9821F)),
-    "Amethyst" to TasbihStyle(beadLight = Color(0xFFC9A8F0), beadMid = Color(0xFF8B5FD6), beadDark = Color(0xFF4A2E83), cord = Color(0xFF6B459E)),
+    Res.string.tasbih_material_sandal to TasbihStyle(
+        beadLight = Color(0xFFE7C896),
+        beadMid = Color(0xFFA9783F),
+        beadDark = Color(0xFF5C3A1E),
+        cord = Color(0xFF7A5532)
+    ),
+    Res.string.tasbih_material_pearl to TasbihStyle(
+        beadLight = Color(0xFFFFFFFF),
+        beadMid = Color(0xFFE8E4DA),
+        beadDark = Color(0xFFB4AD9E),
+        cord = Color(0xFFCFC8BA)
+    ),
+    Res.string.tasbih_material_onyx to TasbihStyle(
+        beadLight = Color(0xFF6B6B72),
+        beadMid = Color(0xFF2E2E33),
+        beadDark = Color(0xFF101013),
+        cord = Color(0xFF3A3A40)
+    ),
+    Res.string.tasbih_material_emerald to TasbihStyle(
+        beadLight = Color(0xFF6FE0A8),
+        beadMid = Color(0xFF1E9E63),
+        beadDark = Color(0xFF0C5436),
+        cord = Color(0xFF14794B)
+    ),
+    Res.string.tasbih_material_amber to TasbihStyle(
+        beadLight = Color(0xFFFFE08A),
+        beadMid = Color(0xFFE0A52E),
+        beadDark = Color(0xFF8A5E10),
+        cord = Color(0xFFB9821F)
+    ),
+    Res.string.tasbih_material_amethyst to TasbihStyle(
+        beadLight = Color(0xFFC9A8F0),
+        beadMid = Color(0xFF8B5FD6),
+        beadDark = Color(0xFF4A2E83),
+        cord = Color(0xFF6B459E)
+    ),
 )
 
 /** Grid of tappable bead swatches — 4 per row, all visible at once (no scrolling). */
 @Composable
 private fun MaterialGrid(
-    materials: List<Pair<String, TasbihStyle>>,
+    materials: List<Pair<StringResource, TasbihStyle>>,
     selected: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -835,7 +896,7 @@ private fun MaterialGrid(
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         materials.chunked(cols).forEachIndexed { rowIdx, row ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                row.forEachIndexed { colIdx, (name, st) ->
+                row.forEachIndexed { colIdx, (res, st) ->
                     val i = rowIdx * cols + colIdx
                     Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                         Box(
@@ -852,7 +913,7 @@ private fun MaterialGrid(
                                 .clickable { onSelect(i) },
                         )
                         Spacer(Modifier.height(6.dp))
-                        Text(name, fontSize = 11.sp, color = if (i == selected) c.primary else c.onSurfaceVariant)
+                        Text(stringResource(res), fontSize = 11.sp, color = if (i == selected) c.primary else c.onSurfaceVariant)
                     }
                 }
                 repeat(cols - row.size) { Spacer(Modifier.weight(1f)) } // pad last row so columns stay aligned

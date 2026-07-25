@@ -22,6 +22,9 @@
     <string name="tasbih_counter">Tasbih Counter</string>
     <string name="settings">Settings</string>
     <string name="about_miqat">About</string>
+    <string name="back">Back</string>
+    <string name="discard">Discard</string>
+    <string name="makkah">Makkah</string>
     <string name="developer_sandbox">Sandbox</string>
 
     <string name="qibla">Qibla</string>
@@ -38,14 +41,59 @@
 
     <string name="best">Best</string>
     <string name="on_time">On time</string>
+    <string name="prayed_with_jamaat">Jamaat</string>
+    <string name="prayed_kaza">Kaza</string>
+    <string name="missed_prayer">Missed</string>
     <string name="not_tracked">Not set</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="best_days_streak_and_on_time_percentage">Best %1$d days · %2$d%% on time</string>
+    <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>
+
+    <string name="gregorian_jan">January</string>
+    <string name="gregorian_feb">February</string>
+    <string name="gregorian_mar">March</string>
+    <string name="gregorian_apr">April</string>
+    <string name="gregorian_may">May</string>
+    <string name="gregorian_jun">June</string>
+    <string name="gregorian_jul">July</string>
+    <string name="gregorian_aug">August</string>
+    <string name="gregorian_sep">September</string>
+    <string name="gregorian_oct">October</string>
+    <string name="gregorian_nov">November</string>
+    <string name="gregorian_dec">December</string>
+
+    <string name="day_mon">Monday</string>
+    <string name="day_tue">Tuesday</string>
+    <string name="day_wed">Wednesday</string>
+    <string name="day_thu">Thursday</string>
+    <string name="day_fri">Friday</string>
+    <string name="day_sat">Saturday</string>
+    <string name="day_sun">Sunday</string>
+
+    <string name="fajr_short">Fajr</string>
+    <string name="sunrise_short">Sunr</string>
+    <string name="dhuhr_short">Dhuh</string>
+    <string name="asr_short">Asr</string>
+    <string name="maghrib_short">Magh</string>
+    <string name="isha_short">Isha</string>
+    <string name="yesterday">Yesterday</string>
 
     <string name="tasbih">Tasbih</string>
     <string name="rounds">Rounds</string>
     <string name="total">Total</string>
     <string name="reset">Reset</string>
     <string name="tap_to_count">Tap to count</string>
+
+    <!-- Focus feature (Test tool) -->
+    <string name="test_background_focus_logic">Background test</string>
+    <string name="focus_test_instructions_survive_reboot">Saved slots survive a reboot and fire once. Add one, then kill the app or restart.</string>
+    <string name="add_test_focus_slot">Add slot</string>
+    <string name="start_silence_after">Start in</string>
+    <string name="silence_for_period">Silence for</string>
+    <string name="choose_silence_mode">Silence mode</string>
+    <string name="scheduled_test_slots">Scheduled</string>
+    <string name="remove_scheduled_slot">Remove</string>
+    <string name="silence_duration_summary">%1$s for %2$d min</string>
 
     <!-- Tasbih feature -->
     <string name="tasbih_back">Back</string>
@@ -112,12 +160,37 @@
     <string name="tasbih_no_history">No history yet</string>
     <string name="tasbih_no_history_hint">Completed dhikr sessions will appear here.</string>
 
+    <string name="tasbih_material_theme">Theme</string>
+    <string name="tasbih_material_sandal">Sandal</string>
+    <string name="tasbih_material_pearl">Pearl</string>
+    <string name="tasbih_material_onyx">Onyx</string>
+    <string name="tasbih_material_emerald">Emerald</string>
+    <string name="tasbih_material_amber">Amber</string>
+    <string name="tasbih_material_amethyst">Amethyst</string>
+
     <string name="welcome_to_miqat">Welcome to Noor e Islam</string>
     <string name="your_companion_for_every_prayer">Your companion for every prayer — accurate times, Qibla and tracking, all offline.</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
-    <string name="now">Now</string>
+    <string name="status_now">Now</string>
+    <string name="status_soon">Soon</string>
+    <string name="status_upcoming">Upcoming</string>
+    <string name="now_caps">NOW</string>
+    <string name="next_caps">NEXT</string>
+    <string name="next_prayer_name">Next · %1$s</string>
+    <string name="time_at_in_summary">%1$s · in %2$s</string>
+    <string name="prayer_and_time_summary">%1$s · %2$s</string>
+    <string name="sun_journey">Sun Journey</string>
+    <string name="night_sky">Night sky</string>
+    <string name="daytime">Daytime</string>
+    <string name="home_prayer_quote">"Indeed, prayer prohibits immorality and wrongdoing."</string>
+    <string name="home_prayer_quote_ref">Surah Al-\'Ankabut 29:45</string>
+    <string name="prayer_countdown_summary">%1$s %2$s · %3$s</string>
+    <string name="countdown_hms">in %1$dh %2$dm %3$ds</string>
+    <string name="countdown_ms">in %1$dm %2$ds</string>
+    <string name="time_with_period">%1$s %2$s</string>
+    <string name="about_sehri">About Sehri</string>
     <string name="never_miss_a_prayer">Never miss a prayer</string>
     <string name="accurate_times_with_live_countdown">Accurate times for your location, with a live countdown to the next prayer.</string>
     <string name="find_the_qibla_and_track">Find the Qibla and track</string>
@@ -143,7 +216,7 @@
     <string name="onboarding_gps_or_city_search">GPS or city search</string>
     <string name="onboarding_city_presets">Makkah · Madinah · Karachi presets</string>
     <string name="works_fully_offline">Works fully offline</string>
-    <string name="continue_label">Continue</string>
+    <string name="resume">Continue</string>
     <string name="allow_notifications">Allow Notifications</string>
     <string name="start_praying">Start Praying</string>
 
@@ -163,7 +236,13 @@
     <string name="miqat_midnight">Midnight</string>
 
     <!-- Prayer Focus -->
-    <string name="back">Back</string>
+    <string name="surah_number_place_ayah_count">Surah %1$d · %2$s · %3$d ayahs</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+    <string name="open_surah">Open surah</string>
+    <string name="juz_number">Juz %1$d</string>
+    <string name="juz_start_summary">Starts at Surah %1$d · Ayah %2$d</string>
+    <string name="expand">Expand</string>
     <string name="minutes_short">min</string>
     <string name="silence_phone_around_each_prayer_set_separately">Silence your phone around each prayer, then restore it automatically. Set each prayer separately.</string>
     <string name="start_after">Start after</string>
@@ -287,6 +366,7 @@
     <string name="dua_of_the_day">Dua of the day</string>
     <string name="collections">Collections</string>
     <string name="favorites">Favorites</string>
+    <string name="surahs">Surahs</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Morning</string>
     <string name="evening">Evening</string>
@@ -297,7 +377,9 @@
     <string name="add_your_own">Add your own</string>
     <string name="search_duas">Search duas…</string>
     <string name="no_duas_found">No duas found</string>
-    <string name="arabic_text">Arabic</string>
+    <string name="try_a_different_dua_search">Try a different search</string>
+    <string name="arabic">Arabic</string>
+    <string name="translation">Translation</string>
     <string name="translation_optional">Translation (optional)</string>
     <string name="repetitions">Repetitions</string>
     <string name="added_by_you">Added by you</string>
@@ -308,6 +390,23 @@
     <string name="dua">Du'a</string>
     <string name="zikr">Zikr</string>
     <string name="new_collection">New collection</string>
+    <string name="collection_name">Collection name</string>
+    <string name="create_collection_n">Create collection (%1$d)</string>
+    <string name="n_items">%1$d items</string>
+    <string name="azkar_and_dua">Azkar &amp; Du'a</string>
+    <string name="continue_caps">CONTINUE</string>
+    <string name="today_caps">TODAY</string>
+    <string name="after_prayer_progress">%1$s · %2$d / %3$d</string>
+    <string name="tab_all">All</string>
+    <string name="tab_dua">Du'a</string>
+    <string name="tab_zikr">Zikr</string>
+    <string name="tab_tasbih">Tasbih</string>
+    <string name="everyday_dua">Everyday du'a</string>
+    <string name="your_collections">Your collections</string>
+    <string name="see_all_n">See all (%1$d)</string>
+    <string name="count_of_total">%1$d / %2$d</string>
+    <string name="times_count">×%1$d</string>
+
     <string name="names_of_allah">99 Names of Allah</string>
     <string name="azkar">Azkar (preview)</string>
 
@@ -396,30 +495,129 @@
     <string name="quran_theme_green">Green</string>
     <string name="quran_theme_mint">Mint</string>
     <string name="quran_theme_dark">Dark</string>
+    <string name="quran_theme_night">Night</string>
     <string name="quran_theme_charcoal">Charcoal</string>
     <string name="quran_theme_slate">Slate</string>
-    <string name="quran_theme_night">Night</string>
+    <string name="continue_reading">Continue reading</string>
+    <string name="start_from_beginning">Start from the beginning</string>
+    <string name="reading_settings">Reading settings</string>
+    <string name="text_size">Text size</string>
+    <string name="line_spacing">Line spacing</string>
+    <string name="script">Script</string>
+    <string name="theme">Theme</string>
+    <string name="content">Content</string>
+    <string name="reading">Reading</string>
+    <string name="tafsir_source">Tafsir source</string>
+    <string name="word_by_word">Word-by-word</string>
+    <string name="auto_scroll">Auto-scroll</string>
+    <string name="keep_screen_on">Keep screen on</string>
+    <string name="jump_to">Jump to surah / juz / page</string>
+    <string name="more_actions">More actions</string>
+    <string name="surah_number_ayah_number">Surah %1$d · Ayah %2$d</string>
+
+    <string name="action_audio">Audio</string>
+    <string name="action_play_recitation">Play recitation</string>
+    <string name="action_repeat_loop">Repeat / loop</string>
+    <string name="action_play_from_here">Play from here onward</string>
+    <string name="action_choose_reciter">Choose reciter</string>
+
+    <string name="action_personal">Personal</string>
+    <string name="action_bookmark">Bookmark</string>
+    <string name="action_add_to_collection">Add to collection</string>
+    <string name="action_add_note">Add note</string>
+    <string name="action_highlight">Highlight</string>
+    <string name="action_mark_memorized">Mark memorized</string>
+
+    <string name="action_sharing">Sharing</string>
+    <string name="share_as_text">Share as text</string>
+    <string name="action_share_image">Share as image</string>
+    <string name="action_share_link">Share link</string>
+
+    <string name="action_navigation">Navigation</string>
+    <string name="action_go_to_surah_start">Go to surah start</string>
+    <string name="action_set_last_read">Set as last-read</string>
+
+    <string name="action_study">Study</string>
+    <string name="action_related_ayahs">Related ayahs</string>
+    <string name="action_context_revelation">Context of revelation</string>
+
+    <string name="font_uthmani">Uthmani</string>
+    <string name="font_naskh">Naskh</string>
+    <string name="font_madani">Madani</string>
+    <string name="font_scheherazade">Scheherazade</string>
+    <string name="font_indopak">IndoPak</string>
     <!-- Studio (share editor) -->
-    <string name="studio_mode_templates">Templates</string>
-    <string name="studio_mode_layout">Layout</string>
-    <string name="studio_mode_background">Background</string>
-    <string name="studio_mode_gradient">Gradient</string>
-    <string name="studio_mode_fonts">Fonts</string>
-    <string name="studio_mode_size">Size</string>
-    <string name="studio_mode_style">Style</string>
-    <string name="studio_mode_align">Align</string>
-    <string name="studio_mode_content">Content</string>
-    <string name="studio_mode_stickers">Stickers</string>
-    <string name="studio_mode_card">Card</string>
-    <string name="studio_mode_effects">Effects</string>
-    <string name="studio_mode_dates">Dates</string>
-    <string name="studio_mode_presets">Presets</string>
-    <string name="studio_mode_branding">Details</string>
-    <string name="studio_pattern_none">None</string>
-    <string name="studio_pattern_grain">Grain</string>
-    <string name="studio_pattern_geometric">Geometric</string>
+    <string name="mode_templates">Templates</string>
+    <string name="mode_layout">Layout</string>
+    <string name="mode_background">Background</string>
+    <string name="mode_gradient">Gradient</string>
+    <string name="mode_fonts">Fonts</string>
+    <string name="mode_size">Size</string>
+    <string name="mode_style">Style</string>
+    <string name="mode_align">Align</string>
+    <string name="mode_content">Content</string>
+    <string name="mode_stickers">Stickers</string>
+    <string name="mode_card">Card</string>
+    <string name="mode_effects">Effects</string>
+    <string name="mode_dates">Dates</string>
+    <string name="mode_presets">Presets</string>
+    <string name="mode_branding">Details</string>
+    <string name="pattern_none">None</string>
+    <string name="pattern_grain">Grain</string>
+    <string name="pattern_geometric">Geometric</string>
+
+    <string name="continue_editing">Continue editing</string>
+    <string name="no_designs_saved">No designs saved yet</string>
+    <string name="watermark">Watermark</string>
+    <string name="position">Position</string>
+    <string name="bismillah">Bismillah</string>
+    <string name="trans_size">Trans Size</string>
+    <string name="size">Size</string>
+    <string name="line_height">Line</string>
+    <string name="opacity">Opacity</string>
+    <string name="shadow">Shadow</string>
+    <string name="radius">Radius</string>
+    <string name="blur">Blur</string>
+    <string name="vignette">Vignette</string>
+    <string name="shadow_spread">Shadow Spread</string>
+    <string name="overlay">Overlay</string>
+    <string name="off">Off</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+    <string name="show_less">Show less</string>
+    <string name="view_all">View all</string>
+    <string name="generate">Generate</string>
+    <string name="generate_again">Generate again</string>
+    <string name="tap_generate_for_fresh_looks">Tap Generate for fresh looks</string>
+    <string name="tap_generate_for_fresh_gradients">Tap Generate for fresh gradients</string>
+    <string name="surah_name">Surah name</string>
+    <string name="transliteration_coming_soon">Transliteration (coming soon)</string>
+    <string name="hijri_date">Hijri Date</string>
+    <string name="gregorian">Gregorian</string>
+    <string name="reset_to_default">Reset to Default</string>
+    <string name="save_as_creation">Save current as creation</string>
+    <string name="share">Share</string>
+    <string name="include_ayah_text">Include ayah text</string>
+    <string name="add_a_message">Add a message</string>
+    <string name="shared_with">Shared with Noor e Islam</string>
+    <string name="leave_this_design">Leave this design?</string>
+    <string name="you_have_unsaved_changes">You have unsaved changes.</string>
+    <string name="save_exit">Save &amp; exit</string>
+    <string name="my_creations">My Creations</string>
+    <string name="saved_to_gallery">Saved to gallery</string>
+    <string name="couldnt_save">Couldn't save</string>
+    <string name="just_now">just now</string>
+    <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">Warm Gray</string>
     <string name="quran_theme_amber">Amber</string>
     <string name="quran_theme_dusty_blue">Dusty Blue</string>
     <string name="quran_theme_dim_gray">Dim Gray</string>
+
+    <string name="search">Search</string>
+    <string name="no_methods_found">No methods found</string>
+    <string name="placeholder">placeholder</string>
+    <string name="display">Display</string>
+    <string name="version_summary">Version %1$s</string>
+    <string name="dimension_format">%1$d × %2$d</string>
+    <string name="percent_format">%1$d%%</string>
 </resources>

@@ -24,6 +24,10 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.position
+import com.kodeelite.nooreislam.resources.watermark
+import org.jetbrains.compose.resources.stringResource
 
 // Watermark toggle + position (corner) picker.
 @Composable
@@ -31,11 +35,11 @@ fun BrandingPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
     val colors = AppTheme.colors
     Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Watermark", color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(Res.string.watermark), color = colors.onSurface, fontSize = 12.sp, modifier = Modifier.weight(1f))
             AppSwitch(config.showWatermark, { onChange(config.copy(showWatermark = it)) })
         }
         if (config.showWatermark) {
-            Text("Position", color = colors.onSurfaceVariant, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(Res.string.position), color = colors.onSurfaceVariant, fontSize = 10.sp, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 LogoCorner.entries.forEach { c ->
                     val isSel = config.watermarkCorner == c

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.BookOpen
+import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.List
 import com.composables.icons.lucide.Lucide
@@ -59,6 +60,7 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.icons.TasbihIcon
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
 import com.kodeelite.nooreislam.feature.duas.presentation.AzkarCollectionReader
@@ -72,9 +74,36 @@ import com.kodeelite.nooreislam.feature.tasbih.presentation.CountTag
 import com.kodeelite.nooreislam.feature.tasbih.presentation.HeartIcon
 import kotlinx.coroutines.launch
 
-// ponytail: strings hardcoded until the design is locked, then localize in one pass.
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.after_prayer_progress
+import com.kodeelite.nooreislam.resources.azkar_and_dua
+import com.kodeelite.nooreislam.resources.continue_caps
+import com.kodeelite.nooreislam.resources.everyday_dua
+import com.kodeelite.nooreislam.resources.favorites
+import com.kodeelite.nooreislam.resources.menu
+import com.kodeelite.nooreislam.resources.n_items
+import com.kodeelite.nooreislam.resources.new_collection
+import com.kodeelite.nooreislam.resources.see_all_n
+import com.kodeelite.nooreislam.resources.tab_all
+import com.kodeelite.nooreislam.resources.tab_dua
+import com.kodeelite.nooreislam.resources.tab_tasbih
+import com.kodeelite.nooreislam.resources.tab_zikr
+import com.kodeelite.nooreislam.resources.today_caps
+import com.kodeelite.nooreislam.resources.your_collections
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
-private enum class ZTab(val label: String) { All("All"), Dua("Du'a"), Zikr("Zikr"), Tasbih("Tasbih") }
+// ponytail: localized strings applied.
+
+private enum class ZTab(val labelRes: StringResource) {
+    All(Res.string.tab_all),
+    Dua(Res.string.tab_dua),
+    Zikr(Res.string.tab_zikr),
+    Tasbih(Res.string.tab_tasbih)
+}
+
+private val ZTab.label: String
+    @Composable get() = stringResource(labelRes)
 
 // everyday = du'a, glorifications = tasbih, the rest of the adhkar = zikr (Tasbih is a tab here, not a drawer screen)
 private fun kindOf(s: DuaSection): ZTab = when (s) {
@@ -83,12 +112,13 @@ private fun kindOf(s: DuaSection): ZTab = when (s) {
     else -> ZTab.Zikr
 }
 
+@Composable
 private fun nameOf(s: DuaSection): String = when (s) {
-    DuaSection.Morning -> "Morning"
-    DuaSection.Evening -> "Evening"
-    DuaSection.AfterPrayer -> "After prayer"
-    DuaSection.Everyday -> "Everyday du'a"
-    DuaSection.Tasbihat -> "Tasbihat"
+    DuaSection.Morning -> stringResource(DuaSection.Morning.labelRes)
+    DuaSection.Evening -> stringResource(DuaSection.Evening.labelRes)
+    DuaSection.AfterPrayer -> stringResource(DuaSection.AfterPrayer.labelRes)
+    DuaSection.Everyday -> stringResource(Res.string.everyday_dua)
+    DuaSection.Tasbihat -> stringResource(DuaSection.Tasbihat.labelRes)
 }
 
 private fun iconOf(s: DuaSection): ImageVector = when (s) {
@@ -132,8 +162,15 @@ fun AzkarScreen() {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Azkar & Du'a") },
-                navigationIcon = { IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") } },
+                title = { Text(stringResource(Res.string.azkar_and_dua)) },
+                navigationIcon = {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(
+                            Lucide.Menu,
+                            stringResource(Res.string.menu)
+                        )
+                    }
+                },
             )
         },
     ) { pad ->
@@ -152,9 +189,9 @@ fun AzkarScreen() {
                     AppTileGroup(
                         items = listOf(
                             AppTileItem(
-                                title = "Favorites", actions = listOf(
+                                title = stringResource(Res.string.favorites), actions = listOf(
                                     AppAction(TasbihIcon) { queueForBeads(favDuas); nav.navigate(AppRoute.TasbihCounter) },
-                                    AppAction(Lucide.ChevronRight) { showFavs = true },
+                                    AppAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { showFavs = true },
                                 )
                             ),
                         ) + favDuas.take(PEEK).map { d ->
@@ -169,8 +206,12 @@ fun AzkarScreen() {
             if (tab == ZTab.All && UserCollections.list.isNotEmpty()) {
                 item {
                     AppTileGroup(
-                        items = listOf(AppTileItem(title = "Your collections")) + UserCollections.list.map { uc ->
-                            AppTileItem(title = uc.name, subtitle = "${uc.items.size} items", leadingIcon = Lucide.Star, onClick = { openColl = uc })
+                        items = listOf(AppTileItem(title = stringResource(Res.string.your_collections))) + UserCollections.list.map { uc ->
+                            AppTileItem(
+                                title = uc.name,
+                                subtitle = stringResource(Res.string.n_items, uc.items.size),
+                                leadingIcon = Lucide.Star,
+                                onClick = { openColl = uc })
                         },
                     )
                 }
@@ -185,7 +226,7 @@ fun AzkarScreen() {
                             AppTileItem(
                                 title = nameOf(section), actions = listOf(
                                     AppAction(TasbihIcon) { queueForBeads(all); nav.navigate(AppRoute.TasbihCounter) },
-                                    AppAction(Lucide.ChevronRight) { openSection = section },
+                                    AppAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { openSection = section },
                                 )
                             ),
                         ) + all.take(PEEK).map { d ->
@@ -199,7 +240,14 @@ fun AzkarScreen() {
             }
 
             item {
-                AppTileGroup(items = listOf(AppTileItem(title = "New collection", leadingIcon = Lucide.Plus, onClick = { creating = true })))
+                AppTileGroup(
+                    items = listOf(
+                        AppTileItem(
+                            title = stringResource(Res.string.new_collection),
+                            leadingIcon = Lucide.Plus,
+                            onClick = { creating = true })
+                    )
+                )
             }
         }
     }
@@ -226,8 +274,9 @@ private fun azkarItem(d: Dua, onOpen: () -> Unit, onBeads: () -> Unit) = AppTile
     },
 )
 
+@Composable
 private fun seeAllItem(n: Int, onOpen: () -> Unit) =
-    AppTileItem(title = "See all ($n)", leadingIcon = Lucide.List, onClick = onOpen)
+    AppTileItem(title = stringResource(Res.string.see_all_n, n), leadingIcon = Lucide.List, onClick = onOpen)
 
 /** Resume where you left off — reads the live session later; static for the preview. */
 @Composable
@@ -238,9 +287,20 @@ private fun ContinueCard() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text("CONTINUE", fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp, color = c.onPrimary.copy(alpha = 0.8f))
+            Text(
+                stringResource(Res.string.continue_caps),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.4.sp,
+                color = c.onPrimary.copy(alpha = 0.8f)
+            )
             Spacer(Modifier.height(4.dp))
-            Text("After prayer  ·  3 / 7", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = c.onPrimary)
+            Text(
+                stringResource(Res.string.after_prayer_progress, stringResource(DuaSection.AfterPrayer.labelRes), 3, 7),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = c.onPrimary
+            )
             Spacer(Modifier.height(10.dp))
             Box(Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)).background(c.onPrimary.copy(alpha = 0.25f))) {
                 Box(Modifier.fillMaxWidth(3f / 7f).height(6.dp).clip(RoundedCornerShape(3.dp)).background(c.onPrimary))
@@ -260,7 +320,7 @@ private fun TodayCard() {
     Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(c.cardColor).padding(20.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
             Icon(Lucide.Sparkles, null, tint = c.primary, modifier = Modifier.size(15.dp))
-            Text("TODAY", fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp, color = c.primary)
+            Text(stringResource(Res.string.today_caps), fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.4.sp, color = c.primary)
         }
         Spacer(Modifier.height(14.dp))
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {

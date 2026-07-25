@@ -65,39 +65,66 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.action_add_note
+import com.kodeelite.nooreislam.resources.action_add_to_collection
+import com.kodeelite.nooreislam.resources.action_audio
+import com.kodeelite.nooreislam.resources.action_bookmark
+import com.kodeelite.nooreislam.resources.action_choose_reciter
+import com.kodeelite.nooreislam.resources.action_context_revelation
+import com.kodeelite.nooreislam.resources.action_go_to_surah_start
+import com.kodeelite.nooreislam.resources.action_highlight
+import com.kodeelite.nooreislam.resources.action_mark_memorized
+import com.kodeelite.nooreislam.resources.action_navigation
+import com.kodeelite.nooreislam.resources.action_personal
+import com.kodeelite.nooreislam.resources.action_play_from_here
+import com.kodeelite.nooreislam.resources.action_play_recitation
+import com.kodeelite.nooreislam.resources.action_related_ayahs
+import com.kodeelite.nooreislam.resources.action_repeat_loop
+import com.kodeelite.nooreislam.resources.action_set_last_read
+import com.kodeelite.nooreislam.resources.action_share_image
+import com.kodeelite.nooreislam.resources.action_share_link
+import com.kodeelite.nooreislam.resources.share_as_text
+import com.kodeelite.nooreislam.resources.action_sharing
+import com.kodeelite.nooreislam.resources.action_study
+import com.kodeelite.nooreislam.resources.more_actions
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
-private class QAction(val icon: ImageVector, val label: String)
-private class QGroup(val title: String, val items: List<QAction>)
+private class QAction(val icon: ImageVector, val labelRes: StringResource)
+private class QGroup(val titleRes: StringResource, val items: List<QAction>)
 
 // full action set from the design; ponytail: all shown now, hide non-applicable ones as features land
 private val MORE_GROUPS = listOf(
     QGroup(
-        "Audio", listOf(
-            QAction(Lucide.Play, "Play recitation"), QAction(Lucide.Repeat, "Repeat / loop"),
-            QAction(Lucide.FastForward, "Play from here onward"), QAction(Lucide.Mic, "Choose reciter"),
+        Res.string.action_audio, listOf(
+            QAction(Lucide.Play, Res.string.action_play_recitation), QAction(Lucide.Repeat, Res.string.action_repeat_loop),
+            QAction(Lucide.FastForward, Res.string.action_play_from_here), QAction(Lucide.Mic, Res.string.action_choose_reciter),
         )
     ),
     QGroup(
-        "Personal", listOf(
-            QAction(Lucide.Bookmark, "Bookmark"), QAction(Lucide.FolderPlus, "Add to collection"),
-            QAction(Lucide.StickyNote, "Add note"), QAction(Lucide.Highlighter, "Highlight"),
-            QAction(Lucide.Check, "Mark memorized"),
+        Res.string.action_personal, listOf(
+            QAction(Lucide.Bookmark, Res.string.action_bookmark), QAction(Lucide.FolderPlus, Res.string.action_add_to_collection),
+            QAction(Lucide.StickyNote, Res.string.action_add_note), QAction(Lucide.Highlighter, Res.string.action_highlight),
+            QAction(Lucide.Check, Res.string.action_mark_memorized),
         )
     ),
     QGroup(
-        "Sharing", listOf(
-            QAction(Lucide.Share2, "Share as text"), QAction(Lucide.Image, "Share as image"), QAction(Lucide.Link, "Share link"),
+        Res.string.action_sharing, listOf(
+            QAction(Lucide.Share2, Res.string.share_as_text),
+            QAction(Lucide.Image, Res.string.action_share_image),
+            QAction(Lucide.Link, Res.string.action_share_link),
         )
     ),
     QGroup(
-        "Navigation", listOf(
-            QAction(Lucide.House, "Go to surah start"), QAction(Lucide.RotateCcw, "Set as last-read"),
+        Res.string.action_navigation, listOf(
+            QAction(Lucide.House, Res.string.action_go_to_surah_start), QAction(Lucide.RotateCcw, Res.string.action_set_last_read),
         )
     ),
     QGroup(
-        "Study", listOf(
-            QAction(Lucide.ArrowLeftRight, "Related ayahs"), QAction(Lucide.Info, "Context of revelation"),
+        Res.string.action_study, listOf(
+            QAction(Lucide.ArrowLeftRight, Res.string.action_related_ayahs), QAction(Lucide.Info, Res.string.action_context_revelation),
         )
     ),
 )
@@ -175,12 +202,12 @@ fun AyahActionSheet(
                 )
                 Text(label, color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(bottom = 6.dp))
                 Row(Modifier.fillMaxWidth()) {
-                    QuickAction(Lucide.Play, "Play", Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Bookmark, "Save", Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Highlighter, "Highlight", Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Pencil, "Note", Modifier.weight(1f)) {}
+                    QuickAction(Lucide.Play, stringResource(Res.string.action_play_recitation), Modifier.weight(1f)) {}
+                    QuickAction(Lucide.Bookmark, stringResource(Res.string.action_bookmark), Modifier.weight(1f)) {}
+                    QuickAction(Lucide.Highlighter, stringResource(Res.string.action_highlight), Modifier.weight(1f)) {}
+                    QuickAction(Lucide.Pencil, stringResource(Res.string.action_add_note), Modifier.weight(1f)) {}
                     // add on tap for onShareAsImage for share
-                    QuickAction(Lucide.Share2, "Share", Modifier.weight(1f)) {
+                    QuickAction(Lucide.Share2, stringResource(Res.string.action_share_image), Modifier.weight(1f)) {
                         onShareAsImage()
                     }
                 }
@@ -192,16 +219,16 @@ fun AyahActionSheet(
                     ) {
                         Icon(Lucide.ChevronUp, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.size(6.dp))
-                        Text("More actions", color = colors.onSurfaceVariant, fontSize = 12.sp)
+                        Text(stringResource(Res.string.more_actions), color = colors.onSurfaceVariant, fontSize = 12.sp)
                     }
                 }
                 Spacer(Modifier.size(8.dp))
                 // grouped actions fill the remaining sheet height and scroll; revealed as the sheet grows
                 Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())) {
                     MORE_GROUPS.forEach { g ->
-                        AppTileGroup(title = g.title, items = g.items.map { a ->
+                        AppTileGroup(title = stringResource(g.titleRes), items = g.items.map { a ->
                             AppTileItem(
-                                title = a.label,
+                                title = stringResource(a.labelRes),
                                 leadingIcon = a.icon,
                                 onClick = {
                                     onDismiss()

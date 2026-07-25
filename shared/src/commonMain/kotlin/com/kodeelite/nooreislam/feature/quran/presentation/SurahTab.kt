@@ -26,6 +26,10 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.Surah
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahActionSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahRow
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.favorites
+import com.kodeelite.nooreislam.resources.surahs
+import org.jetbrains.compose.resources.stringResource
 
 // Surah listing — favorites pinned on top, then the rest; long-press a row for its actions
 @Composable
@@ -44,14 +48,14 @@ fun SurahTab() {
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         if (favs.isNotEmpty()) {
-            item { SectionLabel("Favorites") }
+            item { SectionLabel(stringResource(Res.string.favorites)) }
             items(favs.size) { i ->
                 SurahRow(
                     favs[i],
                     TilePosition.at(i, favs.size),
                     onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].startId)) }
             }
-            item { SectionLabel("Surahs") }
+            item { SectionLabel(stringResource(Res.string.surahs)) }
         }
         items(rest.size) { i ->
             SurahRow(

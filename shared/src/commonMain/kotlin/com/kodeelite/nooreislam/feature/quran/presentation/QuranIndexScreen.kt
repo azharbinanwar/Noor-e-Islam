@@ -50,7 +50,13 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkRo
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightRow
 import com.kodeelite.nooreislam.feature.quran.presentation.components.JuzRow
 import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteRow
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.continue_reading
+import com.kodeelite.nooreislam.resources.menu
+import com.kodeelite.nooreislam.resources.quran
+import com.kodeelite.nooreislam.resources.start_from_beginning
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -65,8 +71,15 @@ fun QuranIndexScreen() {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Quran") },
-                navigationIcon = { IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") } },
+                title = { Text(stringResource(Res.string.quran)) },
+                navigationIcon = {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(
+                            Lucide.Menu,
+                            stringResource(Res.string.menu)
+                        )
+                    }
+                },
             )
         },
     ) { padding ->
@@ -150,8 +163,8 @@ private fun ContinueCard(onClick: () -> Unit) {
         Icon(Lucide.BookOpen, null, tint = colors.primary)
         Spacer(Modifier.size(12.dp))
         Column {
-            Text("Continue reading", color = colors.onSurface, fontWeight = FontWeight.SemiBold)
-            Text("Start from the beginning", color = colors.onSurfaceVariant, fontSize = 12.sp)
+            Text(stringResource(Res.string.continue_reading), color = colors.onSurface, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(Res.string.start_from_beginning), color = colors.onSurfaceVariant, fontSize = 12.sp)
         }
     }
 }

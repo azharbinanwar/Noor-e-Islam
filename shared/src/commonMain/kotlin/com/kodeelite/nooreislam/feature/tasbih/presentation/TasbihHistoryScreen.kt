@@ -46,6 +46,8 @@ import com.kodeelite.nooreislam.resources.tasbih_no_history
 import com.kodeelite.nooreislam.resources.tasbih_no_history_hint
 import com.kodeelite.nooreislam.resources.tasbih_sessions
 import com.kodeelite.nooreislam.resources.tasbih_total_recited
+import com.kodeelite.nooreislam.resources.today
+import com.kodeelite.nooreislam.resources.yesterday
 import org.jetbrains.compose.resources.stringResource
 
 /** One past completion. ponytail: mock for now — replaced by persisted history later. */
@@ -60,7 +62,7 @@ private data class HistoryEntry(val dhikrId: String, val dhikr: String, val arab
 @Composable
 fun TasbihHistoryScreen(dhikrId: String? = null, onBack: () -> Unit = {}) {
     val c = AppTheme.colors
-    val sessions = remember(dhikrId) {
+    val sessions = run {
         val all = mockHistory()
         if (dhikrId == null) all else all.filter { it.dhikrId == dhikrId }
     }
@@ -169,6 +171,7 @@ private fun Stat(value: String, label: String) {
 }
 
 // ponytail: mock data so we can design the screen now; real entries come from persisted history.
+@Composable
 private fun mockHistory(): List<HistoryEntry> {
     val dhikrs = listOf(
         Triple("subhanallah", "SubhanAllah", "سُبْحَانَ ٱللَّٰه"),
@@ -176,7 +179,8 @@ private fun mockHistory(): List<HistoryEntry> {
         Triple("allahuakbar", "Allahu Akbar", "اللّٰه أكبر"),
         Triple("astaghfirullah", "Astaghfirullah", "أَسْتَغْفِرُ ٱللَّٰه"),
     )
-    val labels = listOf("Today", "Yesterday", "12 Jun", "11 Jun", "10 Jun", "9 Jun", "8 Jun", "7 Jun")
+    val yesterday = stringResource(Res.string.yesterday)
+    val labels = listOf(stringResource(Res.string.today), yesterday, "12 Jun", "11 Jun", "10 Jun", "9 Jun", "8 Jun", "7 Jun")
     val counts = listOf(33, 99, 100, 33, 500, 33)
     return List(50) { i ->
         val (id, name, arabic) = dhikrs[i % dhikrs.size]

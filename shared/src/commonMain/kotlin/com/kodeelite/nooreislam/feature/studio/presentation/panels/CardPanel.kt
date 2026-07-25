@@ -11,20 +11,24 @@ import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ArtSlider
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ColorStripPicker
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.opacity
+import com.kodeelite.nooreislam.resources.radius
+import org.jetbrains.compose.resources.stringResource
 
 // Card opacity + corner radius + color (suggested colors from the bg image's palette).
 @Composable
 fun CardPanel(config: StudioConfig, swatches: List<Color>, onChange: (StudioConfig) -> Unit) {
     Column {
         ArtSlider(
-            "Opacity",
+            stringResource(Res.string.opacity),
             config.cardColor.alpha * 100f,
             { onChange(config.copy(cardColor = config.cardColor.copy(alpha = it / 100f))) },
             StudioDefaults.PERCENT_RANGE,
             "${(config.cardColor.alpha * 100).toInt()}%"
         )
         ArtSlider(
-            "Radius",
+            stringResource(Res.string.radius),
             config.cardCornerRadius,
             { onChange(config.copy(cardCornerRadius = it)) },
             StudioDefaults.CARD_RADIUS_RANGE,

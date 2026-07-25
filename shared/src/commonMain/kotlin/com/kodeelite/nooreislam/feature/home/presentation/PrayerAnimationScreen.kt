@@ -41,8 +41,21 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.core.enums.Miqat
+import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.locale.tr
-import com.kodeelite.nooreislam.core.navigation.LocalNavController
+import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.asr_short
+import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.daytime
+import com.kodeelite.nooreislam.resources.dhuhr_short
+import com.kodeelite.nooreislam.resources.fajr_short
+import com.kodeelite.nooreislam.resources.isha_short
+import com.kodeelite.nooreislam.resources.maghrib_short
+import com.kodeelite.nooreislam.resources.night_sky
+import com.kodeelite.nooreislam.resources.sun_journey
+import com.kodeelite.nooreislam.resources.sunrise_short
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -56,7 +69,7 @@ private fun lerp3(a: List<Color>, b: List<Color>, t: Float) = a.indices.map { le
 /** Animated sun journey across the sky — original take, not a copy of any specific design. */
 @Composable
 fun PrayerAnimationScreen() {
-    val nav = LocalNavController.current
+    val nav = LocalAppNavigator.current
     val transition = rememberInfiniteTransition(label = "sky")
     // 0..1 over the whole day loop
     val phase by transition.animateFloat(
@@ -79,8 +92,14 @@ fun PrayerAnimationScreen() {
     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(sky))) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { nav.popBackStack() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), "Back", tint = Color.White) }
-                Text("Sun Journey", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                IconButton(onClick = { nav.back() }) {
+                    Icon(
+                        tr(Lucide.ChevronLeft, Lucide.ChevronRight),
+                        stringResource(Res.string.back),
+                        tint = Color.White
+                    )
+                }
+                Text(stringResource(Res.string.sun_journey), color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
             }
 
             Spacer(Modifier.height(40.dp))
@@ -88,8 +107,12 @@ fun PrayerAnimationScreen() {
 
             Spacer(Modifier.height(28.dp))
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(currentLabel(phase), color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                Text(if (isNight) "Night sky" else "Daytime", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
+                Text(currentMiqat(phase).label(), color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(if (isNight) Res.string.night_sky else Res.string.daytime),
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontSize = 14.sp
+                )
             }
 
             Spacer(Modifier.height(36.dp))
@@ -100,7 +123,7 @@ fun PrayerAnimationScreen() {
                 Miqat.DAILY.forEach { p ->
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Box(Modifier.size(8.dp).background(Color.White.copy(alpha = 0.9f), androidx.compose.foundation.shape.CircleShape))
-                        Text(p.name.take(3), color = Color.White.copy(alpha = 0.75f), fontSize = 10.sp)
+                        Text(p.shortLabel(), color = Color.White.copy(alpha = 0.75f), fontSize = 10.sp)
                     }
                 }
             }
@@ -108,13 +131,25 @@ fun PrayerAnimationScreen() {
     }
 }
 
-private fun currentLabel(phase: Float): String = when {
-    phase < 0.17f -> "Fajr"
-    phase < 0.34f -> "Sunrise"
-    phase < 0.5f -> "Dhuhr"
-    phase < 0.67f -> "Asr"
-    phase < 0.83f -> "Maghrib"
-    else -> "Isha"
+@Composable
+private fun Miqat.shortLabel(): String = stringResource(
+    when (this) {
+        Miqat.Fajr -> Res.string.fajr_short
+        Miqat.Sunrise -> Res.string.sunrise_short
+        Miqat.Dhuhr -> Res.string.dhuhr_short
+        Miqat.Asr -> Res.string.asr_short
+        Miqat.Maghrib -> Res.string.maghrib_short
+        else -> Res.string.isha_short
+    }
+)
+
+private fun currentMiqat(phase: Float): Miqat = when {
+    phase < 0.17f -> Miqat.Fajr
+    phase < 0.34f -> Miqat.Sunrise
+    phase < 0.5f -> Miqat.Dhuhr
+    phase < 0.67f -> Miqat.Asr
+    phase < 0.83f -> Miqat.Maghrib
+    else -> Miqat.Isha
 }
 
 @Composable

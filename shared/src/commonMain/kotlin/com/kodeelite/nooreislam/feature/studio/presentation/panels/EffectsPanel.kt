@@ -10,6 +10,12 @@ import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.presentation.components.ArtSlider
 import com.kodeelite.nooreislam.feature.studio.presentation.components.PatternPicker
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.blur
+import com.kodeelite.nooreislam.resources.overlay
+import com.kodeelite.nooreislam.resources.shadow_spread
+import com.kodeelite.nooreislam.resources.vignette
+import org.jetbrains.compose.resources.stringResource
 
 // Pattern + blur / vignette / shadow-spread / overlay.
 @Composable
@@ -17,23 +23,29 @@ fun EffectsPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
     Column {
         PatternPicker(config.pattern) { onChange(config.copy(pattern = it)) }
         Spacer(Modifier.size(8.dp))
-        ArtSlider("Blur", config.blurRadius, { onChange(config.copy(blurRadius = it)) }, StudioDefaults.BLUR_RANGE, "${config.blurRadius.toInt()}px")
         ArtSlider(
-            "Vignette",
+            stringResource(Res.string.blur),
+            config.blurRadius,
+            { onChange(config.copy(blurRadius = it)) },
+            StudioDefaults.BLUR_RANGE,
+            "${config.blurRadius.toInt()}px"
+        )
+        ArtSlider(
+            stringResource(Res.string.vignette),
             config.vignetteIntensity * 100f,
             { onChange(config.copy(vignetteIntensity = it / 100f)) },
             StudioDefaults.PERCENT_RANGE,
             "${(config.vignetteIntensity * 100).toInt()}%"
         )
         ArtSlider(
-            "Shadow Spread",
+            stringResource(Res.string.shadow_spread),
             config.vignetteSpread * 100f,
             { onChange(config.copy(vignetteSpread = it / 100f)) },
             StudioDefaults.PERCENT_RANGE,
             "${(config.vignetteSpread * 100).toInt()}%"
         )
         ArtSlider(
-            "Overlay",
+            stringResource(Res.string.overlay),
             config.overlayAlpha * 100f,
             { onChange(config.copy(overlayAlpha = it / 100f)) },
             StudioDefaults.PERCENT_RANGE,

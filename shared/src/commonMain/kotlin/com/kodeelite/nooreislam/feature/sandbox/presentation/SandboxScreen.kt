@@ -47,6 +47,7 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.MiqatTimeStatus
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
+import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.enums.onColor
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.stringResource

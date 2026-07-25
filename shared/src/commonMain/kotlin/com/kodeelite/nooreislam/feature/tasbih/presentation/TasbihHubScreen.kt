@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,7 @@ import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.heart_filled
 import com.kodeelite.nooreislam.resources.heart_outline
+import com.kodeelite.nooreislam.resources.count_of_total
 import com.kodeelite.nooreislam.resources.tasbih
 import com.kodeelite.nooreislam.resources.tasbih_add_more_azkar
 import com.kodeelite.nooreislam.resources.tasbih_add_to_favorites
@@ -101,15 +103,19 @@ import com.kodeelite.nooreislam.resources.tasbih_view_set
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.StringResource
 
 // ───────────────────────── mock catalog (ponytail: replace with DB later) ─────────────────────────
 
-enum class ZikrCategory(val label: String) {
-    Tasbihat("Tasbihat"),
-    Durood("Durood & Salawat"),
-    Names("Names of Allah"),
-    Quranic("Qur'anic"),
+enum class ZikrCategory(val labelRes: StringResource) {
+    Tasbihat(Res.string.tasbih_cat_tasbihat),
+    Durood(Res.string.tasbih_cat_durood),
+    Names(Res.string.tasbih_cat_names),
+    Quranic(Res.string.tasbih_cat_quranic),
 }
+
+val ZikrCategory.label: String
+    @Composable get() = stringResource(this.labelRes)
 
 /** A single dhikr. [defaultCount] 0 = unlimited. */
 data class Zikr(
@@ -247,7 +253,7 @@ fun TasbihHubScreen() {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 item {
-                    ActiveSessionCard(name = "SubhanAllah", count = 18, target = 33) { start(listOf(zikrById("subhanallah"))) }
+                    ActiveSessionCard(name = zikrById("subhanallah").title, count = 18, target = 33) { start(listOf(zikrById("subhanallah"))) }
                 }
                 item { Spacer(Modifier.height(8.dp)) }
 
@@ -349,7 +355,7 @@ fun TasbihHubScreen() {
                     val rows = CATALOG.filter { it.category == cat }
                     item {
                         AppTileGroup(
-                            title = categoryLabel(cat),
+                            title = cat.label,
                             items = rows.map { z ->
                                 AppTileItem(
                                     title = z.arabic,
@@ -443,7 +449,7 @@ private fun ActiveSessionCard(name: String, count: Int, target: Int, onResume: (
             Text(stringResource(Res.string.tasbih_resume), fontSize = 12.sp, color = c.onPrimary.copy(alpha = 0.8f))
             Spacer(Modifier.height(2.dp))
             Text(name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = c.onPrimary)
-            Text("$count / $target", fontSize = 13.sp, color = c.onPrimary.copy(alpha = 0.9f))
+            Text(stringResource(Res.string.count_of_total, count, target), fontSize = 13.sp, color = c.onPrimary.copy(alpha = 0.9f))
         }
         Box(Modifier.size(40.dp).clip(CircleShape).background(c.onPrimary.copy(alpha = 0.18f)), contentAlignment = Alignment.Center) {
             Icon(Lucide.Play, stringResource(Res.string.tasbih_resume), tint = c.onPrimary, modifier = Modifier.size(20.dp))
@@ -586,7 +592,7 @@ internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Un
         Spacer(Modifier.height(18.dp))
         Text(stringResource(Res.string.tasbih_custom), fontSize = 13.sp, color = c.onSurfaceVariant)
         Spacer(Modifier.height(8.dp))
-        var custom by remember { mutableStateOf(if (current > 0) current else 33) }
+        var custom by remember { mutableIntStateOf(if (current > 0) current else 33) }
         Text(
             "$custom",
             style = MaterialTheme.typography.headlineMedium,
@@ -610,17 +616,6 @@ internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Un
         Spacer(Modifier.height(4.dp))
     }
 }
-
-// Localized category title — rendered here only; ZikrCategory's `label` stays as a stable id.
-@Composable
-private fun categoryLabel(category: ZikrCategory): String = stringResource(
-    when (category) {
-        ZikrCategory.Tasbihat -> Res.string.tasbih_cat_tasbihat
-        ZikrCategory.Durood -> Res.string.tasbih_cat_durood
-        ZikrCategory.Names -> Res.string.tasbih_cat_names
-        ZikrCategory.Quranic -> Res.string.tasbih_cat_quranic
-    },
-)
 
 @Composable
 private fun AdjChip(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {

@@ -8,13 +8,22 @@ import com.composables.icons.lucide.CircleDot
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.status_now
+import com.kodeelite.nooreislam.resources.status_soon
+import com.kodeelite.nooreislam.resources.status_upcoming
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 /** A prayer's timing state relative to now. Icon/label here; colors in AppColors. */
-enum class MiqatTimeStatus(val label: String, val icon: ImageVector) {
-    Current("Now", Lucide.CircleDot),
-    Soon("Soon", Lucide.Clock),
-    Upcoming("Upcoming", Lucide.CalendarClock),
+enum class MiqatTimeStatus(val labelRes: StringResource, val icon: ImageVector) {
+    Current(Res.string.status_now, Lucide.CircleDot),
+    Soon(Res.string.status_soon, Lucide.Clock),
+    Upcoming(Res.string.status_upcoming, Lucide.CalendarClock),
 }
+
+val MiqatTimeStatus.label: String
+    @Composable get() = stringResource(this.labelRes)
 
 val MiqatTimeStatus.color: Color
     @Composable get() = AppTheme.colors.let {

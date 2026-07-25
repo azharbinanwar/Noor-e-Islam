@@ -34,6 +34,7 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.feature.tracker.store.PrayerTrackingStore
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.best_days_streak_and_on_time_percentage
 import com.kodeelite.nooreislam.resources.day_streak
 import com.kodeelite.nooreislam.resources.this_week
 import com.kodeelite.nooreislam.resources.week_days
@@ -72,7 +73,11 @@ fun StreakCard() {
                     Text(stringResource(Res.string.day_streak), color = AppTheme.colors.onSurfaceVariant, fontSize = 13.sp)
                 }
                 Spacer(Modifier.height(4.dp))
-                Text("Best $best days  ·  $onTimePct% on time", color = AppTheme.colors.onSurfaceVariant, fontSize = 12.sp)
+                Text(
+                    stringResource(Res.string.best_days_streak_and_on_time_percentage, best, onTimePct),
+                    color = AppTheme.colors.onSurfaceVariant,
+                    fontSize = 12.sp
+                )
             }
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

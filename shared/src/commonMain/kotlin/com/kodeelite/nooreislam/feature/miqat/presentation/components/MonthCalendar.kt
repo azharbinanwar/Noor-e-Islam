@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
+import com.kodeelite.nooreislam.core.locale.tr
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.resources.Res
@@ -65,7 +66,7 @@ fun MonthCalendar(
     Column(modifier.fillMaxWidth()) {
         // month header
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onPrevMonth) { Icon(Lucide.ChevronLeft, null, tint = c.onSurface) }
+            IconButton(onClick = onPrevMonth) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), null, tint = c.onSurface) }
             Text(
                 "${monthName(month)} $year",
                 modifier = Modifier.weight(1f),
@@ -74,7 +75,7 @@ fun MonthCalendar(
                 fontWeight = FontWeight.Bold,
                 color = c.onSurface,
             )
-            IconButton(onClick = onNextMonth) { Icon(Lucide.ChevronRight, null, tint = c.onSurface) }
+            IconButton(onClick = onNextMonth) { Icon(tr(Lucide.ChevronRight, Lucide.ChevronLeft), null, tint = c.onSurface) }
         }
 
         // weekday labels

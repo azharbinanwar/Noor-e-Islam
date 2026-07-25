@@ -53,7 +53,19 @@ import com.kodeelite.nooreislam.feature.tasbih.presentation.CountSheet
 import com.kodeelite.nooreislam.feature.tasbih.presentation.CountTag
 import com.kodeelite.nooreislam.feature.tasbih.presentation.SelectCheck
 
-// ponytail: strings hardcoded until the design is locked; in-memory store until the DB lands.
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.collection_name
+import com.kodeelite.nooreislam.resources.create_collection_n
+import com.kodeelite.nooreislam.resources.new_collection
+import com.kodeelite.nooreislam.resources.tab_all
+import com.kodeelite.nooreislam.resources.tab_dua
+import com.kodeelite.nooreislam.resources.tab_tasbih
+import com.kodeelite.nooreislam.resources.tab_zikr
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+
+// ponytail: localized strings applied.
 
 /** Collections the user builds. Untyped (can mix any azkar) — they live in "All" + "Your collections". */
 object UserCollections {
@@ -67,7 +79,15 @@ object UserCollections {
 }
 
 private enum class PKind { Dua, Zikr, Tasbih }
-private enum class PTab(val label: String) { All("All"), Dua("Du'a"), Zikr("Zikr"), Tasbih("Tasbih") }
+private enum class PTab(val labelRes: StringResource) {
+    All(Res.string.tab_all),
+    Dua(Res.string.tab_dua),
+    Zikr(Res.string.tab_zikr),
+    Tasbih(Res.string.tab_tasbih)
+}
+
+private val PTab.label: String
+    @Composable get() = stringResource(labelRes)
 
 // behavior falls out of the section: everyday = read du'a, adhkar = zikr, glorifications = tasbih
 private fun kindOf(section: DuaSection): PKind = when (section) {
@@ -109,14 +129,21 @@ fun CreateCollectionScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("New collection") },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), "Back") } },
+                title = { Text(stringResource(Res.string.new_collection)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            tr(Lucide.ChevronLeft, Lucide.ChevronRight),
+                            stringResource(Res.string.back)
+                        )
+                    }
+                },
             )
         },
         bottomBar = {
             Box(Modifier.fillMaxWidth().padding(16.dp)) {
                 AppButton(
-                    text = "Create collection (${order.size})",
+                    text = stringResource(Res.string.create_collection_n, order.size),
                     onClick = {
                         val items = order.map { id -> POOL.first { it.first.id == id }.first.copy(repeat = counts[id] ?: 1) }
                         UserCollections.add(name.trim(), items)
@@ -130,7 +157,7 @@ fun CreateCollectionScreen(onBack: () -> Unit) {
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
             Box(Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp)) {
-                AppTextField(value = name, onValueChange = { name = it }, placeholder = "Collection name")
+                AppTextField(value = name, onValueChange = { name = it }, placeholder = stringResource(Res.string.collection_name))
             }
             Spacer(Modifier.height(12.dp))
             Row(
