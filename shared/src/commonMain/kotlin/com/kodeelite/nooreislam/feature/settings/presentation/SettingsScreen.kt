@@ -66,12 +66,12 @@ import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
-import com.kodeelite.nooreislam.resources.prayer_card
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
 import com.kodeelite.nooreislam.resources.widgets
+import com.kodeelite.nooreislam.resources.widgets_summary
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -126,7 +126,7 @@ fun SettingsScreen() {
                     AppTileItem(
                         leadingIcon = Lucide.LayoutGrid,
                         title = stringResource(Res.string.widgets),
-                        subtitle = stringResource(Res.string.prayer_card),
+                        subtitle = stringResource(Res.string.widgets_summary),
                         onClick = { nav.navigate(AppRoute.Widgets) }),
                     AppTileItem(
                         leadingIcon = Lucide.Calendar,

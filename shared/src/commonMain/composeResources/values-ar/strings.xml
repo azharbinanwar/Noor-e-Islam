@@ -457,6 +457,7 @@
     <string name="notifications_nafil">النوافل</string>
     <string name="widgets">الأدوات</string>
     <string name="prayer_card">بطاقة الصلاة</string>
+    <string name="widgets_summary">مواقيت الصلاة على شاشتك الرئيسية</string>
     <string name="background_opacity">شفافية الخلفية</string>
     <string name="add_to_home_screen">أضف إلى الشاشة الرئيسية</string>
     <string name="card_color">لون البطاقة</string>
