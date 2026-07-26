@@ -95,7 +95,7 @@ object QuranRepository {
                     nameEnglish = st.getText(3),
                     ayahCount = st.getLong(4).toInt(),
                     rukuCount = st.getLong(5).toInt(),
-                    revelation = if (st.getText(6) == "Medinan") Revelation.Medinan else Revelation.Meccan,
+                    revelation = if (st.getText(6) == "Medinan") Revelation.Madinah else Revelation.Makkah,
                     revelationOrder = st.getLong(7).toInt(),
                     startId = st.getLong(8).toInt(),
                 )

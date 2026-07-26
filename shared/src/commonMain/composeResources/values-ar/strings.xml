@@ -471,8 +471,8 @@
     <string name="widget_customize">تخصيص</string>
 
     <!-- Quran -->
-    <string name="revelation_meccan">مكية</string>
-    <string name="revelation_medinan">مدنية</string>
+    <string name="revelation_makkah">مكية</string>
+    <string name="revelation_madinah">مدنية</string>
     <string name="sajda_recommended">سجدة مستحبة</string>
     <string name="sajda_obligatory">سجدة واجبة</string>
     <string name="quran_tab_surah">السور</string>

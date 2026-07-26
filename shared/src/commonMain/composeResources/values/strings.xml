@@ -472,8 +472,8 @@
     <string name="widget_customize">Customize</string>
 
     <!-- Quran -->
-    <string name="revelation_meccan">Meccan</string>
-    <string name="revelation_medinan">Medinan</string>
+    <string name="revelation_makkah">Makkah</string>
+    <string name="revelation_madinah">Madinah</string>
     <string name="sajda_recommended">Recommended prostration</string>
     <string name="sajda_obligatory">Obligatory prostration</string>
     <string name="quran_tab_surah">Surah</string>
