@@ -25,7 +25,7 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.Surah
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahActionSheet
-import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahRow
+import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahItem
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.favorites
 import com.kodeelite.nooreislam.resources.surahs
@@ -50,7 +50,7 @@ fun SurahTab() {
         if (favs.isNotEmpty()) {
             item { SectionLabel(stringResource(Res.string.favorites)) }
             items(favs.size) { i ->
-                SurahRow(
+                SurahItem(
                     favs[i],
                     TilePosition.at(i, favs.size),
                     onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].startId)) }
@@ -58,7 +58,7 @@ fun SurahTab() {
             item { SectionLabel(stringResource(Res.string.surahs)) }
         }
         items(rest.size) { i ->
-            SurahRow(
+            SurahItem(
                 rest[i],
                 TilePosition.at(i, rest.size),
                 onLongClick = { actionSurah = rest[i] }) { nav.navigate(AppRoute.QuranReader(rest[i].startId)) }

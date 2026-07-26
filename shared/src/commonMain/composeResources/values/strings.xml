@@ -474,6 +474,8 @@
     <!-- Quran -->
     <string name="revelation_makkah">Makkah</string>
     <string name="revelation_madinah">Madinah</string>
+    <string name="surah_ruku_count">%1$s ruku</string>
+    <string name="surah_ayah_count">%1$s ayahs</string>
     <string name="sajda_recommended">Recommended prostration</string>
     <string name="sajda_obligatory">Obligatory prostration</string>
     <string name="quran_tab_surah">Surah</string>
@@ -614,4 +616,120 @@
     <string name="version_summary">Version %1$s</string>
     <string name="dimension_format">%1$d × %2$d</string>
     <string name="percent_format">%1$d%%</string>
+    <string-array name="surah_meanings">
+        <item>The Opening</item>
+        <item>The Cow</item>
+        <item>The Family of Imraan</item>
+        <item>The Women</item>
+        <item>The Table</item>
+        <item>The Cattle</item>
+        <item>The Heights</item>
+        <item>The Spoils of War</item>
+        <item>The Repentance</item>
+        <item>Jonas</item>
+        <item>Hud</item>
+        <item>Joseph</item>
+        <item>The Thunder</item>
+        <item>Abraham</item>
+        <item>The Rock</item>
+        <item>The Bee</item>
+        <item>The Night Journey</item>
+        <item>The Cave</item>
+        <item>Mary</item>
+        <item>Taa-Haa</item>
+        <item>The Prophets</item>
+        <item>The Pilgrimage</item>
+        <item>The Believers</item>
+        <item>The Light</item>
+        <item>The Criterion</item>
+        <item>The Poets</item>
+        <item>The Ant</item>
+        <item>The Stories</item>
+        <item>The Spider</item>
+        <item>The Romans</item>
+        <item>Luqman</item>
+        <item>The Prostration</item>
+        <item>The Clans</item>
+        <item>Sheba</item>
+        <item>The Originator</item>
+        <item>Yaseen</item>
+        <item>Those drawn up in Ranks</item>
+        <item>The letter Saad</item>
+        <item>The Groups</item>
+        <item>The Forgiver</item>
+        <item>Explained in detail</item>
+        <item>Consultation</item>
+        <item>Ornaments of gold</item>
+        <item>The Smoke</item>
+        <item>Crouching</item>
+        <item>The Dunes</item>
+        <item>Muhammad</item>
+        <item>The Victory</item>
+        <item>The Inner Apartments</item>
+        <item>The letter Qaaf</item>
+        <item>The Winnowing Winds</item>
+        <item>The Mount</item>
+        <item>The Star</item>
+        <item>The Moon</item>
+        <item>The Beneficent</item>
+        <item>The Inevitable</item>
+        <item>The Iron</item>
+        <item>The Pleading Woman</item>
+        <item>The Exile</item>
+        <item>She that is to be examined</item>
+        <item>The Ranks</item>
+        <item>Friday</item>
+        <item>The Hypocrites</item>
+        <item>Mutual Disillusion</item>
+        <item>Divorce</item>
+        <item>The Prohibition</item>
+        <item>The Sovereignty</item>
+        <item>The Pen</item>
+        <item>The Reality</item>
+        <item>The Ascending Stairways</item>
+        <item>Noah</item>
+        <item>The Jinn</item>
+        <item>The Enshrouded One</item>
+        <item>The Cloaked One</item>
+        <item>The Resurrection</item>
+        <item>Man</item>
+        <item>The Emissaries</item>
+        <item>The Announcement</item>
+        <item>Those who drag forth</item>
+        <item>He frowned</item>
+        <item>The Overthrowing</item>
+        <item>The Cleaving</item>
+        <item>Defrauding</item>
+        <item>The Splitting Open</item>
+        <item>The Constellations</item>
+        <item>The Morning Star</item>
+        <item>The Most High</item>
+        <item>The Overwhelming</item>
+        <item>The Dawn</item>
+        <item>The City</item>
+        <item>The Sun</item>
+        <item>The Night</item>
+        <item>The Morning Hours</item>
+        <item>The Consolation</item>
+        <item>The Fig</item>
+        <item>The Clot</item>
+        <item>The Power, Fate</item>
+        <item>The Evidence</item>
+        <item>The Earthquake</item>
+        <item>The Chargers</item>
+        <item>The Calamity</item>
+        <item>Competition</item>
+        <item>The Declining Day, Epoch</item>
+        <item>The Traducer</item>
+        <item>The Elephant</item>
+        <item>Quraysh</item>
+        <item>Almsgiving</item>
+        <item>Abundance</item>
+        <item>The Disbelievers</item>
+        <item>Divine Support</item>
+        <item>The Palm Fibre</item>
+        <item>Sincerity</item>
+        <item>The Dawn</item>
+        <item>Mankind</item>
+    </string-array>
 </resources>

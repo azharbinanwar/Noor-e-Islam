@@ -33,8 +33,8 @@ import com.kodeelite.nooreislam.feature.quran.data.Juz
 import com.kodeelite.nooreislam.feature.quran.data.Surah
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.expand
-import com.kodeelite.nooreislam.resources.juz_start_summary
 import com.kodeelite.nooreislam.resources.juz_number
+import com.kodeelite.nooreislam.resources.juz_start_summary
 import com.kodeelite.nooreislam.resources.quran_juz
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
@@ -55,7 +55,8 @@ fun JuzRow(juz: Juz, onOpen: () -> Unit, onOpenSurah: (Surah) -> Unit) {
             onClick = onOpen,
         )
         if (expanded) juz.surahs.forEachIndexed { i, s ->
-            SurahRow(s, if (i == juz.surahs.lastIndex) TilePosition.Last else TilePosition.Middle) { onOpenSurah(s) }
+            // +1: the juz tile above is the group's first item, so the surahs are its middle/last members
+            SurahItem(s, TilePosition.at(i + 1, juz.surahs.size + 1)) { onOpenSurah(s) }
         }
     }
 }

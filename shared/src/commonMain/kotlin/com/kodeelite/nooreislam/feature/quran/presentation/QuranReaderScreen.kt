@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -42,8 +41,8 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.locale.tr
+import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
@@ -154,7 +153,6 @@ fun QuranReaderScreen(startId: Int = 1) {
                     }
                 },
             )
-            HorizontalDivider(color = colors.outlineVariant)
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 val tapAway = if (selected != null && !expanded) Modifier.pointerInput(Unit) { detectTapGestures { selected = null } } else Modifier
                 LazyColumn(state = listState, modifier = Modifier.fillMaxSize().then(tapAway)) {
