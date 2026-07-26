@@ -74,7 +74,7 @@ enum class TilePosition {
 }
 
 /** A small icon action; tiles and group headers render these with one consistent size/tint/spacing. */
-class AppAction(val icon: ImageVector, val onClick: () -> Unit)
+class AppIconAction(val icon: ImageVector, val onClick: () -> Unit)
 
 /** Data for one tile in an [AppTileGroup]. */
 class AppTileItem(
@@ -85,7 +85,7 @@ class AppTileItem(
     val leading: (@Composable () -> Unit)? = null,
     val trailing: (@Composable () -> Unit)? = null,
     val badge: (@Composable () -> Unit)? = null,
-    val actions: List<AppAction> = emptyList(),
+    val actions: List<AppIconAction> = emptyList(),
     val selected: Boolean = false,
     val onClick: (() -> Unit)? = null,
     val onLongClick: (() -> Unit)? = null,
@@ -105,7 +105,7 @@ fun AppTile(
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     badge: (@Composable () -> Unit)? = null,
-    actions: List<AppAction> = emptyList(),
+    actions: List<AppIconAction> = emptyList(),
     selected: Boolean = false,
     position: TilePosition = TilePosition.Single,
     onClick: (() -> Unit)? = null,
@@ -127,7 +127,7 @@ fun AppTileGroup(
     items: List<AppTileItem>,
     modifier: Modifier = Modifier,
     title: String? = null,
-    actions: List<AppAction> = emptyList(),
+    actions: List<AppIconAction> = emptyList(),
 ) {
     GroupShell(modifier, title, actions) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -146,17 +146,17 @@ fun AppTileGroupReorderable(
     onReorder: (from: Int, to: Int) -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
-    actions: List<AppAction> = emptyList(),
+    actions: List<AppIconAction> = emptyList(),
 ) {
     GroupShell(modifier, title, actions) { ReorderableTiles(items, onReorder) }
 }
 
 /** Shared chrome (outer padding + optional section title) for both group variants. */
 @Composable
-private fun GroupShell(
+internal fun GroupShell(
     modifier: Modifier,
     title: String?,
-    actions: List<AppAction> = emptyList(),
+    actions: List<AppIconAction> = emptyList(),
     bottomSpace: Dp = 16.dp,
     content: @Composable () -> Unit
 ) {
@@ -181,9 +181,9 @@ private fun GroupShell(
     }
 }
 
-/** Shared renderer for [AppAction]s — one look everywhere: 18dp icon, muted tint, 10dp gaps. */
+/** Shared renderer for [AppIconAction]s — one look everywhere: 18dp icon, muted tint, 10dp gaps. */
 @Composable
-private fun ActionIcons(actions: List<AppAction>) {
+private fun ActionIcons(actions: List<AppIconAction>) {
     val c = AppTheme.colors
     actions.forEachIndexed { i, a ->
         if (i > 0) Spacer(Modifier.width(2.dp))
@@ -324,7 +324,7 @@ private fun TileRow(
     leading: (@Composable () -> Unit)?,
     trailing: (@Composable () -> Unit)?,
     badge: (@Composable () -> Unit)?,
-    actions: List<AppAction>,
+    actions: List<AppIconAction>,
     selected: Boolean,
     onClick: (() -> Unit)?,
     onLongClick: (() -> Unit)?,

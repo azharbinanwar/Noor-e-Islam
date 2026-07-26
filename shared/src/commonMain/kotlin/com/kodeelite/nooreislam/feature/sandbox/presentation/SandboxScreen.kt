@@ -26,11 +26,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.BookOpen
+import com.composables.icons.lucide.Bookmark
+import com.composables.icons.lucide.Download
+import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.Highlighter
+import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Play
+import com.composables.icons.lucide.Share2
+import com.composables.icons.lucide.Star
 import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.config.theme.ThemeMode
 import com.kodeelite.nooreislam.config.theme.darkAppColors
 import com.kodeelite.nooreislam.config.theme.lightAppColors
+import com.kodeelite.nooreislam.core.components.ActionPosition
+import com.kodeelite.nooreislam.core.components.ActionWidth
+import com.kodeelite.nooreislam.core.components.AppAction
+import com.kodeelite.nooreislam.core.components.AppActionGroup
+import com.kodeelite.nooreislam.core.components.AppActionItem
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonSize
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
@@ -89,6 +104,8 @@ private fun Panel(title: String, mode: ThemeMode) {
             ConfigEnumsShowcase()
             SectionTitle("Tiles")
             TileShowcase()
+            SectionTitle("Quick Actions (horizontal)")
+            ActionShowcase()
             SectionTitle("Buttons")
             ButtonShowcase()
             SectionTitle("StateView")
@@ -256,6 +273,60 @@ private fun TileShowcase() {
         ),
     )
     AppTile(title = "About Miqat", subtitle = "Standalone tile", onClick = {})
+}
+
+/** Every AppActionGroup usage: the three width modes, states, two-up, and a standalone Single cell. */
+@Composable
+private fun ActionShowcase() {
+    // Fill — cells split the full width equally (best for a small fixed set)
+    AppActionGroup(
+        title = "Fill (2-4, full width)",
+        width = ActionWidth.Fill,
+        items = listOf(
+            AppActionItem("Play", Lucide.Play) {},
+            AppActionItem("Bookmark", Lucide.Bookmark) {},
+            AppActionItem("Share", Lucide.Share2) {},
+        ),
+    )
+    // Wrap — cells size to content, start-aligned
+    AppActionGroup(
+        title = "Wrap (content width)",
+        width = ActionWidth.Wrap,
+        items = listOf(
+            AppActionItem("Play", Lucide.Play) {},
+            AppActionItem("Bookmark", Lucide.Bookmark) {},
+            AppActionItem("Share", Lucide.Share2) {},
+        ),
+    )
+    // Scroll — many items, row scrolls horizontally on overflow
+    AppActionGroup(
+        title = "Scroll (overflow)",
+        width = ActionWidth.Scroll,
+        items = listOf(
+            AppActionItem("Play", Lucide.Play) {},
+            AppActionItem("Bookmark", Lucide.Bookmark) {},
+            AppActionItem("Tafsir", Lucide.BookOpen) {},
+            AppActionItem("Highlight", Lucide.Highlighter) {},
+            AppActionItem("Like", Lucide.Heart) {},
+            AppActionItem("Save", Lucide.Download) {},
+            AppActionItem("Info", Lucide.Info) {},
+            AppActionItem("Share", Lucide.Share2) {},
+        ),
+    )
+    // states — a selected cell and a badge dot (Fill)
+    AppActionGroup(
+        title = "Selected + badge",
+        width = ActionWidth.Fill,
+        items = listOf(
+            AppActionItem("Bookmark", Lucide.Bookmark, selected = true) {},
+            AppActionItem("Like", Lucide.Heart, badge = {
+                Box(Modifier.size(8.dp).background(MaterialTheme.colorScheme.error, CircleShape))
+            }) {},
+            AppActionItem("Info", Lucide.Info) {},
+        ),
+    )
+    // standalone Single cell (all-round corners)
+    AppAction("Single", Lucide.Star, modifier = Modifier.fillMaxWidth(0.3f), position = ActionPosition.Single) {}
 }
 
 @Composable

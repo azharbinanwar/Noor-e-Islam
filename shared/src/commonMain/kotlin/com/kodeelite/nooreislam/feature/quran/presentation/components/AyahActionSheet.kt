@@ -62,6 +62,9 @@ import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Share2
 import com.composables.icons.lucide.StickyNote
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.ActionWidth
+import com.kodeelite.nooreislam.core.components.AppActionGroup
+import com.kodeelite.nooreislam.core.components.AppActionItem
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
@@ -84,10 +87,12 @@ import com.kodeelite.nooreislam.resources.action_repeat_loop
 import com.kodeelite.nooreislam.resources.action_set_last_read
 import com.kodeelite.nooreislam.resources.action_share_image
 import com.kodeelite.nooreislam.resources.action_share_link
-import com.kodeelite.nooreislam.resources.share_as_text
 import com.kodeelite.nooreislam.resources.action_sharing
 import com.kodeelite.nooreislam.resources.action_study
 import com.kodeelite.nooreislam.resources.more_actions
+import com.kodeelite.nooreislam.resources.play
+import com.kodeelite.nooreislam.resources.share
+import com.kodeelite.nooreislam.resources.share_as_text
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -201,16 +206,16 @@ fun AyahActionSheet(
                         },
                 )
                 Text(label, color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(bottom = 6.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    QuickAction(Lucide.Play, stringResource(Res.string.action_play_recitation), Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Bookmark, stringResource(Res.string.action_bookmark), Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Highlighter, stringResource(Res.string.action_highlight), Modifier.weight(1f)) {}
-                    QuickAction(Lucide.Pencil, stringResource(Res.string.action_add_note), Modifier.weight(1f)) {}
-                    // add on tap for onShareAsImage for share
-                    QuickAction(Lucide.Share2, stringResource(Res.string.action_share_image), Modifier.weight(1f)) {
-                        onShareAsImage()
-                    }
-                }
+                AppActionGroup(
+                    width = ActionWidth.Fill,
+                    items = listOf(
+                        AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
+                        AppActionItem(stringResource(Res.string.action_bookmark), Lucide.Bookmark, iconColor = colors.primary) {},
+                        AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {},
+                        AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) {},
+                        AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
+                    ),
+                )
                 // "More" affordance at the peek: tap to open (drag still works too); hidden once expanded
                 if (!atExpanded) {
                     Row(
@@ -240,19 +245,5 @@ fun AyahActionSheet(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun QuickAction(icon: ImageVector, label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    val colors = AppTheme.colors
-    // equal width via weight from the caller; clip before clickable so the ripple is a bounded rounded button
-    Column(
-        modifier.clip(RoundedCornerShape(14.dp)).clickable(onClick = onClick).padding(vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(icon, label, tint = colors.primary, modifier = Modifier.size(22.dp))
-        Spacer(Modifier.size(4.dp))
-        Text(label, color = colors.onSurfaceVariant, fontSize = 10.sp, maxLines = 1, softWrap = false)
     }
 }

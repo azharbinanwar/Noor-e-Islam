@@ -55,7 +55,7 @@ import com.composables.icons.lucide.Star
 import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.core.components.AppAction
+import com.kodeelite.nooreislam.core.components.AppIconAction
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
@@ -72,8 +72,6 @@ import com.kodeelite.nooreislam.feature.duas.presentation.duasOf
 import com.kodeelite.nooreislam.feature.duas.presentation.queueForBeads
 import com.kodeelite.nooreislam.feature.tasbih.presentation.CountTag
 import com.kodeelite.nooreislam.feature.tasbih.presentation.HeartIcon
-import kotlinx.coroutines.launch
-
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.after_prayer_progress
 import com.kodeelite.nooreislam.resources.azkar_and_dua
@@ -90,6 +88,7 @@ import com.kodeelite.nooreislam.resources.tab_tasbih
 import com.kodeelite.nooreislam.resources.tab_zikr
 import com.kodeelite.nooreislam.resources.today_caps
 import com.kodeelite.nooreislam.resources.your_collections
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -190,8 +189,8 @@ fun AzkarScreen() {
                         items = listOf(
                             AppTileItem(
                                 title = stringResource(Res.string.favorites), actions = listOf(
-                                    AppAction(TasbihIcon) { queueForBeads(favDuas); nav.navigate(AppRoute.TasbihCounter) },
-                                    AppAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { showFavs = true },
+                                    AppIconAction(TasbihIcon) { queueForBeads(favDuas); nav.navigate(AppRoute.TasbihCounter) },
+                                    AppIconAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { showFavs = true },
                                 )
                             ),
                         ) + favDuas.take(PEEK).map { d ->
@@ -225,8 +224,8 @@ fun AzkarScreen() {
                         items = listOf(
                             AppTileItem(
                                 title = nameOf(section), actions = listOf(
-                                    AppAction(TasbihIcon) { queueForBeads(all); nav.navigate(AppRoute.TasbihCounter) },
-                                    AppAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { openSection = section },
+                                    AppIconAction(TasbihIcon) { queueForBeads(all); nav.navigate(AppRoute.TasbihCounter) },
+                                    AppIconAction(tr(Lucide.ChevronRight, Lucide.ChevronLeft)) { openSection = section },
                                 )
                             ),
                         ) + all.take(PEEK).map { d ->

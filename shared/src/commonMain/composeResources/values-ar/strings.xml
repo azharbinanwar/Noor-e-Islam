@@ -590,6 +590,7 @@
     <string name="reset_to_default">إعادة للوضع الافتراضي</string>
     <string name="save_as_creation">حفظ كعمل جديد</string>
     <string name="share">مشاركة</string>
+    <string name="play">تشغيل</string>
     <string name="include_ayah_text">تضمين نص الآية</string>
     <string name="add_a_message">أضف رسالة</string>
     <string name="shared_with">تمت المشاركة عبر نور الإسلام</string>
