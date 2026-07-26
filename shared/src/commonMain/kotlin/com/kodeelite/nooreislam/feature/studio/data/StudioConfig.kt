@@ -36,33 +36,33 @@ data class StudioConfig(
     // Typography
     val fontFamily: QuranFont = QuranFont.DEFAULT,
     val fontSize: Float = StudioDefaults.FONT_SIZE,
-    @Contextual val textColor: Color = Color.White,
-    @Contextual val textAlign: TextAlign = TextAlign.Center,
+    @Contextual val textColor: Color = StudioDefaults.TEXT_COLOR,
+    @Contextual val textAlign: TextAlign = StudioDefaults.TEXT_ALIGN,
     val lineHeight: Float = StudioDefaults.LINE_HEIGHT,
     val textOutlineSize: Float = StudioDefaults.TEXT_OUTLINE,
     val textShadowAlpha: Float = StudioDefaults.TEXT_SHADOW_ALPHA,
-    val autoContrast: Boolean = false,
+    val autoContrast: Boolean = StudioDefaults.AUTO_CONTRAST,
 
     // Content Customization
     val emphasizedWords: Set<Int> = emptySet(),
     @Contextual val emphasisColor: Color = StudioDefaults.EMPHASIS_COLOR,
 
     // Header & Content
-    val showBismillah: Boolean = false,
-    val showTranslation: Boolean = false,
-    val translationText: String = "This is a placeholder for the Ayah translation...",
+    val showBismillah: Boolean = StudioDefaults.SHOW_BISMILLAH,
+    val showTranslation: Boolean = StudioDefaults.SHOW_TRANSLATION,
+    val translationText: String = StudioDefaults.TRANSLATION_TEXT,
     val translationSize: Float = StudioDefaults.TRANSLATION_SIZE,
-    val surahPlacement: SurahPlacement = SurahPlacement.Bottom,   // surah name + ref block: top, bottom, or off
+    val surahPlacement: SurahPlacement = SurahPlacement.DEFAULT,   // surah name + ref block: top, bottom, or off
 
     // Background
     @Contextual val bgColor: Color = StudioDefaults.BG_COLOR,
     val bgImageUrl: String? = ImageStore.default.url,
-    val bgImageScale: Float = 1f,      // pinch-zoom the photo (manual crop)
-    val bgImageOffsetX: Float = 0f,    // pan the photo within the frame
-    val bgImageOffsetY: Float = 0f,
+    val bgImageScale: Float = StudioDefaults.IMAGE_SCALE,   // pinch-zoom the photo (manual crop)
+    val bgImageOffsetX: Float = StudioDefaults.OFFSET,      // pan the photo within the frame
+    val bgImageOffsetY: Float = StudioDefaults.OFFSET,
     val bgGradient: StudioGradient? = null,
-    val isDuotone: Boolean = false,
-    val pattern: CanvasPattern = CanvasPattern.None,
+    val isDuotone: Boolean = StudioDefaults.IS_DUOTONE,
+    val pattern: CanvasPattern = CanvasPattern.DEFAULT,
     val blurRadius: Float = StudioDefaults.BLUR,
     val vignetteIntensity: Float = StudioDefaults.VIGNETTE,
     val vignetteSpread: Float = StudioDefaults.VIGNETTE_SPREAD,
@@ -73,20 +73,20 @@ data class StudioConfig(
     val cardCornerRadius: Float = StudioDefaults.CARD_RADIUS,
     val cardPadding: Float = StudioDefaults.CARD_PADDING,
     val cardScale: Float = StudioDefaults.CARD_SCALE,
-    val cardOffsetX: Float = 0f,
-    val cardOffsetY: Float = 0f,
+    val cardOffsetX: Float = StudioDefaults.OFFSET,
+    val cardOffsetY: Float = StudioDefaults.OFFSET,
 
     // Stickers
     val stickers: List<PlacedSticker> = emptyList(),
 
     // Branding & Dates
-    val showHijri: Boolean = false,
-    val showGregorian: Boolean = false,
-    val showWatermark: Boolean = true,
-    val watermarkCorner: LogoCorner = LogoCorner.BottomRight,
+    val showHijri: Boolean = StudioDefaults.SHOW_HIJRI,
+    val showGregorian: Boolean = StudioDefaults.SHOW_GREGORIAN,
+    val showWatermark: Boolean = StudioDefaults.SHOW_WATERMARK,
+    val watermarkCorner: LogoCorner = LogoCorner.DEFAULT,
 
     // Canvas
-    val aspectRatio: StudioAspectRatio = StudioAspectRatio.Full
+    val aspectRatio: StudioAspectRatio = StudioAspectRatio.DEFAULT
 ) {
     companion object {
         // the ship-default config (every field from StudioDefaults) for a given ayah set — reset / new design

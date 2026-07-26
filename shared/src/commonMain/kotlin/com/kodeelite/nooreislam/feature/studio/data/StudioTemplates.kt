@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.feature.studio.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import kotlin.random.Random
 
 /**
@@ -23,11 +24,12 @@ data class StudioTemplate(
 ) {
     fun applyTo(c: StudioConfig): StudioConfig = c.copy(
         showBismillah = true,   // every template shows the bismillah
+        surahPlacement = SurahPlacement.DEFAULT,   // surah name placement for every template (single source of truth)
         bgColor = bg.first(),
         bgGradient = if (imageUrl == null && bg.size > 1) StudioGradient(bg) else null,
         bgImageUrl = imageUrl,
-        isDuotone = false,
-        pattern = CanvasPattern.None,
+        isDuotone = StudioDefaults.IS_DUOTONE,
+        pattern = CanvasPattern.DEFAULT,
         textColor = textColor,
         emphasisColor = accent,
         cardColor = card,

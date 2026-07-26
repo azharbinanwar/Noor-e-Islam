@@ -1,10 +1,7 @@
 package com.kodeelite.nooreislam.feature.studio.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.gestures.rememberTransformableState
-import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -16,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,12 +37,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -62,6 +63,7 @@ import com.kodeelite.nooreislam.resources.miqat_logo
 import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.quran_label_arabic
 import com.kodeelite.nooreislam.resources.quran_surah_name
+import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -80,6 +82,8 @@ fun DesignCanvas(
     val today = Now.date()          // generic time service — formatting handled centrally later
     val todayHijri = Now.hijri()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name))
+    // locked font for the surah:ayah reference so the digits always render (Arabic-Indic), like the reader's ayah marker
+    val refFont = FontFamily(Font(Res.font.tanzil_hafs))
     val canvasShape = RectangleShape   // square canvas; clip still crops panned/zoomed images to the frame
     val liveConfig = rememberUpdatedState(config)   // gesture callbacks read the latest config
     var imgRatio by remember(config.bgImageUrl) { mutableStateOf<Float?>(null) }   // photo w/h once loaded
@@ -196,31 +200,24 @@ fun DesignCanvas(
 
         // AYAH CARD
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            val state = rememberTransformableState { zoom, _, _ ->
-                onUpdate(
-                    liveConfig.value.copy(
-                        cardScale = (liveConfig.value.cardScale * zoom).coerceIn(
-                            0.5f,
-                            2.5f
-                        )
-                    )
-                )
-            }
             Box(
                 Modifier
+                    // grow the card to its content height (even past the frame) so tall text isn't clipped at a locked height; only the frame edge crops
+                    .wrapContentHeight(unbounded = true)
                     // translation via graphicsLayer = absolute screen pixels (offset {} mirrors X in RTL), so the drag matches the finger in Arabic too
                     .graphicsLayer {
                         translationX = config.cardOffsetX; translationY = config.cardOffsetY; scaleX = config.cardScale; scaleY = config.cardScale
                     }
-                    .transformable(state = state)
+                    // pan + pinch share ONE gesture stream so they never fight (two detectors compete and drop the pinch)
                     .pointerInput(isEditing) {
                         if (!isEditing) return@pointerInput
-                        detectDragGestures { change, drag ->
-                            change.consume()
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            val c = liveConfig.value
                             onUpdate(
-                                liveConfig.value.copy(
-                                    cardOffsetX = liveConfig.value.cardOffsetX + drag.x,
-                                    cardOffsetY = liveConfig.value.cardOffsetY + drag.y
+                                c.copy(
+                                    cardScale = (c.cardScale * zoom).coerceIn(0.5f, 2.5f),
+                                    cardOffsetX = c.cardOffsetX + pan.x,
+                                    cardOffsetY = c.cardOffsetY + pan.y,
                                 )
                             )
                         }
@@ -293,35 +290,39 @@ fun DesignCanvas(
 
                     if (config.surahPlacement == SurahPlacement.Bottom) {
                         Spacer(Modifier.size(16.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(
-                                text = "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                                color = config.textColor.copy(alpha = 0.7f),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                text = config.ayahs.first().surah.toSurahKey(),
-                                fontFamily = surahFont,
-                                color = config.textColor.copy(alpha = 0.85f),
-                                fontSize = 32.sp
-                            )
+                        // lock LTR so the reference stays on the left and the surah name on the right in both languages
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    text = QuranSymbols.ltrLock("(${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})"),
+                                    fontFamily = refFont,
+                                    color = config.textColor.copy(alpha = 0.7f),
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    text = config.ayahs.first().surah.toSurahKey(),
+                                    fontFamily = surahFont,
+                                    color = config.textColor.copy(alpha = 0.85f),
+                                    fontSize = 32.sp
+                                )
+                            }
                         }
                     }
 
                     if (config.surahPlacement == SurahPlacement.Top) {
-                        // bottom reference in Arabic, ayah font, Arabic-Indic digits: القرآن (٢:٥)
+                        // address (٢:٥) on the left, القرآن on the right — locked LTR so it never flips between languages
                         Spacer(Modifier.size(16.dp))
-                        Text(
-                            text = "${stringResource(Res.string.quran_label_arabic)} (${config.ayahs.first().surah.toArabicIndic()}:${
-                                config.ayahs.joinToString(
-                                    "،"
-                                ) { it.ayah.toArabicIndic() }
-                            })",
-                            fontFamily = FontFamily(Font(config.fontFamily.res)),
-                            color = config.textColor.copy(alpha = 0.75f),
-                            fontSize = 18.sp
-                        )
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                            Text(
+                                text = QuranSymbols.ltrLock(
+                                    "(${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})"
+                                ) + " ${stringResource(Res.string.quran_label_arabic)}",
+                                fontFamily = refFont,
+                                color = config.textColor.copy(alpha = 0.75f),
+                                fontSize = 18.sp
+                            )
+                        }
                     }
 
                     if (config.showHijri || config.showGregorian) {

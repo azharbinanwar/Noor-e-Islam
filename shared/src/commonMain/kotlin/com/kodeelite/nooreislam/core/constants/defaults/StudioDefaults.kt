@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.core.constants.defaults
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 
 /**
  * Ship defaults for the share studio — the values a new design starts with (read by `StudioConfig`),
@@ -12,7 +13,10 @@ object StudioDefaults {
     const val LINE_HEIGHT = 1.3f
     const val TEXT_OUTLINE = 0f
     const val TEXT_SHADOW_ALPHA = 0f
+    const val AUTO_CONTRAST = false
     val EMPHASIS_COLOR = Color(0xFFFBC02D)
+    val TEXT_COLOR = Color.White
+    val TEXT_ALIGN = TextAlign.Center
 
     // auto initial size by ayah length
     const val SHORT_LEN = 100
@@ -23,10 +27,13 @@ object StudioDefaults {
 
     // background
     val BG_COLOR = Color.Black
+    const val IS_DUOTONE = false
     const val BLUR = 0f
     const val VIGNETTE = 0f
     const val VIGNETTE_SPREAD = 0.5f
     const val OVERLAY_ALPHA = 0.2f
+    const val IMAGE_SCALE = 1f          // no zoom (manual-crop identity)
+    const val OFFSET = 0f               // image + card pan: no offset
 
     // card
     val CARD_COLOR = Color.Black.copy(alpha = 0.4f)
@@ -34,8 +41,16 @@ object StudioDefaults {
     const val CARD_PADDING = 20f
     const val CARD_SCALE = 1f
 
-    // translation
+    // content toggles + translation
+    const val SHOW_BISMILLAH = false
+    const val SHOW_TRANSLATION = false
     const val TRANSLATION_SIZE = 16f
+    const val TRANSLATION_TEXT = "This is a placeholder for the Ayah translation..."
+
+    // dates & watermark
+    const val SHOW_HIJRI = false
+    const val SHOW_GREGORIAN = false
+    const val SHOW_WATERMARK = true
 
     // limits
     const val HISTORY_MAX = 20

@@ -19,4 +19,8 @@ enum class SurahPlacement(val labelRes: StringResource) {
     ;
 
     val label: String @Composable get() = stringResource(labelRes)
+
+    companion object {
+        val DEFAULT = Top
+    }
 }

@@ -2,8 +2,8 @@ package com.kodeelite.nooreislam.feature.quran.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +23,13 @@ fun QuranCalligraphy() {
     val colors = AppTheme.colors
     val juz = FontFamily(Font(Res.font.quran_juz))
     Box(Modifier.fillMaxSize().background(colors.background), Alignment.Center) {
-        Text(QuranSymbols.QURAN, fontFamily = juz, fontSize = 120.sp, color = colors.primary, modifier = Modifier.offset(x = (-20).dp, y = 0.dp))
+        // absoluteOffset (not offset): the glyph nudge is a fixed screen direction, so it doesn't flip in RTL/Arabic
+        Text(
+            QuranSymbols.QURAN,
+            fontFamily = juz,
+            fontSize = 120.sp,
+            color = colors.primary,
+            modifier = Modifier.absoluteOffset(x = (-20).dp, y = 0.dp)
+        )
     }
 }

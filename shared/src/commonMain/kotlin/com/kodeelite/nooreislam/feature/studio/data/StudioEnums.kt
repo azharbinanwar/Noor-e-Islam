@@ -23,6 +23,10 @@ enum class LogoCorner(private val ltrIcon: ImageVector, private val rtlIcon: Ima
     ;
 
     val icon: ImageVector @Composable get() = tr(ltrIcon, rtlIcon)
+
+    companion object {
+        val DEFAULT = BottomRight
+    }
 }
 
 @Serializable
@@ -32,7 +36,18 @@ enum class StudioAspectRatio(val label: String, val ratio: Float?) {
     Story("9:16", 9f / 16f),
     Post("4:5", 4f / 5f),
     Square("1:1", 1f),
+    ;
+
+    companion object {
+        val DEFAULT = Full
+    }
 }
 
 @Serializable
-enum class CanvasPattern { None, Grain, Geometric }
+enum class CanvasPattern {
+    None, Grain, Geometric;
+
+    companion object {
+        val DEFAULT = None
+    }
+}
