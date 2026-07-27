@@ -32,6 +32,8 @@ import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
 
+import org.koin.compose.koinInject
+
 // ruku end: big ع (lifted to sit centered on the lines) with this ruku's number on the right, next on the left
 @Composable
 fun RukuMarker(rukuNumber: Int, nextRukuNumber: Int?, modifier: Modifier = Modifier) {
@@ -56,7 +58,8 @@ fun JuzMarker(juz: Int, modifier: Modifier = Modifier) {
 // big centered glyph with a 3-line ornament each side + optional numbers; `lift` nudges the glyph up (× font size)
 @Composable
 private fun MarkerRow(middle: String, middleFont: FontFamily, lift: Float, leftLabel: String?, rightLabel: String?, modifier: Modifier) {
-    val fontSize by QuranStore.fontSize.collectAsState()
+    val store = koinInject<QuranStore>()
+    val fontSize by store.fontSize.collectAsState()
     val color = AppTheme.colors.primary
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Row(

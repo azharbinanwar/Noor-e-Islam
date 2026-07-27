@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 // takes plain surah/ayah; the reader observes the active key set ("surah:ayah").
-class BookmarkRepository(private val dao: BookmarkDao) {
+class BookmarksRepository(private val dao: BookmarksDao) {
     val keys: Flow<Set<String>> = dao.activeFlow().map { rows -> rows.map { "${it.surah}:${it.ayah}" }.toSet() }
     val active: Flow<List<Bookmark>> = dao.activeFlow()
 

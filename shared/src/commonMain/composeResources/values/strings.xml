@@ -360,6 +360,7 @@
     <string name="collections">Collections</string>
     <string name="favorites">Favorites</string>
     <string name="surahs">Surahs</string>
+    <string name="surahs_label">Surahs</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Morning</string>
     <string name="evening">Evening</string>
@@ -481,8 +482,8 @@
     <string name="surah_ayah_count">%1$s ayahs</string>
     <string name="sajda_recommended">Recommended prostration</string>
     <string name="sajda_obligatory">Obligatory prostration</string>
-    <string name="quran_tab_surah">Surah</string>
-    <string name="quran_tab_juz">Juz</string>
+    <string name="quran_tab_surah">Surahs</string>
+    <string name="quran_tab_juz">Juzs</string>
     <string name="quran_tab_bookmarks">Bookmarks</string>
     <string name="quran_tab_notes">Notes</string>
     <string name="quran_tab_highlights">Highlights</string>

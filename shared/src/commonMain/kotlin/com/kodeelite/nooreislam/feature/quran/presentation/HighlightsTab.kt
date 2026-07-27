@@ -15,22 +15,23 @@ import androidx.compose.ui.unit.dp
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.feature.quran.data.BookmarkRepository
+import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
-import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkRow
+import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightItem
 import org.koin.compose.koinInject
 
-// Saved ayahs — one BookmarkRow per bookmark; tap to jump to the reader.
+// Highlighted ayahs — one HighlightItem per highlight (its color shown); tap to jump to the reader.
 @Composable
-fun BookmarkTab() {
+fun HighlightsTab() {
     val nav = LocalAppNavigator.current
-    val bookmarks by koinInject<BookmarkRepository>().active.collectAsState(emptyList())
-    // ayah text for each row (preview), fetched by surah:ayah so it matches the current script
+    val store = koinInject<HighlightsStore>()
+    val highlights by store.highlights.collectAsState()
+    // ayah text for each item (preview), fetched by surah:ayah so it matches the current script
     val texts = remember { mutableStateMapOf<String, String>() }
-    LaunchedEffect(bookmarks) {
-        bookmarks.forEach { b ->
-            val key = "${b.surah}:${b.ayah}"
-            if (key !in texts) QuranRepository.ayah(b.surah, b.ayah)?.let { texts[key] = it.text }
+    LaunchedEffect(highlights) {
+        highlights.forEach { h ->
+            val key = "${h.surah}:${h.ayah}"
+            if (key !in texts) QuranRepository.ayah(h.surah, h.ayah)?.let { texts[key] = it.text }
         }
     }
     LazyColumn(
@@ -38,12 +39,12 @@ fun BookmarkTab() {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        items(bookmarks.size) { i ->
-            val b = bookmarks[i]
-            BookmarkRow(
-                b.surah, b.ayah, texts["${b.surah}:${b.ayah}"] ?: "",
-                TilePosition.at(i, bookmarks.size),
-            ) { nav.navigate(AppRoute.QuranReader(b.surah, b.ayah)) }
+        items(highlights.size) { i ->
+            val h = highlights[i]
+            HighlightItem(
+                h, texts["${h.surah}:${h.ayah}"] ?: "",
+                TilePosition.at(i, highlights.size),
+            ) { nav.navigate(AppRoute.QuranReader(h.surah, h.ayah)) }
         }
     }
 }

@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,20 +34,20 @@ import com.composables.icons.lucide.Minus
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
-import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
+import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.hue
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 // long-press → floating vertical color strip on the right; auto-dismiss after 2s (reset on each pick), tap-away closes.
 @Composable
 fun HighlightQuickPicker(ayah: Ayah, onDismiss: () -> Unit) {
-    val repo = koinInject<HighlightRepository>()
-    val scope = rememberCoroutineScope()
-    val current by repo.colorOf(ayah.surah, ayah.ayah).collectAsState(null)
+    val highlightsStore = koinInject<HighlightsStore>()
+    val highlightColors by highlightsStore.colors.collectAsState()
+    val current = highlightColors["${ayah.surah}:${ayah.ayah}"]
     var tick by remember { mutableStateOf(0) } // bump to restart the 2s countdown
-    LaunchedEffect(tick) { delay(2000); onDismiss() }
+    LaunchedEffect(tick) { delay(2000.milliseconds); onDismiss() }
 
     // no full-screen catcher — the page stays scrollable; the strip just auto-dismisses on the timer
     Box(Modifier.fillMaxSize()) {
@@ -64,20 +63,21 @@ fun HighlightQuickPicker(ayah: Ayah, onDismiss: () -> Unit) {
                     icon = Lucide.Minus,
                     iconTint = AppTheme.colors.onSurfaceVariant
                 ) {
-                    scope.launch { repo.remove(ayah.surah, ayah.ayah) }; onDismiss()
+                    highlightsStore.set(ayah.surah, ayah.ayah, null)
+                    onDismiss()
                 }
             }
             HighlightColor.entries.forEachIndexed { i, c ->
                 // slide in from the right, staggered, with a bouncy spring
                 val anim = remember { Animatable(0f) }
                 LaunchedEffect(Unit) {
-                    delay(i * 55L)
+                    delay((i * 55L).milliseconds)
                     anim.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
                 }
                 Dot(
                     c.hue, ring = c == current, icon = Lucide.Check.takeIf { c == current }, iconTint = Color.White,
                     modifier = Modifier.graphicsLayer { translationX = (1f - anim.value) * 90f; alpha = anim.value.coerceIn(0f, 1f) },
-                ) { scope.launch { repo.set(ayah.surah, ayah.ayah, c) }; tick++ }
+                ) { highlightsStore.set(ayah.surah, ayah.ayah, c); tick++ }
             }
         }
     }

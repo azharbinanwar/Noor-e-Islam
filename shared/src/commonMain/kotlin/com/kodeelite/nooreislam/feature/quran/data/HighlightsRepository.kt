@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 // takes plain surah/ayah; the reader observes `colors` (key -> color) to paint tints.
-class HighlightRepository(private val dao: HighlightDao) {
+class HighlightsRepository(private val dao: HighlightsDao) {
     val colors: Flow<Map<String, HighlightColor>> =
         dao.activeFlow().map { rows -> rows.associate { "${it.surah}:${it.ayah}" to it.color } }
     val active: Flow<List<Highlight>> = dao.activeFlow()

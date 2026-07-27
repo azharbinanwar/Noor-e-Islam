@@ -63,6 +63,7 @@ import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,9 +82,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     var scrolled by remember { mutableStateOf(false) }
 
     val colors = AppTheme.colors
-    val fontSize by QuranStore.fontSize.collectAsState()
-    val script by QuranStore.font.collectAsState()
-    val readingTheme by QuranStore.theme.collectAsState()
+    val store = koinInject<QuranStore>()
+    val fontSize by store.fontSize.collectAsState()
+    val script by store.font.collectAsState()
+    val readingTheme by store.theme.collectAsState()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
@@ -188,11 +190,11 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         if (showSettings) {
             ReaderSettingsSheet(
                 fontSize = fontSize,
-                onFontChange = { QuranStore.setFontSize(it) },
+                onFontChange = { store.setFontSize(it) },
                 font = script,
-                onFontSelect = { QuranStore.setFont(it) },
+                onFontSelect = { store.setFont(it) },
                 theme = readingTheme,
-                onThemeSelect = { QuranStore.setTheme(it) },
+                onThemeSelect = { store.setTheme(it) },
                 onDismiss = { showSettings = false },
             )
         }

@@ -292,9 +292,10 @@ private fun TileShowcase() {
 @Composable
 private fun HighlightShowcase() {
     var sel by remember { mutableStateOf(HighlightColor.Green) }
+    val colors = AppTheme.colors
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         HighlightColorRow(sel) { sel = it }
-        Box(Modifier.clip(RoundedCornerShape(6.dp)).background(sel.tint()).padding(horizontal = 8.dp, vertical = 4.dp)) {
+        Box(Modifier.clip(RoundedCornerShape(6.dp)).background(sel.tint(colors.background)).padding(horizontal = 8.dp, vertical = 4.dp)) {
             Text("ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", fontFamily = FontFamily(Font(QuranDefaults.FONT.res)), fontSize = 24.sp)
         }
     }

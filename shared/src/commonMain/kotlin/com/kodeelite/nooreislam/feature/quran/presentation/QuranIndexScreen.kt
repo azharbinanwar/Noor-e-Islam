@@ -117,11 +117,11 @@ fun QuranIndexScreen() {
                 modifier = Modifier.fillMaxSize().padding(top = with(density) { (headerH + offsetY).toDp() }),
             ) { page ->
                 when (tabs[page]) {
-                    QuranTab.Surah -> SurahTab()
-                    QuranTab.Juz -> JuzTab()
-                    QuranTab.Bookmarks -> BookmarkTab()
-                    QuranTab.Notes -> NoteTab()
-                    QuranTab.Highlights -> HighlightTab()
+                    QuranTab.Surahs -> SurahsTab()
+                    QuranTab.Juzs -> JuzsTab()
+                    QuranTab.Bookmarks -> BookmarksTab()
+                    QuranTab.Notes -> NotesTab()
+                    QuranTab.Highlights -> HighlightsTab()
                 }
             }
 

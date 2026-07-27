@@ -18,12 +18,15 @@ import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_juz
 import org.jetbrains.compose.resources.Font
 
+import org.koin.compose.koinInject
+
 private const val BISMALAH_MAX_SP = 24f // above this the glyph would overflow, so it's capped
 
 // stylish basmalah (juz font's decorative ﷽), shown at a surah start except Al-Fatiha and At-Tawbah
 @Composable
 fun Bismalah() {
-    val fontSize by QuranStore.fontSize.collectAsState()
+    val store = koinInject<QuranStore>()
+    val fontSize by store.fontSize.collectAsState()
     Text(
         QuranSymbols.BASMALAH, Modifier.fillMaxWidth().padding(horizontal = 30.dp, vertical = 8.dp),
         fontFamily = FontFamily(Font(Res.font.quran_juz)), fontSize = (fontSize * 1.9f).coerceAtMost(BISMALAH_MAX_SP).sp,

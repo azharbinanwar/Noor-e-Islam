@@ -28,15 +28,17 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahActio
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahItem
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.favorites
-import com.kodeelite.nooreislam.resources.surahs
+import com.kodeelite.nooreislam.resources.surahs_label
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // Surah listing — favorites pinned on top, then the rest; long-press a row for its actions
 @Composable
-fun SurahTab() {
+fun SurahsTab() {
     val nav = LocalAppNavigator.current
+    val store = koinInject<QuranStore>()
     val surahs by produceState(emptyList()) { value = QuranRepository.surahs() }
-    val favorites by QuranStore.favorites.collectAsState()
+    val favorites by store.favorites.collectAsState()
     var actionSurah by remember { mutableStateOf<Surah?>(null) }
 
     val favs = surahs.filter { it.number in favorites }
@@ -55,7 +57,7 @@ fun SurahTab() {
                     TilePosition.at(i, favs.size),
                     onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].number, 1)) }
             }
-            item { SectionLabel(stringResource(Res.string.surahs)) }
+            item { SectionLabel(stringResource(Res.string.surahs_label)) }
         }
         items(rest.size) { i ->
             SurahItem(
@@ -69,7 +71,7 @@ fun SurahTab() {
         SurahActionSheet(
             surah = s,
             favorite = s.number in favorites,
-            onToggleFavorite = { QuranStore.toggleFavorite(s.number) },
+            onToggleFavorite = { store.toggleFavorite(s.number) },
             onOpen = { nav.navigate(AppRoute.QuranReader(s.number, 1)) },
             onDismiss = { actionSurah = null },
         )

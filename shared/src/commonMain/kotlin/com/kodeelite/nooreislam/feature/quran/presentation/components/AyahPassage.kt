@@ -25,7 +25,7 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
-import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
+import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.quran.data.tint
@@ -40,14 +40,15 @@ private const val BISMALAH_WORD_COUNT = 4
 @Composable
 fun AyahPassage(ayahs: List<Ayah>, selected: Ayah?, pressed: Ayah?, onSelect: (Ayah) -> Unit, onLongSelect: (Ayah) -> Unit) {
     val colors = AppTheme.colors
-    val fontSize by QuranStore.fontSize.collectAsState()
-    val script by QuranStore.font.collectAsState()
+    val store = koinInject<QuranStore>()
+    val highlightStore = koinInject<HighlightsStore>()
+    val fontSize by store.fontSize.collectAsState()
+    val script by store.font.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
     val markerFont = FontFamily(Font(Res.font.tanzil_hafs)) // ornate number + ruku/sajda glyphs
 
-    val highlights = koinInject<HighlightRepository>()
-    val highlightColors by highlights.colors.collectAsState(emptyMap())
-    val tints = HighlightColor.entries.associateWith { it.tint() } // resolve theme-aware tints once
+    val highlightColors by highlightStore.colors.collectAsState()
+    val tints = remember(colors.background) { HighlightColor.entries.associateWith { it.tint(colors.background) } } // resolve theme-aware tints once
 
     // char range each verse occupies, so a tap can map back to its ayah
     val ranges = remember(ayahs) { ArrayList<Pair<Ayah, IntRange>>() }

@@ -19,24 +19,32 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.util.toSurahKey
+import com.kodeelite.nooreislam.feature.quran.data.Note
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font
 
-// a saved note row
+// a saved note item
 @Composable
-fun NoteRow(surah: Int, ayah: Int, text: String, position: TilePosition, onClick: () -> Unit) {
+fun NoteItem(note: Note, position: TilePosition, onClick: () -> Unit) {
     val colors = AppTheme.colors
     AppTile(
-        title = "Surah $surah · Ayah $ayah",
-        subtitle = text,
+        title = "Surah ${note.surah} · Ayah ${note.ayah}",
+        subtitle = note.text,
         leading = {
             Box(
                 Modifier.size(38.dp).clip(CircleShape).background(colors.primary.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) { Icon(Lucide.StickyNote, null, tint = colors.primary, modifier = Modifier.size(20.dp)) }
         },
-        trailing = { Text(surah.toSurahKey(), fontFamily = FontFamily(Font(Res.font.quran_surah_name)), color = colors.primary, fontSize = 28.sp) },
+        trailing = {
+            Text(
+                note.surah.toSurahKey(),
+                fontFamily = FontFamily(Font(Res.font.quran_surah_name)),
+                color = colors.primary,
+                fontSize = 28.sp
+            )
+        },
         position = position,
         onClick = onClick,
     )

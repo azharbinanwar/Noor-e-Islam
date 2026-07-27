@@ -5,34 +5,32 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteRow
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.presentation.components.JuzRow
 
-// Notes — placeholder rows until the notes store lands.
-private class DummyNote(val surah: Int, val ayah: Int, val text: String)
-
-private val DUMMY_NOTES = listOf(
-    DummyNote(2, 286, "A dua to memorize for daily use"),
-    DummyNote(1, 5, "The heart of Al-Fatiha"),
-)
-
+// The 30 juz — each row expands to its surahs; tap opens the reader.
 @Composable
-fun NoteTab() {
+fun JuzsTab() {
     val nav = LocalAppNavigator.current
+    val juzs by produceState(emptyList()) { value = QuranRepository.juzs() }
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        items(DUMMY_NOTES.size) { i ->
-            val n = DUMMY_NOTES[i]
-            NoteRow(n.surah, n.ayah, n.text, TilePosition.at(i, DUMMY_NOTES.size)) {
-                nav.navigate(AppRoute.QuranReader(n.surah, n.ayah))
-            }
+        items(juzs.size, key = { juzs[it].number }) { i ->
+            val juz = juzs[i]
+            JuzRow(
+                juz,
+                onOpen = { nav.navigate(AppRoute.QuranReader(juz.startsAt.surah, juz.startsAt.ayah)) },
+                onOpenSurah = { nav.navigate(AppRoute.QuranReader(it.number, 1)) },
+            )
         }
     }
 }

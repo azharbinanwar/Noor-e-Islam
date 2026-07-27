@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-// Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit
-object QuranStore {
-
+// Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit.
+// User data (highlights/bookmarks/notes) moved to their own specialized stores.
+class QuranStore(
+) {
     private val _fontSize = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_FONT_SP, QuranDefaults.FONT_SP))
     val fontSize: StateFlow<Int> = _fontSize.asStateFlow()
 

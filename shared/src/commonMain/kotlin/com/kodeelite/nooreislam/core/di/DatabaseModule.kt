@@ -3,8 +3,9 @@ package com.kodeelite.nooreislam.core.di
 import com.kodeelite.nooreislam.core.database.AppDatabase
 import com.kodeelite.nooreislam.core.database.getRoomDatabase
 import com.kodeelite.nooreislam.feature.notifications.data.NotificationScheduleRepository
-import com.kodeelite.nooreislam.feature.quran.data.BookmarkRepository
-import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
+import com.kodeelite.nooreislam.feature.quran.data.BookmarksRepository
+import com.kodeelite.nooreislam.feature.quran.data.HighlightsRepository
+import com.kodeelite.nooreislam.feature.quran.data.NotesRepository
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationRepository
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -16,10 +17,12 @@ val databaseModule = module {
     single { NotificationScheduleRepository(get()) }
     single { get<AppDatabase>().studioCreationDao() }
     single { StudioCreationRepository(get()) }
-    single { get<AppDatabase>().bookmarkDao() }
-    single { BookmarkRepository(get()) }
-    single { get<AppDatabase>().highlightDao() }
-    single { HighlightRepository(get()) }
+    single { get<AppDatabase>().bookmarksDao() }
+    single { BookmarksRepository(get()) }
+    single { get<AppDatabase>().highlightsDao() }
+    single { HighlightsRepository(get()) }
+    single { get<AppDatabase>().notesDao() }
+    single { NotesRepository(get()) }
 }
 
 // Android needs a Context, iOS a file path.

@@ -6,7 +6,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BookmarkDao {
+interface BookmarksDao {
     @Query("SELECT * FROM bookmark WHERE deletedAt IS NULL ORDER BY createdAt DESC")
     fun activeFlow(): Flow<List<Bookmark>>
 

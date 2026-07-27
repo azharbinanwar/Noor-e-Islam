@@ -1,9 +1,7 @@
 package com.kodeelite.nooreislam.feature.quran.data
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import com.kodeelite.nooreislam.config.theme.AppTheme
 
 // preset highlight tints. Persisted by name via the Room Converters.
 enum class HighlightColor {
@@ -22,6 +20,5 @@ val HighlightColor.hue: Color
     }
 
 // theme-aware wash drawn behind the ayah — stronger on dark so it still reads
-@Composable
-fun HighlightColor.tint(): Color =
-    hue.copy(alpha = if (AppTheme.colors.background.luminance() < 0.5f) 0.30f else 0.20f)
+fun HighlightColor.tint(backgroundColor: Color): Color =
+    hue.copy(alpha = if (backgroundColor.luminance() < 0.5f) 0.30f else 0.20f)

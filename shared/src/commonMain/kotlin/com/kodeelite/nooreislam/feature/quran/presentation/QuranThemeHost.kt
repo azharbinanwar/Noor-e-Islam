@@ -11,10 +11,13 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
 import com.kodeelite.nooreislam.feature.quran.data.applyTo
 
+import org.koin.compose.koinInject
+
 // wraps the Quran index + reader in the picked reading theme: recolors the whole subtree, app stays untouched
 @Composable
 fun QuranThemeHost(content: @Composable () -> Unit) {
-    val theme by QuranStore.theme.collectAsState()
+    val store = koinInject<QuranStore>()
+    val theme by store.theme.collectAsState()
     if (theme == QuranTheme.System) {
         content(); return
     } // follow the app theme — no override

@@ -19,8 +19,8 @@ import org.jetbrains.compose.resources.stringResource
 
 // index tabs — same shape as Miqat: icon + labelRes + a @Composable label
 internal enum class QuranTab(val icon: ImageVector, val labelRes: StringResource) {
-    Surah(Lucide.BookOpen, Res.string.quran_tab_surah),
-    Juz(Lucide.Layers, Res.string.quran_tab_juz),
+    Surahs(Lucide.BookOpen, Res.string.quran_tab_surah),
+    Juzs(Lucide.Layers, Res.string.quran_tab_juz),
     Bookmarks(Lucide.Bookmark, Res.string.quran_tab_bookmarks),
     Notes(Lucide.StickyNote, Res.string.quran_tab_notes),
     Highlights(Lucide.Highlighter, Res.string.quran_tab_highlights);

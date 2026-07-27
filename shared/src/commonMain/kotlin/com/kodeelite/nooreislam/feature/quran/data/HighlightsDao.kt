@@ -6,7 +6,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface HighlightDao {
+interface HighlightsDao {
     @Query("SELECT * FROM highlight WHERE deletedAt IS NULL ORDER BY createdAt DESC")
     fun activeFlow(): Flow<List<Highlight>>
 

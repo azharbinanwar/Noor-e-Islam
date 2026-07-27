@@ -70,8 +70,8 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.BookmarkRepository
-import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
+import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
+import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.action_add_note
 import com.kodeelite.nooreislam.resources.action_add_to_collection
@@ -156,9 +156,10 @@ fun AyahActionSheet(
     val expandedPx = if (winPx > 0) winPx * 0.80f else with(density) { 560.dp.toPx() }
 
     val scope = rememberCoroutineScope()
-    val highlights = koinInject<HighlightRepository>()
-    val bookmarks = koinInject<BookmarkRepository>()
-    val bookmarkedKeys by bookmarks.keys.collectAsState(emptySet())
+    val bookmarksStore = koinInject<BookmarksStore>()
+    val highlightsStore = koinInject<HighlightsStore>()
+
+    val bookmarkedKeys by bookmarksStore.keys.collectAsState()
     val isBookmarked = "${ayah.surah}:${ayah.ayah}" in bookmarkedKeys
     val heightPx = remember { Animatable(peekPx) }
     var atExpanded by remember { mutableStateOf(false) }
@@ -227,10 +228,12 @@ fun AyahActionSheet(
                             selected = isBookmarked,
                             iconColor = colors.primary
                         ) {
-                            scope.launch { bookmarks.toggle(ayah.surah, ayah.ayah) }
+                            bookmarksStore.toggle(ayah.surah, ayah.ayah)
                         },
                         AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {
-                            scope.launch { highlights.set(ayah.surah, ayah.ayah) }
+                            val key = "${ayah.surah}:${ayah.ayah}"
+                            if (key in highlightsStore.colors.value) highlightsStore.set(ayah.surah, ayah.ayah, null)
+                            else highlightsStore.applyDefault(ayah.surah, ayah.ayah)
                             onHighlight()
                         },
                         AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) {},
