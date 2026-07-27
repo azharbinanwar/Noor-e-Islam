@@ -48,10 +48,10 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.AyahRef
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
+import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalligraphy
 import com.kodeelite.nooreislam.feature.quran.presentation.components.ReaderSettingsSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.RukuBlock
@@ -67,7 +67,7 @@ import org.jetbrains.compose.resources.stringResource
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuranReaderScreen(startId: Int = 1) {
+fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val nav = LocalAppNavigator.current
     val ayahs = remember { mutableStateListOf<Ayah>() }
     val listState = rememberLazyListState()
@@ -109,13 +109,14 @@ fun QuranReaderScreen(startId: Int = 1) {
     // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
     LaunchedEffect(rukus) {
         if (rukus.isNotEmpty()) {
-            val target = rukus.indexOfFirst { it.last().id >= startId }.coerceAtLeast(0)
+            val target = rukus.indexOfFirst { r -> r.any { it.surah == surah && it.ayah == ayah } }.coerceAtLeast(0)
             if (target > 0) listState.scrollToItem(target)
             scrolled = true
         }
     }
 
-    var selected by remember { mutableStateOf<AyahRef?>(null) }
+    var selected by remember { mutableStateOf<Ayah?>(null) }
+    var quickHighlight by remember { mutableStateOf<Ayah?>(null) } // long-press → floating color strip
     var showSettings by remember { mutableStateOf(false) }
     var expanded by remember(selected) { mutableStateOf(false) }
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
@@ -161,22 +162,28 @@ fun QuranReaderScreen(startId: Int = 1) {
                         // juz of the ayah before this ruku, so RukuBlock can mark a juz that begins inside it
                         val prevJuz = if (i == 0) ruku.first().juz else rukus[i - 1].last().juz
                         val (numInSurah, lastInSurah) = rukuMeta[i]
-                        RukuBlock(ruku, numInSurah, if (lastInSurah) null else numInSurah + 1, prevJuz, selected) {
-                            selected = if (selected == it) null else it
-                        }
+                        RukuBlock(
+                            ruku, numInSurah, if (lastInSurah) null else numInSurah + 1, prevJuz, selected, quickHighlight,
+                            onSelect = { selected = if (selected == it) null else it },
+                            onLongSelect = { quickHighlight = it },
+                        )
                     }
                 }
             }
         }
 
-        selected?.let { ref ->
+        selected?.let { ayah ->
             AyahActionSheet(
-                label = stringResource(Res.string.surah_number_ayah_number, ref.surah, ref.ayah),
-                onShareAsImage = { nav.navigate(AppRoute.Studio(ref.surah, ref.ayah)) },
+                label = stringResource(Res.string.surah_number_ayah_number, ayah.surah, ayah.ayah),
+                ayah = ayah,
+                onShareAsImage = { nav.navigate(AppRoute.Studio(ayah.surah, ayah.ayah)) },
+                onHighlight = { quickHighlight = ayah; selected = null },
                 onExpandedChange = { expanded = it },
                 onDismiss = { selected = null },
             )
         }
+
+        quickHighlight?.let { HighlightQuickPicker(it) { quickHighlight = null } }
 
         if (showSettings) {
             ReaderSettingsSheet(

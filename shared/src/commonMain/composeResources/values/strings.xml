@@ -459,6 +459,8 @@
     <string name="widgets">Widgets</string>
     <string name="prayer_card">Prayer card</string>
     <string name="widgets_summary">Prayer times on your home screen</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="no_bookmarks">No bookmarks yet</string>
     <string name="background_opacity">Background opacity</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="card_color">Card color</string>

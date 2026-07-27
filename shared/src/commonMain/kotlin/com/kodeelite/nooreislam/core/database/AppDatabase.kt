@@ -4,22 +4,30 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.TypeConverters
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.kodeelite.nooreislam.core.constants.AppConst
+import com.kodeelite.nooreislam.feature.quran.data.Bookmark
+import com.kodeelite.nooreislam.feature.quran.data.BookmarkDao
+import com.kodeelite.nooreislam.feature.quran.data.Highlight
+import com.kodeelite.nooreislam.feature.quran.data.HighlightDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationEntity
 
 // exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
 @Database(
-    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class],
+    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class],
     version = AppConst.DB_VERSION,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun prayerLogDao(): PrayerLogDao
     abstract fun scheduledNotificationDao(): ScheduledNotificationDao
     abstract fun studioCreationDao(): StudioCreationDao
+    abstract fun bookmarkDao(): BookmarkDao
+    abstract fun highlightDao(): HighlightDao
 }
 
 /** The Room compiler (KSP) generates the actual implementation per platform. */

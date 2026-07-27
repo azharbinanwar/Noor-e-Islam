@@ -20,7 +20,7 @@ object QuranStore {
 
     private val _font = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.QURAN_FONT)
-            ?.let { runCatching { QuranFont.valueOf(it) }.getOrNull() } ?: QuranFont.DEFAULT,
+            ?.let { runCatching { QuranFont.valueOf(it) }.getOrNull() } ?: QuranDefaults.FONT,
     )
     val font: StateFlow<QuranFont> = _font.asStateFlow()
 
@@ -31,7 +31,7 @@ object QuranStore {
 
     private val _theme = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.QURAN_THEME)
-            ?.let { runCatching { QuranTheme.valueOf(it) }.getOrNull() } ?: QuranTheme.DEFAULT,
+            ?.let { runCatching { QuranTheme.valueOf(it) }.getOrNull() } ?: QuranDefaults.THEME,
     )
     val theme: StateFlow<QuranTheme> = _theme.asStateFlow()
 

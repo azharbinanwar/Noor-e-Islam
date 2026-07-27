@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,6 +69,9 @@ import com.kodeelite.nooreislam.core.components.AppActionItem
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
+import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.BookmarkRepository
+import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.action_add_note
 import com.kodeelite.nooreislam.resources.action_add_to_collection
@@ -96,6 +100,7 @@ import com.kodeelite.nooreislam.resources.share_as_text
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 private class QAction(val icon: ImageVector, val labelRes: StringResource)
 private class QGroup(val titleRes: StringResource, val items: List<QAction>)
@@ -138,7 +143,9 @@ private val MORE_GROUPS = listOf(
 @Composable
 fun AyahActionSheet(
     label: String,
+    ayah: Ayah,
     onShareAsImage: () -> Unit,
+    onHighlight: () -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -149,6 +156,10 @@ fun AyahActionSheet(
     val expandedPx = if (winPx > 0) winPx * 0.80f else with(density) { 560.dp.toPx() }
 
     val scope = rememberCoroutineScope()
+    val highlights = koinInject<HighlightRepository>()
+    val bookmarks = koinInject<BookmarkRepository>()
+    val bookmarkedKeys by bookmarks.keys.collectAsState(emptySet())
+    val isBookmarked = "${ayah.surah}:${ayah.ayah}" in bookmarkedKeys
     val heightPx = remember { Animatable(peekPx) }
     var atExpanded by remember { mutableStateOf(false) }
     val scrimAlpha by animateFloatAsState(if (atExpanded) SHEET_SCRIM_ALPHA else 0f, label = "scrim")
@@ -210,8 +221,18 @@ fun AyahActionSheet(
                     width = ActionWidth.Fill,
                     items = listOf(
                         AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
-                        AppActionItem(stringResource(Res.string.action_bookmark), Lucide.Bookmark, iconColor = colors.primary) {},
-                        AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {},
+                        AppActionItem(
+                            stringResource(Res.string.action_bookmark),
+                            Lucide.Bookmark,
+                            selected = isBookmarked,
+                            iconColor = colors.primary
+                        ) {
+                            scope.launch { bookmarks.toggle(ayah.surah, ayah.ayah) }
+                        },
+                        AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {
+                            scope.launch { highlights.set(ayah.surah, ayah.ayah) }
+                            onHighlight()
+                        },
                         AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) {},
                         AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
                     ),

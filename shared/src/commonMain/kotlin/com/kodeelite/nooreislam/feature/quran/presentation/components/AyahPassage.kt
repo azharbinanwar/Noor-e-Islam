@@ -24,38 +24,51 @@ import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.AyahRef
+import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
+import com.kodeelite.nooreislam.feature.quran.data.HighlightRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
+import com.kodeelite.nooreislam.feature.quran.data.tint
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
+import org.koin.compose.koinInject
 
 private const val BISMALAH_WORD_COUNT = 4
 
 // one ruku as a single flowing paragraph; tap a verse to select it, highlight follows only that verse's glyphs
 @Composable
-fun AyahPassage(ayahs: List<Ayah>, selected: AyahRef?, onSelect: (AyahRef) -> Unit) {
+fun AyahPassage(ayahs: List<Ayah>, selected: Ayah?, pressed: Ayah?, onSelect: (Ayah) -> Unit, onLongSelect: (Ayah) -> Unit) {
     val colors = AppTheme.colors
     val fontSize by QuranStore.fontSize.collectAsState()
     val script by QuranStore.font.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
     val markerFont = FontFamily(Font(Res.font.tanzil_hafs)) // ornate number + ruku/sajda glyphs
 
-    // char range each verse occupies, so a tap can map back to its AyahRef
-    val ranges = remember(ayahs) { ArrayList<Pair<AyahRef, IntRange>>() }
+    val highlights = koinInject<HighlightRepository>()
+    val highlightColors by highlights.colors.collectAsState(emptyMap())
+    val tints = HighlightColor.entries.associateWith { it.tint() } // resolve theme-aware tints once
+
+    // char range each verse occupies, so a tap can map back to its ayah
+    val ranges = remember(ayahs) { ArrayList<Pair<Ayah, IntRange>>() }
     val text = buildAnnotatedString {
         ranges.clear()
         ayahs.forEach { ayah ->
             val start = length
-            val hit = if (selected == ayah.ref) colors.primary.copy(alpha = 0.14f) else Color.Transparent
+            // a picked/saved highlight shows its color; otherwise a tap or long-press shows the selection tint
+            val hlColor = highlightColors["${ayah.surah}:${ayah.ayah}"]?.let { tints[it] }
+            val hit = when {
+                hlColor != null -> hlColor
+                selected == ayah || pressed == ayah -> colors.primary.copy(alpha = 0.14f)
+                else -> Color.Transparent
+            }
             withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)) { append(ayahText(ayah)) }
             append(" ")
             withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
                 append(QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
             }
             if (ayah.sajda != null) withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary)) { append(" " + QuranSymbols.SAJDA) }
-            ranges.add(ayah.ref to (start until length))
+            ranges.add(ayah to (start until length))
             append("  ")
         }
     }
@@ -65,10 +78,14 @@ fun AyahPassage(ayahs: List<Ayah>, selected: AyahRef?, onSelect: (AyahRef) -> Un
         text,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)
             .pointerInput(ranges) {
-                detectTapGestures { pos ->
-                    val offset = layout?.getOffsetForPosition(pos) ?: return@detectTapGestures
-                    ranges.firstOrNull { offset in it.second }?.let { onSelect(it.first) }
-                }
+                detectTapGestures(
+                    onTap = { pos ->
+                        layout?.getOffsetForPosition(pos)?.let { off -> ranges.firstOrNull { off in it.second }?.let { onSelect(it.first) } }
+                    },
+                    onLongPress = { pos ->
+                        layout?.getOffsetForPosition(pos)?.let { off -> ranges.firstOrNull { off in it.second }?.let { onLongSelect(it.first) } }
+                    },
+                )
             },
         fontSize = fontSize.sp,
         lineHeight = (fontSize * 1.9f).sp,

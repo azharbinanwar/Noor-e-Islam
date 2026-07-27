@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.feature.studio.data
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
@@ -34,7 +35,7 @@ data class StudioConfig(
     val ayahs: List<Ayah>,   // the app's main model; surah name etc. added later if needed
 
     // Typography
-    val fontFamily: QuranFont = QuranFont.DEFAULT,
+    val fontFamily: QuranFont = QuranDefaults.FONT,
     val fontSize: Float = StudioDefaults.FONT_SIZE,
     @Contextual val textColor: Color = StudioDefaults.TEXT_COLOR,
     @Contextual val textAlign: TextAlign = StudioDefaults.TEXT_ALIGN,

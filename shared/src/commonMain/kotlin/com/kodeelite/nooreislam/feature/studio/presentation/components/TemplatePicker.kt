@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.feature.quran.data.QuranFont
+import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.StudioTemplate
 import com.kodeelite.nooreislam.feature.studio.data.TemplateStore
@@ -146,7 +146,7 @@ private fun TemplateChip(t: StudioTemplate, modifier: Modifier = Modifier, onCli
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("ع", fontFamily = FontFamily(Font(QuranFont.DEFAULT.res)), color = t.accent, fontSize = 14.sp)
+                Text("ع", fontFamily = FontFamily(Font(QuranDefaults.FONT.res)), color = t.accent, fontSize = 14.sp)
                 Bar(t.textColor, 1f)
                 Bar(t.textColor, 1f)
                 Bar(t.textColor, 0.6f, Modifier.align(Alignment.CenterHorizontally))

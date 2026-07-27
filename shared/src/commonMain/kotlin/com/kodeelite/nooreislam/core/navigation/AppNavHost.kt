@@ -25,7 +25,6 @@ import com.kodeelite.nooreislam.feature.notifications.presentation.Notifications
 import com.kodeelite.nooreislam.feature.onboarding.presentation.OnboardingScreen
 import com.kodeelite.nooreislam.feature.qibla.presentation.QiblaScreen
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.AyahRef
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranIndexScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranReaderScreen
@@ -69,12 +68,13 @@ fun AppNavHost(
                         QuranThemeHost { QuranIndexScreen() }
                     }
                     composable<AppRoute.QuranReader> { entry ->
-                        QuranThemeHost { QuranReaderScreen(startId = entry.toRoute<AppRoute.QuranReader>().startId) }
+                        val r = entry.toRoute<AppRoute.QuranReader>()
+                        QuranThemeHost { QuranReaderScreen(surah = r.surah, ayah = r.ayah) }
                     }
                     composable<AppRoute.Studio> { entry ->
                         val r = entry.toRoute<AppRoute.Studio>()
                         val ayah by produceState<Ayah?>(null, r.surah, r.ayah) {
-                            value = QuranRepository.ayah(AyahRef(r.surah, r.ayah))
+                            value = QuranRepository.ayah(r.surah, r.ayah)
                         }
                         ayah?.let { StudioScreen(ayahs = listOf(it)) }
                     }

@@ -172,7 +172,7 @@ private fun ThemeChip(theme: QuranTheme, selected: Boolean, onClick: () -> Unit)
             Bar(tx.copy(alpha = 0.82f), 0.6f, Modifier.align(Alignment.CenterHorizontally))
             Text(
                 "ع",
-                fontFamily = FontFamily(Font(QuranFont.DEFAULT.res)),
+                fontFamily = FontFamily(Font(QuranDefaults.FONT.res)),
                 color = ac,
                 fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)

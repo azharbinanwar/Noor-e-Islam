@@ -40,8 +40,8 @@ object QuranRepository {
     }
 
     /** A single ayah by its canonical ref (for jumps / deep links / bookmarks). */
-    suspend fun ayah(ref: AyahRef): Ayah? = lock.withLock {
-        readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? AND ayah = ?", ref.surah.toLong(), ref.ayah.toLong()).firstOrNull()
+    suspend fun ayah(surah: Int, ayah: Int): Ayah? = lock.withLock {
+        readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? AND ayah = ?", surah.toLong(), ayah.toLong()).firstOrNull()
     }
 
     /** The 114-row surah table (names, counts, revelation) — read once, for the header and picker. */

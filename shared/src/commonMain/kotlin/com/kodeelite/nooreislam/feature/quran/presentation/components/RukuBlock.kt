@@ -5,12 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.AyahRef
 
 // one ruku: surah header + basmalah at a surah start, the flowing ayahs, a ع marker at the end.
 // A juz that begins on the first ayah shows before the surah header; one that begins mid-ruku splits the passage.
 @Composable
-fun RukuBlock(ruku: List<Ayah>, rukuNumber: Int, nextRukuNumber: Int?, prevJuz: Int, selected: AyahRef?, onSelect: (AyahRef) -> Unit) {
+fun RukuBlock(
+    ruku: List<Ayah>,
+    rukuNumber: Int,
+    nextRukuNumber: Int?,
+    prevJuz: Int,
+    selected: Ayah?,
+    pressed: Ayah?,
+    onSelect: (Ayah) -> Unit,
+    onLongSelect: (Ayah) -> Unit
+) {
     val first = ruku.first()
     var prev = prevJuz
     // a juz that begins on this ruku's first ayah comes BEFORE the surah header (you enter the juz, then the surah)
@@ -27,12 +35,12 @@ fun RukuBlock(ruku: List<Ayah>, rukuNumber: Int, nextRukuNumber: Int?, prevJuz: 
     var runStart = 0
     for (k in 1 until ruku.size) {
         if (ruku[k].juz != prev) {
-            AyahPassage(ruku.subList(runStart, k), selected, onSelect)
+            AyahPassage(ruku.subList(runStart, k), selected, pressed, onSelect, onLongSelect)
             JuzMarker(ruku[k].juz, modifier = Modifier.padding(vertical = 14.dp))
             runStart = k
             prev = ruku[k].juz
         }
     }
-    AyahPassage(ruku.subList(runStart, ruku.size), selected, onSelect)
+    AyahPassage(ruku.subList(runStart, ruku.size), selected, pressed, onSelect, onLongSelect)
     RukuMarker(rukuNumber = rukuNumber, nextRukuNumber = nextRukuNumber)
 }

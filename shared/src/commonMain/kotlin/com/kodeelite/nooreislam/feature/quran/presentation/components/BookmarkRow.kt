@@ -5,16 +5,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bookmark
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.TilePosition
+import com.kodeelite.nooreislam.core.util.toSurahKey
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.quran_surah_name
+import org.jetbrains.compose.resources.Font
 
 // a saved bookmark row
 @Composable
@@ -29,6 +36,7 @@ fun BookmarkRow(surah: Int, ayah: Int, text: String, position: TilePosition, onC
                 contentAlignment = Alignment.Center
             ) { Icon(Lucide.Bookmark, null, tint = colors.primary, modifier = Modifier.size(20.dp)) }
         },
+        trailing = { Text(surah.toSurahKey(), fontFamily = FontFamily(Font(Res.font.quran_surah_name)), color = colors.primary, fontSize = 28.sp) },
         position = position,
         onClick = onClick,
     )

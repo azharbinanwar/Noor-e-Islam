@@ -2,18 +2,8 @@ package com.kodeelite.nooreislam.feature.quran.data
 
 import kotlinx.serialization.Serializable
 
-// canonical keys — persist these, not the db id (which can shift)
-data class AyahRef(val surah: Int, val ayah: Int) {
-    fun toKey() = "$surah:$ayah"
-
-    companion object {
-        fun fromKey(k: String) = k.split(":").let { AyahRef(it[0].toInt(), it[1].toInt()) }
-    }
-}
-
 data class WordRef(val surah: Int, val ayah: Int, val word: Int) {
     fun toKey() = "$surah:$ayah:$word"
-    val ayahRef get() = AyahRef(surah, ayah)
 
     companion object {
         fun fromKey(k: String) = k.split(":").let { WordRef(it[0].toInt(), it[1].toInt(), it[2].toInt()) }
@@ -30,9 +20,7 @@ data class Ayah(
     val juz: Int,
     val endsRuku: Boolean,
     val sajda: Sajda?,
-) {
-    val ref get() = AyahRef(surah, ayah)
-}
+)
 
 // a juz = its number, the ayah it starts at, and the surahs it spans (so the UI never re-derives them)
 data class Juz(val number: Int, val startsAt: Ayah, val surahs: List<Surah>)

@@ -45,7 +45,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -100,6 +103,9 @@ fun AppTile(
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    subtitleFont: FontFamily? = null,
+    subtitleAlign: TextAlign? = null,
+    subtitleMaxLines: Int = Int.MAX_VALUE,
     leadingIcon: ImageVector? = null,
     leadingColor: Color? = null,
     leading: (@Composable () -> Unit)? = null,
@@ -114,7 +120,22 @@ fun AppTile(
     val c = AppTheme.colors
     val bg = if (selected) c.primary.copy(alpha = 0.10f) else c.cardColor
     Column(modifier.fillMaxWidth().clip(shapeFor(position)).background(bg)) {
-        TileRow(title, subtitle, leadingIcon, leadingColor, leading, trailing, badge, actions, selected, onClick, onLongClick)
+        TileRow(
+            title,
+            subtitle,
+            subtitleFont,
+            subtitleAlign,
+            subtitleMaxLines,
+            leadingIcon,
+            leadingColor,
+            leading,
+            trailing,
+            badge,
+            actions,
+            selected,
+            onClick,
+            onLongClick
+        )
     }
 }
 
@@ -319,6 +340,9 @@ private fun shapeFor(pos: TilePosition): Shape {
 private fun TileRow(
     title: String,
     subtitle: String?,
+    subtitleFont: FontFamily?,
+    subtitleAlign: TextAlign?,
+    subtitleMaxLines: Int,
     leadingIcon: ImageVector?,
     leadingColor: Color?,
     leading: (@Composable () -> Unit)?,
@@ -362,7 +386,15 @@ private fun TileRow(
             }
             if (subtitle != null) {
                 Spacer(Modifier.height(4.dp))
-                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant)
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = c.onSurfaceVariant,
+                    fontFamily = subtitleFont,
+                    textAlign = subtitleAlign,
+                    maxLines = subtitleMaxLines,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
         if (trailing != null) {

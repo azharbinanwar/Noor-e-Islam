@@ -29,8 +29,9 @@ sealed interface AppRoute {
     @Serializable
     data object Quran : AppRoute
 
+    // surah:ayah, not a db id — the reader resolves the ruku to scroll to. Defaults open at the start.
     @Serializable
-    data class QuranReader(val startId: Int) : AppRoute
+    data class QuranReader(val surah: Int = 1, val ayah: Int = 1) : AppRoute
 
     // canonical surah:ayah keys (one ayah now, list later); the screen loads the real Ayah
     @Serializable

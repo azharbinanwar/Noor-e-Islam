@@ -53,7 +53,7 @@ fun SurahTab() {
                 SurahItem(
                     favs[i],
                     TilePosition.at(i, favs.size),
-                    onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].startId)) }
+                    onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].number, 1)) }
             }
             item { SectionLabel(stringResource(Res.string.surahs)) }
         }
@@ -61,7 +61,7 @@ fun SurahTab() {
             SurahItem(
                 rest[i],
                 TilePosition.at(i, rest.size),
-                onLongClick = { actionSurah = rest[i] }) { nav.navigate(AppRoute.QuranReader(rest[i].startId)) }
+                onLongClick = { actionSurah = rest[i] }) { nav.navigate(AppRoute.QuranReader(rest[i].number, 1)) }
         }
     }
 
@@ -70,7 +70,7 @@ fun SurahTab() {
             surah = s,
             favorite = s.number in favorites,
             onToggleFavorite = { QuranStore.toggleFavorite(s.number) },
-            onOpen = { nav.navigate(AppRoute.QuranReader(s.startId)) },
+            onOpen = { nav.navigate(AppRoute.QuranReader(s.number, 1)) },
             onDismiss = { actionSurah = null },
         )
     }

@@ -30,8 +30,4 @@ enum class QuranFont(val labelRes: StringResource, val sample: String, val res: 
     Indopak(Res.string.font_indopak, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem);
 
     val label: String @Composable get() = stringResource(labelRes)
-
-    companion object {
-        val DEFAULT = Hafs
-    }
 }

@@ -18,11 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +59,7 @@ import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.StateView
+import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.AdhanRoundingStyle
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
@@ -64,7 +71,11 @@ import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.enums.onColor
+import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
+import com.kodeelite.nooreislam.feature.quran.data.tint
+import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightColorRow
 import kotlinx.datetime.LocalDateTime
+import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
 /** Scratch page to eyeball every button and color in light + dark. */
@@ -106,6 +117,8 @@ private fun Panel(title: String, mode: ThemeMode) {
             TileShowcase()
             SectionTitle("Quick Actions (horizontal)")
             ActionShowcase()
+            SectionTitle("Highlight colors")
+            HighlightShowcase()
             SectionTitle("Buttons")
             ButtonShowcase()
             SectionTitle("StateView")
@@ -273,6 +286,18 @@ private fun TileShowcase() {
         ),
     )
     AppTile(title = "About Miqat", subtitle = "Standalone tile", onClick = {})
+}
+
+/** Highlight color picker + a live preview of the tint drawn behind a sample ayah. */
+@Composable
+private fun HighlightShowcase() {
+    var sel by remember { mutableStateOf(HighlightColor.Green) }
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        HighlightColorRow(sel) { sel = it }
+        Box(Modifier.clip(RoundedCornerShape(6.dp)).background(sel.tint()).padding(horizontal = 8.dp, vertical = 4.dp)) {
+            Text("ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ", fontFamily = FontFamily(Font(QuranDefaults.FONT.res)), fontSize = 24.sp)
+        }
+    }
 }
 
 /** Every AppActionGroup usage: the three width modes, states, two-up, and a standalone Single cell. */
