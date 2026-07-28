@@ -56,7 +56,7 @@ fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () 
     val colors = AppTheme.colors
     val hue = highlight.color.hue
     // Use the professional tint logic for a consistent "wash" feel
-    val wash = highlight.color.tint(colors.background).copy(alpha = 0.12f)
+    val wash = highlight.color.tint(colors.background).copy(alpha = 0.05f)
 
     val text by produceState("") {
         value = QuranRepository.ayah(highlight.surah, highlight.ayah)?.text ?: ""

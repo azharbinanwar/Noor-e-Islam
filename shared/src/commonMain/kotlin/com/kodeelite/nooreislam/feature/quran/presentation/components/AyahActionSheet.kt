@@ -229,6 +229,7 @@ fun AyahActionSheet(
                             iconColor = colors.primary
                         ) {
                             bookmarksStore.toggle(ayah.surah, ayah.ayah)
+                            onDismiss()
                         },
                         AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {
                             val key = "${ayah.surah}:${ayah.ayah}"

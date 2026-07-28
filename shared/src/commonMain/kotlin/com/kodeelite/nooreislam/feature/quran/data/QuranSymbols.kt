@@ -8,6 +8,8 @@ object QuranSymbols {
     const val SAJDA = "۩"       // prostration marker
     const val BASMALAH = "﷽"    // ligature bismillah
     const val QURAN = "quran" // this will be used ot show a glyph under juz font
+    const val BOOKMARK = "⚑"    // plain glyph, not emoji — inherits tint like any other char
+    const val NOTE = "✎"
 
     // LTR OVERRIDE (not embedding/isolate): forces every enclosed char to STRONG left-to-right, so the
     // neutral brackets ( ) / ﴾ ﴿ can't reorder or mirror inside RTL Arabic. Override is Unicode 1.0, so it

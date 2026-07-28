@@ -15,9 +15,9 @@ fun RukuBlock(
     nextRukuNumber: Int?,
     prevJuz: Int,
     selected: Ayah?,
-    pressed: Ayah?,
     onSelect: (Ayah) -> Unit,
-    onLongSelect: (Ayah) -> Unit
+    onLongSelect: (Ayah) -> Unit,
+    onNoteTap: (Ayah) -> Unit = {}
 ) {
     val first = ruku.first()
     var prev = prevJuz
@@ -35,12 +35,12 @@ fun RukuBlock(
     var runStart = 0
     for (k in 1 until ruku.size) {
         if (ruku[k].juz != prev) {
-            AyahPassage(ruku.subList(runStart, k), selected, pressed, onSelect, onLongSelect)
+            AyahPassage(ruku.subList(runStart, k), selected, onSelect, onLongSelect, onNoteTap)
             JuzMarker(ruku[k].juz, modifier = Modifier.padding(vertical = 14.dp))
             runStart = k
             prev = ruku[k].juz
         }
     }
-    AyahPassage(ruku.subList(runStart, ruku.size), selected, pressed, onSelect, onLongSelect)
+    AyahPassage(ruku.subList(runStart, ruku.size), selected, onSelect, onLongSelect, onNoteTap)
     RukuMarker(rukuNumber = rukuNumber, nextRukuNumber = nextRukuNumber)
 }

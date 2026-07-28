@@ -41,6 +41,7 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
@@ -48,6 +49,7 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
@@ -119,7 +121,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
 
     var selected by remember { mutableStateOf<Ayah?>(null) }
     var quickHighlight by remember { mutableStateOf<Ayah?>(null) } // long-press → floating color strip
+    var viewingNote by remember { mutableStateOf<Ayah?>(null) } // tap the note glyph → stub preview, real editor later
     var showSettings by remember { mutableStateOf(false) }
+    val notesStore = koinInject<NotesStore>()
+    val noteMap by notesStore.noteMap.collectAsState()
     var expanded by remember(selected) { mutableStateOf(false) }
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
     val blurRadius by animateDpAsState(if (expanded) 14.dp else 0.dp, label = "pageBlur")
@@ -165,9 +170,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                         val prevJuz = if (i == 0) ruku.first().juz else rukus[i - 1].last().juz
                         val (numInSurah, lastInSurah) = rukuMeta[i]
                         RukuBlock(
-                            ruku, numInSurah, if (lastInSurah) null else numInSurah + 1, prevJuz, selected, quickHighlight,
+                            ruku, numInSurah, if (lastInSurah) null else numInSurah + 1, prevJuz, selected ?: quickHighlight,
                             onSelect = { selected = if (selected == it) null else it },
                             onLongSelect = { quickHighlight = it },
+                            onNoteTap = { viewingNote = it },
                         )
                     }
                 }
@@ -186,6 +192,16 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
 
         quickHighlight?.let { HighlightQuickPicker(it) { quickHighlight = null } }
+
+        viewingNote?.let { ayah ->
+            // stub preview — a real editor sheet replaces this later
+            AppBottomSheet(
+                onDismiss = { viewingNote = null },
+                title = stringResource(Res.string.surah_number_ayah_number, ayah.surah, ayah.ayah),
+            ) {
+                Text(noteMap["${ayah.surah}:${ayah.ayah}"] ?: "", color = colors.onSurface)
+            }
+        }
 
         if (showSettings) {
             ReaderSettingsSheet(

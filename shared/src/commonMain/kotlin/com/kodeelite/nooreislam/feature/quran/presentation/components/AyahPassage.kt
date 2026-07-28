@@ -11,20 +11,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -45,10 +38,36 @@ import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 
 private const val BISMALAH_WORD_COUNT = 4
+private const val RTL_MARKER = "‏"
 
-// one ruku as a single flowing paragraph; tap a verse to select it, highlight follows only that verse's glyphs
+private const val SELECTION_ALPHA = 0.10f
+
+// Text plus each ayah's selection range and the note glyph's own tiny range (a
+// separate tap target from the ayah's full selection range)
+private data class AyahPassageData(
+    val text: AnnotatedString,
+    val ranges: List<Pair<Ayah, IntRange>>,
+    val noteIconRanges: Map<String, IntRange>
+)
+
+/**
+ * AyahPassage: renders a group of verses (ruku) as a single flowing paragraph.
+ *
+ * Highlights/selection are drawn via SpanStyle(background = ...), not a custom drawBehind
+ * path — that's deliberate. Android paints justified (TextAlign.Justify) text and its
+ * SpanStyle backgrounds in the same pass, so the highlight always lands exactly where the
+ * justified glyphs actually render. A reconstructed-after-the-fact rect (built from
+ * TextLayoutResult queries) doesn't have that guarantee on Android and drifted on wrapped,
+ * justified lines — see AyahPassageV2.kt for that attempt and why it's parked.
+ */
 @Composable
-fun AyahPassage(ayahs: List<Ayah>, selected: Ayah?, pressed: Ayah?, onSelect: (Ayah) -> Unit, onLongSelect: (Ayah) -> Unit) {
+fun AyahPassage(
+    ayahs: List<Ayah>,
+    selected: Ayah?,
+    onSelect: (Ayah) -> Unit,
+    onLongSelect: (Ayah) -> Unit,
+    onNoteTap: (Ayah) -> Unit = {}
+) {
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
     val highlightStore = koinInject<HighlightsStore>()
@@ -58,161 +77,97 @@ fun AyahPassage(ayahs: List<Ayah>, selected: Ayah?, pressed: Ayah?, onSelect: (A
     val fontSize by store.fontSize.collectAsState()
     val script by store.font.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
-    val markerFont = FontFamily(Font(Res.font.tanzil_hafs)) // ornate number + ruku/sajda glyphs
+    val markerFont = FontFamily(Font(Res.font.tanzil_hafs))
 
-    val highlightColors by highlightStore.colors.collectAsState()
-    val bookmarkKeys by bookmarksStore.keys.collectAsState()
-    val notes by notesStore.notes.collectAsState()
-    val tints = remember(colors.background) { HighlightColor.entries.associateWith { it.tint(colors.background) } } // resolve theme-aware tints once
+    val highlights by highlightStore.colors.collectAsState()
+    val bookmarks by bookmarksStore.keys.collectAsState()
+    val noteMap by notesStore.noteMap.collectAsState()
 
-    // char range each verse occupies, so a tap can map back to its ayah
-    val ranges = remember(ayahs) { ArrayList<Pair<Ayah, IntRange>>() }
-    val text = buildAnnotatedString {
-        ranges.clear()
-        ayahs.forEach { ayah ->
-            val start = length
-            val key = "${ayah.surah}:${ayah.ayah}"
-            val isBookmarked = key in bookmarkKeys
-            val hasNote = notes.any { it.surah == ayah.surah && it.ayah == ayah.ayah }
+    val tints = remember(colors.background) {
+        HighlightColor.entries.associateWith { it.tint(colors.background) }
+    }
 
-            // Highlight: Visuals moved to drawBehind (Background removed from SpanStyle)
-            withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground)) {
-                append(ayahText(ayah))
+    // Build the text and its ranges atomically so a tap always matches what's on screen
+    val passageData = remember(ayahs, highlights, bookmarks, noteMap, bodyFont, markerFont, colors, selected, fontSize) {
+        val ranges = mutableListOf<Pair<Ayah, IntRange>>()
+        val noteIconRanges = mutableMapOf<String, IntRange>()
+        val annotatedString = buildAnnotatedString {
+            ayahs.forEach { ayah ->
+                val start = length
+                val key = "${ayah.surah}:${ayah.ayah}"
+
+                val hlColor = highlights[key]?.let { tints[it] }
+                val hit = when {
+                    selected == ayah -> colors.primary.copy(alpha = SELECTION_ALPHA)
+                    hlColor != null -> hlColor
+                    else -> Color.Transparent
+                }
+
+                append(RTL_MARKER)
+
+                if (key in bookmarks) {
+                    withStyle(SpanStyle(fontFamily = bodyFont, color = colors.primary, background = hit)) { append(QuranSymbols.BOOKMARK + " ") }
+                }
+                if (key in noteMap) {
+                    val noteStart = length
+                    withStyle(SpanStyle(fontFamily = bodyFont, color = colors.primary, background = hit)) { append(QuranSymbols.NOTE) }
+                    noteIconRanges[key] = noteStart until length
+                    withStyle(SpanStyle(background = hit)) { append(" ") }
+                }
+
+                withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)) {
+                    append(ayahText(ayah))
+                }
+
+                withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
+                    append(" " + QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
+                }
+
+                if (ayah.sajda != null) {
+                    withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
+                        append(" " + QuranSymbols.SAJDA)
+                    }
+                }
+
+                append(RTL_MARKER)
+                append("   ")
+
+                ranges.add(ayah to (start until length))
             }
-            append(" ")
-
-            withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary)) {
-                append(QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
-            }
-
-            // Inline Markers: Bookmark 🔖 and Note 📝 symbols
-            if (isBookmarked) {
-                withStyle(SpanStyle(color = Color(0xFFF59E0B), fontWeight = FontWeight.Bold)) { append(" 🔖") }
-            }
-            if (hasNote) {
-                withStyle(SpanStyle(color = colors.primary, fontWeight = FontWeight.Bold)) { append(" 📝") }
-            }
-
-            if (ayah.sajda != null) withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary)) {
-                append(" " + QuranSymbols.SAJDA)
-            }
-            ranges.add(ayah to (start until length))
-            append("  ")
         }
+        AyahPassageData(annotatedString, ranges, noteIconRanges)
     }
 
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
-    val density = LocalDensity.current
-    val padPx = with(density) { 4.dp.toPx() } // Padding around text
-    val cornerPx = with(density) { 6.dp.toPx() } // Corner radius
-
-    // Build a single continuous contour path that "hugs" the RTL text blocks
-    fun buildHuggingPath(ayah: Ayah?): Path? {
-        val l = layout ?: return null
-        val target = ayah ?: return null
-        val range = ranges.firstOrNull { it.first == target }?.second ?: return null
-
-        val startLine = l.getLineForOffset(range.first)
-        val endLine = l.getLineForOffset(range.last)
-
-        return Path().apply {
-            val startX = l.getHorizontalPosition(range.first, true)
-            val endX = l.getHorizontalPosition(range.last, false)
-
-            // 1. TOP-START JUNCTION (Right-Top in LTR card logic)
-            // Move to vertical start to allow corner radius to draw the top-right corner
-            moveTo(startX + padPx, l.getLineTop(startLine) + cornerPx)
-
-            // 2. RIGHT SIDE (Descending Trace)
-            for (i in startLine..endLine) {
-                val lineRight = if (i == startLine) startX else l.getLineRight(i)
-                lineTo(lineRight + padPx, l.getLineTop(i))
-                lineTo(lineRight + padPx, l.getLineBottom(i))
-            }
-
-            // 3. BOTTOM-END JUNCTION (Left-Bottom in LTR card logic)
-            // Ensure no duplicate points: move straight to the vertical start of the left side
-            lineTo(endX - padPx, l.getLineBottom(endLine))
-            lineTo(endX - padPx, l.getLineBottom(endLine) - cornerPx)
-
-            // 4. LEFT SIDE (Ascending Trace)
-            for (i in endLine downTo startLine) {
-                val lineLeft = if (i == endLine) endX else l.getLineLeft(i)
-                // Skip drawing to the exact bottom corner again if we just did it in step 3
-                if (i != endLine) lineTo(lineLeft - padPx, l.getLineBottom(i))
-                lineTo(lineLeft - padPx, l.getLineTop(i))
-            }
-
-            // 5. CLOSE TOP
-            lineTo(startX + padPx, l.getLineTop(startLine))
-            close()
-        }
-    }
-
-    val selectionPath = remember(selected, layout) { buildHuggingPath(selected) }
-    val pressPath = remember(pressed, layout) { buildHuggingPath(pressed) }
-    // Pre-calculate paths for all highlighted ayahs in this passage
-    val highlightPaths = remember(ayahs, highlightColors, layout) {
-        ayahs.mapNotNull { ayah ->
-            val color = highlightColors["${ayah.surah}:${ayah.ayah}"] ?: return@mapNotNull null
-            val path = buildHuggingPath(ayah) ?: return@mapNotNull null
-            path to (tints[color] ?: Color.Transparent)
-        }
-    }
 
     Text(
-        text,
+        text = passageData.text,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)
-            .drawBehind {
-                val cornerEffect = PathEffect.cornerPathEffect(cornerPx)
-                val selectionStroke = Stroke(width = 1.5.dp.toPx(), pathEffect = cornerEffect)
-                val selectionFillPaint = Paint().apply {
-                    color = colors.primary.copy(alpha = 0.04f)
-                    pathEffect = cornerEffect
-                }
-
-                // 1. Draw Highlights (Fill only, no border)
-                highlightPaths.forEach { (path, tint) ->
-                    val paint = Paint().apply {
-                        color = tint
-                        pathEffect = cornerEffect
-                    }
-                    drawIntoCanvas { canvas -> canvas.drawPath(path, paint) }
-                }
-
-                // 2. Draw Pressed Feedback
-                pressPath?.let { path ->
-                    val paint = Paint().apply {
-                        color = colors.primary.copy(alpha = 0.12f)
-                        pathEffect = cornerEffect
-                    }
-                    drawIntoCanvas { canvas -> canvas.drawPath(path, paint) }
-                }
-
-                // 3. Draw Selection "Hugging" Border (Fill + Stroke)
-                selectionPath?.let { path ->
-                    drawIntoCanvas { canvas -> canvas.drawPath(path, selectionFillPaint) }
-                    drawPath(path, color = colors.primary.copy(alpha = 0.5f), style = selectionStroke)
-                }
-            }
-            .pointerInput(ranges) {
+            .pointerInput(passageData) {
                 detectTapGestures(
                     onTap = { pos ->
-                        layout?.getOffsetForPosition(pos)?.let { off -> ranges.firstOrNull { off in it.second }?.let { onSelect(it.first) } }
+                        layout?.getOffsetForPosition(pos)?.let { idx ->
+                            passageData.ranges.firstOrNull { idx in it.second }?.let { (ayah, _) ->
+                                val noteRange = passageData.noteIconRanges["${ayah.surah}:${ayah.ayah}"]
+                                if (noteRange != null && idx in noteRange) onNoteTap(ayah) else onSelect(ayah)
+                            }
+                        }
                     },
                     onLongPress = { pos ->
-                        layout?.getOffsetForPosition(pos)?.let { off -> ranges.firstOrNull { off in it.second }?.let { onLongSelect(it.first) } }
-                    },
+                        layout?.getOffsetForPosition(pos)?.let { idx ->
+                            passageData.ranges.firstOrNull { idx in it.second }?.let { onLongSelect(it.first) }
+                        }
+                    }
                 )
             },
         fontSize = fontSize.sp,
         lineHeight = (fontSize * 1.9f).sp,
         textAlign = TextAlign.Justify,
-        onTextLayout = { layout = it },
+        onTextLayout = { layout = it }
     )
 }
 
-// ayah display text; the embedded basmalah is dropped on non-Fatiha surah starts (shown separately)
+// Drops embedded basmalah on non-Fatiha surah starts
 private fun ayahText(ayah: Ayah): String {
     val words = ayah.text.split(' ').filter { it.isNotBlank() }
     val body = if (ayah.ayah == 1 && ayah.surah != 1 && words.size > BISMALAH_WORD_COUNT && words.first().startsWith("بِسْم"))
