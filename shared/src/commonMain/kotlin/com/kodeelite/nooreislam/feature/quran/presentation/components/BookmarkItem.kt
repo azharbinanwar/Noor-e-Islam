@@ -19,17 +19,16 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.util.toSurahKey
-import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font
 
 // a saved bookmark item
 @Composable
-fun BookmarkItem(bookmark: Bookmark, text: String, position: TilePosition, onClick: () -> Unit) {
+fun BookmarkItem(surah: Int, ayah: Int, text: String, position: TilePosition, onClick: () -> Unit) {
     val colors = AppTheme.colors
     AppTile(
-        title = "Surah ${bookmark.surah} · Ayah ${bookmark.ayah}",
+        title = "Surah $surah · Ayah $ayah",
         subtitle = text,
         leading = {
             Box(
@@ -37,14 +36,7 @@ fun BookmarkItem(bookmark: Bookmark, text: String, position: TilePosition, onCli
                 contentAlignment = Alignment.Center
             ) { Icon(Lucide.Bookmark, null, tint = colors.primary, modifier = Modifier.size(20.dp)) }
         },
-        trailing = {
-            Text(
-                bookmark.surah.toSurahKey(),
-                fontFamily = FontFamily(Font(Res.font.quran_surah_name)),
-                color = colors.primary,
-                fontSize = 28.sp
-            )
-        },
+        trailing = { Text(surah.toSurahKey(), fontFamily = FontFamily(Font(Res.font.quran_surah_name)), color = colors.primary, fontSize = 28.sp) },
         position = position,
         onClick = onClick,
     )

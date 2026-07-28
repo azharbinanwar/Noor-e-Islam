@@ -42,7 +42,7 @@ fun BookmarksTab() {
         items(bookmarks.size) { i ->
             val b = bookmarks[i]
             BookmarkItem(
-                b, texts["${b.surah}:${b.ayah}"] ?: "",
+                b.surah, b.ayah, texts["${b.surah}:${b.ayah}"] ?: "",
                 TilePosition.at(i, bookmarks.size),
             ) { nav.navigate(AppRoute.QuranReader(b.surah, b.ayah)) }
         }

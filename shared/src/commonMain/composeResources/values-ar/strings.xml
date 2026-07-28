@@ -2,10 +2,10 @@
 <resources>
     <string name="today">اليوم</string>
     <string name="this_week">هذا الأسبوع</string>
-    <string name="day_streak">أيام متتالية</string>
+    <string name="day_streak">سلسلة الأيام</string>
     <string name="verse_of_the_day">آية اليوم</string>
     <string name="surah_al_mulk">سورة الملك</string>
-    <string name="recite_before_sleep_after_isha">اقرأها قبل النوم · بعد العشاء بـ 30 دقيقة</string>
+    <string name="recite_before_sleep_after_isha">اقرأها قبل النوم · 30 دقيقة بعد العشاء</string>
     <string name="clear">مسح</string>
     <string name="mark_prayer">تسجيل %1$s</string>
     <string name="tap_header_to_preview_each_prayer">اضغط على الرأس لمعاينة كل صلاة</string>
@@ -24,7 +24,7 @@
     <string name="back">رجوع</string>
     <string name="discard">تجاهل</string>
     <string name="makkah">مكة المكرمة</string>
-    <string name="developer_sandbox">بيئة التطوير</string>
+    <string name="developer_sandbox">بيئة الاختبار</string>
 
     <string name="qibla">القبلة</string>
     <string name="qibla_direction_degrees">القبلة %1$s°</string>
@@ -32,7 +32,7 @@
     <string name="turn_left_to_face_qibla">استدر يساراً لمواجهة القبلة</string>
     <string name="turn_right_to_face_qibla">استدر يميناً لمواجهة القبلة</string>
     <string name="you_are_facing_qibla">أنت تواجه القبلة</string>
-    <string name="compass_accuracy_low_wave_phone_in_figure_eight">دقة منخفضة — حرّك هاتفك على شكل رقم ٨</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">دقة منخفضة — حرّك هاتفك على شكل رقم 8</string>
     <string name="compass_unavailable">البوصلة غير متوفرة</string>
     <string name="device_has_no_compass_sensor">جهازك لا يحتوي على مستشعر بوصلة، لذا لا يمكن عرض اتجاه القبلة</string>
     <string name="location_needed_for_qibla">الموقع مطلوب لتحديد القبلة</string>
@@ -41,7 +41,7 @@
     <string name="best">الأفضل</string>
     <string name="on_time">في الوقت</string>
     <string name="prayed_with_jamaat">جماعة</string>
-    <string name="prayed_kaza">قضاء</string>
+    <string name="prayed_kaza">قضاءً</string>
     <string name="missed_prayer">لم تصل</string>
     <string name="not_tracked">غير محدد</string>
     <string name="coming_soon">قريباً</string>
@@ -61,7 +61,6 @@
     <string name="gregorian_nov">نوفمبر</string>
     <string name="gregorian_dec">ديسمبر</string>
 
-
     <string name="fajr_short">فجر</string>
     <string name="sunrise_short">شروق</string>
     <string name="dhuhr_short">ظهر</string>
@@ -80,8 +79,8 @@
     <string name="test_background_focus_logic">اختبار الخلفية</string>
     <string name="focus_test_instructions_survive_reboot">الفتحات المحفوظة تبقى بعد إعادة التشغيل وتعمل مرة واحدة. أضف واحدة، ثم أغلق التطبيق أو أعد التشغيل.</string>
     <string name="add_test_focus_slot">إضافة فتحة</string>
-    <string name="start_silence_after">يبدأ خلال</string>
-    <string name="silence_for_period">صمت لمدة</string>
+    <string name="start_silence_after">بدء الكتم بعد</string>
+    <string name="silence_for_period">مدة الكتم</string>
     <string name="choose_silence_mode">وضع الصمت</string>
     <string name="scheduled_test_slots">المجدولة</string>
     <string name="remove_scheduled_slot">إزالة</string>
@@ -106,7 +105,7 @@
     <string name="tasbih_shape">الشكل</string>
     <string name="tasbih_shape_round">دائري</string>
     <string name="tasbih_shape_oval">بيضوي</string>
-    <string name="tasbih_finish">اللمسة</string>
+    <string name="tasbih_finish">الملمس</string>
     <string name="tasbih_finish_glossy">لامع</string>
     <string name="tasbih_finish_marble">رخامي</string>
     <string name="tasbih_color">اللون</string>
@@ -329,13 +328,13 @@
     <string name="after_asr">بعد العصر</string>
 
     <string-array name="week_days">
+        <item>ح</item>
         <item>ن</item>
         <item>ث</item>
         <item>ر</item>
         <item>خ</item>
         <item>ج</item>
         <item>س</item>
-        <item>ح</item>
     </string-array>
 
     <!-- Hijri calendar -->
@@ -354,6 +353,7 @@
     <string name="date_adjustment">تعديل التاريخ</string>
     <string name="days">أيام</string>
     <string name="hijri_era">هـ</string>
+
     <!-- Duas & Adhkar -->
     <string name="dua_of_the_day">دعاء اليوم</string>
     <string name="collections">المجموعات</string>
@@ -442,9 +442,11 @@
     <string name="notif_tahajjud_body">قم لصلاة الليل، فهو يسمعك</string>
     <string name="notif_ishraq_body">صلِّ بعد الشروق لأجرٍ عظيم</string>
     <string name="notif_verse_sub">آية يومية تتدبرها</string>
+
     <!-- Fire-time preview labels shown under each alert -->
     <string name="notif_at_before">قبل</string>
     <string name="notif_at_jamaah">الجماعة</string>
+
     <!-- Android notification channels (categories users can tune in system settings) -->
     <string name="notification_channel_group">التذكيرات</string>
     <string name="notification_channel_prayer">تذكيرات الصلاة</string>
@@ -460,6 +462,8 @@
     <string name="widgets_summary">مواقيت الصلاة على شاشتك الرئيسية</string>
     <string name="bookmarks">الإشارات المرجعية</string>
     <string name="no_bookmarks">لا توجد إشارات مرجعية بعد</string>
+    <string name="no_highlights">لا توجد تظليلات بعد</string>
+    <string name="highlights_hint">اضغط على آية لتظليلها، أو اضغط مطولاً للخيارات السريعة.</string>
     <string name="background_opacity">شفافية الخلفية</string>
     <string name="add_to_home_screen">أضف إلى الشاشة الرئيسية</string>
     <string name="card_color">لون البطاقة</string>
@@ -487,7 +491,7 @@
     <string name="quran_tab_highlights">التظليل</string>
     <string name="quran_theme_system">النظام</string>
     <string name="quran_theme_light">فاتح</string>
-    <string name="quran_theme_paper">ورقي</string>
+    <string name="quran_theme_paper">نمط الورق</string>
     <string name="quran_theme_sepia">بني داكن</string>
     <string name="quran_theme_green">أخضر</string>
     <string name="quran_theme_mint">نعناعي</string>
@@ -544,6 +548,7 @@
     <string name="font_madani">مدني</string>
     <string name="font_scheherazade">شهرزاد</string>
     <string name="font_indopak">إندوباك</string>
+
     <!-- Studio (share editor) -->
     <string name="mode_templates">قوالب</string>
     <string name="mode_layout">تخطيط</string>
@@ -619,6 +624,7 @@
     <string name="version_summary">الإصدار %1$s</string>
     <string name="dimension_format">%1$d × %2$d</string>
     <string name="percent_format">%1$d%%</string>
+
     <string-array name="surah_meanings">
         <item>الفاتحة</item>
         <item>البقرة</item>

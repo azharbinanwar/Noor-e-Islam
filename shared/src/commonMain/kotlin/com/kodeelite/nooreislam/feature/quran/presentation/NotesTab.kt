@@ -21,7 +21,6 @@ fun NotesTab() {
     val nav = LocalAppNavigator.current
     val store = koinInject<NotesStore>()
     val notes by store.notes.collectAsState()
-    val noteList = notes.toList() // list of Pair(surah:ayah, text)
 
     LazyColumn(
         Modifier.fillMaxSize(),
@@ -29,22 +28,9 @@ fun NotesTab() {
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(notes.size) { i ->
-            val (key, text) = noteList[i]
-            val parts = key.split(":")
-            val surah = parts[0].toInt()
-            val ayah = parts[1].toInt()
-
-            NoteItem(
-                com.kodeelite.nooreislam.feature.quran.data.Note(
-                    surah = surah,
-                    ayah = ayah,
-                    text = text,
-                    createdAt = 0,
-                    updatedAt = 0
-                ),
-                TilePosition.at(i, notes.size)
-            ) {
-                nav.navigate(AppRoute.QuranReader(surah, ayah))
+            val note = notes[i]
+            NoteItem(note.surah, note.ayah, note.text, TilePosition.at(i, notes.size)) {
+                nav.navigate(AppRoute.QuranReader(note.surah, note.ayah))
             }
         }
     }

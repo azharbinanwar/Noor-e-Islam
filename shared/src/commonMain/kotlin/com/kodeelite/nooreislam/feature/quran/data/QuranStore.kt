@@ -3,6 +3,7 @@ package com.kodeelite.nooreislam.feature.quran.data
 import com.kodeelite.nooreislam.core.constants.PrefConst
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.prefs.PrefsService
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 // Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit.
 // User data (highlights/bookmarks/notes) moved to their own specialized stores.
 class QuranStore(
+    private val scope: CoroutineScope,
 ) {
     private val _fontSize = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_FONT_SP, QuranDefaults.FONT_SP))
     val fontSize: StateFlow<Int> = _fontSize.asStateFlow()
