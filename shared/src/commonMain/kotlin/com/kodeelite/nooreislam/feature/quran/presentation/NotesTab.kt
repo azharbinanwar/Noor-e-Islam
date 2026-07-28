@@ -21,6 +21,7 @@ fun NotesTab() {
     val nav = LocalAppNavigator.current
     val store = koinInject<NotesStore>()
     val notes by store.notes.collectAsState()
+    val noteList = notes.toList()
 
     LazyColumn(
         Modifier.fillMaxSize(),

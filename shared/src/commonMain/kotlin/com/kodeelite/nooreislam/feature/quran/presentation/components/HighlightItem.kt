@@ -37,6 +37,7 @@ import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Highlight
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.hue
+import com.kodeelite.nooreislam.feature.quran.data.tint
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
@@ -44,31 +45,34 @@ import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Highlight Item: Locked to LTR card layout with RTL text handling.
- * This ensures the card structure (Glyph on Right, Citation on Left) stays identical
- * whether the app is in English or Arabic, while correctly truncating Arabic text.
+ * Highlight Item: A premium, model-driven card for highlighted ayahs.
+ * - Locked to LTR structure with RTL Arabic text.
+ * - Subtle background color wash based on the highlight color.
+ * - Decorative Surah glyph.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () -> Unit, onClick: () -> Unit) {
     val colors = AppTheme.colors
     val hue = highlight.color.hue
+    // Use the professional tint logic for a consistent "wash" feel
+    val wash = highlight.color.tint(colors.background).copy(alpha = 0.12f)
 
     val text by produceState("") {
         value = QuranRepository.ayah(highlight.surah, highlight.ayah)?.text ?: ""
     }
 
-    // Force LTR for the card layout (keeps Glyph on Right, Citation on Left consistently)
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shapeFor(TilePosition.at(index, total)))
                 .background(colors.cardColor)
+                .background(wash) // Layered tint for depth
                 .combinedClickable(onClick = onClick, onLongClick = onLongClick)
                 .height(IntrinsicSize.Min)
         ) {
-            // Decorative background glyph (Aligned to Right/End)
+            // Decorative background glyph (Faded, aligned to End)
             Box(
                 Modifier
                     .align(Alignment.CenterEnd)
@@ -77,43 +81,44 @@ fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () 
                 Text(
                     text = highlight.surah.toSurahKey(),
                     fontFamily = FontFamily(Font(Res.font.quran_surah_name)),
-                    color = hue.copy(alpha = 0.22f),
-                    fontSize = 68.sp
+                    color = hue.copy(alpha = 0.18f),
+                    fontSize = 72.sp
                 )
             }
 
-            // Main content column (Starts from Left)
+            // Content Column
             Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Citation Header
+                // Citation Badge
                 Box(
                     Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(hue.copy(alpha = 0.12f))
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(hue.copy(alpha = 0.15f))
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
                         text = stringResource(Res.string.surah_number_ayah_number, highlight.surah, highlight.ayah),
                         style = MaterialTheme.typography.labelSmall,
                         color = hue,
                         fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
                     )
                 }
 
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(12.dp))
 
-                // Ayah Text Body: Forced RTL to ensure Arabic punctuation/ellipsis appear correctly
+                // Ayah Text Body (Forced RTL)
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     Text(
                         text = text,
                         style = MaterialTheme.typography.titleMedium,
                         fontFamily = FontFamily(Font(QuranDefaults.FONT.res)),
                         color = colors.onSurface,
-                        textAlign = TextAlign.Start, // Right-aligned for the reader
+                        textAlign = TextAlign.Start,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth(),
