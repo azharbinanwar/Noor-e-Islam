@@ -462,6 +462,7 @@
     <string name="widgets_summary">Prayer times on your home screen</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="no_bookmarks">No bookmarks yet</string>
+    <string name="bookmarks_hint">Tap an ayah in the reader to bookmark it for quick access.</string>
     <string name="no_highlights">No highlights yet</string>
     <string name="highlights_hint">Tap an ayah to highlight it, or long-press for quick actions.</string>
     <string name="background_opacity">Background opacity</string>
@@ -617,6 +618,7 @@
 
     <string name="copy_ayah">Copy Ayah</string>
     <string name="remove_highlight">Remove highlight</string>
+    <string name="remove_bookmark">Remove bookmark</string>
     <string name="share_to_studio">Share to Studio</string>
 
     <string name="search">Search</string>

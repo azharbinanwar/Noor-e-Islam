@@ -462,6 +462,7 @@
     <string name="widgets_summary">مواقيت الصلاة على شاشتك الرئيسية</string>
     <string name="bookmarks">الإشارات المرجعية</string>
     <string name="no_bookmarks">لا توجد إشارات مرجعية بعد</string>
+    <string name="bookmarks_hint">اضغط على آية في القارئ لإضافتها إلى المرجعيات للوصول السريع.</string>
     <string name="no_highlights">لا توجد تظليلات بعد</string>
     <string name="highlights_hint">اضغط على آية لتظليلها، أو اضغط مطولاً للخيارات السريعة.</string>
     <string name="background_opacity">شفافية الخلفية</string>
@@ -741,4 +742,5 @@
         <item>الفلق</item>
         <item>الناس</item>
     </string-array>
+    <string name="remove_bookmark">إزالة المرجعية</string>
 </resources>
