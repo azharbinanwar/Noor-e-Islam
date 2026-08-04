@@ -34,15 +34,13 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
-import com.kodeelite.nooreislam.core.datetime.format
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
@@ -54,10 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun BookmarkItem(bookmark: Bookmark, index: Int, total: Int, onLongClick: () -> Unit, onClick: () -> Unit) {
     val colors = AppTheme.colors
-    val timestamp = remember(bookmark.createdAt) {
-        val dt = kotlin.time.Instant.fromEpochMilliseconds(bookmark.createdAt).toLocalDateTime(TimeZone.currentSystemDefault())
-        dt.format("dd MMM, h:mm a")
-    }
+    val timestamp = remember(bookmark.createdAt) { Now.formattedDateTime(bookmark.createdAt) }
 
     val text by produceState("") {
         value = QuranRepository.ayah(bookmark.surah, bookmark.ayah)?.text ?: ""

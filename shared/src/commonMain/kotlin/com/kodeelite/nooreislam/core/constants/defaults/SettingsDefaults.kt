@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.core.constants.defaults
 
 import com.kodeelite.nooreislam.config.theme.ThemeChoice
+import com.kodeelite.nooreislam.core.enums.DateFormatStyle
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.Language
@@ -13,6 +14,8 @@ object SettingsDefaults {
     val theme = ThemeChoice.default          // System
     val language = Language.English          // fromCode(null) resolves here
     val timeFormat = TimeFormat.default      // 12-hour
+    val gregorianDateFormat = DateFormatStyle.default
+    val hijriDateFormat = DateFormatStyle.default
     const val HIJRI_OFFSET = 0
     val sehriReference = Miqat.Imsak         // cautious default; user can switch to Fajr in Ramadan
 }

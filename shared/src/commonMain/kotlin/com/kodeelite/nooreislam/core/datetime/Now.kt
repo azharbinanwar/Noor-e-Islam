@@ -1,6 +1,8 @@
 package com.kodeelite.nooreislam.core.datetime
 
+import androidx.compose.runtime.Composable
 import com.kodeelite.nooreislam.core.debug.Debug
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -13,7 +15,9 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.milliseconds
 
 /** App clock: date, time and Hijri from one place. Debug can pin a date or run a fast clock. */
@@ -58,4 +62,23 @@ object Now {
 
     /** Wall-clock epoch millis — for stored timestamps (e.g. "saved at"). */
     fun epochMillis(): Long = currentEpochMillis()
+
+    /** Today, in the user's chosen Gregorian date format (Settings ▸ Date formats). One call, no pattern to carry around. */
+    fun formattedDate(): String = date().formatted(SettingsStore.gregorianDateFormat.value)
+
+    /** Today's Hijri date (± [offsetDays]), in the user's chosen Hijri date format. */
+    @Composable
+    fun formattedHijri(offsetDays: Int = 0): String = hijri(offsetDays).formatted(SettingsStore.hijriDateFormat.value)
+
+    private fun localDateTime(epochMillis: Long): LocalDateTime =
+        kotlin.time.Instant.fromEpochMilliseconds(epochMillis).toLocalDateTime(TimeZone.currentSystemDefault())
+
+    /** An arbitrary stored timestamp's date (e.g. a note's createdAt), in the user's chosen Gregorian date format. */
+    fun formattedTimestamp(epochMillis: Long): String = localDateTime(epochMillis).date.formatted(SettingsStore.gregorianDateFormat.value)
+
+    /** An arbitrary stored timestamp's time, in the user's chosen 12h/24h format. */
+    fun formattedTime(epochMillis: Long): String = localDateTime(epochMillis).time.format(SettingsStore.timeFormat.value.pattern)
+
+    /** An arbitrary stored timestamp, date + time together — each half in its own chosen format. */
+    fun formattedDateTime(epochMillis: Long): String = "${formattedTimestamp(epochMillis)}, ${formattedTime(epochMillis)}"
 }

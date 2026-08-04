@@ -13,6 +13,8 @@ object PrefConst {
     const val THEME = "theme"                 // light | dark | system
     const val LANGUAGE = "language"           // en | ar | null = system
     const val TIME_FORMAT = "time_format"     // 12 | 24
+    const val GREGORIAN_DATE_FORMAT = "gregorian_date_format" // GregorianDateFormat enum name
+    const val HIJRI_DATE_FORMAT = "hijri_date_format"         // HijriDateFormat enum name
     const val HIJRI_OFFSET = "hijri_offset"   // -2..+2
     const val SEHRI_REFERENCE = "sehri_reference" // Fajr | Imsak — which time the Ramadan "Sehri" label uses
 

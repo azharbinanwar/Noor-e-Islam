@@ -30,14 +30,12 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.ExpandableText
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
-import com.kodeelite.nooreislam.core.datetime.format
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Note
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
@@ -46,11 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun NoteItem(note: Note, position: TilePosition, onClick: () -> Unit, onLongClick: () -> Unit = {}) {
     val colors = AppTheme.colors
-    val timestamp = remember(note.createdAt) {
-        val dt = kotlin.time.Instant.fromEpochMilliseconds(note.createdAt).toLocalDateTime(TimeZone.currentSystemDefault())
-        dt.format("dd MMM, h:mm a")
-    }
-
+    val timestamp = remember(note.createdAt) { Now.formattedDateTime(note.createdAt) }
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
             modifier = Modifier

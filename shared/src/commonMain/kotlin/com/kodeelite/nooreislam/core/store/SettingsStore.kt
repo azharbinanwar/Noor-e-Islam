@@ -6,6 +6,7 @@ import com.kodeelite.nooreislam.core.constants.defaults.SettingsDefaults
 import com.kodeelite.nooreislam.core.datetime.HijriDate
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.toHijri
+import com.kodeelite.nooreislam.core.enums.DateFormatStyle
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.Language
@@ -46,6 +47,18 @@ object SettingsStore {
     )
     val timeFormat: StateFlow<TimeFormat> = _timeFormat.asStateFlow()
 
+    private val _gregorianDateFormat = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.GREGORIAN_DATE_FORMAT)?.let { DateFormatStyle.fromValue(it) }
+            ?: SettingsDefaults.gregorianDateFormat,
+    )
+    val gregorianDateFormat: StateFlow<DateFormatStyle> = _gregorianDateFormat.asStateFlow()
+
+    private val _hijriDateFormat = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.HIJRI_DATE_FORMAT)?.let { DateFormatStyle.fromValue(it) }
+            ?: SettingsDefaults.hijriDateFormat,
+    )
+    val hijriDateFormat: StateFlow<DateFormatStyle> = _hijriDateFormat.asStateFlow()
+
     /** Which time the Ramadan "Sehri" label follows — Fajr (the ruling) or Imsak (the precaution). */
     private val _sehriReference = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.SEHRI_REFERENCE)?.let { name -> Miqat.entries.firstOrNull { it.name == name } }
@@ -78,6 +91,16 @@ object SettingsStore {
     fun setTimeFormat(value: TimeFormat) {
         PrefsService.putString(PrefConst.TIME_FORMAT, value.value)
         _timeFormat.value = value
+    }
+
+    fun setGregorianDateFormat(value: DateFormatStyle) {
+        PrefsService.putString(PrefConst.GREGORIAN_DATE_FORMAT, value.value)
+        _gregorianDateFormat.value = value
+    }
+
+    fun setHijriDateFormat(value: DateFormatStyle) {
+        PrefsService.putString(PrefConst.HIJRI_DATE_FORMAT, value.value)
+        _hijriDateFormat.value = value
     }
 
     fun setSehriReference(value: Miqat) {

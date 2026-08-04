@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +35,7 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Highlight
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
@@ -61,6 +64,7 @@ fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () 
     val text by produceState("") {
         value = QuranRepository.ayah(highlight.surah, highlight.ayah)?.text ?: ""
     }
+    val timestamp = remember(highlight.createdAt) { Now.formattedDateTime(highlight.createdAt) }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(
@@ -93,19 +97,32 @@ fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () 
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                // Citation Badge
-                Box(
-                    Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(hue.copy(alpha = 0.15f))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
+                // Citation Badge + timestamp
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(hue.copy(alpha = 0.15f))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.surah_number_ayah_number, highlight.surah, highlight.ayah),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = hue,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.5.sp,
+                        )
+                    }
                     Text(
-                        text = stringResource(Res.string.surah_number_ayah_number, highlight.surah, highlight.ayah),
+                        text = "  •  ",
                         style = MaterialTheme.typography.labelSmall,
-                        color = hue,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp,
+                        color = colors.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
+                    Text(
+                        text = timestamp,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = colors.onSurfaceVariant,
+                        fontSize = 10.sp
                     )
                 }
 

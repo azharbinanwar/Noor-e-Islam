@@ -1,5 +1,7 @@
 package com.kodeelite.nooreislam.core.datetime
 
+import androidx.compose.runtime.Composable
+import com.kodeelite.nooreislam.core.enums.DateFormatStyle
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
@@ -31,6 +33,39 @@ fun LocalTime.format(pattern: String): String =
 @OptIn(FormatStringsInDatetimeFormats::class)
 fun LocalDate.format(pattern: String): String =
     LocalDate.Format { byUnicodePattern(expandNames(pattern, month.ordinal, dayOfWeek.ordinal)) }.format(this)
+
+/** The user's chosen [DateFormatStyle], applied — single source of truth for Gregorian display, see also [Now.formattedDate]. */
+fun LocalDate.formatted(style: DateFormatStyle): String = format(style.pattern)
+
+/**
+ * The user's chosen [DateFormatStyle], applied to a Hijri date — single source of truth for Hijri
+ * display, see also [Now.formattedHijri]. Hijri isn't a LocalDate, so unlike [LocalDate.formatted]
+ * this composes the string by hand per style, and needs @Composable for the localized month name.
+ * Medium/Long land on the same shape — Hijri months have no abbreviated form and no easy weekday name.
+ */
+@Composable
+fun HijriDate.formatted(style: DateFormatStyle): String {
+    val monthLabel = HijriMonth.of(month).label()
+    val dd = day.toString().padStart(2, '0')
+    val mm = month.toString().padStart(2, '0')
+    val yyyy = year.toString()
+    val yy = yyyy.takeLast(2)
+    return when (style) {
+        DateFormatStyle.Short -> "$day $monthLabel $yyyy"
+        DateFormatStyle.Medium, DateFormatStyle.Long -> "$monthLabel $day, $yyyy"
+        DateFormatStyle.Slash -> "$dd/$mm/$yyyy"
+        DateFormatStyle.Dash -> "$dd-$mm-$yyyy"
+        DateFormatStyle.Dot -> "$dd.$mm.$yyyy"
+        DateFormatStyle.Iso -> "$yyyy-$mm-$dd"
+        DateFormatStyle.YearFirstSlash -> "$yyyy/$mm/$dd"
+        DateFormatStyle.Compact -> "$dd/$mm/$yy"
+        DateFormatStyle.UsStyle -> "$monthLabel $day, $yyyy"
+        DateFormatStyle.Weekday -> "$day $monthLabel $yyyy"
+        DateFormatStyle.WeekdayCompact -> "$monthLabel $day"
+        DateFormatStyle.DayMonth -> "$day $monthLabel"
+        DateFormatStyle.CompactYearFirst -> "$yy/$mm/$dd"
+    }
+}
 
 private val MONTH_SHORT = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 private val MONTH_FULL =

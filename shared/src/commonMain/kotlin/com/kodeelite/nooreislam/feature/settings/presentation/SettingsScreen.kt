@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.Calendar
+import com.composables.icons.lucide.CalendarDays
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
@@ -33,6 +34,7 @@ import com.composables.icons.lucide.LayoutGrid
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
@@ -42,6 +44,7 @@ import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.components.SwapPill
 import com.kodeelite.nooreislam.core.datetime.HijriMonth
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.Language
 import com.kodeelite.nooreislam.core.navigation.AppRoute
@@ -56,7 +59,10 @@ import com.kodeelite.nooreislam.resources.all_alerts_on
 import com.kodeelite.nooreislam.resources.app_name
 import com.kodeelite.nooreislam.resources.appearance
 import com.kodeelite.nooreislam.resources.auto_silence_around_prayer
+import com.kodeelite.nooreislam.resources.date_format
+import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
+import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
 import com.kodeelite.nooreislam.resources.hijri_era
@@ -85,9 +91,13 @@ fun SettingsScreen() {
     // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
     val theme by SettingsStore.theme.collectAsState()
     val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val gregorianDateFormat by SettingsStore.gregorianDateFormat.collectAsState()
+    val hijriDateFormat by SettingsStore.hijriDateFormat.collectAsState()
     val language by SettingsStore.language.collectAsState()
     var showTheme by remember { mutableStateOf(false) }
     var showLanguage by remember { mutableStateOf(false) }
+    var showGregorianDateFormat by remember { mutableStateOf(false) }
+    var showHijriDateFormat by remember { mutableStateOf(false) }
     // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
     val hijriOffset by SettingsStore.hijriOffset.collectAsState()
     val hijri by SettingsStore.hijriDate.collectAsState()
@@ -144,6 +154,21 @@ fun SettingsScreen() {
                     ),
                 ),
             )
+            AppTileGroup(
+                title = stringResource(Res.string.date_formats),
+                items = listOf(
+                    AppTileItem(
+                        leadingIcon = Lucide.CalendarDays,
+                        title = stringResource(Res.string.date_format),
+                        subtitle = Now.formattedDate(),
+                        onClick = { showGregorianDateFormat = true }),
+                    AppTileItem(
+                        leadingIcon = Lucide.Moon,
+                        title = stringResource(Res.string.hijri_date_format),
+                        subtitle = Now.formattedHijri(hijriOffset),
+                        onClick = { showHijriDateFormat = true }),
+                ),
+            )
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
@@ -196,6 +221,17 @@ fun SettingsScreen() {
     }
 
     if (showTheme) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); showTheme = false }, onDismiss = { showTheme = false })
+    if (showGregorianDateFormat) GregorianDateFormatPickerSheet(
+        gregorianDateFormat,
+        onSelect = { SettingsStore.setGregorianDateFormat(it); showGregorianDateFormat = false },
+        onDismiss = { showGregorianDateFormat = false },
+    )
+    if (showHijriDateFormat) HijriDateFormatPickerSheet(
+        hijriDateFormat,
+        hijriToday = hijri,
+        onSelect = { SettingsStore.setHijriDateFormat(it); showHijriDateFormat = false },
+        onDismiss = { showHijriDateFormat = false },
+    )
     if (showLanguage) AppBottomSheet(onDismiss = { showLanguage = false }, title = stringResource(Res.string.language)) {
         AppTileGroup(
             items = Language.entries.map { lang ->
