@@ -41,7 +41,6 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
@@ -54,6 +53,7 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
+import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteEditorSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalligraphy
 import com.kodeelite.nooreislam.feature.quran.presentation.components.ReaderSettingsSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.RukuBlock
@@ -186,6 +186,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 ayah = ayah,
                 onShareAsImage = { nav.navigate(AppRoute.Studio(ayah.surah, ayah.ayah)) },
                 onHighlight = { quickHighlight = ayah; selected = null },
+                onNote = { viewingNote = ayah; selected = null },
                 onExpandedChange = { expanded = it },
                 onDismiss = { selected = null },
             )
@@ -194,13 +195,13 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         quickHighlight?.let { HighlightQuickPicker(it) { quickHighlight = null } }
 
         viewingNote?.let { ayah ->
-            // stub preview — a real editor sheet replaces this later
-            AppBottomSheet(
+            NoteEditorSheet(
+                surah = ayah.surah,
+                ayah = ayah.ayah,
+                initialText = noteMap["${ayah.surah}:${ayah.ayah}"] ?: "",
+                store = notesStore,
                 onDismiss = { viewingNote = null },
-                title = stringResource(Res.string.surah_number_ayah_number, ayah.surah, ayah.ayah),
-            ) {
-                Text(noteMap["${ayah.surah}:${ayah.ayah}"] ?: "", color = colors.onSurface)
-            }
+            )
         }
 
         if (showSettings) {

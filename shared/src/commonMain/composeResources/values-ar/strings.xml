@@ -376,6 +376,8 @@
     <string name="repetitions">عدد التكرار</string>
     <string name="added_by_you">من إضافتك</string>
     <string name="save">حفظ</string>
+    <string name="see_more">عرض المزيد</string>
+    <string name="see_less">عرض أقل</string>
     <string name="completed">تمّ</string>
     <string name="use_beads">بالمسبحة</string>
     <string name="all">الكل</string>
@@ -530,6 +532,12 @@
     <string name="action_bookmark">مرجعية</string>
     <string name="action_add_to_collection">إضافة للمجموعة</string>
     <string name="action_add_note">إضافة ملاحظة</string>
+    <string name="edit_note">تعديل الملاحظة</string>
+    <string name="remove_note">إزالة الملاحظة</string>
+    <string name="note_placeholder">اكتب ملاحظة…</string>
+    <string name="no_notes">لا توجد ملاحظات بعد</string>
+    <string name="notes_hint">اضغط على أيقونة الملاحظة على آية، أو أضف ملاحظة من قائمة الإجراءات.</string>
+    <string name="loading_notes">جارٍ تحميل الملاحظات…</string>
     <string name="action_highlight">تظليل</string>
     <string name="action_mark_memorized">تمييز كمحفوظ</string>
 

@@ -146,6 +146,7 @@ fun AyahActionSheet(
     ayah: Ayah,
     onShareAsImage: () -> Unit,
     onHighlight: () -> Unit,
+    onNote: () -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -237,7 +238,7 @@ fun AyahActionSheet(
                             else highlightsStore.applyDefault(ayah.surah, ayah.ayah)
                             onHighlight()
                         },
-                        AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) {},
+                        AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) { onNote() },
                         AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
                     ),
                 )
@@ -263,6 +264,7 @@ fun AyahActionSheet(
                                 onClick = {
                                     onDismiss()
                                     if (a.icon == Lucide.Image) onShareAsImage()
+                                    if (a.icon == Lucide.StickyNote) onNote()
                                 }
                             )
                         })

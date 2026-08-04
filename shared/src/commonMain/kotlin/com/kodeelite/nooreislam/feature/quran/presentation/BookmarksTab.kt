@@ -25,7 +25,7 @@ import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkActionSheet
-import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkItemV2
+import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkItem
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.bookmarks_hint
 import com.kodeelite.nooreislam.resources.loading_bookmarks
@@ -61,7 +61,7 @@ fun BookmarksTab() {
         ) {
             items(bookmarks.size) { i ->
                 val b = bookmarks[i]
-                BookmarkItemV2(
+                BookmarkItem(
                     b, i, bookmarks.size,
                     onLongClick = { actionBookmark = b }
                 ) { nav.navigate(AppRoute.QuranReader(b.surah, b.ayah)) }

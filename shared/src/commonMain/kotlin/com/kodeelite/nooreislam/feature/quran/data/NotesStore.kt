@@ -11,8 +11,8 @@ class NotesStore(
     private val scope: CoroutineScope,
     private val repo: NotesRepository
 ) {
-    val notes: StateFlow<List<Note>> = repo.active
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val notes: StateFlow<List<Note>?> = repo.active
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
 
     // reactive view of all notes (key -> text) for O(1) lookup during scroll
     val noteMap: StateFlow<Map<String, String>> = repo.active

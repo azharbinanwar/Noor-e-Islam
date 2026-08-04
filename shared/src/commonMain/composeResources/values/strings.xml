@@ -378,6 +378,8 @@
     <string name="repetitions">Repetitions</string>
     <string name="added_by_you">Added by you</string>
     <string name="save">Save</string>
+    <string name="see_more">See more</string>
+    <string name="see_less">See less</string>
     <string name="completed">Completed</string>
     <string name="use_beads">Use beads</string>
     <string name="all">All</string>
@@ -529,6 +531,12 @@
     <string name="action_bookmark">Bookmark</string>
     <string name="action_add_to_collection">Add to collection</string>
     <string name="action_add_note">Add note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="remove_note">Remove note</string>
+    <string name="note_placeholder">Write a note…</string>
+    <string name="no_notes">No notes yet</string>
+    <string name="notes_hint">Tap the note icon on an ayah, or add one from the action sheet.</string>
+    <string name="loading_notes">Loading notes…</string>
     <string name="action_highlight">Highlight</string>
     <string name="action_mark_memorized">Mark memorized</string>
 

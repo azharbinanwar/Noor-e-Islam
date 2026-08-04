@@ -324,7 +324,8 @@ private fun positionFor(index: Int, size: Int): TilePosition = when {
     else -> TilePosition.Middle
 }
 
-private fun shapeFor(pos: TilePosition): Shape {
+// corner rounding for one tile's position within its group — shared by every card-style list item
+fun shapeFor(pos: TilePosition): Shape {
     val r = 16.dp
     val m = 4.dp
     return when (pos) {

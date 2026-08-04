@@ -21,7 +21,6 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.TilePosition
+import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Highlight
@@ -127,16 +127,5 @@ fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () 
                 }
             }
         }
-    }
-}
-
-private fun shapeFor(pos: TilePosition): Shape {
-    val r = 16.dp
-    val m = 4.dp
-    return when (pos) {
-        TilePosition.Single -> RoundedCornerShape(r)
-        TilePosition.First -> RoundedCornerShape(topStart = r, topEnd = r, bottomStart = m, bottomEnd = m)
-        TilePosition.Middle -> RoundedCornerShape(m)
-        TilePosition.Last -> RoundedCornerShape(topStart = m, topEnd = m, bottomStart = r, bottomEnd = r)
     }
 }
