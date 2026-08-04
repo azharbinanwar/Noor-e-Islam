@@ -98,8 +98,8 @@ fun AyahPassage(
 
                 val hlColor = highlights[key]?.let { tints[it] }
                 val hit = when {
-                    selected == ayah -> colors.primary.copy(alpha = SELECTION_ALPHA)
                     hlColor != null -> hlColor
+                    selected == ayah -> colors.primary.copy(alpha = SELECTION_ALPHA)
                     else -> Color.Transparent
                 }
 

@@ -17,4 +17,9 @@ data class Highlight(
     val updatedAt: Long,
     val synced: Boolean = false,
     val deletedAt: Long? = null,
-)
+) {
+    companion object {
+        // placeholder row for loading lists — feed it to the real HighlightItem with toSkeleton()
+        fun skeleton() = Highlight(surah = 1, ayah = 1, createdAt = 0L, updatedAt = 0L)
+    }
+}

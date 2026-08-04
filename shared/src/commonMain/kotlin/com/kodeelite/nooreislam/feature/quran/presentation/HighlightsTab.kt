@@ -28,6 +28,7 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightA
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightItem
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.highlights_hint
+import com.kodeelite.nooreislam.resources.loading_highlights
 import com.kodeelite.nooreislam.resources.no_highlights
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -37,10 +38,14 @@ import org.koin.compose.koinInject
 fun HighlightsTab() {
     val nav = LocalAppNavigator.current
     val store = koinInject<HighlightsStore>()
-    val highlights by store.highlights.collectAsState()
+    val highlightsState by store.highlights.collectAsState()
     var actionHighlight by remember { mutableStateOf<Highlight?>(null) }
 
-    if (highlights.isEmpty()) {
+    if (highlightsState == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            StateView.Loading(title = stringResource(Res.string.loading_highlights))
+        }
+    } else if (highlightsState!!.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             StateView(
                 title = stringResource(Res.string.no_highlights),
@@ -49,13 +54,15 @@ fun HighlightsTab() {
             )
         }
     } else {
+        val highlights = highlightsState!!
         LazyColumn(
             Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp), // Matched to standard AppTileGroup spacing
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             items(highlights.size) { i ->
                 val h = highlights[i]
+
                 HighlightItem(
                     h, i, highlights.size,
                     onLongClick = { actionHighlight = h }

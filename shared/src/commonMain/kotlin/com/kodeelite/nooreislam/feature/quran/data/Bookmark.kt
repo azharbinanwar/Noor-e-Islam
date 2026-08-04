@@ -15,4 +15,9 @@ data class Bookmark(
     val updatedAt: Long,
     val synced: Boolean = false,
     val deletedAt: Long? = null,
-)
+) {
+    companion object {
+        // placeholder row for loading lists — feed it to the real BookmarkItem with toSkeleton()
+        fun skeleton() = Bookmark(surah = 1, ayah = 1, createdAt = 0L, updatedAt = 0L)
+    }
+}

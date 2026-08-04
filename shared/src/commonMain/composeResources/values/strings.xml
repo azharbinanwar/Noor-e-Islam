@@ -463,8 +463,10 @@
     <string name="bookmarks">Bookmarks</string>
     <string name="no_bookmarks">No bookmarks yet</string>
     <string name="bookmarks_hint">Tap an ayah in the reader to bookmark it for quick access.</string>
+    <string name="loading_bookmarks">Loading bookmarks…</string>
     <string name="no_highlights">No highlights yet</string>
     <string name="highlights_hint">Tap an ayah to highlight it, or long-press for quick actions.</string>
+    <string name="loading_highlights">Loading highlights…</string>
     <string name="background_opacity">Background opacity</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="card_color">Card color</string>

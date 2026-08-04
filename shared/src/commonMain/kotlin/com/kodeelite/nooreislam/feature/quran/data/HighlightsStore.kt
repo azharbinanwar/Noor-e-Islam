@@ -10,8 +10,8 @@ class HighlightsStore(
     private val scope: CoroutineScope,
     private val repo: HighlightsRepository
 ) {
-    val highlights: StateFlow<List<Highlight>> = repo.active
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val highlights: StateFlow<List<Highlight>?> = repo.active
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
 
     val colors: StateFlow<Map<String, HighlightColor>> = repo.colors
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyMap())

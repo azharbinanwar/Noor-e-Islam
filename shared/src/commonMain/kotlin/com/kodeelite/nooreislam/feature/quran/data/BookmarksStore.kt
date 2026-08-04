@@ -10,8 +10,8 @@ class BookmarksStore(
     private val scope: CoroutineScope,
     private val repo: BookmarksRepository
 ) {
-    val bookmarks: StateFlow<List<Bookmark>> = repo.active
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val bookmarks: StateFlow<List<Bookmark>?> = repo.active
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
 
     val keys: StateFlow<Set<String>> = repo.keys
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptySet())

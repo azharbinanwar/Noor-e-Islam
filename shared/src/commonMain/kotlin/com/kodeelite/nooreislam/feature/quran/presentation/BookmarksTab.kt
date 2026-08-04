@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -22,16 +20,15 @@ import com.composables.icons.lucide.Bookmark
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.StateView
-import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
-import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkActionSheet
-import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkItem
+import com.kodeelite.nooreislam.feature.quran.presentation.components.BookmarkItemV2
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.bookmarks_hint
+import com.kodeelite.nooreislam.resources.loading_bookmarks
 import com.kodeelite.nooreislam.resources.no_bookmarks
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -40,18 +37,14 @@ import org.koin.compose.koinInject
 fun BookmarksTab() {
     val nav = LocalAppNavigator.current
     val store = koinInject<BookmarksStore>()
-    val bookmarks by store.bookmarks.collectAsState()
+    val bookmarksState by store.bookmarks.collectAsState()
     var actionBookmark by remember { mutableStateOf<Bookmark?>(null) }
 
-    val texts = remember { mutableStateMapOf<String, String>() }
-    LaunchedEffect(bookmarks) {
-        bookmarks.forEach { b ->
-            val key = "${b.surah}:${b.ayah}"
-            if (key !in texts) QuranRepository.ayah(b.surah, b.ayah)?.let { texts[key] = it.text }
+    if (bookmarksState == null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            StateView.Loading(title = stringResource(Res.string.loading_bookmarks))
         }
-    }
-
-    if (bookmarks.isEmpty()) {
+    } else if (bookmarksState!!.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             StateView(
                 title = stringResource(Res.string.no_bookmarks),
@@ -60,6 +53,7 @@ fun BookmarksTab() {
             )
         }
     } else {
+        val bookmarks = bookmarksState!!
         LazyColumn(
             Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
@@ -67,9 +61,9 @@ fun BookmarksTab() {
         ) {
             items(bookmarks.size) { i ->
                 val b = bookmarks[i]
-                BookmarkItem(
-                    b.surah, b.ayah, texts["${b.surah}:${b.ayah}"] ?: "",
-                    TilePosition.at(i, bookmarks.size),
+                BookmarkItemV2(
+                    b, i, bookmarks.size,
+                    onLongClick = { actionBookmark = b }
                 ) { nav.navigate(AppRoute.QuranReader(b.surah, b.ayah)) }
             }
         }
