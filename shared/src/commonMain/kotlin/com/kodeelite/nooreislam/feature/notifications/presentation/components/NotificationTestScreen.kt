@@ -42,7 +42,6 @@ import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationScheduler
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationTestStore
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -103,7 +102,7 @@ fun NotificationTestScreen(onBack: () -> Unit) {
             }
             Text("All scheduled (${scheduled.size})", fontSize = 12.sp, color = c.onSurfaceVariant)
             scheduled.forEach { e ->
-                val t = Instant.fromEpochMilliseconds(e.fireAtMillis).toLocalDateTime(tz).time.format(pattern)
+                val t = kotlin.time.Instant.fromEpochMilliseconds(e.fireAtMillis).toLocalDateTime(tz).time.format(pattern)
                 val name = if (e.target == "test") "Test #${e.eventKey.substringAfterLast(':')}" else e.target
                 Row(
                     Modifier.fillMaxWidth().padding(vertical = 6.dp),

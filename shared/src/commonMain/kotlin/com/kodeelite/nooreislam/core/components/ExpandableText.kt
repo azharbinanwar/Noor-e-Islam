@@ -2,8 +2,8 @@ package com.kodeelite.nooreislam.core.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,10 +12,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.resources.Res
@@ -23,7 +25,6 @@ import com.kodeelite.nooreislam.resources.see_less
 import com.kodeelite.nooreislam.resources.see_more
 import org.jetbrains.compose.resources.stringResource
 
-private const val TOGGLE_TAG = "toggle"
 private val WHITESPACE = Regex("\\s+")
 
 /**
@@ -51,9 +52,9 @@ fun ExpandableText(
 
     fun withToggle(body: String, label: String) = buildAnnotatedString {
         append(body)
-        pushStringAnnotation(TOGGLE_TAG, TOGGLE_TAG)
-        withStyle(SpanStyle(color = colors.primary)) { append(" $label") }
-        pop()
+        withLink(LinkAnnotation.Clickable(tag = "toggle", linkInteractionListener = { expanded = !expanded })) {
+            withStyle(SpanStyle(color = colors.primary)) { append(" $label") }
+        }
     }
 
     Column(modifier.animateContentSize()) {
@@ -65,13 +66,7 @@ fun ExpandableText(
                 overflows -> withToggle(words.take(collapsedMaxWords).joinToString(" ") + "…", moreLabel)
                 else -> AnnotatedString(text)
             }
-            ClickableText(
-                text = displayed,
-                style = style.copy(color = color),
-                onClick = { offset ->
-                    displayed.getStringAnnotations(TOGGLE_TAG, offset, offset).firstOrNull()?.let { expanded = !expanded }
-                },
-            )
+            Text(text = displayed, style = style.copy(color = color))
         } else {
             var clampedText by remember(text) { mutableStateOf<AnnotatedString?>(null) }
             val displayed = when {
@@ -79,14 +74,11 @@ fun ExpandableText(
                 clampedText != null -> clampedText!!
                 else -> AnnotatedString(text) // first pass: plain, used only to measure the cutoff
             }
-            ClickableText(
+            Text(
                 text = displayed,
                 style = style.copy(color = color),
                 maxLines = if (expanded) Int.MAX_VALUE else collapsedMaxLines,
                 overflow = TextOverflow.Ellipsis,
-                onClick = { offset ->
-                    displayed.getStringAnnotations(TOGGLE_TAG, offset, offset).firstOrNull()?.let { expanded = !expanded }
-                },
                 onTextLayout = { layout ->
                     if (!expanded && clampedText == null && layout.hasVisualOverflow) {
                         val cut = layout.getLineEnd(collapsedMaxLines - 1, visibleEnd = true)

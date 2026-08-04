@@ -29,7 +29,6 @@ import com.kodeelite.nooreislam.resources.prayer_jumuah
 import com.kodeelite.nooreislam.resources.surah_al_kahf
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.tahajjud
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.StringResource
@@ -84,6 +83,6 @@ private fun bodyRes(target: String): StringResource = when (target) {
 
 // Clock time of fireAt in the user's 12/24 setting, for the at-prayer body.
 private fun timeStr(millis: Long): String {
-    val t = Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
+    val t = kotlin.time.Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault()).time
     return t.format(SettingsStore.timeFormat.value.pattern)
 }
