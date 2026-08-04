@@ -286,6 +286,10 @@
     <string name="location">Location</string>
     <string name="use_current_location">Use current location</string>
     <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="delete_collection_title">Delete collection?</string>
+    <string name="delete_collection_message">This removes %1$d ayah(s) from "%2$s". This can't be undone.</string>
+    <string name="remove_from_collection">Remove from collection</string>
     <string name="open_settings">Open Settings</string>
     <string name="location_permission_needed">Location access needed</string>
     <string name="location_permission_rationale">Noor e Islam needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
@@ -511,6 +515,11 @@
     <string name="quran_tab_bookmarks">Bookmarks</string>
     <string name="quran_tab_notes">Notes</string>
     <string name="quran_tab_highlights">Highlights</string>
+    <string name="quran_tab_collections">Collections</string>
+    <string name="loading_collections">Loading collections…</string>
+    <string name="no_collections">No collections yet</string>
+    <string name="collections_hint">Add an ayah to a collection from its action sheet to get started.</string>
+    <string name="collection_empty_hint">No ayahs in this collection yet.</string>
     <string name="quran_theme_system">System</string>
     <string name="quran_theme_light">Light</string>
     <string name="quran_theme_paper">Paper</string>
@@ -537,6 +546,7 @@
     <string name="jump_to">Jump to surah / juz / page</string>
     <string name="more_actions">More actions</string>
     <string name="surah_number_ayah_number">Surah %1$d · Ayah %2$d</string>
+    <string name="collection_item_count">%1$s (%2$d)</string>
 
     <string name="action_audio">Audio</string>
     <string name="action_play_recitation">Play recitation</string>
@@ -547,6 +557,10 @@
     <string name="action_personal">Personal</string>
     <string name="action_bookmark">Bookmark</string>
     <string name="action_add_to_collection">Add to collection</string>
+    <string name="collection_name_placeholder">Collection name</string>
+    <string name="rename_collection">Rename collection</string>
+    <string name="no_collections_found">No collections found</string>
+    <string name="no_collections_found_hint">Try a different name, or create a new one below</string>
     <string name="action_add_note">Add note</string>
     <string name="edit_note">Edit note</string>
     <string name="remove_note">Remove note</string>
@@ -644,6 +658,7 @@
     <string name="quran_theme_dim_gray">Dim Gray</string>
 
     <string name="copy_ayah">Copy Ayah</string>
+    <string name="open_ayah">Open ayah</string>
     <string name="remove_highlight">Remove highlight</string>
     <string name="remove_bookmark">Remove bookmark</string>
     <string name="share_to_studio">Share to Studio</string>

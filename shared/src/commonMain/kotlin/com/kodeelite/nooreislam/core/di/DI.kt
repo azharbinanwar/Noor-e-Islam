@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.core.di
 
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
+import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
@@ -21,6 +22,7 @@ val appModule = module {
     single { BookmarksStore(get(), get()) }
     single { HighlightsStore(get(), get()) }
     single { NotesStore(get(), get()) }
+    single { CollectionStore(get(), get()) }
 }
 
 val appModules = listOf(appModule, databaseModule, platformDatabaseModule())

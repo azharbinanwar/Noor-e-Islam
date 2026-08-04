@@ -77,6 +77,8 @@ fun NotesTab() {
         NoteActionSheet(
             note = note,
             store = store,
+            onOpen = { nav.navigate(AppRoute.QuranReader(note.surah, note.ayah)) },
+            onShareToStudio = { nav.navigate(AppRoute.Studio(note.surah, note.ayah)) },
             onEdit = { editingNote = note },
             onDismiss = { actionNote = null },
         )

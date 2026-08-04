@@ -9,6 +9,10 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.kodeelite.nooreislam.core.constants.AppConst
 import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksDao
+import com.kodeelite.nooreislam.feature.quran.data.Collection
+import com.kodeelite.nooreislam.feature.quran.data.CollectionAyah
+import com.kodeelite.nooreislam.feature.quran.data.CollectionAyahDao
+import com.kodeelite.nooreislam.feature.quran.data.CollectionDao
 import com.kodeelite.nooreislam.feature.quran.data.Highlight
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsDao
 import com.kodeelite.nooreislam.feature.quran.data.Note
@@ -18,7 +22,7 @@ import com.kodeelite.nooreislam.feature.studio.data.StudioCreationEntity
 
 // exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
 @Database(
-    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class],
+    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class],
     version = AppConst.DB_VERSION,
     exportSchema = false
 )
@@ -31,6 +35,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarksDao(): BookmarksDao
     abstract fun highlightsDao(): HighlightsDao
     abstract fun notesDao(): NotesDao
+    abstract fun collectionDao(): CollectionDao
+    abstract fun collectionAyahDao(): CollectionAyahDao
 }
 
 /** The Room compiler (KSP) generates the actual implementation per platform. */

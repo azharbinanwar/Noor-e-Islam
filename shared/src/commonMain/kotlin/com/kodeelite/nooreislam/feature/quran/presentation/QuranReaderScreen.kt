@@ -48,10 +48,12 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
+import com.kodeelite.nooreislam.feature.quran.presentation.components.CollectionPickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
 import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteEditorSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalligraphy
@@ -122,8 +124,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     var selected by remember { mutableStateOf<Ayah?>(null) }
     var quickHighlight by remember { mutableStateOf<Ayah?>(null) } // long-press → floating color strip
     var viewingNote by remember { mutableStateOf<Ayah?>(null) } // tap the note glyph → stub preview, real editor later
+    var pickingCollectionFor by remember { mutableStateOf<Ayah?>(null) }
     var showSettings by remember { mutableStateOf(false) }
     val notesStore = koinInject<NotesStore>()
+    val collectionStore = koinInject<CollectionStore>()
     val noteMap by notesStore.noteMap.collectAsState()
     var expanded by remember(selected) { mutableStateOf(false) }
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
@@ -187,6 +191,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 onShareAsImage = { nav.navigate(AppRoute.Studio(ayah.surah, ayah.ayah)) },
                 onHighlight = { quickHighlight = ayah; selected = null },
                 onNote = { viewingNote = ayah; selected = null },
+                onAddToCollection = { pickingCollectionFor = ayah; selected = null },
                 onExpandedChange = { expanded = it },
                 onDismiss = { selected = null },
             )
@@ -201,6 +206,14 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 initialText = noteMap["${ayah.surah}:${ayah.ayah}"] ?: "",
                 store = notesStore,
                 onDismiss = { viewingNote = null },
+            )
+        }
+
+        pickingCollectionFor?.let { ayah ->
+            CollectionPickerSheet(
+                ayah = ayah,
+                store = collectionStore,
+                onDismiss = { pickingCollectionFor = null },
             )
         }
 

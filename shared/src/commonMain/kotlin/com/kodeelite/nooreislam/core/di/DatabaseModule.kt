@@ -4,6 +4,7 @@ import com.kodeelite.nooreislam.core.database.AppDatabase
 import com.kodeelite.nooreislam.core.database.getRoomDatabase
 import com.kodeelite.nooreislam.feature.notifications.data.NotificationScheduleRepository
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksRepository
+import com.kodeelite.nooreislam.feature.quran.data.CollectionRepository
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsRepository
 import com.kodeelite.nooreislam.feature.quran.data.NotesRepository
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationRepository
@@ -23,6 +24,9 @@ val databaseModule = module {
     single { HighlightsRepository(get()) }
     single { get<AppDatabase>().notesDao() }
     single { NotesRepository(get()) }
+    single { get<AppDatabase>().collectionDao() }
+    single { get<AppDatabase>().collectionAyahDao() }
+    single { CollectionRepository(get(), get()) }
 }
 
 // Android needs a Context, iOS a file path.

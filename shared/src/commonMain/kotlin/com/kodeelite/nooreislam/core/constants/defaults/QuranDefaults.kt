@@ -17,4 +17,6 @@ object QuranDefaults {
     const val FONT_SP = 15        // default reading size
     const val MIN_FONT_SP = 12    // stepper floor
     const val MAX_FONT_SP = 40    // stepper ceiling
+
+    const val COLLECTION_SEARCH_THRESHOLD = 12  // collection picker shows a search field past this count
 }

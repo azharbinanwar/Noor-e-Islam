@@ -75,6 +75,7 @@ fun HighlightsTab() {
         HighlightActionSheet(
             highlight = h,
             store = store,
+            onOpen = { nav.navigate(AppRoute.QuranReader(h.surah, h.ayah)) },
             onShareToStudio = { nav.navigate(AppRoute.Studio(h.surah, h.ayah)) },
             onDismiss = { actionHighlight = null }
         )

@@ -38,6 +38,9 @@ sealed interface AppRoute {
     data class Studio(val surah: Int, val ayah: Int) : AppRoute
 
     @Serializable
+    data class CollectionDetails(val collectionId: Long) : AppRoute
+
+    @Serializable
     data object Tasbih : AppRoute
 
     @Serializable

@@ -26,6 +26,7 @@ import com.kodeelite.nooreislam.feature.onboarding.presentation.OnboardingScreen
 import com.kodeelite.nooreislam.feature.qibla.presentation.QiblaScreen
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.presentation.CollectionDetailsScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranIndexScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranReaderScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranThemeHost
@@ -77,6 +78,10 @@ fun AppNavHost(
                             value = QuranRepository.ayah(r.surah, r.ayah)
                         }
                         ayah?.let { StudioScreen(ayahs = listOf(it)) }
+                    }
+                    composable<AppRoute.CollectionDetails> { entry ->
+                        val r = entry.toRoute<AppRoute.CollectionDetails>()
+                        QuranThemeHost { CollectionDetailsScreen(collectionId = r.collectionId) }
                     }
                     composable<AppRoute.Tasbih> { TasbihHubScreen() }
                     composable<AppRoute.TasbihHistory> { /* TasbihHistoryScreen() */ }

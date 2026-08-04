@@ -122,6 +122,7 @@ fun QuranIndexScreen() {
                     QuranTab.Bookmarks -> BookmarksTab()
                     QuranTab.Notes -> NotesTab()
                     QuranTab.Highlights -> HighlightsTab()
+                    QuranTab.Collections -> CollectionsTab()
                 }
             }
 

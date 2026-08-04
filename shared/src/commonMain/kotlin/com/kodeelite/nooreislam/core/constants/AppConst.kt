@@ -5,5 +5,5 @@ object AppConst {
     const val APP_NAME = "Noor e Islam"
     const val DATASTORE_FILE = "dev.nooreislam.sss"
     const val DATABASE_NAME = "nooreislam.db"   // change this to start on a fresh (empty) db while testing
-    const val DB_VERSION = 2                  // bump when an entity's schema changes
+    const val DB_VERSION = 3                  // bump when an entity's schema changes
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Copy
 import com.composables.icons.lucide.Image
@@ -39,6 +40,7 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.hue
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.copy_ayah
+import com.kodeelite.nooreislam.resources.open_ayah
 import com.kodeelite.nooreislam.resources.remove_highlight
 import com.kodeelite.nooreislam.resources.share_to_studio
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
@@ -48,6 +50,7 @@ import org.jetbrains.compose.resources.stringResource
 fun HighlightActionSheet(
     highlight: Highlight,
     store: HighlightsStore,
+    onOpen: () -> Unit,
     onShareToStudio: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -104,6 +107,11 @@ fun HighlightActionSheet(
         // 2. Actions using AppTileGroup
         AppTileGroup(
             items = listOf(
+                AppTileItem(
+                    title = stringResource(Res.string.open_ayah),
+                    leadingIcon = Lucide.BookOpen,
+                    onClick = { onOpen(); onDismiss() }
+                ),
                 AppTileItem(
                     title = stringResource(Res.string.share_to_studio),
                     leadingIcon = Lucide.Image,

@@ -73,6 +73,7 @@ fun BookmarksTab() {
         BookmarkActionSheet(
             bookmark = b,
             store = store,
+            onOpen = { nav.navigate(AppRoute.QuranReader(b.surah, b.ayah)) },
             onShareToStudio = { nav.navigate(AppRoute.Studio(b.surah, b.ayah)) },
             onDismiss = { actionBookmark = null }
         )

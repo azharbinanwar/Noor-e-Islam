@@ -231,6 +231,7 @@
     <string name="remove_from_favorites">إزالة من المفضلة</string>
     <string name="add_to_favorites">إضافة إلى المفضلة</string>
     <string name="open_surah">فتح السورة</string>
+    <string name="open_ayah">فتح الآية</string>
     <string name="juz_number">الجزء %1$d</string>
     <string name="juz_start_summary">يبدأ من سورة %1$d · آية %2$d</string>
     <string name="expand">توسيع</string>
@@ -284,6 +285,10 @@
     <string name="location">الموقع</string>
     <string name="use_current_location">استخدام الموقع الحالي</string>
     <string name="cancel">إلغاء</string>
+    <string name="delete">حذف</string>
+    <string name="delete_collection_title">حذف المجموعة؟</string>
+    <string name="delete_collection_message">سيؤدي هذا إلى حذف %1$d آية من "%2$s". لا يمكن التراجع عن هذا.</string>
+    <string name="remove_from_collection">إزالة من المجموعة</string>
     <string name="open_settings">فتح الإعدادات</string>
     <string name="location_permission_needed">الوصول إلى الموقع مطلوب</string>
     <string name="location_permission_rationale">يحتاج نور الإسلام إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
@@ -511,6 +516,10 @@
     <string name="quran_tab_bookmarks">المرجعيات</string>
     <string name="quran_tab_notes">الملاحظات</string>
     <string name="quran_tab_highlights">التظليل</string>
+    <string name="quran_tab_collections">المجموعات</string>
+    <string name="loading_collections">جارٍ تحميل المجموعات…</string>
+    <string name="no_collections">لا توجد مجموعات بعد</string>
+    <string name="collections_hint">أضف آية إلى مجموعة من قائمة إجراءاتها للبدء.</string>
     <string name="quran_theme_system">النظام</string>
     <string name="quran_theme_light">فاتح</string>
     <string name="quran_theme_paper">نمط الورق</string>
@@ -538,6 +547,7 @@
     <string name="jump_to">انتقال إلى سورة / جزء / صفحة</string>
     <string name="more_actions">المزيد من الخيارات</string>
     <string name="surah_number_ayah_number">سورة %1$d · آية %2$d</string>
+    <string name="collection_item_count">%1$s (%2$d)</string>
 
     <string name="action_audio">صوتيات</string>
     <string name="action_play_recitation">تشغيل التلاوة</string>
@@ -548,6 +558,10 @@
     <string name="action_personal">شخصي</string>
     <string name="action_bookmark">مرجعية</string>
     <string name="action_add_to_collection">إضافة للمجموعة</string>
+    <string name="collection_name_placeholder">اسم المجموعة</string>
+    <string name="rename_collection">إعادة تسمية المجموعة</string>
+    <string name="no_collections_found">لم يتم العثور على مجموعات</string>
+    <string name="no_collections_found_hint">جرّب اسمًا مختلفًا، أو أنشئ مجموعة جديدة بالأسفل</string>
     <string name="action_add_note">إضافة ملاحظة</string>
     <string name="edit_note">تعديل الملاحظة</string>
     <string name="remove_note">إزالة الملاحظة</string>

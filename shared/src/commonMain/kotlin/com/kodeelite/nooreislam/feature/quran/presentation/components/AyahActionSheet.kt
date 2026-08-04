@@ -53,7 +53,6 @@ import com.composables.icons.lucide.Highlighter
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Info
-import com.composables.icons.lucide.Link
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Mic
 import com.composables.icons.lucide.Pencil
@@ -61,7 +60,6 @@ import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.Repeat
 import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Share2
-import com.composables.icons.lucide.StickyNote
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.ActionWidth
 import com.kodeelite.nooreislam.core.components.AppActionGroup
@@ -90,7 +88,6 @@ import com.kodeelite.nooreislam.resources.action_related_ayahs
 import com.kodeelite.nooreislam.resources.action_repeat_loop
 import com.kodeelite.nooreislam.resources.action_set_last_read
 import com.kodeelite.nooreislam.resources.action_share_image
-import com.kodeelite.nooreislam.resources.action_share_link
 import com.kodeelite.nooreislam.resources.action_sharing
 import com.kodeelite.nooreislam.resources.action_study
 import com.kodeelite.nooreislam.resources.more_actions
@@ -114,9 +111,9 @@ private val MORE_GROUPS = listOf(
         )
     ),
     QGroup(
+        // bookmark/note/highlight live in the quick row above, not repeated here
         Res.string.action_personal, listOf(
-            QAction(Lucide.Bookmark, Res.string.action_bookmark), QAction(Lucide.FolderPlus, Res.string.action_add_to_collection),
-            QAction(Lucide.StickyNote, Res.string.action_add_note), QAction(Lucide.Highlighter, Res.string.action_highlight),
+            QAction(Lucide.FolderPlus, Res.string.action_add_to_collection),
             QAction(Lucide.Check, Res.string.action_mark_memorized),
         )
     ),
@@ -124,7 +121,7 @@ private val MORE_GROUPS = listOf(
         Res.string.action_sharing, listOf(
             QAction(Lucide.Share2, Res.string.share_as_text),
             QAction(Lucide.Image, Res.string.action_share_image),
-            QAction(Lucide.Link, Res.string.action_share_link),
+            // QAction(Lucide.Link, Res.string.action_share_link), // hidden until real deep-link generation exists
         )
     ),
     QGroup(
@@ -147,6 +144,7 @@ fun AyahActionSheet(
     onShareAsImage: () -> Unit,
     onHighlight: () -> Unit,
     onNote: () -> Unit,
+    onAddToCollection: () -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -264,7 +262,7 @@ fun AyahActionSheet(
                                 onClick = {
                                     onDismiss()
                                     if (a.icon == Lucide.Image) onShareAsImage()
-                                    if (a.icon == Lucide.StickyNote) onNote()
+                                    if (a.icon == Lucide.FolderPlus) onAddToCollection()
                                 }
                             )
                         })
