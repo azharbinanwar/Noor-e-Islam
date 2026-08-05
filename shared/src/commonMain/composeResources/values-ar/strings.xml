@@ -520,6 +520,8 @@
     <string name="loading_collections">جارٍ تحميل المجموعات…</string>
     <string name="no_collections">لا توجد مجموعات بعد</string>
     <string name="collections_hint">أضف آية إلى مجموعة من قائمة إجراءاتها للبدء.</string>
+    <string name="collection_empty_hint">لا توجد آيات في هذه المجموعة بعد.</string>
+    <string name="collection_details_empty_message">أضف آية إلى هذه المجموعة من قائمة إجراءاتها.</string>
     <string name="quran_theme_system">النظام</string>
     <string name="quran_theme_light">فاتح</string>
     <string name="quran_theme_paper">نمط الورق</string>

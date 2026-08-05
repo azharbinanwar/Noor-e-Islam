@@ -520,6 +520,7 @@
     <string name="no_collections">No collections yet</string>
     <string name="collections_hint">Add an ayah to a collection from its action sheet to get started.</string>
     <string name="collection_empty_hint">No ayahs in this collection yet.</string>
+    <string name="collection_details_empty_message">Add an ayah to this collection from its action sheet.</string>
     <string name="quran_theme_system">System</string>
     <string name="quran_theme_light">Light</string>
     <string name="quran_theme_paper">Paper</string>

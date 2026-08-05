@@ -40,6 +40,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
+import com.composables.icons.lucide.Settings2
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
@@ -57,6 +58,7 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.Collection
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
 import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteEditorSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalligraphy
+import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.ReaderSettingsSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.RukuBlock
 import com.kodeelite.nooreislam.resources.Res
@@ -65,6 +67,7 @@ import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
+import com.kodeelite.nooreislam.resources.theme
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -88,6 +91,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
     val fontSize by store.fontSize.collectAsState()
+    val lineSpacing by store.lineSpacing.collectAsState()
     val script by store.font.collectAsState()
     val readingTheme by store.theme.collectAsState()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
@@ -126,6 +130,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     var viewingNote by remember { mutableStateOf<Ayah?>(null) } // tap the note glyph → stub preview, real editor later
     var pickingCollectionFor by remember { mutableStateOf<Ayah?>(null) }
     var showSettings by remember { mutableStateOf(false) }
+    var showTheme by remember { mutableStateOf(false) }
     val notesStore = koinInject<NotesStore>()
     val collectionStore = koinInject<CollectionStore>()
     val noteMap by notesStore.noteMap.collectAsState()
@@ -156,9 +161,16 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                     }
                 },
                 actions = {
-                    IconButton({ showSettings = true }) {
+                    IconButton({ showTheme = true }) {
                         Icon(
                             Lucide.Palette,
+                            stringResource(Res.string.theme),
+                            tint = colors.onSurface
+                        )
+                    }
+                    IconButton({ showSettings = true }) {
+                        Icon(
+                            Lucide.Settings2,
                             stringResource(Res.string.reading_settings),
                             tint = colors.onSurface
                         )
@@ -218,14 +230,20 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
 
         if (showSettings) {
-            ReaderSettingsSheet(
+            ReaderSettingsSheet(onDismiss = { showSettings = false })
+        }
+
+        if (showTheme) {
+            QuranThemePickerSheet(
                 fontSize = fontSize,
                 onFontChange = { store.setFontSize(it) },
+                lineSpacing = lineSpacing,
+                onLineSpacingChange = { store.setLineSpacing(it) },
                 font = script,
                 onFontSelect = { store.setFont(it) },
                 theme = readingTheme,
                 onThemeSelect = { store.setTheme(it) },
-                onDismiss = { showSettings = false },
+                onDismiss = { showTheme = false },
             )
         }
 

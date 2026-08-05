@@ -18,5 +18,13 @@ object QuranDefaults {
     const val MIN_FONT_SP = 12    // stepper floor
     const val MAX_FONT_SP = 40    // stepper ceiling
 
+    // % of the base line height (fontSize * BASE_LINE_HEIGHT_RATIO) — a ratio, not an absolute size, so
+    // it scales correctly no matter which font is active; switching fonts never needs a reset.
+    const val BASE_LINE_HEIGHT_RATIO = 1.9f
+    const val LINE_SPACING_PERCENT = 100  // 100% = the base ratio as-is
+    const val MIN_LINE_SPACING_PERCENT = 100
+    const val MAX_LINE_SPACING_PERCENT = 200
+    const val LINE_SPACING_STEP_PERCENT = 10
+
     const val COLLECTION_SEARCH_THRESHOLD = 12  // collection picker shows a search field past this count
 }

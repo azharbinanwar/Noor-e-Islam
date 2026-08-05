@@ -75,6 +75,7 @@ fun AyahPassage(
     val notesStore = koinInject<NotesStore>()
 
     val fontSize by store.fontSize.collectAsState()
+    val lineHeightRatio by store.lineHeightRatio.collectAsState()
     val script by store.font.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
     val markerFont = FontFamily(Font(Res.font.tanzil_hafs))
@@ -161,7 +162,7 @@ fun AyahPassage(
                 )
             },
         fontSize = fontSize.sp,
-        lineHeight = (fontSize * 1.9f).sp,
+        lineHeight = (fontSize * lineHeightRatio).sp,
         textAlign = TextAlign.Justify,
         onTextLayout = { layout = it }
     )

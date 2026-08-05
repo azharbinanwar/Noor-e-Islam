@@ -5,8 +5,11 @@ import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.prefs.PrefsService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 // Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit.
 // User data (highlights/bookmarks/notes) moved to their own specialized stores.
@@ -20,6 +23,19 @@ class QuranStore(
         PrefsService.putInt(PrefConst.QURAN_FONT_SP, value)
         _fontSize.value = value
     }
+
+    private val _lineSpacing = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_LINE_SPACING, QuranDefaults.LINE_SPACING_PERCENT))
+    val lineSpacing: StateFlow<Int> = _lineSpacing.asStateFlow()
+
+    fun setLineSpacing(value: Int) {
+        PrefsService.putInt(PrefConst.QURAN_LINE_SPACING, value)
+        _lineSpacing.value = value
+    }
+
+    // ready-to-multiply-by-fontSize ratio — UI never touches QuranDefaults, it just reads this
+    val lineHeightRatio: StateFlow<Float> = _lineSpacing
+        .map { QuranDefaults.BASE_LINE_HEIGHT_RATIO * (it / 100f) }
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), QuranDefaults.BASE_LINE_HEIGHT_RATIO)
 
     private val _font = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.QURAN_FONT)

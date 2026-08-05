@@ -316,3 +316,7 @@ fun darkAppColors() = AppColors(
 
 /** Provides [AppColors] down the tree — Compose equivalent of Flutter's ThemeExtension. */
 val LocalAppColors = staticCompositionLocalOf { lightAppColors() }
+
+// the true, unoverridden app palette — QuranThemeHost re-provides LocalAppColors with the picked
+// reading theme, so nested UI that needs the real app look (e.g. a "System" theme preview) reads this instead.
+val LocalBaseAppColors = staticCompositionLocalOf { lightAppColors() }

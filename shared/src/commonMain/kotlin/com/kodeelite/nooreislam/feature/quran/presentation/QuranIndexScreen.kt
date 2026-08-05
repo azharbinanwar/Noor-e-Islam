@@ -27,9 +27,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -51,18 +53,23 @@ import androidx.compose.ui.zIndex
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
+import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.continue_reading
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.start_from_beginning
+import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -74,6 +81,12 @@ fun QuranIndexScreen() {
     val scope = rememberCoroutineScope()
     val drawerState = LocalDrawerState.current
     val density = LocalDensity.current
+    val quranStore = koinInject<QuranStore>()
+    val fontSize by quranStore.fontSize.collectAsState()
+    val lineSpacing by quranStore.lineSpacing.collectAsState()
+    val script by quranStore.font.collectAsState()
+    val readingTheme by quranStore.theme.collectAsState()
+    var showTheme by remember { mutableStateOf(false) }
 
     var collapsibleH by remember { mutableIntStateOf(0) } // top bar + continue card (px) — the part that hides
     var headerH by remember { mutableIntStateOf(0) }       // full header incl. the pinned chips (px)
@@ -105,6 +118,11 @@ fun QuranIndexScreen() {
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(Lucide.Menu, stringResource(Res.string.menu))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showTheme = true }) {
+                        Icon(Lucide.Palette, stringResource(Res.string.theme))
                     }
                 },
             )
@@ -150,6 +168,20 @@ fun QuranIndexScreen() {
                 }
             }
         }
+    }
+
+    if (showTheme) {
+        QuranThemePickerSheet(
+            fontSize = fontSize,
+            onFontChange = { quranStore.setFontSize(it) },
+            lineSpacing = lineSpacing,
+            onLineSpacingChange = { quranStore.setLineSpacing(it) },
+            font = script,
+            onFontSelect = { quranStore.setFont(it) },
+            theme = readingTheme,
+            onThemeSelect = { quranStore.setTheme(it) },
+            onDismiss = { showTheme = false },
+        )
     }
 }
 

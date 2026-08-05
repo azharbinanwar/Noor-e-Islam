@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
@@ -56,6 +57,7 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.Collection
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.cancel
+import com.kodeelite.nooreislam.resources.collection_details_empty_message
 import com.kodeelite.nooreislam.resources.collection_empty_hint
 import com.kodeelite.nooreislam.resources.delete
 import com.kodeelite.nooreislam.resources.collection_name_placeholder
@@ -106,7 +108,11 @@ fun CollectionDetailsScreen(collectionId: Long) {
             }
         } else if (ayahs.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                StateView(title = stringResource(Res.string.collection_empty_hint))
+                StateView(
+                    title = stringResource(Res.string.collection_empty_hint),
+                    message = stringResource(Res.string.collection_details_empty_message),
+                    icon = { Icon(Lucide.BookOpen, null, tint = AppTheme.colors.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
+                )
             }
         } else {
             LazyColumn(
