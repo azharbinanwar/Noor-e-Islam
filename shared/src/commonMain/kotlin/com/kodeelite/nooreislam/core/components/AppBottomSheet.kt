@@ -42,8 +42,9 @@ const val SHEET_SCRIM_ALPHA = 0.32f
 fun AppBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String? = null,                                 // pinned header — stays put while the body scrolls
+    title: String? = null,                                 // pinned text title — stays put while the body scrolls; skip it if header already gives the sheet its context
     subtitle: String? = null,
+    header: (@Composable ColumnScope.() -> Unit)? = null, // pinned below the title (or alone, if title is skipped), above the scrollable body (e.g. a search field)
     footer: (@Composable ColumnScope.() -> Unit)? = null, // pinned below the scrollable body (e.g. action buttons)
     fillHeight: Boolean = false,                          // true = body fills to the max height, so it stays put while a list filters
     skipPartiallyExpanded: Boolean = true,               // false = open at a half detent; drag the handle up to expand
@@ -80,6 +81,9 @@ fun AppBottomSheet(
                     Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = AppTheme.colors.onSurface)
                     if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.onSurfaceVariant)
                 }
+            }
+            if (header != null) {
+                Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 4.dp), content = header)
             }
             // scrollable body — capped so a sticky footer always stays visible
             Column(

@@ -27,4 +27,9 @@ object QuranDefaults {
     const val LINE_SPACING_STEP_PERCENT = 10
 
     const val COLLECTION_SEARCH_THRESHOLD = 12  // collection picker shows a search field past this count
+
+    const val RECENT_JUMPS_LIMIT = 10  // Jump To's "Recent" chips, most recent first
+    val COMMON_SURAHS = listOf(18, 36, 55, 67)  // Al-Kahf, Ya-Sin, Ar-Rahman, Al-Mulk — Jump To's shortcut list
+
+    const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
 }

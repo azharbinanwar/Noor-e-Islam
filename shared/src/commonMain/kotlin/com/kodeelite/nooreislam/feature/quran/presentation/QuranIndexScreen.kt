@@ -2,23 +2,18 @@ package com.kodeelite.nooreislam.feature.quran.presentation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,12 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -45,32 +39,38 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.composables.icons.lucide.BookOpen
+import com.composables.icons.lucide.Dices
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Palette
+import com.composables.icons.lucide.Search
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.ActionWidth
+import com.kodeelite.nooreislam.core.components.AppActionGroup
+import com.kodeelite.nooreislam.core.components.AppActionItem
 import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
+import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranSearchSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
+import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahPickerSheet
 import com.kodeelite.nooreislam.resources.Res
-import com.kodeelite.nooreislam.resources.continue_reading
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.quran
-import com.kodeelite.nooreislam.resources.start_from_beginning
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -87,6 +87,9 @@ fun QuranIndexScreen() {
     val script by quranStore.font.collectAsState()
     val readingTheme by quranStore.theme.collectAsState()
     var showTheme by remember { mutableStateOf(false) }
+    var showJumpTo by remember { mutableStateOf(false) }
+    var showSearchQuran by remember { mutableStateOf(false) }
+    val surahs by produceState(emptyList()) { value = QuranRepository.surahs() }
 
     var collapsibleH by remember { mutableIntStateOf(0) } // top bar + continue card (px) — the part that hides
     var headerH by remember { mutableIntStateOf(0) }       // full header incl. the pinned chips (px)
@@ -152,7 +155,24 @@ fun QuranIndexScreen() {
                     .background(AppTheme.colors.background),
             ) {
                 Column(Modifier.onSizeChanged { collapsibleH = it.height }) {
-                    ContinueCard { nav.navigate(AppRoute.QuranReader()) }
+                    AppActionGroup(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        width = ActionWidth.Fill,
+                        items = listOf(
+                            AppActionItem(label = "Resume", icon = Lucide.BookOpen, onClick = { nav.navigate(AppRoute.QuranReader()) }),
+                            AppActionItem(label = "Jump to", icon = Lucide.Navigation, onClick = { showJumpTo = true }),
+                            AppActionItem(label = "Search", icon = Lucide.Search, onClick = { showSearchQuran = true }),
+                            AppActionItem(
+                                label = "Random",
+                                icon = Lucide.Dices,
+                                onClick = {
+                                    surahs.randomOrNull()?.let { s ->
+                                        nav.navigate(AppRoute.QuranReader(s.number, Random.nextInt(1, s.ayahCount + 1)))
+                                    }
+                                },
+                            ),
+                        ),
+                    )
                 }
                 val chipState = rememberLazyListState()
                 LaunchedEffect(pager.currentPage) { chipState.animateScrollToItem(pager.currentPage) } // keep the selected chip in view
@@ -183,22 +203,18 @@ fun QuranIndexScreen() {
             onDismiss = { showTheme = false },
         )
     }
-}
 
-// basic hero — real last-read + progress come with that store
-@Composable
-private fun ContinueCard(onClick: () -> Unit) {
-    val colors = AppTheme.colors
-    Row(
-        Modifier.fillMaxWidth().padding(16.dp).clip(RoundedCornerShape(16.dp))
-            .background(colors.surfaceContainerHigh).clickable(onClick = onClick).padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(Lucide.BookOpen, null, tint = colors.primary)
-        Spacer(Modifier.size(12.dp))
-        Column {
-            Text(stringResource(Res.string.continue_reading), color = colors.onSurface, fontWeight = FontWeight.SemiBold)
-            Text(stringResource(Res.string.start_from_beginning), color = colors.onSurfaceVariant, fontSize = 12.sp)
-        }
+    if (showJumpTo) {
+        SurahPickerSheet(
+            onOpen = { surah, ayah -> nav.navigate(AppRoute.QuranReader(surah, ayah)) },
+            onDismiss = { showJumpTo = false },
+        )
+    }
+
+    if (showSearchQuran) {
+        QuranSearchSheet(
+            onOpen = { surah, ayah -> nav.navigate(AppRoute.QuranReader(surah, ayah)) },
+            onDismiss = { showSearchQuran = false },
+        )
     }
 }

@@ -70,4 +70,23 @@ class QuranStore(
         PrefsService.putString(PrefConst.QURAN_FAVORITES, next.joinToString(","))
         _favorites.value = next
     }
+
+    private val _recentJumps = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.QURAN_RECENT_JUMPS)
+            ?.split(",")?.mapNotNull { pair ->
+                val (s, a) = pair.split(":").takeIf { it.size == 2 } ?: return@mapNotNull null
+                val surah = s.toIntOrNull() ?: return@mapNotNull null
+                val ayah = a.toIntOrNull() ?: return@mapNotNull null
+                surah to ayah
+            } ?: emptyList(),
+    )
+    val recentJumps: StateFlow<List<Pair<Int, Int>>> = _recentJumps.asStateFlow()
+
+    // most recent first, no duplicate surah+ayah, capped — same lightweight PrefsService list as favorites
+    fun recordJump(surah: Int, ayah: Int) {
+        val next = (listOf(surah to ayah) + _recentJumps.value.filterNot { it.first == surah && it.second == ayah })
+            .take(QuranDefaults.RECENT_JUMPS_LIMIT)
+        PrefsService.putString(PrefConst.QURAN_RECENT_JUMPS, next.joinToString(",") { "${it.first}:${it.second}" })
+        _recentJumps.value = next
+    }
 }
