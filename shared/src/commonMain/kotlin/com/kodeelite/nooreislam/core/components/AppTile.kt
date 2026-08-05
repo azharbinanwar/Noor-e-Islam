@@ -76,6 +76,18 @@ enum class TilePosition {
     }
 }
 
+// corner rounding for one tile's position within its group — shared by every card-style list item
+fun shapeFor(pos: TilePosition): Shape {
+    val r = 16.dp
+    val m = 4.dp
+    return when (pos) {
+        TilePosition.Single -> RoundedCornerShape(r)
+        TilePosition.First -> RoundedCornerShape(topStart = r, topEnd = r, bottomStart = m, bottomEnd = m)
+        TilePosition.Middle -> RoundedCornerShape(m)
+        TilePosition.Last -> RoundedCornerShape(topStart = m, topEnd = m, bottomStart = r, bottomEnd = r)
+    }
+}
+
 /** A small icon action; tiles and group headers render these with one consistent size/tint/spacing. */
 class AppIconAction(val icon: ImageVector, val onClick: () -> Unit)
 
@@ -324,17 +336,6 @@ private fun positionFor(index: Int, size: Int): TilePosition = when {
     else -> TilePosition.Middle
 }
 
-// corner rounding for one tile's position within its group — shared by every card-style list item
-fun shapeFor(pos: TilePosition): Shape {
-    val r = 16.dp
-    val m = 4.dp
-    return when (pos) {
-        TilePosition.Single -> RoundedCornerShape(r)
-        TilePosition.First -> RoundedCornerShape(topStart = r, topEnd = r, bottomStart = m, bottomEnd = m)
-        TilePosition.Middle -> RoundedCornerShape(m)
-        TilePosition.Last -> RoundedCornerShape(topStart = m, topEnd = m, bottomStart = r, bottomEnd = r)
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

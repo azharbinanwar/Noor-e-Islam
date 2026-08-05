@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 // Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit.
 // User data (highlights/bookmarks/notes) moved to their own specialized stores.
 class QuranStore(
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
 ) {
     private val _fontSize = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_FONT_SP, QuranDefaults.FONT_SP))
     val fontSize: StateFlow<Int> = _fontSize.asStateFlow()
@@ -88,5 +88,15 @@ class QuranStore(
             .take(QuranDefaults.RECENT_JUMPS_LIMIT)
         PrefsService.putString(PrefConst.QURAN_RECENT_JUMPS, next.joinToString(",") { "${it.first}:${it.second}" })
         _recentJumps.value = next
+        setJumpToLastSurah(surah)
+    }
+
+    // sticky default for Jump To's surah field — whichever surah the user picked (or jumped to) last
+    private val _jumpToLastSurah = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_JUMP_TO_LAST_SURAH, QuranDefaults.JUMP_TO_DEFAULT_SURAH))
+    val jumpToLastSurah: StateFlow<Int> = _jumpToLastSurah.asStateFlow()
+
+    fun setJumpToLastSurah(surah: Int) {
+        PrefsService.putInt(PrefConst.QURAN_JUMP_TO_LAST_SURAH, surah)
+        _jumpToLastSurah.value = surah
     }
 }

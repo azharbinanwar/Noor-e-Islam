@@ -30,6 +30,7 @@ object QuranDefaults {
 
     const val RECENT_JUMPS_LIMIT = 10  // Jump To's "Recent" chips, most recent first
     val COMMON_SURAHS = listOf(18, 36, 55, 67)  // Al-Kahf, Ya-Sin, Ar-Rahman, Al-Mulk — Jump To's shortcut list
+    const val JUMP_TO_DEFAULT_SURAH = 1  // Jump To's pick before the user has ever picked one — Al-Fatihah
 
     const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
 }

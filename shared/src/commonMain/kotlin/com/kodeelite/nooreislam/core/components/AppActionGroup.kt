@@ -157,7 +157,8 @@ fun AppActionGroup(
     }
 }
 
-private fun actionShapeFor(pos: ActionPosition): Shape {
+// corner rounding for one action's position within its group — shared by every horizontal action row
+fun actionShapeFor(pos: ActionPosition): Shape {
     val r = 16.dp
     val m = 4.dp
     return when (pos) {

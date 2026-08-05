@@ -27,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -43,7 +42,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.composables.icons.lucide.BookOpen
-import com.composables.icons.lucide.Dices
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Navigation
@@ -57,7 +55,6 @@ import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranSearchSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
@@ -70,7 +67,6 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -89,7 +85,6 @@ fun QuranIndexScreen() {
     var showTheme by remember { mutableStateOf(false) }
     var showJumpTo by remember { mutableStateOf(false) }
     var showSearchQuran by remember { mutableStateOf(false) }
-    val surahs by produceState(emptyList()) { value = QuranRepository.surahs() }
 
     var collapsibleH by remember { mutableIntStateOf(0) } // top bar + continue card (px) — the part that hides
     var headerH by remember { mutableIntStateOf(0) }       // full header incl. the pinned chips (px)
@@ -121,11 +116,6 @@ fun QuranIndexScreen() {
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(Lucide.Menu, stringResource(Res.string.menu))
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { showTheme = true }) {
-                        Icon(Lucide.Palette, stringResource(Res.string.theme))
                     }
                 },
             )
@@ -162,15 +152,7 @@ fun QuranIndexScreen() {
                             AppActionItem(label = "Resume", icon = Lucide.BookOpen, onClick = { nav.navigate(AppRoute.QuranReader()) }),
                             AppActionItem(label = "Jump to", icon = Lucide.Navigation, onClick = { showJumpTo = true }),
                             AppActionItem(label = "Search", icon = Lucide.Search, onClick = { showSearchQuran = true }),
-                            AppActionItem(
-                                label = "Random",
-                                icon = Lucide.Dices,
-                                onClick = {
-                                    surahs.randomOrNull()?.let { s ->
-                                        nav.navigate(AppRoute.QuranReader(s.number, Random.nextInt(1, s.ayahCount + 1)))
-                                    }
-                                },
-                            ),
+                            AppActionItem(label = stringResource(Res.string.theme), icon = Lucide.Palette, onClick = { showTheme = true }),
                         ),
                     )
                 }

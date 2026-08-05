@@ -32,7 +32,7 @@
     <string name="turn_left_to_face_qibla">استدر يساراً لمواجهة القبلة</string>
     <string name="turn_right_to_face_qibla">استدر يميناً لمواجهة القبلة</string>
     <string name="you_are_facing_qibla">أنت تواجه القبلة</string>
-    <string name="compass_accuracy_low_wave_phone_in_figure_eight">دقة منخفضة — حرّك هاتفك على شكل رقم 8</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">دقة منخفضة، حرّك هاتفك على شكل رقم 8</string>
     <string name="compass_unavailable">البوصلة غير متوفرة</string>
     <string name="device_has_no_compass_sensor">جهازك لا يحتوي على مستشعر بوصلة، لذا لا يمكن عرض اتجاه القبلة</string>
     <string name="location_needed_for_qibla">الموقع مطلوب لتحديد القبلة</string>
@@ -160,7 +160,7 @@
     <string name="tasbih_material_amethyst">جمشت</string>
 
     <string name="welcome_to_miqat">مرحباً بك في نور الإسلام</string>
-    <string name="your_companion_for_every_prayer">رفيقك في كل صلاة — مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
+    <string name="your_companion_for_every_prayer">رفيقك في كل صلاة: مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
     <string name="get_started">ابدأ</string>
     <string name="skip">تخطّي</string>
     <string name="next">التالي</string>
@@ -185,10 +185,10 @@
     <string name="never_miss_a_prayer">لا تفوّت أي صلاة</string>
     <string name="accurate_times_with_live_countdown">مواقيت دقيقة لموقعك، مع عدّ تنازلي مباشر للصلاة القادمة.</string>
     <string name="find_the_qibla_and_track">اعرف القبلة وتابع صلاتك</string>
-    <string name="point_to_the_kaaba_and_log_every_prayer">وجّه نحو الكعبة وسجّل كل صلاة — سلاسل وإحصائيات، بدون إنترنت.</string>
+    <string name="point_to_the_kaaba_and_log_every_prayer">وجّه نحو الكعبة وسجّل كل صلاة: سلاسل وإحصائيات، بدون إنترنت.</string>
 
     <string name="onboarding_live_countdown">عدّ تنازلي مباشر للصلاة القادمة</string>
-    <string name="onboarding_qibla_offline">بوصلة القبلة — بدون إنترنت</string>
+    <string name="onboarding_qibla_offline">بوصلة القبلة، بدون إنترنت</string>
     <string name="onboarding_track_streaks">تابع كل صلاة وسلاسلك</string>
     <string name="your_madhab">مذهبك</string>
     <string name="affects_asr_calculation">يؤثر في حساب وقت صلاة العصر.</string>

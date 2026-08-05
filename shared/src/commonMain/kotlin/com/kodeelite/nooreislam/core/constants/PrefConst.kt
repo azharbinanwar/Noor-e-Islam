@@ -78,6 +78,7 @@ object PrefConst {
     const val QURAN_THEME = "quran_theme"     // reading theme (QuranTheme enum name)
     const val QURAN_FAVORITES = "quran_favorites" // favorite surah numbers, comma-separated
     const val QURAN_RECENT_JUMPS = "quran_recent_jumps" // "surah:ayah" pairs from Jump To, comma-separated, most recent first
+    const val QURAN_JUMP_TO_LAST_SURAH = "quran_jump_to_last_surah" // last surah picked in Jump To — sticky default for next open
     const val QURAN_HIGHLIGHT_COLOR = "quran_highlight_color" // last-used highlight color (sticky default)
 
     // ── Tasbih ───────────────────────────────────────────────

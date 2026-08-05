@@ -33,7 +33,7 @@
     <string name="turn_left_to_face_qibla">Turn left to face the Qibla</string>
     <string name="turn_right_to_face_qibla">Turn right to face the Qibla</string>
     <string name="you_are_facing_qibla">You are facing the Qibla</string>
-    <string name="compass_accuracy_low_wave_phone_in_figure_eight">Low accuracy — wave your phone in a figure 8</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">Low accuracy, wave your phone in a figure 8</string>
     <string name="compass_unavailable">Compass unavailable</string>
     <string name="device_has_no_compass_sensor">Your device has no compass sensor, so the Qibla direction can't be shown</string>
     <string name="location_needed_for_qibla">Location is needed to find the Qibla</string>
@@ -162,7 +162,7 @@
     <string name="tasbih_material_amethyst">Amethyst</string>
 
     <string name="welcome_to_miqat">Welcome to Noor e Islam</string>
-    <string name="your_companion_for_every_prayer">Your companion for every prayer — accurate times, Qibla and tracking, all offline.</string>
+    <string name="your_companion_for_every_prayer">Your companion for every prayer: accurate times, Qibla and tracking, all offline.</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
@@ -187,10 +187,10 @@
     <string name="never_miss_a_prayer">Never miss a prayer</string>
     <string name="accurate_times_with_live_countdown">Accurate times for your location, with a live countdown to the next prayer.</string>
     <string name="find_the_qibla_and_track">Find the Qibla and track</string>
-    <string name="point_to_the_kaaba_and_log_every_prayer">Point to the Kaaba and log every prayer — streaks, stats, all offline.</string>
+    <string name="point_to_the_kaaba_and_log_every_prayer">Point to the Kaaba and log every prayer: streaks, stats, all offline.</string>
 
     <string name="onboarding_live_countdown">Live countdown to the next prayer</string>
-    <string name="onboarding_qibla_offline">Qibla compass — fully offline</string>
+    <string name="onboarding_qibla_offline">Qibla compass, fully offline</string>
     <string name="onboarding_track_streaks">Track every prayer and your streaks</string>
     <string name="your_madhab">Your Madhab</string>
     <string name="affects_asr_calculation">Affects the Asr prayer time calculation.</string>
@@ -558,7 +558,7 @@
     <string name="search_quran">Search Quran</string>
     <string name="search_quran_placeholder">Search the Quran…</string>
     <string name="search_quran_hint_title">Search the Quran</string>
-    <string name="search_quran_hint_message">Type a phrase — works with or without diacritics (harakat).</string>
+    <string name="search_quran_hint_message">Type a phrase. Works with or without diacritics (harakat).</string>
     <string name="no_ayahs_found">No ayahs found</string>
     <string name="more_actions">More actions</string>
     <string name="surah_number_ayah_number">Surah %1$d · Ayah %2$d</string>
