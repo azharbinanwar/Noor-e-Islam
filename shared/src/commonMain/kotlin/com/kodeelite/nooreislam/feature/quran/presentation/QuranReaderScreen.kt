@@ -3,11 +3,17 @@ package com.kodeelite.nooreislam.feature.quran.presentation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +38,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.LayoutDirection
@@ -49,10 +58,10 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
+import com.kodeelite.nooreislam.feature.quran.presentation.components.AutoScrollControl
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.CollectionPickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
@@ -68,9 +77,12 @@ import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import com.kodeelite.nooreislam.resources.theme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,10 +102,51 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
 
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
-    val fontSize by store.fontSize.collectAsState()
-    val lineSpacing by store.lineSpacing.collectAsState()
-    val script by store.font.collectAsState()
-    val readingTheme by store.theme.collectAsState()
+    val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
+    val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
+
+    // any manual drag stops auto-scroll — never fight the user's own gesture
+    LaunchedEffect(listState) {
+        listState.interactionSource.interactions.collect { if (it is DragInteraction.Start) store.stopAutoScroll() }
+    }
+    LaunchedEffect(autoScrollEnabled, autoScrollPxPerTick) {
+        if (!autoScrollEnabled) return@LaunchedEffect
+        while (isActive) {
+            listState.scrollBy(autoScrollPxPerTick)
+            delay(store.autoScrollTickInterval)
+        }
+    }
+
+    // chrome (app bar + auto-scroll bar) visibility: normal reading follows scroll direction (LinkedIn-style);
+    // auto-scroll starting hides it immediately (no reveal flash) — tap the screen to bring it back briefly,
+    // which then auto-hides again after a couple seconds of no interaction
+    var chromeRevealed by remember { mutableStateOf(true) }
+    LaunchedEffect(autoScrollEnabled) { if (autoScrollEnabled) chromeRevealed = false }
+    LaunchedEffect(autoScrollEnabled, chromeRevealed) {
+        if (autoScrollEnabled && chromeRevealed) {
+            delay(2000.milliseconds)
+            chromeRevealed = false
+        }
+    }
+    var prevIndex by remember { mutableStateOf(0) }
+    var prevOffset by remember { mutableStateOf(0) }
+    val scrollingUp by remember {
+        derivedStateOf {
+            val up = if (prevIndex != listState.firstVisibleItemIndex) {
+                prevIndex > listState.firstVisibleItemIndex
+            } else {
+                prevOffset >= listState.firstVisibleItemScrollOffset
+            }
+            prevIndex = listState.firstVisibleItemIndex
+            prevOffset = listState.firstVisibleItemScrollOffset
+            up
+        }
+    }
+    // forced visible until the initial load+jump settles (hidden behind the splash anyway) — avoids the jump
+    // being misread as a "scroll down" before scrollingUp's baseline is synced to the post-jump position
+    val chromeVisible = !scrolled || if (autoScrollEnabled) chromeRevealed else scrollingUp
+    var topBarHeightPx by remember { mutableStateOf(0) }
+    val topBarHeight = with(LocalDensity.current) { topBarHeightPx.toDp() }
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
@@ -121,6 +174,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         if (rukus.isNotEmpty()) {
             val target = rukus.indexOfFirst { r -> r.any { it.surah == surah && it.ayah == ayah } }.coerceAtLeast(0)
             if (target > 0) listState.scrollToItem(target)
+            // sync scrollingUp's baseline to the post-jump position in the same breath as flipping `scrolled`,
+            // so the jump itself is never misread as a scroll-down the moment the app bar starts trusting it
+            prevIndex = listState.firstVisibleItemIndex
+            prevOffset = listState.firstVisibleItemScrollOffset
             scrolled = true
         }
     }
@@ -132,54 +189,28 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     var showSettings by remember { mutableStateOf(false) }
     var showTheme by remember { mutableStateOf(false) }
     val notesStore = koinInject<NotesStore>()
-    val collectionStore = koinInject<CollectionStore>()
     val noteMap by notesStore.noteMap.collectAsState()
     var expanded by remember(selected) { mutableStateOf(false) }
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
     val blurRadius by animateDpAsState(if (expanded) 14.dp else 0.dp, label = "pageBlur")
 
     Box(Modifier.fillMaxSize().background(colors.background)) {
-        Column(Modifier.fillMaxSize().blur(blurRadius)) {
-            CenterAlignedTopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(header?.let { "${it.juz.toArabicIndic()} - " } ?: "", color = colors.primary, fontSize = 14.sp)
-                            Text(header?.juz?.toJuzKey() ?: "", fontFamily = juzFont, color = colors.primary, fontSize = 14.sp)
-                        }
-                        Text("  .  ", color = colors.primary, fontSize = 14.sp)
-                        header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 28.sp, color = colors.primary) }
-                    }
-                },
-                navigationIcon = {
-                    IconButton({ nav.back() }) {
-                        Icon(
-                            tr(Lucide.ChevronLeft, Lucide.ChevronRight),
-                            stringResource(Res.string.back),
-                            tint = colors.onSurface
-                        )
-                    }
-                },
-                actions = {
-                    IconButton({ showTheme = true }) {
-                        Icon(
-                            Lucide.Palette,
-                            stringResource(Res.string.theme),
-                            tint = colors.onSurface
-                        )
-                    }
-                    IconButton({ showSettings = true }) {
-                        Icon(
-                            Lucide.Settings2,
-                            stringResource(Res.string.reading_settings),
-                            tint = colors.onSurface
-                        )
-                    }
-                },
-            )
+        Box(Modifier.fillMaxSize().blur(blurRadius)) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                val tapAway = if (selected != null && !expanded) Modifier.pointerInput(Unit) { detectTapGestures { selected = null } } else Modifier
-                LazyColumn(state = listState, modifier = Modifier.fillMaxSize().then(tapAway)) {
+                val tapAway = if ((selected != null && !expanded) || autoScrollEnabled) {
+                    Modifier.pointerInput(selected, expanded, autoScrollEnabled) {
+                        detectTapGestures {
+                            if (selected != null && !expanded) selected = null
+                            if (autoScrollEnabled) chromeRevealed = true
+                        }
+                    }
+                } else Modifier
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize().then(tapAway),
+                    // reserved regardless of chromeVisible — the app bar overlays this space, never resizes it
+                    contentPadding = PaddingValues(top = topBarHeight),
+                ) {
                     items(rukus.size) { i ->
                         val ruku = rukus[i]
                         // juz of the ayah before this ruku, so RukuBlock can mark a juz that begins inside it
@@ -193,6 +224,60 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                         )
                     }
                 }
+            }
+
+            AnimatedVisibility(
+                visible = chromeVisible,
+                modifier = Modifier.align(Alignment.TopCenter),
+                enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { -it },
+                exit = fadeOut(tween(220)) + slideOutVertically(tween(220)) { -it },
+            ) {
+                CenterAlignedTopAppBar(
+                    modifier = Modifier.onSizeChanged { topBarHeightPx = it.height },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = colors.background,
+                        scrolledContainerColor = colors.background,
+                    ),
+                    title = {
+                        if (!autoScrollEnabled) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(header?.let { "${it.juz.toArabicIndic()} - " } ?: "", color = colors.primary, fontSize = 14.sp)
+                                    Text(header?.juz?.toJuzKey() ?: "", fontFamily = juzFont, color = colors.primary, fontSize = 14.sp)
+                                }
+                                Text("  .  ", color = colors.primary, fontSize = 14.sp)
+                                header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 28.sp, color = colors.primary) }
+                            }
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton({ nav.back() }) {
+                            Icon(
+                                tr(Lucide.ChevronLeft, Lucide.ChevronRight),
+                                stringResource(Res.string.back),
+                                tint = colors.onSurface
+                            )
+                        }
+                    },
+                    actions = {
+                        if (!autoScrollEnabled) {
+                            IconButton({ showTheme = true }) {
+                                Icon(
+                                    Lucide.Palette,
+                                    stringResource(Res.string.theme),
+                                    tint = colors.onSurface
+                                )
+                            }
+                            IconButton({ showSettings = true }) {
+                                Icon(
+                                    Lucide.Settings2,
+                                    stringResource(Res.string.reading_settings),
+                                    tint = colors.onSurface
+                                )
+                            }
+                        }
+                    },
+                )
             }
         }
 
@@ -222,11 +307,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
 
         pickingCollectionFor?.let { ayah ->
-            CollectionPickerSheet(
-                ayah = ayah,
-                store = collectionStore,
-                onDismiss = { pickingCollectionFor = null },
-            )
+            CollectionPickerSheet(ayah = ayah, onDismiss = { pickingCollectionFor = null })
         }
 
         if (showSettings) {
@@ -234,16 +315,15 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
 
         if (showTheme) {
-            QuranThemePickerSheet(
-                fontSize = fontSize,
-                onFontChange = { store.setFontSize(it) },
-                lineSpacing = lineSpacing,
-                onLineSpacingChange = { store.setLineSpacing(it) },
-                font = script,
-                onFontSelect = { store.setFont(it) },
-                theme = readingTheme,
-                onThemeSelect = { store.setTheme(it) },
-                onDismiss = { showTheme = false },
+            QuranThemePickerSheet(onDismiss = { showTheme = false })
+        }
+
+        if (selected == null && quickHighlight == null && viewingNote == null && pickingCollectionFor == null && !showSettings && !showTheme) {
+            AutoScrollControl(
+                isScrollInProgress = listState.isScrollInProgress,
+                onToggle = { store.toggleAutoScroll() },
+                onSpeedDown = { store.decreaseAutoScrollSpeed() },
+                onSpeedUp = { store.increaseAutoScrollSpeed() },
             )
         }
 

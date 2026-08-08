@@ -80,6 +80,7 @@ object PrefConst {
     const val QURAN_RECENT_JUMPS = "quran_recent_jumps" // "surah:ayah" pairs from Jump To, comma-separated, most recent first
     const val QURAN_JUMP_TO_LAST_SURAH = "quran_jump_to_last_surah" // last surah picked in Jump To — sticky default for next open
     const val QURAN_HIGHLIGHT_COLOR = "quran_highlight_color" // last-used highlight color (sticky default)
+    const val QURAN_AUTO_SCROLL_SPEED = "quran_auto_scroll_speed" // sticky speed level for the reader's auto-scroll
 
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus

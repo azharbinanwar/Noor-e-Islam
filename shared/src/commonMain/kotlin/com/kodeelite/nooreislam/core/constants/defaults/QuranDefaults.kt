@@ -33,4 +33,10 @@ object QuranDefaults {
     const val JUMP_TO_DEFAULT_SURAH = 1  // Jump To's pick before the user has ever picked one — Al-Fatihah
 
     const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
+
+    const val AUTO_SCROLL_SPEED = 3       // default level
+    const val MIN_AUTO_SCROLL_SPEED = 1
+    const val MAX_AUTO_SCROLL_SPEED = 5
+    const val AUTO_SCROLL_PX_PER_TICK = 0.6f  // pixels per tick at speed 1; scales linearly with level
+    const val AUTO_SCROLL_TICK_MS = 16L       // ~60fps
 }

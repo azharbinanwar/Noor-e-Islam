@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 // Quran reader settings (feature-local): each flow seeded from PrefsService, setters persist + emit.
 // User data (highlights/bookmarks/notes) moved to their own specialized stores.
@@ -98,5 +100,35 @@ class QuranStore(
     fun setJumpToLastSurah(surah: Int) {
         PrefsService.putInt(PrefConst.QURAN_JUMP_TO_LAST_SURAH, surah)
         _jumpToLastSurah.value = surah
+    }
+
+    private val _autoScrollSpeed = MutableStateFlow(PrefsService.getInt(PrefConst.QURAN_AUTO_SCROLL_SPEED, QuranDefaults.AUTO_SCROLL_SPEED))
+    val autoScrollSpeed: StateFlow<Int> = _autoScrollSpeed.asStateFlow()
+
+    fun setAutoScrollSpeed(value: Int) {
+        PrefsService.putInt(PrefConst.QURAN_AUTO_SCROLL_SPEED, value.coerceIn(QuranDefaults.MIN_AUTO_SCROLL_SPEED, QuranDefaults.MAX_AUTO_SCROLL_SPEED))
+        _autoScrollSpeed.value = value.coerceIn(QuranDefaults.MIN_AUTO_SCROLL_SPEED, QuranDefaults.MAX_AUTO_SCROLL_SPEED)
+    }
+
+    fun increaseAutoScrollSpeed() = setAutoScrollSpeed(_autoScrollSpeed.value + 1)
+    fun decreaseAutoScrollSpeed() = setAutoScrollSpeed(_autoScrollSpeed.value - 1)
+
+    // ready-to-scrollBy pixel step for the current speed — UI never touches QuranDefaults, it just reads this
+    val autoScrollPxPerTick: StateFlow<Float> = _autoScrollSpeed
+        .map { it * QuranDefaults.AUTO_SCROLL_PX_PER_TICK }
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), QuranDefaults.AUTO_SCROLL_SPEED * QuranDefaults.AUTO_SCROLL_PX_PER_TICK)
+
+    val autoScrollTickInterval: Duration = QuranDefaults.AUTO_SCROLL_TICK_MS.milliseconds
+
+    // session-only — never persisted, so the reader always opens paused regardless of how it was left
+    private val _autoScrollEnabled = MutableStateFlow(false)
+    val autoScrollEnabled: StateFlow<Boolean> = _autoScrollEnabled.asStateFlow()
+
+    fun toggleAutoScroll() {
+        _autoScrollEnabled.value = !_autoScrollEnabled.value
+    }
+
+    fun stopAutoScroll() {
+        _autoScrollEnabled.value = false
     }
 }

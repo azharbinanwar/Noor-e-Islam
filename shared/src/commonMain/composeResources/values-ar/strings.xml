@@ -545,6 +545,8 @@
     <string name="tafsir_source">مصدر التفسير</string>
     <string name="word_by_word">كلمة بكلمة</string>
     <string name="auto_scroll">التمرير التلقائي</string>
+    <string name="pause">إيقاف مؤقت</string>
+    <string name="auto_scroll_speed">السرعة</string>
     <string name="keep_screen_on">إبقاء الشاشة مفعلة</string>
     <string name="jump_to">الانتقال إلى</string>
     <string name="jump_to_search_placeholder">سورة، آية، أو 2:255…</string>

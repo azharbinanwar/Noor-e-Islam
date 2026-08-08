@@ -543,6 +543,8 @@
     <string name="tafsir_source">Tafsir source</string>
     <string name="word_by_word">Word-by-word</string>
     <string name="auto_scroll">Auto-scroll</string>
+    <string name="pause">Pause</string>
+    <string name="auto_scroll_speed">Speed</string>
     <string name="keep_screen_on">Keep screen on</string>
     <string name="jump_to">Jump to</string>
     <string name="jump_to_search_placeholder">Surah, ayah, or 2:255…</string>

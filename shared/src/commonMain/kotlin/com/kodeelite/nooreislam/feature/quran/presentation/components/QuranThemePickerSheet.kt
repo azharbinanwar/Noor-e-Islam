@@ -18,6 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.line_spacing
@@ -44,26 +47,22 @@ import com.kodeelite.nooreislam.resources.script
 import com.kodeelite.nooreislam.resources.text_size
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // everything appearance-related in one sheet — theme color, text size, line spacing, script — same
 // entry point from both the reader and the index screen's app bar. Content/Reading stay in
 // ReaderSettingsSheet, which only opens from the reader itself.
 @Composable
-fun QuranThemePickerSheet(
-    fontSize: Int,
-    onFontChange: (Int) -> Unit,
-    lineSpacing: Int,
-    onLineSpacingChange: (Int) -> Unit,
-    font: QuranFont,
-    onFontSelect: (QuranFont) -> Unit,
-    theme: QuranTheme,
-    onThemeSelect: (QuranTheme) -> Unit,
-    onDismiss: () -> Unit,
-) {
+fun QuranThemePickerSheet(onDismiss: () -> Unit) {
     val colors = AppTheme.colors
+    val store = koinInject<QuranStore>()
+    val fontSize by store.fontSize.collectAsState()
+    val lineSpacing by store.lineSpacing.collectAsState()
+    val font by store.font.collectAsState()
+    val theme by store.theme.collectAsState()
     AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings)) {
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            QuranTheme.entries.forEach { t -> ThemeChip(t, selected = t == theme, onClick = { onThemeSelect(t) }) }
+            QuranTheme.entries.forEach { t -> ThemeChip(t, selected = t == theme, onClick = { store.setTheme(t) }) }
         }
         Spacer(Modifier.size(12.dp))
         Text(
@@ -73,7 +72,7 @@ fun QuranThemePickerSheet(
             modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
         )
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            QuranFont.entries.forEach { f -> FontChip(f, selected = f == font, onClick = { onFontSelect(f) }) }
+            QuranFont.entries.forEach { f -> FontChip(f, selected = f == font, onClick = { store.setFont(f) }) }
         }
         Spacer(Modifier.size(12.dp))
         AppTileGroup(
@@ -85,7 +84,7 @@ fun QuranThemePickerSheet(
                         MiniStepper(
                             value = fontSize,
                             suffix = "sp",
-                            onChange = onFontChange,
+                            onChange = { store.setFontSize(it) },
                             min = QuranDefaults.MIN_FONT_SP,
                             max = QuranDefaults.MAX_FONT_SP
                         )
@@ -98,7 +97,7 @@ fun QuranThemePickerSheet(
                         MiniStepper(
                             value = lineSpacing,
                             suffix = "%",
-                            onChange = onLineSpacingChange,
+                            onChange = { store.setLineSpacing(it) },
                             min = QuranDefaults.MIN_LINE_SPACING_PERCENT,
                             max = QuranDefaults.MAX_LINE_SPACING_PERCENT,
                             step = QuranDefaults.LINE_SPACING_STEP_PERCENT,

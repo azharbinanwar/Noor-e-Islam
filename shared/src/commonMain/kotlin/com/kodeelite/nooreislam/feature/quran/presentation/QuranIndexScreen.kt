@@ -22,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,7 +54,6 @@ import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranSearchSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahPickerSheet
@@ -65,7 +63,6 @@ import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -77,11 +74,6 @@ fun QuranIndexScreen() {
     val scope = rememberCoroutineScope()
     val drawerState = LocalDrawerState.current
     val density = LocalDensity.current
-    val quranStore = koinInject<QuranStore>()
-    val fontSize by quranStore.fontSize.collectAsState()
-    val lineSpacing by quranStore.lineSpacing.collectAsState()
-    val script by quranStore.font.collectAsState()
-    val readingTheme by quranStore.theme.collectAsState()
     var showTheme by remember { mutableStateOf(false) }
     var showJumpTo by remember { mutableStateOf(false) }
     var showSearchQuran by remember { mutableStateOf(false) }
@@ -173,17 +165,7 @@ fun QuranIndexScreen() {
     }
 
     if (showTheme) {
-        QuranThemePickerSheet(
-            fontSize = fontSize,
-            onFontChange = { quranStore.setFontSize(it) },
-            lineSpacing = lineSpacing,
-            onLineSpacingChange = { quranStore.setLineSpacing(it) },
-            font = script,
-            onFontSelect = { quranStore.setFont(it) },
-            theme = readingTheme,
-            onThemeSelect = { quranStore.setTheme(it) },
-            onDismiss = { showTheme = false },
-        )
+        QuranThemePickerSheet(onDismiss = { showTheme = false })
     }
 
     if (showJumpTo) {

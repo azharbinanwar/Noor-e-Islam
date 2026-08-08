@@ -36,14 +36,16 @@ import com.kodeelite.nooreislam.resources.no_collections_found
 import com.kodeelite.nooreislam.resources.no_collections_found_hint
 import com.kodeelite.nooreislam.resources.search
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // pick an existing collection (adds immediately) or type a new name (creates it, then adds) —
 // typing a name that matches an existing collection (case-insensitive) merges into it instead
 // of creating a duplicate; see CollectionRepository.addToCollectionByName. Past
 // QuranDefaults.COLLECTION_SEARCH_THRESHOLD a search field appears above the list.
 @Composable
-fun CollectionPickerSheet(ayah: Ayah, store: CollectionStore, onDismiss: () -> Unit) {
+fun CollectionPickerSheet(ayah: Ayah, onDismiss: () -> Unit) {
     val colors = AppTheme.colors
+    val store = koinInject<CollectionStore>()
     val collections by store.collections.collectAsState()
     var name by remember { mutableStateOf("") }
     var query by remember { mutableStateOf("") }
