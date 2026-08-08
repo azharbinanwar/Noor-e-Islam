@@ -184,8 +184,7 @@ private fun SurahAyahPickerRow(
                     .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (pickedSurah != null)
-
+                if (pickedSurah != null) {
                     Text(
                         pickedSurah.number.toSurahKey(),
                         style = MaterialTheme.typography.titleSmall,
@@ -195,6 +194,7 @@ private fun SurahAyahPickerRow(
                         fontFamily = FontFamily(Font(Res.font.quran_surah_name)),
                         modifier = Modifier.weight(1f),
                     )
+                }
                 Icon(Lucide.ChevronDown, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp).padding(start = 4.dp))
             }
             Row(
