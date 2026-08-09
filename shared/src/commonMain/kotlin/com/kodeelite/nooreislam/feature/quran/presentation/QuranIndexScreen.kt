@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,6 +55,7 @@ import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranSearchSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahPickerSheet
@@ -63,12 +65,15 @@ import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun QuranIndexScreen() {
     val nav = LocalAppNavigator.current
+    val quranStore = koinInject<QuranStore>()
+    val lastRead by quranStore.lastRead.collectAsState()
     val tabs = QuranTab.entries
     val pager = rememberPagerState(pageCount = { tabs.size })
     val scope = rememberCoroutineScope()
@@ -141,7 +146,14 @@ fun QuranIndexScreen() {
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                         width = ActionWidth.Fill,
                         items = listOf(
-                            AppActionItem(label = "Resume", icon = Lucide.BookOpen, onClick = { nav.navigate(AppRoute.QuranReader()) }),
+                            AppActionItem(
+                                label = "Resume",
+                                icon = Lucide.BookOpen,
+                                onClick = {
+                                    val target = lastRead
+                                    nav.navigate(if (target != null) AppRoute.QuranReader(target.first, target.second) else AppRoute.QuranReader())
+                                },
+                            ),
                             AppActionItem(label = "Jump to", icon = Lucide.Navigation, onClick = { showJumpTo = true }),
                             AppActionItem(label = "Search", icon = Lucide.Search, onClick = { showSearchQuran = true }),
                             AppActionItem(label = stringResource(Res.string.theme), icon = Lucide.Palette, onClick = { showTheme = true }),

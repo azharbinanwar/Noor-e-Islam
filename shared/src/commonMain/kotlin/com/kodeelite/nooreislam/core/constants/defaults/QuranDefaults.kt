@@ -36,6 +36,8 @@ object QuranDefaults {
 
     const val KEEP_SCREEN_ON = true  // default on — the whole point is not fighting the lock timer mid-ayah
 
+    const val READING_DWELL_MS = 10_000L  // minimum time on the reader before a visit counts as "reading" for Resume, not a glance
+
     const val AUTO_SCROLL_SPEED = 4       // default level — matches the old fixed 1x pace
     const val MIN_AUTO_SCROLL_SPEED = 1
     const val MAX_AUTO_SCROLL_SPEED = 10

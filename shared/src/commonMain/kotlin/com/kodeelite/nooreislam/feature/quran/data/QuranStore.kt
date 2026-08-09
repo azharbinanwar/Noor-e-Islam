@@ -141,4 +141,26 @@ class QuranStore(
         PrefsService.putBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, next)
         _keepScreenOn.value = next
     }
+
+    // "Resume" target — only ever written after a real reading dwell (see QuranReaderScreen), so a
+    // quick search-and-glance visit never clobbers where the user actually left off. One pref key,
+    // "surah:ayah" — getLastRead/saveLastRead are the only two places that encode/decode that string;
+    // everywhere else just sees one Pair.
+    private val _lastRead = MutableStateFlow(getLastRead())
+    val lastRead: StateFlow<Pair<Int, Int>?> = _lastRead.asStateFlow()
+
+    private fun getLastRead(): Pair<Int, Int>? =
+        PrefsService.getStringOrNull(PrefConst.QURAN_LAST_READ)
+            ?.split(":")
+            ?.takeIf { it.size == 2 }
+            ?.let { (s, a) -> s.toIntOrNull()?.let { surah -> a.toIntOrNull()?.let { ayah -> surah to ayah } } }
+
+    private fun saveLastRead(surah: Int, ayah: Int) {
+        PrefsService.putString(PrefConst.QURAN_LAST_READ, "$surah:$ayah")
+    }
+
+    fun recordLastRead(surah: Int, ayah: Int) {
+        saveLastRead(surah, ayah)
+        _lastRead.value = surah to ayah
+    }
 }

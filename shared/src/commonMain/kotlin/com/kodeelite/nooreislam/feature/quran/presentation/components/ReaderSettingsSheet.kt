@@ -9,15 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.ChevronsDown
 import com.composables.icons.lucide.Gauge
-import com.composables.icons.lucide.Languages
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Sun
-import com.composables.icons.lucide.WholeWord
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -30,15 +27,11 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.auto_scroll
 import com.kodeelite.nooreislam.resources.auto_scroll_speed
-import com.kodeelite.nooreislam.resources.content
 import com.kodeelite.nooreislam.resources.jump_to
 import com.kodeelite.nooreislam.resources.keep_screen_on
 import com.kodeelite.nooreislam.resources.reading
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.search_quran
-import com.kodeelite.nooreislam.resources.tafsir_source
-import com.kodeelite.nooreislam.resources.translation
-import com.kodeelite.nooreislam.resources.word_by_word
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -56,22 +49,25 @@ fun ReaderSettingsSheet(onDismiss: () -> Unit) {
     var showJumpTo by remember { mutableStateOf(false) }
     var showSearchQuran by remember { mutableStateOf(false) }
     AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings)) {
-        AppTileGroup(
-            title = stringResource(Res.string.content),
-            items = listOf(
-                AppTileItem(
-                    title = stringResource(Res.string.translation),
-                    subtitle = "on/off + pick — placeholder",
-                    leadingIcon = Lucide.Languages,
-                    onClick = {}),
-                AppTileItem(title = stringResource(Res.string.tafsir_source), subtitle = "placeholder", leadingIcon = Lucide.BookOpen, onClick = {}),
-                AppTileItem(
-                    title = stringResource(Res.string.word_by_word),
-                    subtitle = "on/off — placeholder",
-                    leadingIcon = Lucide.WholeWord,
-                    onClick = {}),
-            ),
-        )
+        // Content section (Translation, Tafsir source, Word by word) — parked until each is actually
+        // built; only functional rows stay visible until then. Restore this block (and the matching
+        // icon/string imports above) once a real feature lands.
+        // AppTileGroup(
+        //     title = stringResource(Res.string.content),
+        //     items = listOf(
+        //         AppTileItem(
+        //             title = stringResource(Res.string.translation),
+        //             subtitle = "on/off + pick — placeholder",
+        //             leadingIcon = Lucide.Languages,
+        //             onClick = {}),
+        //         AppTileItem(title = stringResource(Res.string.tafsir_source), subtitle = "placeholder", leadingIcon = Lucide.BookOpen, onClick = {}),
+        //         AppTileItem(
+        //             title = stringResource(Res.string.word_by_word),
+        //             subtitle = "on/off — placeholder",
+        //             leadingIcon = Lucide.WholeWord,
+        //             onClick = {}),
+        //     ),
+        // )
         AppTileGroup(
             title = stringResource(Res.string.reading),
             items = listOf(

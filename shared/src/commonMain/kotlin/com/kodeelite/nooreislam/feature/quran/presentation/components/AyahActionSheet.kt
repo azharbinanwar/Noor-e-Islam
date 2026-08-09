@@ -217,38 +217,44 @@ fun AyahActionSheet(
                         },
                 )
                 Text(label, color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(bottom = 6.dp))
-                AppActionGroup(
-                    width = ActionWidth.Fill,
-                    items = listOf(
-                        AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
-                        AppActionItem(
-                            stringResource(Res.string.action_bookmark),
-                            Lucide.Bookmark,
-                            selected = isBookmarked,
-                            iconColor = colors.primary
-                        ) {
-                            bookmarksStore.toggle(ayah.surah, ayah.ayah)
-                            onDismiss()
-                        },
-                        AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {
-                            val key = "${ayah.surah}:${ayah.ayah}"
-                            if (key in highlightsStore.colors.value) highlightsStore.set(ayah.surah, ayah.ayah, null)
-                            else highlightsStore.applyDefault(ayah.surah, ayah.ayah)
-                            onHighlight()
-                        },
-                        AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) { onNote() },
-                        AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
-                    ),
+                Column(
+
                 )
-                // "More" affordance at the peek: tap to open (drag still works too); hidden once expanded
-                if (!atExpanded) {
-                    Row(
-                        Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).clickable { expand() }.padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(Lucide.ChevronUp, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.size(6.dp))
-                        Text(stringResource(Res.string.more_actions), color = colors.onSurfaceVariant, fontSize = 12.sp)
+                {
+                    AppActionGroup(
+                        width = ActionWidth.Fill,
+                        items = listOf(
+                            AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
+                            AppActionItem(
+                                stringResource(Res.string.action_bookmark),
+                                Lucide.Bookmark,
+                                selected = isBookmarked,
+                                iconColor = colors.primary
+                            ) {
+                                bookmarksStore.toggle(ayah.surah, ayah.ayah)
+                                onDismiss()
+                            },
+                            AppActionItem(stringResource(Res.string.action_highlight), Lucide.Highlighter, iconColor = colors.primary) {
+                                val key = "${ayah.surah}:${ayah.ayah}"
+                                if (key in highlightsStore.colors.value) highlightsStore.set(ayah.surah, ayah.ayah, null)
+                                else highlightsStore.applyDefault(ayah.surah, ayah.ayah)
+                                onHighlight()
+                            },
+                            AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) { onNote() },
+                            AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
+                        ),
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    // "More" affordance at the peek: tap to open (drag still works too); hidden once expanded
+                    if (!atExpanded) {
+                        Row(
+                            Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).clickable { expand() }.padding(vertical = 6.dp),
+                            horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(Lucide.ChevronUp, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.size(6.dp))
+                            Text(stringResource(Res.string.more_actions), color = colors.onSurfaceVariant, fontSize = 12.sp)
+                        }
                     }
                 }
                 Spacer(Modifier.size(8.dp))

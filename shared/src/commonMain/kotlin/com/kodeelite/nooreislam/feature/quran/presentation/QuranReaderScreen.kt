@@ -27,9 +27,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Settings2
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
@@ -206,6 +208,20 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
     val blurRadius by animateDpAsState(if (expanded) 14.dp else 0.dp, label = "pageBlur")
 
+    // "Resume" only updates after a real dwell, not a quick search-and-glance visit — save whatever
+    // ayah is on screen when the reader closes, but only if this visit lasted long enough to count
+    var dwelledLongEnough by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(QuranDefaults.READING_DWELL_MS.milliseconds)
+        dwelledLongEnough = true
+    }
+    val latestHeader by rememberUpdatedState(header)
+    DisposableEffect(Unit) {
+        onDispose {
+            if (dwelledLongEnough) latestHeader?.let { store.recordLastRead(it.surah, it.ayah) }
+        }
+    }
+
     Box(Modifier.fillMaxSize().background(colors.background)) {
         Box(Modifier.fillMaxSize().blur(blurRadius)) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -247,10 +263,6 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
             ) {
                 CenterAlignedTopAppBar(
                     modifier = Modifier.onSizeChanged { topBarHeightPx = it.height },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = colors.background,
-                        scrolledContainerColor = colors.background,
-                    ),
                     title = {
                         if (!autoScrollEnabled) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -340,14 +352,28 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 onSpeedDown = { store.decreaseAutoScrollSpeed() },
                 onSpeedUp = { store.increaseAutoScrollSpeed() },
             )
+            // true once the global controls-collapse group has actually taken effect (today that only
+            // happens via auto-scroll's own idle timer) — the single source of truth for "the screen
+            // cleaner is active," shared by the (<) tab below and every member of the group, so any
+            // future floating action can hide the same way just by reading this same flag
+            val controlsHidden = autoScrollEnabled && controlsCollapsed
             if (keepScreenOn) {
-                KeepScreenOnIndicator(checked = keepScreenOn, onToggle = { store.toggleKeepScreenOn() })
+                KeepScreenOnIndicator(
+                    checked = keepScreenOn,
+                    onToggle = { store.toggleKeepScreenOn() },
+                    // same "hide only for a genuine manual drag, not auto-scroll's own programmatic
+                    // scroll" rule AutoScrollControl's pill already follows, so both hide/reappear together
+                    manualScrolling = !autoScrollEnabled && listState.isScrollInProgress,
+                    hiddenByCollapse = controlsHidden,
+                )
             }
-            // global collapse tab for the reader's floating controls — independent of any one feature
-            // (auto-scroll just happens to be what drives it today); own bottom-end spot, separate from
-            // KeepScreenOnIndicator's bottom-start one so the two never read as a single toggling button
+            // global collapse tab for the reader's floating controls — a "screen cleaner": its own
+            // bottom-end spot, kept separate from KeepScreenOnIndicator's bottom-start one so the two
+            // never read as a single toggling button, but every member of the group (including
+            // KeepScreenOnIndicator, and any future floating action) hides together with this tab and
+            // reappears together when it's tapped
             AnimatedVisibility(
-                visible = autoScrollEnabled && controlsCollapsed,
+                visible = controlsHidden,
                 modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                 enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { it },
                 exit = fadeOut(tween(220)) + slideOutVertically(tween(220)) { it },

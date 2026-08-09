@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -132,7 +133,19 @@ fun AppActionGroup(
     width: ActionWidth = ActionWidth.Wrap,
     minCellWidth: Dp = 70.4.dp,
 ) {
-    GroupShell(modifier, title) {
+    // own container, independent of AppTileGroup/TileGroupShell — no bottom padding added here,
+    // the caller decides its own spacing to whatever comes next
+    val c = AppTheme.colors
+    Column(modifier.fillMaxWidth()) {
+        if (title != null) {
+            Text(
+                text = title,
+                modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                style = MaterialTheme.typography.titleSmall,
+                color = c.primary,
+                fontWeight = FontWeight.Bold,
+            )
+        }
         val rowModifier = when (width) {
             ActionWidth.Fill -> Modifier.fillMaxWidth()
             ActionWidth.Wrap -> Modifier

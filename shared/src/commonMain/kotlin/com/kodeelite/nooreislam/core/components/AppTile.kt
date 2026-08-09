@@ -162,7 +162,7 @@ fun AppTileGroup(
     title: String? = null,
     actions: List<AppIconAction> = emptyList(),
 ) {
-    GroupShell(modifier, title, actions) {
+    TileGroupShell(modifier, title, actions) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             items.forEachIndexed { i, item -> Tile(item, positionFor(i, items.size)) }
         }
@@ -181,12 +181,12 @@ fun AppTileGroupReorderable(
     title: String? = null,
     actions: List<AppIconAction> = emptyList(),
 ) {
-    GroupShell(modifier, title, actions) { ReorderableTiles(items, onReorder) }
+    TileGroupShell(modifier, title, actions) { ReorderableTiles(items, onReorder) }
 }
 
-/** Shared chrome (outer padding + optional section title) for both group variants. */
+/** Chrome (outer padding + optional section title) for the two tile-group variants — tile-only, not shared with AppActionGroup. */
 @Composable
-internal fun GroupShell(
+internal fun TileGroupShell(
     modifier: Modifier,
     title: String?,
     actions: List<AppIconAction> = emptyList(),

@@ -45,11 +45,12 @@ import org.jetbrains.compose.resources.stringResource
 // The intro pill sits exactly where AutoScrollControl's own center pill already is (same
 // alignment/padding), so it simply covers it for a few seconds on landing, then gets out of the way,
 // revealing what was always underneath — AutoScrollControl itself is never touched. The collapsed icon
-// then parks at bottom-start, its own permanent spot, deliberately separate from the reader's
-// bottom-end controls-collapse tab — sharing one spot would read as a single toggle button flipping
-// between two states, when these are two unrelated controls.
+// then parks at bottom-start, its own permanent spot — deliberately separate from the reader's
+// bottom-end controls-collapse tab, so the two never read as one toggle button flipping between states.
+// It's still a member of that tab's "screen cleaner" group though: [hiddenByCollapse] hides this icon
+// the instant the group collapses, and brings it back the instant the group is tapped open again.
 @Composable
-fun BoxScope.KeepScreenOnIndicator(checked: Boolean, onToggle: () -> Unit) {
+fun BoxScope.KeepScreenOnIndicator(checked: Boolean, onToggle: () -> Unit, manualScrolling: Boolean, hiddenByCollapse: Boolean) {
     var collapsed by remember { mutableStateOf(false) }
     var showSheet by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -59,7 +60,7 @@ fun BoxScope.KeepScreenOnIndicator(checked: Boolean, onToggle: () -> Unit) {
     val colors = AppTheme.colors
 
     AnimatedVisibility(
-        visible = !collapsed,
+        visible = !collapsed && !manualScrolling,
         modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp),
         enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { it },
         exit = fadeOut(tween(220)) + slideOutVertically(tween(220)) { it },
@@ -76,7 +77,7 @@ fun BoxScope.KeepScreenOnIndicator(checked: Boolean, onToggle: () -> Unit) {
         }
     }
     AnimatedVisibility(
-        visible = collapsed,
+        visible = collapsed && !manualScrolling && !hiddenByCollapse,
         modifier = Modifier.align(Alignment.BottomStart).padding(16.dp),
         enter = fadeIn(tween(220)),
         exit = fadeOut(tween(220)),
