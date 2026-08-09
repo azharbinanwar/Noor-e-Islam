@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -30,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -123,6 +126,10 @@ private fun CenterPill(
     onSpeedUp: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    // measured once from the real "Pause" string (locale-correct — Arabic runs much wider than English) and
+    // then held as a floor, so the speed hint ("Nx") can never shrink the pill smaller than "Pause" was
+    var pauseTextWidthPx by remember { mutableStateOf(0) }
+    val pauseTextWidth = with(LocalDensity.current) { pauseTextWidthPx.toDp() }
     Row(verticalAlignment = Alignment.CenterVertically) {
         AnimatedVisibility(visible = running, enter = fadeIn(tween(220)), exit = fadeOut(tween(220))) {
             Box(Modifier.padding(end = 10.dp)) {
@@ -144,6 +151,9 @@ private fun CenterPill(
                 color = colors.primary,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .widthIn(min = pauseTextWidth)
+                    .onSizeChanged { if (running && !showSpeedHint) pauseTextWidthPx = it.width },
             )
         }
         AnimatedVisibility(visible = running, enter = fadeIn(tween(220)), exit = fadeOut(tween(220))) {

@@ -113,10 +113,11 @@ class QuranStore(
     fun increaseAutoScrollSpeed() = setAutoScrollSpeed(_autoScrollSpeed.value + 1)
     fun decreaseAutoScrollSpeed() = setAutoScrollSpeed(_autoScrollSpeed.value - 1)
 
-    // ready-to-scrollBy pixel step for the current speed — UI never touches QuranDefaults, it just reads this
+    // ready-to-scrollBy pixel step for the current speed step — UI never touches QuranDefaults, it just reads this
+    private fun pxPerTickFor(step: Int) = QuranDefaults.AUTO_SCROLL_STEP_MULTIPLIERS[step - 1] * QuranDefaults.AUTO_SCROLL_PX_PER_TICK
     val autoScrollPxPerTick: StateFlow<Float> = _autoScrollSpeed
-        .map { it * QuranDefaults.AUTO_SCROLL_PX_PER_TICK }
-        .stateIn(scope, SharingStarted.WhileSubscribed(5000), QuranDefaults.AUTO_SCROLL_SPEED * QuranDefaults.AUTO_SCROLL_PX_PER_TICK)
+        .map { pxPerTickFor(it) }
+        .stateIn(scope, SharingStarted.WhileSubscribed(5000), pxPerTickFor(QuranDefaults.AUTO_SCROLL_SPEED))
 
     val autoScrollTickInterval: Duration = QuranDefaults.AUTO_SCROLL_TICK_MS.milliseconds
 

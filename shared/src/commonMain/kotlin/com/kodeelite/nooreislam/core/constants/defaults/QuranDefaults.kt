@@ -34,9 +34,13 @@ object QuranDefaults {
 
     const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
 
-    const val AUTO_SCROLL_SPEED = 3       // default level
+    const val AUTO_SCROLL_SPEED = 4       // default level — matches the old fixed 1x pace
     const val MIN_AUTO_SCROLL_SPEED = 1
-    const val MAX_AUTO_SCROLL_SPEED = 5
-    const val AUTO_SCROLL_PX_PER_TICK = 0.6f  // pixels per tick at speed 1; scales linearly with level
+    const val MAX_AUTO_SCROLL_SPEED = 10
+    const val AUTO_SCROLL_PX_PER_TICK = 0.6f  // pixels per tick at a 1x multiplier (~37.5px/sec @ 60fps)
     const val AUTO_SCROLL_TICK_MS = 16L       // ~60fps
+
+    // step -> multiplier of AUTO_SCROLL_PX_PER_TICK. 1-3 are slower than the old fixed 1x (step 4) for
+    // comfortable reading; 4-8 match the old 1x-5x range; 9-10 go beyond it for fast skimming.
+    val AUTO_SCROLL_STEP_MULTIPLIERS = listOf(0.25f, 0.5f, 0.75f, 1f, 2f, 3f, 4f, 5f, 6f, 7f)
 }

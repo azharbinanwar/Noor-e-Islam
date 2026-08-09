@@ -105,6 +105,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
     val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
 
+    // autoScrollEnabled lives in the store, which outlives this screen (Koin singleton) — reset it on every
+    // fresh entry so the reader always opens paused, even if it was left running on a previous visit
+    LaunchedEffect(Unit) { store.stopAutoScroll() }
+
     // any manual drag stops auto-scroll — never fight the user's own gesture
     LaunchedEffect(listState) {
         listState.interactionSource.interactions.collect { if (it is DragInteraction.Start) store.stopAutoScroll() }
@@ -117,9 +121,11 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
     }
 
-    // chrome (app bar + auto-scroll bar) visibility: normal reading follows scroll direction (LinkedIn-style);
-    // auto-scroll starting hides it immediately (no reveal flash) — tap the screen to bring it back briefly,
-    // which then auto-hides again after a couple seconds of no interaction
+    // chrome (app bar + auto-scroll bar) visibility: normal reading hides while actively scrolling and
+    // reappears the instant scrolling settles — no need to reverse direction to get it back, and it hides
+    // again the moment scrolling resumes, so it never "locks" open at the cost of reading space. Auto-scroll
+    // starting hides it immediately (no reveal flash) — tap the screen to bring it back briefly, which then
+    // auto-hides again after a couple seconds of no interaction
     var chromeRevealed by remember { mutableStateOf(true) }
     LaunchedEffect(autoScrollEnabled) { if (autoScrollEnabled) chromeRevealed = false }
     LaunchedEffect(autoScrollEnabled, chromeRevealed) {
@@ -128,23 +134,8 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
             chromeRevealed = false
         }
     }
-    var prevIndex by remember { mutableStateOf(0) }
-    var prevOffset by remember { mutableStateOf(0) }
-    val scrollingUp by remember {
-        derivedStateOf {
-            val up = if (prevIndex != listState.firstVisibleItemIndex) {
-                prevIndex > listState.firstVisibleItemIndex
-            } else {
-                prevOffset >= listState.firstVisibleItemScrollOffset
-            }
-            prevIndex = listState.firstVisibleItemIndex
-            prevOffset = listState.firstVisibleItemScrollOffset
-            up
-        }
-    }
-    // forced visible until the initial load+jump settles (hidden behind the splash anyway) — avoids the jump
-    // being misread as a "scroll down" before scrollingUp's baseline is synced to the post-jump position
-    val chromeVisible = !scrolled || if (autoScrollEnabled) chromeRevealed else scrollingUp
+    // forced visible until the initial load+jump settles (hidden behind the splash anyway)
+    val chromeVisible = !scrolled || if (autoScrollEnabled) chromeRevealed else !listState.isScrollInProgress
     var topBarHeightPx by remember { mutableStateOf(0) }
     val topBarHeight = with(LocalDensity.current) { topBarHeightPx.toDp() }
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
@@ -174,10 +165,6 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         if (rukus.isNotEmpty()) {
             val target = rukus.indexOfFirst { r -> r.any { it.surah == surah && it.ayah == ayah } }.coerceAtLeast(0)
             if (target > 0) listState.scrollToItem(target)
-            // sync scrollingUp's baseline to the post-jump position in the same breath as flipping `scrolled`,
-            // so the jump itself is never misread as a scroll-down the moment the app bar starts trusting it
-            prevIndex = listState.firstVisibleItemIndex
-            prevOffset = listState.firstVisibleItemScrollOffset
             scrolled = true
         }
     }
