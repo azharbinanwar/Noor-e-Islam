@@ -381,6 +381,7 @@
     <string name="collections">المجموعات</string>
     <string name="favorites">المفضّلة</string>
     <string name="surahs">السور</string>
+    <string name="surahs_label">السور</string>
     <string name="n_duas">%1$d أدعية</string>
     <string name="morning">الصباح</string>
     <string name="evening">المساء</string>
@@ -554,6 +555,15 @@
     <string name="jump_to_hint_title">ابحث عن موضعك</string>
     <string name="jump_to_hint_message">اكتب اسم سورة أو رقمها أو مرجع آية مثل 2:255.</string>
     <string name="no_surahs_found">لم يتم العثور على سور</string>
+    <string name="recent">الأخيرة</string>
+    <string name="favorites_and_common">المفضلة والشائعة</string>
+    <string name="jump_to_surah_field">السورة</string>
+    <string name="jump_to_ayah_field">الآية</string>
+    <string name="search_quran">البحث في القرآن</string>
+    <string name="search_quran_placeholder">البحث في القرآن…</string>
+    <string name="search_quran_hint_title">البحث في القرآن</string>
+    <string name="search_quran_hint_message">ابحث في نص الآية، أو اسم السورة، أو مرجع مثل 2:255.</string>
+    <string name="no_ayahs_found">لم يتم العثور على آيات</string>
     <string name="more_actions">المزيد من الخيارات</string>
     <string name="surah_number_ayah_number">سورة %1$d · آية %2$d</string>
     <string name="collection_item_count">%1$s (%2$d)</string>
@@ -793,4 +803,7 @@
         <item>الناس</item>
     </string-array>
     <string name="remove_bookmark">إزالة المرجعية</string>
+    <string name="copy_ayah">نسخ الآية</string>
+    <string name="remove_highlight">إزالة التظليل</string>
+    <string name="share_to_studio">مشاركة إلى استوديو</string>
 </resources>

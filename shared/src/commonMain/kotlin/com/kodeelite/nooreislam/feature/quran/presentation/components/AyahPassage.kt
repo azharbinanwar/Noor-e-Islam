@@ -14,8 +14,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -71,6 +74,13 @@ fun AyahPassage(
     onLongSelect: (Ayah) -> Unit,
     onNoteTap: (Ayah) -> Unit = {},
     flashTarget: Ayah? = null,
+    // an ayah to precisely locate once this passage's layout is known — a ruku is one continuously-
+    // flowing Text (deliberately, see file header), so LazyColumn's own scrollToItem can only land on
+    // the ruku's top. [onTargetLocated] reports the target line's exact window-space Y so the caller
+    // (RukuBlock) can work out its exact pixel offset within the ruku item and scroll there directly —
+    // this is measured live off the real TextLayoutResult, so it's correct at any font size.
+    targetAyah: Ayah? = null,
+    onTargetLocated: (Float) -> Unit = {},
 ) {
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
@@ -153,10 +163,23 @@ fun AyahPassage(
     }
 
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var textCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
+
+    // window-space Y is a common frame both this Text and RukuBlock's own container can convert to
+    // independently — no manual height bookkeeping, and correct at any font size since it's all real
+    // measured layout, not an assumed line height or padding constant
+    LaunchedEffect(layout, textCoords, targetAyah, passageData) {
+        val currentLayout = layout ?: return@LaunchedEffect
+        val coords = textCoords ?: return@LaunchedEffect
+        val range = targetAyah?.let { t -> passageData.ranges.firstOrNull { it.first == t } } ?: return@LaunchedEffect
+        val lineTop = currentLayout.getBoundingBox(range.second.first).top
+        onTargetLocated(coords.localToWindow(Offset(0f, lineTop)).y)
+    }
 
     Text(
         text = passageData.text,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)
+            .onGloballyPositioned { textCoords = it }
             .pointerInput(passageData) {
                 detectTapGestures(
                     onTap = { pos ->

@@ -43,21 +43,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeftRight
 import com.composables.icons.lucide.Bookmark
-import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronUp
-import com.composables.icons.lucide.FastForward
 import com.composables.icons.lucide.FolderPlus
 import com.composables.icons.lucide.Highlighter
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Image
-import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Mic
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Play
-import com.composables.icons.lucide.Repeat
 import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Share2
 import com.kodeelite.nooreislam.config.theme.AppTheme
@@ -73,23 +67,14 @@ import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.action_add_note
 import com.kodeelite.nooreislam.resources.action_add_to_collection
-import com.kodeelite.nooreislam.resources.action_audio
 import com.kodeelite.nooreislam.resources.action_bookmark
-import com.kodeelite.nooreislam.resources.action_choose_reciter
-import com.kodeelite.nooreislam.resources.action_context_revelation
 import com.kodeelite.nooreislam.resources.action_go_to_surah_start
 import com.kodeelite.nooreislam.resources.action_highlight
-import com.kodeelite.nooreislam.resources.action_mark_memorized
 import com.kodeelite.nooreislam.resources.action_navigation
 import com.kodeelite.nooreislam.resources.action_personal
-import com.kodeelite.nooreislam.resources.action_play_from_here
-import com.kodeelite.nooreislam.resources.action_play_recitation
-import com.kodeelite.nooreislam.resources.action_related_ayahs
-import com.kodeelite.nooreislam.resources.action_repeat_loop
 import com.kodeelite.nooreislam.resources.action_set_last_read
 import com.kodeelite.nooreislam.resources.action_share_image
 import com.kodeelite.nooreislam.resources.action_sharing
-import com.kodeelite.nooreislam.resources.action_study
 import com.kodeelite.nooreislam.resources.more_actions
 import com.kodeelite.nooreislam.resources.play
 import com.kodeelite.nooreislam.resources.share
@@ -104,17 +89,18 @@ private class QGroup(val titleRes: StringResource, val items: List<QAction>)
 
 // full action set from the design; ponytail: all shown now, hide non-applicable ones as features land
 private val MORE_GROUPS = listOf(
-    QGroup(
-        Res.string.action_audio, listOf(
-            QAction(Lucide.Play, Res.string.action_play_recitation), QAction(Lucide.Repeat, Res.string.action_repeat_loop),
-            QAction(Lucide.FastForward, Res.string.action_play_from_here), QAction(Lucide.Mic, Res.string.action_choose_reciter),
-        )
-    ),
+    // parked — no audio playback exists yet
+    // QGroup(
+    //     Res.string.action_audio, listOf(
+    //         QAction(Lucide.Play, Res.string.action_play_recitation), QAction(Lucide.Repeat, Res.string.action_repeat_loop),
+    //         QAction(Lucide.FastForward, Res.string.action_play_from_here), QAction(Lucide.Mic, Res.string.action_choose_reciter),
+    //     )
+    // ),
     QGroup(
         // bookmark/note/highlight live in the quick row above, not repeated here
         Res.string.action_personal, listOf(
             QAction(Lucide.FolderPlus, Res.string.action_add_to_collection),
-            QAction(Lucide.Check, Res.string.action_mark_memorized),
+            // QAction(Lucide.Check, Res.string.action_mark_memorized), // parked
         )
     ),
     QGroup(
@@ -129,11 +115,12 @@ private val MORE_GROUPS = listOf(
             QAction(Lucide.House, Res.string.action_go_to_surah_start), QAction(Lucide.RotateCcw, Res.string.action_set_last_read),
         )
     ),
-    QGroup(
-        Res.string.action_study, listOf(
-            QAction(Lucide.ArrowLeftRight, Res.string.action_related_ayahs), QAction(Lucide.Info, Res.string.action_context_revelation),
-        )
-    ),
+    // parked — no related-ayahs/revelation-context data wired up yet
+    // QGroup(
+    //     Res.string.action_study, listOf(
+    //         QAction(Lucide.ArrowLeftRight, Res.string.action_related_ayahs), QAction(Lucide.Info, Res.string.action_context_revelation),
+    //     )
+    // ),
 )
 
 // finger-following sheet: peek shows quick actions, drag/expand reveals grouped actions + style/script
@@ -145,6 +132,8 @@ fun AyahActionSheet(
     onHighlight: () -> Unit,
     onNote: () -> Unit,
     onAddToCollection: () -> Unit,
+    onGoToSurahStart: () -> Unit,
+    onSetLastRead: () -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -269,6 +258,8 @@ fun AyahActionSheet(
                                     onDismiss()
                                     if (a.icon == Lucide.Image) onShareAsImage()
                                     if (a.icon == Lucide.FolderPlus) onAddToCollection()
+                                    if (a.icon == Lucide.House) onGoToSurahStart()
+                                    if (a.icon == Lucide.RotateCcw) onSetLastRead()
                                 }
                             )
                         })

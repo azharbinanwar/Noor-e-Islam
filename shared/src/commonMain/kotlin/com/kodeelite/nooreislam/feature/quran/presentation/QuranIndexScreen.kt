@@ -60,8 +60,11 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranSearc
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.SurahPickerSheet
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.jump_to
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.quran
+import com.kodeelite.nooreislam.resources.resume
+import com.kodeelite.nooreislam.resources.search
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -147,15 +150,15 @@ fun QuranIndexScreen() {
                         width = ActionWidth.Fill,
                         items = listOf(
                             AppActionItem(
-                                label = "Resume",
+                                label = stringResource(Res.string.resume),
                                 icon = Lucide.BookOpen,
                                 onClick = {
                                     val target = lastRead
                                     nav.navigate(if (target != null) AppRoute.QuranReader(target.first, target.second) else AppRoute.QuranReader())
                                 },
                             ),
-                            AppActionItem(label = "Jump to", icon = Lucide.Navigation, onClick = { showJumpTo = true }),
-                            AppActionItem(label = "Search", icon = Lucide.Search, onClick = { showSearchQuran = true }),
+                            AppActionItem(label = stringResource(Res.string.jump_to), icon = Lucide.Navigation, onClick = { showJumpTo = true }),
+                            AppActionItem(label = stringResource(Res.string.search), icon = Lucide.Search, onClick = { showSearchQuran = true }),
                             AppActionItem(label = stringResource(Res.string.theme), icon = Lucide.Palette, onClick = { showTheme = true }),
                         ),
                     )

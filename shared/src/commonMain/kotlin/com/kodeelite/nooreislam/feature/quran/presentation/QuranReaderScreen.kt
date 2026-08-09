@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -88,9 +89,11 @@ import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
@@ -196,6 +199,17 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         }
     }
 
+    // for jumps triggered from within this same reader instance (e.g. "Go to surah start") — scrolls
+    // in place instead of pushing a new QuranReaderScreen, so the back stack never grows from it
+    val scope = rememberCoroutineScope()
+    fun jumpTo(targetSurah: Int, targetAyah: Int) {
+        val target = rukus.indexOfFirst { r -> r.any { it.surah == targetSurah && it.ayah == targetAyah } }.coerceAtLeast(0)
+        scope.launch {
+            listState.scrollToItem(target)
+            justJumpedAyah = rukus.getOrNull(target)?.firstOrNull { it.surah == targetSurah && it.ayah == targetAyah }
+        }
+    }
+
     var selected by remember { mutableStateOf<Ayah?>(null) }
     var quickHighlight by remember { mutableStateOf<Ayah?>(null) } // long-press → floating color strip
     var viewingNote by remember { mutableStateOf<Ayah?>(null) } // tap the note glyph → stub preview, real editor later
@@ -215,10 +229,13 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         delay(QuranDefaults.READING_DWELL_MS.milliseconds)
         dwelledLongEnough = true
     }
+    // set by the explicit "Set last read" action — when true, that specific ayah wins and this
+    // screen's own exit must not immediately overwrite it with whatever ayah is merely on screen
+    var lastReadSetManually by remember { mutableStateOf(false) }
     val latestHeader by rememberUpdatedState(header)
     DisposableEffect(Unit) {
         onDispose {
-            if (dwelledLongEnough) latestHeader?.let { store.recordLastRead(it.surah, it.ayah) }
+            if (dwelledLongEnough && !lastReadSetManually) latestHeader?.let { store.recordLastRead(it.surah, it.ayah) }
         }
     }
 
@@ -250,6 +267,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                             onLongSelect = { quickHighlight = it },
                             onNoteTap = { viewingNote = it },
                             flashTarget = justJumpedAyah,
+                            // precise scroll-into-view for whichever ayah we just jumped to, since a coarse
+                            // scrollToItem(ruku index) can only land on the ruku's top, not this specific ayah
+                            targetAyah = justJumpedAyah,
+                            onTargetLocated = { offsetPx -> scope.launch { listState.scrollToItem(i, offsetPx.roundToInt()) } },
                         )
                     }
                 }
@@ -314,6 +335,12 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 onHighlight = { quickHighlight = ayah; selected = null },
                 onNote = { viewingNote = ayah; selected = null },
                 onAddToCollection = { pickingCollectionFor = ayah; selected = null },
+                onGoToSurahStart = { jumpTo(ayah.surah, 1) },
+                onSetLastRead = {
+                    lastReadSetManually = true
+                    store.recordLastRead(ayah.surah, ayah.ayah)
+                    nav.back()
+                },
                 onExpandedChange = { expanded = it },
                 onDismiss = { selected = null },
             )
