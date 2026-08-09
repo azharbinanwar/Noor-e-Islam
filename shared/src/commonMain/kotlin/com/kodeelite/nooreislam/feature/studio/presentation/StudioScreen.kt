@@ -46,7 +46,9 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Trash2
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.folderName
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.SystemBackHandler
@@ -121,6 +123,7 @@ fun StudioScreen(
     }
 
     // all editing state + history now lives in the holder; the screen delegates to it (read + write)
+    val edition = koinInject<AppEdition>()
     val repo = koinInject<StudioCreationRepository>()
     val scope = rememberCoroutineScope()
     val store = remember { StudioStore(initialConfig, repo, scope) }
@@ -285,7 +288,7 @@ fun StudioScreen(
                                 try {
                                     val bitmap = captureLayer.toImageBitmap()
                                     val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
-                                    galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png"))
+                                    galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png", edition.folderName))
                                         getString(Res.string.saved_to_gallery) else getString(Res.string.couldnt_save)
                                 } finally {
                                     savingToGallery = false

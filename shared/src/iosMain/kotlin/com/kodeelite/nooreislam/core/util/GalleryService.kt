@@ -16,7 +16,8 @@ actual object GalleryService {
     // performChanges triggers the add-only photo permission prompt on first use.
     // Requires NSPhotoLibraryAddUsageDescription in Info.plist.
     @OptIn(ExperimentalForeignApi::class)
-    actual suspend fun saveImage(bytes: ByteArray, fileName: String): Boolean {
+    // iOS Photos library has no named-folder equivalent — folderName is unused here, only Android needs it
+    actual suspend fun saveImage(bytes: ByteArray, fileName: String, folderName: String): Boolean {
         val image = UIImage.imageWithData(bytes.toNSData()) ?: return false
         return suspendCancellableCoroutine { cont ->
             PHPhotoLibrary.sharedPhotoLibrary().performChanges({

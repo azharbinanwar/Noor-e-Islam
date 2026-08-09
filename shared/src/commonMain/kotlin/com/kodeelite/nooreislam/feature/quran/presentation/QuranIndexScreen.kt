@@ -47,7 +47,9 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Search
+import com.composables.icons.lucide.Settings
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.ActionWidth
 import com.kodeelite.nooreislam.core.components.AppActionGroup
 import com.kodeelite.nooreislam.core.components.AppActionItem
@@ -65,6 +67,7 @@ import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.resume
 import com.kodeelite.nooreislam.resources.search
+import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -75,6 +78,7 @@ import kotlin.math.roundToInt
 @Composable
 fun QuranIndexScreen() {
     val nav = LocalAppNavigator.current
+    val edition = koinInject<AppEdition>()
     val quranStore = koinInject<QuranStore>()
     val lastRead by quranStore.lastRead.collectAsState()
     val tabs = QuranTab.entries
@@ -114,8 +118,15 @@ fun QuranIndexScreen() {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.quran)) },
                 navigationIcon = {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                    // the Quran app has no drawer to open — nothing else to navigate to from here
+                    if (edition != AppEdition.QURAN) IconButton(onClick = { scope.launch { drawerState.open() } }) {
                         Icon(Lucide.Menu, stringResource(Res.string.menu))
+                    }
+                },
+                actions = {
+                    // no drawer means no other way in — the Quran app gets a direct settings entry instead
+                    if (edition == AppEdition.QURAN) IconButton(onClick = { nav.navigate(AppRoute.Settings) }) {
+                        Icon(Lucide.Settings, stringResource(Res.string.settings))
                     }
                 },
             )

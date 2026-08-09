@@ -43,6 +43,7 @@ import com.composables.icons.lucide.SunMedium
 import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppSwitch
@@ -95,12 +96,14 @@ import com.kodeelite.nooreislam.resources.tahajjud
 import com.kodeelite.nooreislam.resources.verse_of_the_day
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen() {
     val nav = LocalAppNavigator.current
+    val edition = koinInject<AppEdition>()
     val c = AppTheme.colors
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val s by NotificationStore.settings.collectAsState()
@@ -153,7 +156,8 @@ fun NotificationsScreen() {
 
             // off collapses the list; states stay saved
             if (s.allAlerts) {
-                AppTileGroup(
+                // Quran app has no prayer-time engine — only the Quran reminders group applies
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.notifications_prayers),
                     items = buildList {
@@ -275,7 +279,7 @@ fun NotificationsScreen() {
                 )
 
                 val d = s.dhikr
-                AppTileGroup(
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.dhikr),
                     items = listOf(
@@ -328,7 +332,7 @@ fun NotificationsScreen() {
                     ),
                 )
 
-                AppTileGroup(
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth(),
                     title = stringResource(Res.string.notifications_nafil),
                     items = listOf(
@@ -350,7 +354,8 @@ fun NotificationsScreen() {
                     ),
                 )
 
-                AppTileGroup(
+                // parked for now — not wired to a real trigger yet
+                if (false) AppTileGroup(
                     items = listOf(
                         AppTileItem(
                             title = stringResource(Res.string.verse_of_the_day),

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppDrawer
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.LocalOverlay
@@ -39,12 +40,14 @@ import com.kodeelite.nooreislam.feature.studio.presentation.StudioScreen
 import com.kodeelite.nooreislam.feature.tasbih.presentation.TasbihHubScreen
 import com.kodeelite.nooreislam.feature.tasbih.presentation.TasbihScreen
 import com.kodeelite.nooreislam.feature.tracker.presentation.TrackerScreen
+import org.koin.compose.koinInject
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
+    val edition = koinInject<AppEdition>()
     AppNavigatorHost(navController) {
         // drawer + overlay hoisted once around the NavHost; screens open it via LocalDrawerState
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -53,10 +56,11 @@ fun AppNavHost(
             LocalDrawerState provides drawerState,
             LocalOverlay provides overlay,
         ) {
-            AppDrawer(drawerState) {
+            val navHost = @Composable {
                 NavHost(
                     navController = navController,
-                    startDestination = AppRoute.Home,
+                    // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
+                    startDestination = if (edition == AppEdition.QURAN) AppRoute.Quran else AppRoute.Home,
                     modifier = modifier
                 ) {
                     composable<AppRoute.Onboarding> { OnboardingScreen() }
@@ -95,6 +99,9 @@ fun AppNavHost(
                     composable<AppRoute.Sandbox> { SandboxScreen() }
                 }
             }
+            // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
+            // stays out of the tree entirely rather than being present-but-empty
+            if (edition == AppEdition.QURAN) navHost() else AppDrawer(drawerState) { navHost() }
         }
     }
 }
