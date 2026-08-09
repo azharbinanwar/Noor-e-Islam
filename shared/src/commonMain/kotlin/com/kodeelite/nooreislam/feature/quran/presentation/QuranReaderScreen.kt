@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.DragInteraction
@@ -16,8 +17,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -65,6 +70,8 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.AutoScroll
 import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahActionSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.CollectionPickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightQuickPicker
+import com.kodeelite.nooreislam.feature.quran.presentation.components.KeepScreenOn
+import com.kodeelite.nooreislam.feature.quran.presentation.components.KeepScreenOnIndicator
 import com.kodeelite.nooreislam.feature.quran.presentation.components.NoteEditorSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalligraphy
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
@@ -104,6 +111,11 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val store = koinInject<QuranStore>()
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
     val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
+    val keepScreenOn by store.keepScreenOn.collectAsState()
+    KeepScreenOn(enabled = keepScreenOn)
+    // global collapse state for the reader's floating bottom controls — currently only auto-scroll
+    // drives it, but the (<) tab it powers is meant to gather any future floating action too
+    var controlsCollapsed by remember { mutableStateOf(false) }
 
     // autoScrollEnabled lives in the store, which outlives this screen (Koin singleton) — reset it on every
     // fresh entry so the reader always opens paused, even if it was left running on a previous visit
@@ -322,10 +334,32 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         if (selected == null && quickHighlight == null && viewingNote == null && pickingCollectionFor == null && !showSettings && !showTheme) {
             AutoScrollControl(
                 isScrollInProgress = listState.isScrollInProgress,
+                collapsed = controlsCollapsed,
+                onCollapsedChange = { controlsCollapsed = it },
                 onToggle = { store.toggleAutoScroll() },
                 onSpeedDown = { store.decreaseAutoScrollSpeed() },
                 onSpeedUp = { store.increaseAutoScrollSpeed() },
             )
+            if (keepScreenOn) {
+                KeepScreenOnIndicator(checked = keepScreenOn, onToggle = { store.toggleKeepScreenOn() })
+            }
+            // global collapse tab for the reader's floating controls — independent of any one feature
+            // (auto-scroll just happens to be what drives it today); own bottom-end spot, separate from
+            // KeepScreenOnIndicator's bottom-start one so the two never read as a single toggling button
+            AnimatedVisibility(
+                visible = autoScrollEnabled && controlsCollapsed,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { it },
+                exit = fadeOut(tween(220)) + slideOutVertically(tween(220)) { it },
+            ) {
+                Box(
+                    Modifier.size(44.dp).clip(CircleShape).background(colors.cardColor)
+                        .clickable { controlsCollapsed = false },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), null, tint = colors.primary)
+                }
+            }
         }
 
         // calligraphy overlay on top while loading + jumping, so the scroll jump is hidden; fades out when ready

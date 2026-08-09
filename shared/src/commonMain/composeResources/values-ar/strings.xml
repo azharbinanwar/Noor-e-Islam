@@ -548,6 +548,7 @@
     <string name="pause">إيقاف مؤقت</string>
     <string name="auto_scroll_speed">السرعة</string>
     <string name="keep_screen_on">إبقاء الشاشة مفعلة</string>
+    <string name="screen_stays_on_hint">تبقى الشاشة مضاءة أثناء القراءة</string>
     <string name="jump_to">الانتقال إلى</string>
     <string name="jump_to_search_placeholder">سورة، آية، أو 2:255…</string>
     <string name="jump_to_hint_title">ابحث عن موضعك</string>

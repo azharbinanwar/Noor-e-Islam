@@ -132,4 +132,13 @@ class QuranStore(
     fun stopAutoScroll() {
         _autoScrollEnabled.value = false
     }
+
+    private val _keepScreenOn = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, QuranDefaults.KEEP_SCREEN_ON))
+    val keepScreenOn: StateFlow<Boolean> = _keepScreenOn.asStateFlow()
+
+    fun toggleKeepScreenOn() {
+        val next = !_keepScreenOn.value
+        PrefsService.putBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, next)
+        _keepScreenOn.value = next
+    }
 }

@@ -52,6 +52,7 @@ fun ReaderSettingsSheet(onDismiss: () -> Unit) {
     val store = koinInject<QuranStore>()
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
     val autoScrollSpeed by store.autoScrollSpeed.collectAsState()
+    val keepScreenOn by store.keepScreenOn.collectAsState()
     var showJumpTo by remember { mutableStateOf(false) }
     var showSearchQuran by remember { mutableStateOf(false) }
     AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings)) {
@@ -94,7 +95,11 @@ fun ReaderSettingsSheet(onDismiss: () -> Unit) {
                         }
                     },
                 ),
-                AppTileItem(title = stringResource(Res.string.keep_screen_on), subtitle = "placeholder", leadingIcon = Lucide.Sun, onClick = {}),
+                AppTileItem(
+                    title = stringResource(Res.string.keep_screen_on),
+                    leadingIcon = Lucide.Sun,
+                    trailing = { AppSwitch(checked = keepScreenOn, onCheckedChange = { store.toggleKeepScreenOn() }) },
+                ),
                 AppTileItem(title = stringResource(Res.string.jump_to), leadingIcon = Lucide.Navigation, onClick = { showJumpTo = true }),
                 AppTileItem(title = stringResource(Res.string.search_quran), leadingIcon = Lucide.Search, onClick = { showSearchQuran = true }),
             ),

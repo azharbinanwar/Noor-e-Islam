@@ -36,15 +36,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ChevronLeft
-import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.ChevronsDown
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Minus
 import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Plus
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.auto_scroll
@@ -55,12 +52,15 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 // floating auto-scroll control: a center "Auto scroll" pill while off; once turned on it grows into
-// [-][icon+text][+], still centered — only then does it shrink to a small trailing-edge tab after a couple
-// idle seconds (freeing the screen while reading continues on its own). Tapping the tab re-expands it back
-// to center. While off, a manual drag just hides the pill for the duration of that drag.
+// [-][icon+text][+], still centered — only then does it shrink away after a couple idle seconds
+// (freeing the screen while reading continues on its own). [collapsed] is owned by the caller (not
+// this composable) — the re-expand tab itself now lives on the main reader screen, as a general
+// controls-collapse affordance rather than something owned by auto-scroll specifically.
 @Composable
 fun BoxScope.AutoScrollControl(
     isScrollInProgress: Boolean,
+    collapsed: Boolean,
+    onCollapsedChange: (Boolean) -> Unit,
     onToggle: () -> Unit,
     onSpeedDown: () -> Unit,
     onSpeedUp: () -> Unit,
@@ -68,13 +68,12 @@ fun BoxScope.AutoScrollControl(
     val store = koinInject<QuranStore>()
     val enabled by store.autoScrollEnabled.collectAsState()
     val speed by store.autoScrollSpeed.collectAsState()
-    var collapsed by remember { mutableStateOf(false) }
     var tick by remember { mutableStateOf(0) } // bumped on every interaction to restart the collapse timer
-    LaunchedEffect(enabled) { if (enabled) collapsed = false }
+    LaunchedEffect(enabled) { if (enabled) onCollapsedChange(false) }
     LaunchedEffect(enabled, collapsed, tick) {
         if (enabled && !collapsed) {
             delay(2500.milliseconds)
-            collapsed = true
+            onCollapsedChange(true)
         }
     }
 
@@ -102,17 +101,6 @@ fun BoxScope.AutoScrollControl(
             onSpeedDown = { onSpeedDown(); tick++; showSpeedHint = true },
             onSpeedUp = { onSpeedUp(); tick++; showSpeedHint = true },
         )
-    }
-    AnimatedVisibility(
-        visible = enabled && collapsed,
-        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-        enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { it },
-        exit = fadeOut(tween(220)) + slideOutVertically(tween(220)) { it },
-    ) {
-        val colors = AppTheme.colors
-        DockButton(onClick = { collapsed = false; tick++ }, shape = CircleShape) {
-            Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), null, tint = colors.primary)
-        }
     }
 }
 

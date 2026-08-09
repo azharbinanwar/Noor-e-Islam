@@ -34,6 +34,8 @@ object QuranDefaults {
 
     const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
 
+    const val KEEP_SCREEN_ON = true  // default on — the whole point is not fighting the lock timer mid-ayah
+
     const val AUTO_SCROLL_SPEED = 4       // default level — matches the old fixed 1x pace
     const val MIN_AUTO_SCROLL_SPEED = 1
     const val MAX_AUTO_SCROLL_SPEED = 10
