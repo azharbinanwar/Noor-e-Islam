@@ -18,7 +18,7 @@ struct iOSApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        DIKt.startKoinForIos()
+        DIKt.startKoinForIos(edition: AppEdition.main)
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
         NotificationScheduler.shared.start() // build the reminder window + re-arm on any change
         BGTaskScheduler.shared.register(forTaskWithIdentifier: notifRefreshId, using: nil) { task in

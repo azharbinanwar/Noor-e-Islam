@@ -29,4 +29,5 @@ dependencyResolutionManagement {
 }
 
 include(":androidApp")
+include(":quranApp")
 include(":shared")
