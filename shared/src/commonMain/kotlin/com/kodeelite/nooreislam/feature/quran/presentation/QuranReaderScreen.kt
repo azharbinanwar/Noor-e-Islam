@@ -161,11 +161,24 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     }
 
     // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
+    var justJumpedAyah by remember { mutableStateOf<Ayah?>(null) }
     LaunchedEffect(rukus) {
         if (rukus.isNotEmpty()) {
             val target = rukus.indexOfFirst { r -> r.any { it.surah == surah && it.ayah == ayah } }.coerceAtLeast(0)
-            if (target > 0) listState.scrollToItem(target)
+            // target > 0 means a real deep link (Jump To, search, bookmarks, notes…) — flash it on landing.
+            // A plain default open (Al-Fatihah, target 0) never flashes.
+            if (target > 0) {
+                listState.scrollToItem(target)
+                justJumpedAyah = rukus[target].firstOrNull { it.surah == surah && it.ayah == ayah }
+            }
             scrolled = true
+        }
+    }
+    // blink then clear — same look as a manual tap-select, just self-dismissing
+    LaunchedEffect(justJumpedAyah) {
+        if (justJumpedAyah != null) {
+            delay(1500.milliseconds)
+            justJumpedAyah = null
         }
     }
 
@@ -208,6 +221,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                             onSelect = { selected = if (selected == it) null else it },
                             onLongSelect = { quickHighlight = it },
                             onNoteTap = { viewingNote = it },
+                            flashTarget = justJumpedAyah,
                         )
                     }
                 }

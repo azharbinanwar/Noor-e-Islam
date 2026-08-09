@@ -1,10 +1,13 @@
 package com.kodeelite.nooreislam.feature.quran.presentation.components
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,7 +69,8 @@ fun AyahPassage(
     selected: Ayah?,
     onSelect: (Ayah) -> Unit,
     onLongSelect: (Ayah) -> Unit,
-    onNoteTap: (Ayah) -> Unit = {}
+    onNoteTap: (Ayah) -> Unit = {},
+    flashTarget: Ayah? = null,
 ) {
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
@@ -88,8 +92,17 @@ fun AyahPassage(
         HighlightColor.entries.associateWith { it.tint(colors.background) }
     }
 
+    // selection and the "just jumped here" flash are the same visual, driven by the same animated
+    // alpha — appears fast (near-instant, blink-like), fades out smoothly on either kind of clear
+    val highlightedAyah = selected ?: flashTarget
+    val highlightAlpha = remember { Animatable(0f) }
+    LaunchedEffect(highlightedAyah) {
+        val active = highlightedAyah != null && highlightedAyah in ayahs
+        highlightAlpha.animateTo(if (active) SELECTION_ALPHA else 0f, tween(500))
+    }
+
     // Build the text and its ranges atomically so a tap always matches what's on screen
-    val passageData = remember(ayahs, highlights, bookmarks, noteMap, bodyFont, markerFont, colors, selected, fontSize) {
+    val passageData = remember(ayahs, highlights, bookmarks, noteMap, bodyFont, markerFont, colors, highlightedAyah, fontSize, highlightAlpha.value) {
         val ranges = mutableListOf<Pair<Ayah, IntRange>>()
         val noteIconRanges = mutableMapOf<String, IntRange>()
         val annotatedString = buildAnnotatedString {
@@ -100,7 +113,7 @@ fun AyahPassage(
                 val hlColor = highlights[key]?.let { tints[it] }
                 val hit = when {
                     hlColor != null -> hlColor
-                    selected == ayah -> colors.primary.copy(alpha = SELECTION_ALPHA)
+                    ayah == highlightedAyah && highlightAlpha.value > 0f -> colors.primary.copy(alpha = highlightAlpha.value)
                     else -> Color.Transparent
                 }
 
