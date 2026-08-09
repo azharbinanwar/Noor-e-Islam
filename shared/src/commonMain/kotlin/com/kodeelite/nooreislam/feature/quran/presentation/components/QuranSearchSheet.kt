@@ -38,11 +38,13 @@ import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.AppTextField
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.util.fromArabicIndicDigits
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
@@ -72,13 +74,40 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
     // ayahs); display uses the real ayah (with full tashkeel) from quran.db, looked up by id
     val realAyahs by produceState(emptyList()) { value = QuranRepository.all() }
     val searchAyahs by produceState(emptyList()) { value = QuranSearchRepository.all() }
+    val surahs by produceState(emptyList()) { value = QuranRepository.surahs() }
     val realById = remember(realAyahs) { realAyahs.associateBy { it.id } }
-    val results = remember(query, searchAyahs, realById) {
-        val q = normalizeArabic(query.trim())
-        if (q.isEmpty()) emptyList()
-        else searchAyahs.filter { it.text.contains(q) }
-            .take(QuranDefaults.QURAN_SEARCH_RESULT_LIMIT)
-            .mapNotNull { realById[it.id] }
+    val bySurahAyah = remember(realAyahs) { realAyahs.associateBy { it.surah to it.ayah } }
+
+    // any digits in the query are treated as a surah/ayah reference (in either order — whichever
+    // ordering is a real surah:ayah combo wins), on top of, not instead of, the text match below.
+    // A lone number is ambiguous (surah N, or ayah N of every surah that has one) so both are offered.
+    val results = remember(query, searchAyahs, realById, bySurahAyah, surahs) {
+        val trimmed = query.trim()
+        if (trimmed.isEmpty()) return@remember emptyList()
+
+        // Arabic-Indic/Urdu digits normalize to ASCII first, so "٢:٢٥٥" or "۲:۲۵۵" match the same way "2:255" does
+        val normalized = trimmed.fromArabicIndicDigits()
+        val numbers = NUMBER.findAll(normalized).map { it.value.toInt() }.toList()
+        val refResults = when (numbers.size) {
+            2 -> listOfNotNull(bySurahAyah[numbers[0] to numbers[1]], bySurahAyah[numbers[1] to numbers[0]])
+            1 -> listOfNotNull(bySurahAyah[numbers[0] to 1]) + realAyahs.filter { it.ayah == numbers[0] }
+            else -> emptyList()
+        }
+
+        val textQuery = normalizeArabic(NUMBER.replace(normalized, "").trim())
+        val textResults = if (textQuery.isEmpty()) emptyList() else {
+            val surahJumps = surahs.filter {
+                it.nameTransliterated.contains(textQuery, ignoreCase = true) ||
+                    it.nameEnglish.contains(textQuery, ignoreCase = true) ||
+                    normalizeArabic(it.nameArabic).contains(textQuery)
+            }.mapNotNull { bySurahAyah[it.number to 1] }
+            val bodyMatches = searchAyahs.filter { it.text.contains(textQuery) }
+                .take(QuranDefaults.QURAN_SEARCH_RESULT_LIMIT)
+                .mapNotNull { realById[it.id] }
+            surahJumps + bodyMatches
+        }
+
+        (refResults + textResults).distinctBy { it.id }
     }
 
     AppBottomSheet(
@@ -86,19 +115,18 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
         title = stringResource(Res.string.search_quran),
         fillHeight = true,
         header = {
-            // the query is always Arabic (or Urdu) — lock the field RTL rather than follow the app locale;
-            // pinned above the scrollable results instead of scrolling away with them
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                AppTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    placeholder = stringResource(Res.string.search_quran_placeholder),
-                    leading = { Icon(Lucide.Search, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp)) },
-                    trailing = if (query.isNotEmpty()) {
-                        { IconButton(onClick = { query = "" }) { Icon(Lucide.X, stringResource(Res.string.clear_search), tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp)) } }
-                    } else null,
-                )
-            }
+            // no forced direction — query can be Arabic, English (surah name), or a numeric reference,
+            // so the field just follows the ambient app locale like any other input; pinned above the
+            // scrollable results instead of scrolling away with them
+            AppTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = stringResource(Res.string.search_quran_placeholder),
+                leading = { Icon(Lucide.Search, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp)) },
+                trailing = if (query.isNotEmpty()) {
+                    { IconButton(onClick = { query = "" }) { Icon(Lucide.X, stringResource(Res.string.clear_search), tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp)) } }
+                } else null,
+            )
         },
     ) {
         when {
@@ -108,6 +136,13 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
                     message = stringResource(Res.string.search_quran_hint_message),
                     icon = { Icon(Lucide.Search, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
                     modifier = Modifier.padding(top = 24.dp),
+                    action = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            AppChip(label = "2:255", selected = false, onClick = { query = "2:255" })
+                            AppChip(label = "Al-Baqarah", selected = false, onClick = { query = "Al-Baqarah" })
+                            AppChip(label = "الرحمن", selected = false, onClick = { query = "الرحمن" })
+                        }
+                    },
                 )
             }
             results.isEmpty() -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -189,6 +224,7 @@ private fun QuranSearchResultItem(ayah: Ayah, position: TilePosition, onClick: (
 // Quranic pause/annotation marks, 0640 tatweel. Alef variants 0622/0623/0625/0671 -> plain alef.
 private val ARABIC_DIACRITICS_AND_TATWEEL = Regex("[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]")
 private val ARABIC_ALEF_VARIANTS = Regex("[\u0622\u0623\u0625\u0671]")
+private val NUMBER = Regex("\\d+")
 
 private fun normalizeArabic(text: String): String =
     ARABIC_ALEF_VARIANTS.replace(ARABIC_DIACRITICS_AND_TATWEEL.replace(text, ""), "\u0627")
