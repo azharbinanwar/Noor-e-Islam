@@ -5,6 +5,8 @@
     <string name="day_streak">سلسلة الأيام</string>
     <string name="verse_of_the_day">آية اليوم</string>
     <string name="surah_al_mulk">سورة الملك</string>
+    <string name="daily_quran_reminder">تذكير القراءة اليومي</string>
+    <string name="every_day">كل يوم</string>
     <string name="recite_before_sleep_after_isha">اقرأها قبل النوم · 30 دقيقة بعد العشاء</string>
     <string name="clear">مسح</string>
     <string name="mark_prayer">تسجيل %1$s</string>
@@ -311,6 +313,7 @@
     <string name="prayer_focus">تركيز الصلاة</string>
     <string name="auto_silence_around_prayer">كتم تلقائي حول الصلاة</string>
     <string name="all_alerts_on">جميع التنبيهات مفعّلة</string>
+    <string name="all_alerts_off">جميع التنبيهات متوقفة</string>
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
     <string name="system">النظام</string>
@@ -463,6 +466,7 @@
     <string name="notif_jumuah_jamaat_body">صلِّ مع الجماعة</string>
     <string name="notif_mulk_body">اقرأها الليلة، حفظٌ حتى الصباح</string>
     <string name="notif_kahf_body">نورٌ بين الجمعتين</string>
+    <string name="notif_daily_reading_body">لحظتك اليومية مع القرآن</string>
     <string name="notif_morning_body">ابدأ يومك بذكر الله</string>
     <string name="notif_evening_body">اختم يومك قريبًا من الله</string>
     <string name="notif_tahajjud_body">قم لصلاة الليل، فهو يسمعك</string>

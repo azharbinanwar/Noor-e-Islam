@@ -111,6 +111,10 @@ object NotificationScheduler {
             val k = LocalDateTime(date, LocalTime(s.kahf.hour, s.kahf.minute)).toInstant(tz).toEpochMilliseconds()
             add(ev(NotificationTarget.KAHF, NotificationType.REMINDER, k, ds))
         }
+        if (s.dailyReading.enabled) {
+            val r = LocalDateTime(date, LocalTime(s.dailyReading.hour, s.dailyReading.minute)).toInstant(tz).toEpochMilliseconds()
+            add(ev(NotificationTarget.DAILY_READING, NotificationType.REMINDER, r, ds))
+        }
         // Dhikr
         if (s.dhikr.morningEnabled) at(Miqat.Fajr)?.let {
             add(

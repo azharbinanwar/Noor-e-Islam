@@ -5,6 +5,8 @@
     <string name="day_streak">day streak</string>
     <string name="verse_of_the_day">Verse of the Day</string>
     <string name="surah_al_mulk">Surah Al-Mulk</string>
+    <string name="daily_quran_reminder">Daily reading reminder</string>
+    <string name="every_day">Every day</string>
     <string name="recite_before_sleep_after_isha">Recite before sleep · 30 min after Isha</string>
     <string name="clear">Clear</string>
     <string name="mark_prayer">Mark %1$s</string>
@@ -312,6 +314,7 @@
     <string name="prayer_focus">Prayer Focus</string>
     <string name="auto_silence_around_prayer">Auto-silence around prayer</string>
     <string name="all_alerts_on">All alerts on</string>
+    <string name="all_alerts_off">All alerts off</string>
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">System</string>
@@ -463,6 +466,7 @@
     <string name="notif_jumuah_jamaat_body">Join the jamaat</string>
     <string name="notif_mulk_body">Recite tonight for protection till morning</string>
     <string name="notif_kahf_body">Light between the two Fridays</string>
+    <string name="notif_daily_reading_body">Your daily moment with the Quran</string>
     <string name="notif_morning_body">Begin your day in Allah's remembrance</string>
     <string name="notif_evening_body">End your day close to Allah</string>
     <string name="notif_tahajjud_body">Rise for the night prayer, He is listening</string>

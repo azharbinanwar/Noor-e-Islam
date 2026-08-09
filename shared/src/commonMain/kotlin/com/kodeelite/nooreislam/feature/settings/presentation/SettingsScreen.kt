@@ -58,8 +58,10 @@ import com.kodeelite.nooreislam.core.platform.canControlDnd
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
+import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
+import com.kodeelite.nooreislam.resources.all_alerts_off
 import com.kodeelite.nooreislam.resources.all_alerts_on
 import com.kodeelite.nooreislam.resources.appearance
 import com.kodeelite.nooreislam.resources.auto_silence_around_prayer
@@ -194,6 +196,7 @@ fun SettingsScreen() {
                         onClick = { showHijriDateFormat = true }),
                 ),
             )
+            val notificationSettings by NotificationStore.settings.collectAsState()
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
@@ -221,7 +224,7 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Bell,
                             title = stringResource(Res.string.notifications),
-                            subtitle = stringResource(Res.string.all_alerts_on),
+                            subtitle = stringResource(if (notificationSettings.allAlerts) Res.string.all_alerts_on else Res.string.all_alerts_off),
                             onClick = { nav.navigate(AppRoute.Notifications) })
                     )
                     if (canControlDnd && edition != AppEdition.QURAN) add(

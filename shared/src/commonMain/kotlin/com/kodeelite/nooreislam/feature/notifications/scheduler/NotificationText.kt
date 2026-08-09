@@ -14,6 +14,8 @@ import com.kodeelite.nooreislam.resources.notif_jumuah_before_body
 import com.kodeelite.nooreislam.resources.notif_jumuah_before_title
 import com.kodeelite.nooreislam.resources.notif_jumuah_jamaat_body
 import com.kodeelite.nooreislam.resources.notif_jumuah_jamaat_title
+import com.kodeelite.nooreislam.resources.daily_quran_reminder
+import com.kodeelite.nooreislam.resources.notif_daily_reading_body
 import com.kodeelite.nooreislam.resources.notif_kahf_body
 import com.kodeelite.nooreislam.resources.notif_morning_body
 import com.kodeelite.nooreislam.resources.notif_mulk_body
@@ -42,6 +44,7 @@ fun labelRes(target: String): StringResource = when (target) {
     Miqat.jumuahKey -> Res.string.prayer_jumuah
     NotificationTarget.MULK -> Res.string.surah_al_mulk
     NotificationTarget.KAHF -> Res.string.surah_al_kahf
+    NotificationTarget.DAILY_READING -> Res.string.daily_quran_reminder
     NotificationTarget.MORNING -> Res.string.morning_adhkar
     NotificationTarget.EVENING -> Res.string.evening_adhkar
     NotificationTarget.TAHAJJUD -> Res.string.tahajjud
@@ -75,6 +78,7 @@ suspend fun notificationCopy(e: NotificationEvent): NotificationCopy {
 private fun bodyRes(target: String): StringResource = when (target) {
     NotificationTarget.MULK -> Res.string.notif_mulk_body
     NotificationTarget.KAHF -> Res.string.notif_kahf_body
+    NotificationTarget.DAILY_READING -> Res.string.notif_daily_reading_body
     NotificationTarget.MORNING -> Res.string.notif_morning_body
     NotificationTarget.EVENING -> Res.string.notif_evening_body
     NotificationTarget.TAHAJJUD -> Res.string.notif_tahajjud_body

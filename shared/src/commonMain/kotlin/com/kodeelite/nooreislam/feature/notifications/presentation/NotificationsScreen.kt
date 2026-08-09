@@ -67,8 +67,10 @@ import com.kodeelite.nooreislam.resources.after_isha
 import com.kodeelite.nooreislam.resources.all_alerts
 import com.kodeelite.nooreislam.resources.at_prayer_time
 import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.daily_quran_reminder
 import com.kodeelite.nooreislam.resources.dhikr
 import com.kodeelite.nooreislam.resources.evening_adhkar
+import com.kodeelite.nooreislam.resources.every_day
 import com.kodeelite.nooreislam.resources.friday
 import com.kodeelite.nooreislam.resources.ishraq
 import com.kodeelite.nooreislam.resources.jamaat_after_start
@@ -113,6 +115,7 @@ fun NotificationsScreen() {
     var taps by remember { mutableStateOf(0) } // 7 taps opens the dev test screen
     var showTest by remember { mutableStateOf(false) }
     var verseOfDay by remember { mutableStateOf(false) } // ponytail: UI shell only, not wired yet
+    var dailyReminderPicker by remember { mutableStateOf(false) }
     var sheetKey by remember { mutableStateOf<String?>(null) }
     if (showTest) {
         NotificationTestScreen(onBack = { showTest = false }); return
@@ -230,10 +233,29 @@ fun NotificationsScreen() {
 
                 val mk = s.mulk
                 val kf = s.kahf
+                val dr = s.dailyReading
                 AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.notifications_quran),
                     items = listOf(
+                        AppTileItem(
+                            title = stringResource(Res.string.daily_quran_reminder),
+                            subtitle = timeSubtitle(stringResource(Res.string.every_day), LocalTime(dr.hour, dr.minute), dr.enabled, pat),
+                            leadingIcon = Lucide.BookOpen,
+                            trailing = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (dr.enabled) IconButton(onClick = { dailyReminderPicker = true }) {
+                                        Icon(
+                                            Lucide.SlidersHorizontal,
+                                            contentDescription = null,
+                                            tint = c.primary
+                                        )
+                                    }
+                                    AppSwitch(checked = dr.enabled, onCheckedChange = { NotificationStore.setDailyReadingEnabled(it) })
+                                }
+                            },
+                            onClick = if (dr.enabled) ({ dailyReminderPicker = true }) else null,
+                        ),
                         AppTileItem(
                             title = stringResource(Res.string.surah_al_mulk),
                             subtitle = timeSubtitle(
@@ -382,6 +404,24 @@ fun NotificationsScreen() {
                 AppButton(
                     text = stringResource(Res.string.save),
                     onClick = { NotificationStore.setKahfTime(state.hour, state.minute); kahfPicker = false },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+
+    if (dailyReminderPicker) {
+        val state = rememberTimePickerState(initialHour = s.dailyReading.hour, initialMinute = s.dailyReading.minute, is24Hour = timeFormat == TimeFormat.TwentyFour)
+        AppBottomSheet(onDismiss = { dailyReminderPicker = false }, title = stringResource(Res.string.reminder_time)) {
+            Column(
+                Modifier.fillMaxWidth().padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TimePicker(state = state)
+                AppButton(
+                    text = stringResource(Res.string.save),
+                    onClick = { NotificationStore.setDailyReadingTime(state.hour, state.minute); dailyReminderPicker = false },
                     modifier = Modifier.fillMaxWidth()
                 )
             }

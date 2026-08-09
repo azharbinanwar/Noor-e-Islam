@@ -16,6 +16,7 @@ data class NotificationEvent(
 object NotificationTarget {
     const val MULK = "mulk"
     const val KAHF = "kahf"
+    const val DAILY_READING = "daily_reading"
     const val MORNING = "morning_adhkar"
     const val EVENING = "evening_adhkar"
     const val TAHAJJUD = "tahajjud"

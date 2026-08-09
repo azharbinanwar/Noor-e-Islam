@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Notifications: Surah Al-Mulk / Al-Kahf reminders. Runtime-requested on Android 13+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Notifications: exact alarm wakes for the reminder time. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Notifications: re-arm the alarms after a reboot. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".QuranApplication"
         android:allowBackup="true"
@@ -18,6 +26,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Notifications: posts a Surah Al-Mulk/Al-Kahf reminder when its alarm fires. -->
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationReceiver"
+            android:exported="false" />
+        <!-- Notifications: silent nightly wake to roll the reminder window forward. -->
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationRebuildReceiver"
+            android:exported="false" />
+        <!-- Notifications: re-arm when the clock or timezone changes. System-sent. -->
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationTimeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <!-- Notifications: re-arm after reboot or app update (both wipe scheduled alarms). System-sent. -->
+        <receiver
+            android:name="com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
