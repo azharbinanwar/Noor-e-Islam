@@ -57,7 +57,7 @@ object NotificationDefaults {
     /** Daily reading reminder, at a chosen clock time every day. */
     object DailyReading {
         const val enabled = false            // off out of the box — user opts in
-        const val hour = 20                  // default reminder hour (24h)
+        const val hour = 5                    // default reminder hour (24h) — morning, not evening
         const val minute = 0                 // default reminder minute
     }
 
