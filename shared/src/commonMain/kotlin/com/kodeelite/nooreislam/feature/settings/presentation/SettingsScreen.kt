@@ -20,8 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.CalendarDays
@@ -54,6 +56,7 @@ import com.kodeelite.nooreislam.core.locale.Language
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.platform.appVersion
 import com.kodeelite.nooreislam.core.platform.canControlDnd
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
@@ -80,6 +83,7 @@ import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
+import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
@@ -96,6 +100,7 @@ fun SettingsScreen() {
     val edition = koinInject<AppEdition>()
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
     val theme by SettingsStore.theme.collectAsState()
@@ -241,8 +246,15 @@ fun SettingsScreen() {
                 items = listOf(
                     AppTileItem(
                         title = edition.displayName(),
-                        subtitle = stringResource(Res.string.version_summary, "1.0.0"),
+                        subtitle = stringResource(Res.string.version_summary, appVersion),
                         leadingIcon = Lucide.Info
+                    ),
+                    // Tanzil's terms: name the source and link out so readers can check for text updates
+                    AppTileItem(
+                        title = stringResource(Res.string.quran_text_source),
+                        subtitle = "Tanzil Project · tanzil.net",
+                        leadingIcon = Lucide.BookOpen,
+                        onClick = { uriHandler.openUri("https://tanzil.net") },
                     ),
                 ),
             )

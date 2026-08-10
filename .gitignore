@@ -22,3 +22,8 @@ node_modules/
 
 # graphify knowledge-graph output/cache (regenerable via `graphify update .`)
 graphify-out/
+
+# Signing — never commit. Back these up outside the repo.
+*.jks
+*.keystore
+keystore.properties

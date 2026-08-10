@@ -266,6 +266,7 @@
     <string name="general">General</string>
     <string name="prayer_and_alerts">Prayer &amp; alerts</string>
     <string name="about">About</string>
+    <string name="quran_text_source">Quran text</string>
     <string name="appearance">Appearance</string>
     <string name="time_format">Time format</string>
     <string name="date_formats">Date formats</string>

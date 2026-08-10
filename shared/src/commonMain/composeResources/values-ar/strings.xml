@@ -265,6 +265,7 @@
     <string name="general">عام</string>
     <string name="prayer_and_alerts">الصلاة والتنبيهات</string>
     <string name="about">حول التطبيق</string>
+    <string name="quran_text_source">نص القرآن</string>
     <string name="appearance">المظهر</string>
     <string name="time_format">صيغة الوقت</string>
     <string name="date_formats">صيغ التاريخ</string>
