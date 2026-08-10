@@ -16,6 +16,9 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+    // the splash animation is drawn here rather than by the system — see NoorSplash.kt
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.ui)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
