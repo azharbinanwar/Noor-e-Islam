@@ -5,7 +5,7 @@
     <style name="Theme.NoorQuran.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#1E7D55</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenAnimationDuration">1400</item>
         <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
     </style>
 </resources>
