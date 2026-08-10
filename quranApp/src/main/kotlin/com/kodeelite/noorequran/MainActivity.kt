@@ -10,7 +10,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.kodeelite.nooreislam.App
 
-private const val SPLASH_MIN_MS = 1400L // the animation runs ~1.2s; hold so it isn't cut short
+// Android caps the splash icon animation at 1000ms and cuts off anything past it (real devices
+// enforce this; emulators don't). The animation lands at 900ms — hold just to the cap, no further.
+private const val SPLASH_MIN_MS = 1000L
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -89,6 +89,7 @@ fun AyahPassage(
     val notesStore = koinInject<NotesStore>()
 
     val fontSize by store.fontSize.collectAsState()
+    val autoScrolling by store.autoScrollEnabled.collectAsState()
     val lineHeightRatio by store.lineHeightRatio.collectAsState()
     val script by store.font.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
@@ -180,8 +181,18 @@ fun AyahPassage(
         text = passageData.text,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)
             .onGloballyPositioned { textCoords = it }
-            .pointerInput(passageData) {
+            .pointerInput(passageData, autoScrolling) {
                 detectTapGestures(
+                    // While auto-scrolling, holding the page is "wait here" — pause for as long as the
+                    // finger is down. Pressing pauses immediately rather than after the long-press delay,
+                    // so the text stops where the reader meant to stop it.
+                    onPress = {
+                        if (autoScrolling) {
+                            store.setAutoScrollPaused(true)
+                            tryAwaitRelease()
+                            store.setAutoScrollPaused(false)
+                        }
+                    },
                     onTap = { pos ->
                         layout?.getOffsetForPosition(pos)?.let { idx ->
                             passageData.ranges.firstOrNull { idx in it.second }?.let { (ayah, _) ->
@@ -190,8 +201,9 @@ fun AyahPassage(
                             }
                         }
                     },
+                    // the hold means "pause" while auto-scrolling, so the highlight stays out of the way
                     onLongPress = { pos ->
-                        layout?.getOffsetForPosition(pos)?.let { idx ->
+                        if (!autoScrolling) layout?.getOffsetForPosition(pos)?.let { idx ->
                             passageData.ranges.firstOrNull { idx in it.second }?.let { onLongSelect(it.first) }
                         }
                     }
