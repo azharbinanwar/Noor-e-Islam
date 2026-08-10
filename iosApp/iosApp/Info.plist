@@ -4,6 +4,11 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>SplashGreen</string>
+	</dict>
 	<key>CFBundleDisplayName</key>
 	<string>Noor e Islam</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

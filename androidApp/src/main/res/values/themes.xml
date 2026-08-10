@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cold-start splash: brand green + the animated ringed-mosque mark. Hands off to the plain
+         no-actionbar theme once Compose draws. -->
+    <style name="Theme.NoorIslam.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#1E7D55</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
+    </style>
+</resources>
