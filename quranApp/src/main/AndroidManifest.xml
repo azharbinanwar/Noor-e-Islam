@@ -3,8 +3,8 @@
 
     <!-- Notifications: Surah Al-Mulk / Al-Kahf reminders. Runtime-requested on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Notifications: exact alarm wakes for the reminder time. -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- Notifications: exact alarm wakes for the reminder time. User-granted via the in-app prompt
+         (ExactAlarmNeedsAttention) — no USE_EXACT_ALARM, which Play restricts to alarm/calendar apps. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <!-- Notifications: re-arm the alarms after a reboot. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

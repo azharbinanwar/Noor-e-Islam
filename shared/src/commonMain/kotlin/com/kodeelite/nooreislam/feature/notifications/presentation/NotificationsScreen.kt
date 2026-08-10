@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,8 +56,12 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.permissions.AppPermission
+import com.kodeelite.nooreislam.core.permissions.PermissionStatus
+import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
+import com.kodeelite.nooreislam.feature.notifications.presentation.components.ExactAlarmNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
@@ -96,9 +101,11 @@ import com.kodeelite.nooreislam.resources.surah_al_kahf
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.tahajjud
 import com.kodeelite.nooreislam.resources.verse_of_the_day
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,6 +117,25 @@ fun NotificationsScreen() {
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val s by NotificationStore.settings.collectAsState()
     val today by MiqatTimesStore.today.collectAsState()
+
+    // Master switch stays dimmed until both are granted — same check the banners above use.
+    // Checked once on cold start, not polled: canScheduleExactAlarms() is only guaranteed accurate
+    // for a fresh process — Android kills the app outright when the user revokes it in Settings.
+    val perms = rememberPermissionService()
+    var notifGranted by remember { mutableStateOf(true) }
+    var exactAlarmGranted by remember { mutableStateOf(true) }
+    // Notifications can genuinely change while the app is running, so poll it like the banner tile
+    // does. Exact-alarm is checked once — Android only guarantees it accurate for a fresh process.
+    LaunchedEffect(Unit) {
+        while (true) {
+            notifGranted = perms.status(AppPermission.Notifications) == PermissionStatus.Granted
+            delay(1500.milliseconds)
+        }
+    }
+    LaunchedEffect(Unit) {
+        exactAlarmGranted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
+    }
+    val remindersLocked = !notifGranted || !exactAlarmGranted
 
     var kahfPicker by remember { mutableStateOf(false) }
     var taps by remember { mutableStateOf(0) } // 7 taps opens the dev test screen
@@ -143,6 +169,7 @@ fun NotificationsScreen() {
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
             NotificationsNeedsAttention()
+            ExactAlarmNeedsAttention()
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true
@@ -152,13 +179,21 @@ fun NotificationsScreen() {
                         AppTileItem(
                             title = stringResource(Res.string.all_alerts),
                             subtitle = stringResource(Res.string.master_switch_for_every_reminder),
-                            trailing = { AppSwitch(checked = s.allAlerts, onCheckedChange = NotificationStore::setAllAlerts) })
+                            trailing = {
+                                AppSwitch(
+                                    checked = s.allAlerts && !remindersLocked,
+                                    enabled = !remindersLocked,
+                                    onCheckedChange = NotificationStore::setAllAlerts,
+                                )
+                            },
+                        )
                     )
                 )
             }
 
-            // off collapses the list; states stay saved
-            if (s.allAlerts) {
+            // off collapses the list; states stay saved. Also collapsed while locked, even if the
+            // saved preference is still "on" — the switch above only shows on once access is granted.
+            if (s.allAlerts && !remindersLocked) {
                 // Quran app has no prayer-time engine — only the Quran reminders group applies
                 if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
@@ -251,7 +286,7 @@ fun NotificationsScreen() {
                                             tint = c.primary
                                         )
                                     }
-                                    AppSwitch(checked = dr.enabled, onCheckedChange = { NotificationStore.setDailyReadingEnabled(it) })
+                                    AppSwitch(checked = dr.enabled, onCheckedChange = NotificationStore::setDailyReadingEnabled)
                                 }
                             },
                             onClick = if (dr.enabled) ({ dailyReminderPicker = true }) else null,
@@ -274,7 +309,7 @@ fun NotificationsScreen() {
                                             tint = c.primary
                                         )
                                     }
-                                    AppSwitch(checked = mk.enabled, onCheckedChange = { NotificationStore.setMulkEnabled(it) })
+                                    AppSwitch(checked = mk.enabled, onCheckedChange = NotificationStore::setMulkEnabled)
                                 }
                             },
                             onClick = if (mk.enabled) ({ sheetKey = "mulk" }) else null,
@@ -292,7 +327,7 @@ fun NotificationsScreen() {
                                             tint = c.primary
                                         )
                                     }
-                                    AppSwitch(checked = kf.enabled, onCheckedChange = { NotificationStore.setKahfEnabled(it) })
+                                    AppSwitch(checked = kf.enabled, onCheckedChange = NotificationStore::setKahfEnabled)
                                 }
                             },
                             onClick = if (kf.enabled) ({ kahfPicker = true }) else null,

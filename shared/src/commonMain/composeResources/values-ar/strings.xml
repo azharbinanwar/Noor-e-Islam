@@ -325,6 +325,14 @@
     <string name="notif_needs_attention">يتطلب انتباهك</string>
     <string name="notif_permission_needed">تفعيل الإشعارات</string>
     <string name="notif_permission_sub">اسمح بالإشعارات لتصلك تذكيرات الصلاة</string>
+    <string name="notif_exact_alarm_needed">السماح بالتوقيت الدقيق</string>
+    <string name="notif_exact_alarm_sub">لتصل التذكيرات في وقتها بالضبط</string>
+    <string name="exact_alarm_access">إذن التوقيت الدقيق</string>
+    <string name="allowed">مسموح</string>
+    <string name="not_allowed">غير مسموح</string>
+    <string name="allow">سماح</string>
+    <string name="reminder_permission_title">السماح بتشغيل التذكيرات</string>
+    <string name="reminder_permission_body">يفعّل الإشعارات والتوقيت الدقيق — مطلوب مرة واحدة، وينطبق على كل تذكير أدناه</string>
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
     <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق نور الإسلام من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>

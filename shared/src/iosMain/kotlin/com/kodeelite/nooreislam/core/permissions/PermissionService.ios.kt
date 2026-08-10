@@ -36,6 +36,7 @@ private class IosPermissionService : PermissionService {
     override suspend fun status(permission: AppPermission): PermissionStatus = when (permission) {
         AppPermission.Location -> locationManager.authorizationStatus.toStatus()
         AppPermission.Notifications -> notificationStatus()
+        AppPermission.ExactAlarm -> PermissionStatus.Granted // no such concept on iOS
     }
 
     override suspend fun request(permission: AppPermission): PermissionStatus = when (permission) {
@@ -62,6 +63,8 @@ private class IosPermissionService : PermissionService {
             }
             if (granted) PermissionStatus.Granted else PermissionStatus.DeniedPermanently
         }
+
+        AppPermission.ExactAlarm -> PermissionStatus.Granted // no such concept on iOS
     }
 
     override fun openAppSettings() {
