@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash icon, "Bloom Upward": the book's wing strokes light up bottom-to-top, the swoosh
+     completes the open Quran, then the mosque pops in above it with a slight overshoot.
+     Artwork centered in a 3000x3000 viewport so it stays inside the splash mask's safe circle. -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="3000"
+            android:viewportHeight="3000">
+            <group
+                android:name="outer"
+                android:pivotX="1500"
+                android:pivotY="1500"
+                android:scaleX="0.85"
+                android:scaleY="0.85">
+                <group
+                    android:name="art"
+                    android:translateX="577.5"
+                    android:translateY="448">
+                    <group
+                        android:name="mosqueG"
+                        android:pivotX="921"
+                        android:pivotY="880"
+                        android:scaleX="0.6"
+                        android:scaleY="0.6">
+                        <path
+                            android:name="mosque"
+                            android:fillColor="#FFFFFF"
+                            android:fillAlpha="0"
+                            android:pathData="M910.462 0C842.772 23.2908 794.13 87.5201 794.13 163.114C794.134 258.363 871.344 335.572 966.588 335.572C1042.19 335.572 1106.42 286.93 1129.7 219.236C1124.42 323.508 1042.63 407.573 939.355 416.467V482.929C963.64 489.983 979.193 502.868 990.776 519.163C1003.95 537.689 1012.09 560.932 1022.34 583.518C1032.73 606.398 1045.6 629.57 1068.51 649.847C1079.34 659.426 1092.49 668.42 1108.79 676.43C1444.24 747.901 1692.73 1006.64 1692.73 1314.9C1692.73 1332.82 1691.88 1350.58 1690.23 1368.14C1315.57 1370.51 1027.63 1613.45 921.928 1749.83C815.991 1613.14 527.877 1369.4 152.166 1368.12C150.517 1350.57 149.671 1332.81 149.671 1314.9C149.673 1002.04 405.65 740.168 748.711 673.342C762.271 666.134 773.507 658.219 782.969 649.847C805.888 629.569 818.762 606.398 829.143 583.518C839.393 560.932 847.529 537.688 860.7 519.163C872.287 502.868 887.841 489.983 912.126 482.929V417.051C801.042 412.3 712.439 320.757 712.438 208.505C712.438 96.8062 800.159 5.59095 910.462 0Z" />
+                    </group>
+                    <path
+                        android:name="swoosh"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0"
+                        android:pathData="M1837.83 1379.71C1392.09 1306.7 1041.12 1596.03 921.927 1749.83C802.732 1596.03 452.908 1306.7 7.17276 1379.71C0.242784 1388.16 -7.79597 1407.09 15.4887 1415.2C44.5945 1425.34 572.657 1354.36 921.927 1775.18C1271.2 1354.36 1800.41 1425.34 1829.51 1415.2C1852.8 1407.09 1844.76 1388.16 1837.83 1379.71Z" />
+                    <path
+                        android:name="wingR1"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0"
+                        android:pathData="M1827.88 1503.81C1342.23 1430.8 1040.64 1726.9 950.55 1884.07C933.918 1916.52 954.708 1907.73 967.182 1899.28C1253.25 1643.75 1640.77 1603.52 1798.78 1615.35C1858.65 1582.91 1843.13 1527.47 1827.88 1503.81Z" />
+                    <path
+                        android:name="wingL1"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0"
+                        android:pathData="M22.1722 1503.81C507.824 1430.8 809.416 1726.9 899.505 1884.07C916.137 1916.52 895.347 1907.73 882.873 1899.28C596.804 1643.75 209.281 1603.52 51.2781 1615.35C-8.59674 1582.91 6.92633 1527.47 22.1722 1503.81Z" />
+                    <path
+                        android:name="wingR2"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0"
+                        android:pathData="M1827.88 1700.14C1342.23 1627.13 1040.64 1923.22 950.55 2080.39C933.918 2112.84 954.708 2104.05 967.182 2095.6C1253.25 1840.07 1640.77 1799.85 1798.78 1811.68C1858.65 1779.23 1843.13 1723.8 1827.88 1700.14Z" />
+                    <path
+                        android:name="wingL2"
+                        android:fillColor="#FFFFFF"
+                        android:fillAlpha="0"
+                        android:pathData="M22.1722 1700.14C507.824 1627.13 809.416 1923.22 899.505 2080.39C916.137 2112.84 895.347 2104.05 882.873 2095.6C596.804 1840.07 209.281 1799.85 51.2781 1811.68C-8.59674 1779.23 6.92633 1723.8 22.1722 1700.14Z" />
+                </group>
+            </group>
+        </vector>
+    </aapt:attr>
+
+    <target android:name="mosqueG">
+        <aapt:attr name="android:animation">
+            <set xmlns:android="http://schemas.android.com/apk/res/android">
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:startOffset="450"
+                    android:duration="500"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:startOffset="450"
+                    android:duration="500"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="mosque">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:startOffset="450"
+                android:duration="300"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+    <target android:name="swoosh">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:startOffset="280"
+                android:duration="300"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+    <target android:name="wingL2">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:duration="250"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+    <target android:name="wingR2">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:startOffset="50"
+                android:duration="250"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+    <target android:name="wingL1">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:startOffset="140"
+                android:duration="250"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+    <target android:name="wingR1">
+        <aapt:attr name="android:animation">
+            <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+                android:propertyName="fillAlpha"
+                android:valueFrom="0"
+                android:valueTo="1"
+                android:startOffset="190"
+                android:duration="250"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+</animated-vector>
