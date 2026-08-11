@@ -213,7 +213,8 @@ fun AyahActionSheet(
                     AppActionGroup(
                         width = ActionWidth.Fill,
                         items = listOf(
-                            AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
+                            // parked — no audio playback exists yet
+                            // AppActionItem(stringResource(Res.string.play), Lucide.Play, iconColor = colors.primary) {},
                             AppActionItem(
                                 stringResource(Res.string.action_bookmark),
                                 Lucide.Bookmark,
