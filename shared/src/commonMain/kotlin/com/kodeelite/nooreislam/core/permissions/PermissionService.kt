@@ -3,7 +3,7 @@ package com.kodeelite.nooreislam.core.permissions
 import androidx.compose.runtime.Composable
 
 /** Runtime permissions the app requests. Add an entry only when a feature actually needs it. */
-enum class AppPermission { Location, Notifications, ExactAlarm }
+enum class AppPermission { Location, Notifications, ExactAlarm, PhotoLibrary }
 
 /** Outcome of a status check or a request. */
 enum class PermissionStatus {

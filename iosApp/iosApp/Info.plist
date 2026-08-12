@@ -12,9 +12,9 @@
 	<key>CFBundleDisplayName</key>
 	<string>$(APP_DISPLAY_NAME)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Miqat uses your location to calculate accurate prayer times and the Qibla direction.</string>
+	<string>Noor e Islam uses your location to calculate accurate prayer times and the Qibla direction.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Miqat saves your designed ayah images to your photo library.</string>
+	<string>Noor e Islam saves your designed ayah images to your photo library.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

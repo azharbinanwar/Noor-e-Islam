@@ -93,6 +93,8 @@ private class AndroidPermissionService(
         AppPermission.ExactAlarm ->
             Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
                     (context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager).canScheduleExactAlarms()
+
+        AppPermission.PhotoLibrary -> true // MediaStore needs no permission from minSdk 29 up
     }
 
     private fun granted(perm: String) =
@@ -111,6 +113,8 @@ private class AndroidPermissionService(
             } else null
 
         AppPermission.ExactAlarm -> null // handled via the Settings intent in request(), not the launcher
+
+        AppPermission.PhotoLibrary -> null
     }
 }
 

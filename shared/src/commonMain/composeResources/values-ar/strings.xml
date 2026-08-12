@@ -335,7 +335,7 @@
     <string name="reminder_permission_title">السماح بتشغيل التذكيرات</string>
     <string name="reminder_permission_body">يفعّل الإشعارات والتوقيت الدقيق — مطلوب مرة واحدة، وينطبق على كل تذكير أدناه</string>
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
-    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق نور الإسلام من الإعدادات لتصلك التذكيرات.</string>
+    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق %1$s من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
     <string name="remind_before">التذكير قبل</string>
     <string name="minutes_before">الدقائق قبل الوقت</string>
@@ -678,13 +678,15 @@
     <string name="play">تشغيل</string>
     <string name="include_ayah_text">تضمين نص الآية</string>
     <string name="add_a_message">أضف رسالة</string>
-    <string name="shared_with">تمت المشاركة عبر نور الإسلام</string>
+    <string name="shared_with">تمت المشاركة عبر %1$s</string>
     <string name="leave_this_design">مغادرة التصميم؟</string>
     <string name="you_have_unsaved_changes">لديك تغييرات غير محفوظة.</string>
     <string name="save_exit">حفظ وخروج</string>
     <string name="my_creations">أعمالي</string>
     <string name="saved_to_gallery">تم الحفظ في المعرض</string>
     <string name="couldnt_save">تعذر الحفظ</string>
+    <string name="photo_permission_denied_title">الوصول إلى الصور محظور</string>
+    <string name="photo_permission_denied_msg">اسمح لتطبيق %1$s بإضافة الصور من الإعدادات لحفظ صور الآيات.</string>
     <string name="just_now">الآن</string>
     <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">رمادي دافئ</string>

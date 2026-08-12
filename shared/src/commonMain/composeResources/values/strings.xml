@@ -330,7 +330,7 @@
     <string name="notif_exact_alarm_needed">Allow precise timing</string>
     <string name="notif_exact_alarm_sub">So reminders fire exactly when scheduled</string>
     <string name="notif_permission_denied_title">Notifications blocked</string>
-    <string name="notif_permission_denied_msg">Enable notifications for Noor e Islam in Settings to receive reminders.</string>
+    <string name="notif_permission_denied_msg">Enable notifications for %1$s in Settings to receive reminders.</string>
     <string name="master_switch_for_every_reminder">Master switch for every reminder</string>
     <string name="remind_before">Remind before</string>
     <string name="minutes_before">Minutes before</string>
@@ -670,13 +670,15 @@
     <string name="play">Play</string>
     <string name="include_ayah_text">Include ayah text</string>
     <string name="add_a_message">Add a message</string>
-    <string name="shared_with">Shared with Noor e Islam</string>
+    <string name="shared_with">Shared with %1$s</string>
     <string name="leave_this_design">Leave this design?</string>
     <string name="you_have_unsaved_changes">You have unsaved changes.</string>
     <string name="save_exit">Save &amp; exit</string>
     <string name="my_creations">My Creations</string>
     <string name="saved_to_gallery">Saved to gallery</string>
     <string name="couldnt_save">Couldn't save</string>
+    <string name="photo_permission_denied_title">Photos access blocked</string>
+    <string name="photo_permission_denied_msg">Allow %1$s to add photos in Settings to save your ayah images.</string>
     <string name="just_now">just now</string>
     <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">Warm Gray</string>
