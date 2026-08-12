@@ -3,7 +3,9 @@ package com.kodeelite.nooreislam.feature.notifications.scheduler
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.NotificationType
+import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.notifications.data.surahName
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.evening_adhkar
 import com.kodeelite.nooreislam.resources.ishraq
@@ -25,6 +27,8 @@ import com.kodeelite.nooreislam.resources.notif_prayer_before_body
 import com.kodeelite.nooreislam.resources.notif_prayer_before_title
 import com.kodeelite.nooreislam.resources.notif_prayer_jamaat_body
 import com.kodeelite.nooreislam.resources.notif_prayer_jamaat_title
+import com.kodeelite.nooreislam.resources.a_few_minutes_with_the_quran
+import com.kodeelite.nooreislam.resources.continue_from_ayah_x
 import com.kodeelite.nooreislam.resources.notif_tahajjud_body
 import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_jumuah
@@ -56,6 +60,15 @@ fun labelRes(target: String): StringResource = when (target) {
 // the OS then just displays the strings, so no i18n or formatting happens at fire time.
 suspend fun notificationCopy(e: NotificationEvent): NotificationCopy {
     if (e.target == "test") return NotificationCopy("Test #${e.eventKey.substringAfterLast(':')}", "")
+    // Surah reminder: the user's own title, or the surah name when they never gave it one.
+    if (e.target == NotificationTarget.SURAH_REMINDER) {
+        val to = e.route as? AppRoute.QuranReader
+        val title = e.title ?: to?.let { surahName(it.surah) } ?: getString(Res.string.notifications)
+        // ayah 1 is the start of the surah, so there's nothing to continue from
+        val body = if (to != null && to.ayah > 1) getString(Res.string.continue_from_ayah_x, to.ayah)
+        else getString(Res.string.a_few_minutes_with_the_quran)
+        return NotificationCopy(title, body)
+    }
     val jumuah = e.target == Miqat.jumuahKey
     val name = getString(labelRes(e.target))
     return when (e.kind) {

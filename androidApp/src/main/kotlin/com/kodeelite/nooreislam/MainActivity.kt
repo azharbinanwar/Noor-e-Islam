@@ -1,5 +1,6 @@
 package com.kodeelite.nooreislam
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.kodeelite.nooreislam.core.focus.PhoneSilencer
+import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
+import com.kodeelite.nooreislam.core.navigation.PendingNavigation
 import com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationScheduler
 
 class MainActivity : ComponentActivity() {
@@ -38,6 +41,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        PendingNavigation.offer(intent?.getStringExtra(NOTIF_ROUTE_KEY))
 
         setContent {
             var splashDone by remember { mutableStateOf(false) }
@@ -70,6 +74,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Tapped while the app was already running — onCreate doesn't run again.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        PendingNavigation.offer(intent.getStringExtra(NOTIF_ROUTE_KEY))
     }
 
     override fun onResume() {

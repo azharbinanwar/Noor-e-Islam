@@ -1,5 +1,6 @@
 package com.kodeelite.nooreislam.feature.notifications.presentation
 
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
@@ -33,5 +34,5 @@ fun offsetSubtitle(
 }
 
 /** "descriptor · 9:45 PM" when on and the time is known, else just the descriptor. */
-fun timeSubtitle(descriptor: String, fire: LocalTime?, enabled: Boolean, pattern: String): String =
-    if (enabled && fire != null) "$descriptor · ${fire.format(pattern)}" else descriptor
+fun timeSubtitle(descriptor: String, fire: LocalTime?, enabled: Boolean): String =
+    if (enabled && fire != null) "$descriptor · ${Now.formattedTime(fire)}" else descriptor

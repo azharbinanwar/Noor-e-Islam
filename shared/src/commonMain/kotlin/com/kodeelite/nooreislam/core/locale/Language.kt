@@ -32,3 +32,6 @@ enum class Language(val label: String, val code: String, val direction: LayoutDi
  */
 @Composable
 fun <T> tr(en: T, ar: T): T = if (Language.current == Language.Arabic) ar else en
+
+/** [tr] for code outside composition — notification copy is built by the scheduler, not a screen. */
+fun <T> trValue(en: T, ar: T): T = if (SettingsStore.language.value == Language.Arabic) ar else en

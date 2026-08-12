@@ -22,6 +22,8 @@ struct iOSApp: App {
         // AppEdition.quran — Kotlin/Native lowercases the first letter of enum entries for Swift.
         // If Xcode's autocomplete disagrees (e.g. AppEdition.QURAN), use whatever it suggests.
         DIKt.startKoinForIos(edition: AppEdition.quran)
+        // Set before launch finishes, so a tap that cold-starts the app is still delivered.
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
         NotificationScheduler.shared.start() // build Surah Al-Mulk/Al-Kahf reminders + re-arm on any change
         BGTaskScheduler.shared.register(forTaskWithIdentifier: notifRefreshId, using: nil) { task in
@@ -50,6 +52,31 @@ struct iOSApp: App {
                 if phase == .background { scheduleNotifRefresh() }
             }
         }
+    }
+}
+
+/// Reads one key off a tapped notification and hands the raw string to shared. Knows nothing about
+/// what's inside it — shared decodes the route and the nav host acts on it.
+private final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = NotificationDelegate()
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let payload = response.notification.request.content.userInfo[NotificationRouteKt.NOTIF_ROUTE_KEY] as? String
+        PendingNavigation.shared.offer(payload: payload)
+        completionHandler()
+    }
+
+    // Reminders are worth seeing even with the app open.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
     }
 }
 

@@ -275,7 +275,7 @@ fun NotificationsScreen() {
                     items = listOf(
                         AppTileItem(
                             title = stringResource(Res.string.daily_quran_reminder),
-                            subtitle = timeSubtitle(stringResource(Res.string.every_day), LocalTime(dr.hour, dr.minute), dr.enabled, pat),
+                            subtitle = timeSubtitle(stringResource(Res.string.every_day), LocalTime(dr.hour, dr.minute), dr.enabled),
                             leadingIcon = Lucide.BookOpen,
                             trailing = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -296,8 +296,7 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_isha),
                                 shift(timeOf(today, Miqat.Isha), mk.afterIsha),
-                                mk.enabled,
-                                pat
+                                mk.enabled
                             ),
                             leadingIcon = Lucide.BookOpen,
                             trailing = {
@@ -316,7 +315,7 @@ fun NotificationsScreen() {
                         ),
                         AppTileItem(
                             title = stringResource(Res.string.surah_al_kahf),
-                            subtitle = timeSubtitle(stringResource(Res.string.friday), LocalTime(kf.hour, kf.minute), kf.enabled, pat),
+                            subtitle = timeSubtitle(stringResource(Res.string.friday), LocalTime(kf.hour, kf.minute), kf.enabled),
                             leadingIcon = Lucide.BookOpen,
                             trailing = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -345,8 +344,7 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_fajr),
                                 shift(timeOf(today, Miqat.Fajr), d.afterFajr),
-                                d.morningEnabled,
-                                pat
+                                d.morningEnabled
                             ),
                             leadingIcon = Lucide.Sunrise,
                             trailing = {
@@ -368,8 +366,7 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_asr),
                                 shift(timeOf(today, Miqat.Asr), d.afterAsr),
-                                d.eveningEnabled,
-                                pat
+                                d.eveningEnabled
                             ),
                             leadingIcon = Lucide.Sunset,
                             trailing = {
@@ -398,14 +395,13 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.last_third_of_the_night),
                                 timeOf(today, Miqat.LastThird),
-                                s.nafil.tahajjud,
-                                pat
+                                s.nafil.tahajjud
                             ),
                             leadingIcon = Lucide.Moon,
                             trailing = { AppSwitch(checked = s.nafil.tahajjud, onCheckedChange = NotificationStore::setTahajjud) }),
                         AppTileItem(
                             title = stringResource(Res.string.ishraq),
-                            subtitle = timeSubtitle(stringResource(Res.string.mid_morning), timeOf(today, Miqat.Ishraq), s.nafil.ishraq, pat),
+                            subtitle = timeSubtitle(stringResource(Res.string.mid_morning), timeOf(today, Miqat.Ishraq), s.nafil.ishraq),
                             leadingIcon = Lucide.SunMedium,
                             trailing = { AppSwitch(checked = s.nafil.ishraq, onCheckedChange = NotificationStore::setIshraq) }),
                     ),

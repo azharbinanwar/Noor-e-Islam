@@ -95,8 +95,8 @@ import com.kodeelite.nooreislam.resources.my_creations
 import com.kodeelite.nooreislam.resources.save_exit
 import com.kodeelite.nooreislam.resources.saved_to_gallery
 import com.kodeelite.nooreislam.resources.share
-import com.kodeelite.nooreislam.resources.photo_permission_denied_msg
-import com.kodeelite.nooreislam.resources.photo_permission_denied_title
+import com.kodeelite.nooreislam.resources.allow_x_to_add_photos_in_settings
+import com.kodeelite.nooreislam.resources.photos_access_blocked
 import com.kodeelite.nooreislam.resources.shared_with
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -341,8 +341,8 @@ fun StudioScreen(
             }
 
             if (photoDeniedOpen) PermissionDeniedSheet(
-                title = stringResource(Res.string.photo_permission_denied_title),
-                message = stringResource(Res.string.photo_permission_denied_msg, edition.displayName()),
+                title = stringResource(Res.string.photos_access_blocked),
+                message = stringResource(Res.string.allow_x_to_add_photos_in_settings, edition.displayName()),
                 onOpenSettings = { photoDeniedOpen = false; perms.openAppSettings() },
                 onDismiss = { photoDeniedOpen = false },
             )

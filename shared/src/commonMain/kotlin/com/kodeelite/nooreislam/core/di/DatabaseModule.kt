@@ -27,6 +27,7 @@ val databaseModule = module {
     single { get<AppDatabase>().collectionDao() }
     single { get<AppDatabase>().collectionAyahDao() }
     single { CollectionRepository(get(), get()) }
+    single { get<AppDatabase>().surahReminderDao() }
 }
 
 // Android needs a Context, iOS a file path.

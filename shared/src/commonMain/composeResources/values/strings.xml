@@ -469,6 +469,15 @@
     <string name="notif_jumuah_jamaat_body">Join the jamaat</string>
     <string name="notif_mulk_body">Recite tonight for protection till morning</string>
     <string name="notif_kahf_body">Light between the two Fridays</string>
+    <string name="a_few_minutes_with_the_quran">A few minutes with the Quran</string>
+    <string name="continue_from_ayah_x">Continue from ayah %1$d</string>
+    <string name="surah_reminders">Surah reminders</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="no_reminders_yet">No reminders yet</string>
+    <string name="reminder">Reminder</string>
+    <string name="name_this_reminder">Name this reminder</string>
+    <string name="start_at_ayah_1_to_x">Start at ayah (1-%1$d)</string>
+    <string name="days_of_the_week">Days of the week</string>
     <string name="notif_daily_reading_body">Your daily moment with the Quran</string>
     <string name="notif_morning_body">Begin your day in Allah's remembrance</string>
     <string name="notif_evening_body">End your day close to Allah</string>
@@ -677,8 +686,8 @@
     <string name="my_creations">My Creations</string>
     <string name="saved_to_gallery">Saved to gallery</string>
     <string name="couldnt_save">Couldn't save</string>
-    <string name="photo_permission_denied_title">Photos access blocked</string>
-    <string name="photo_permission_denied_msg">Allow %1$s to add photos in Settings to save your ayah images.</string>
+    <string name="photos_access_blocked">Photos access blocked</string>
+    <string name="allow_x_to_add_photos_in_settings">Allow %1$s to add photos in Settings to save your ayah images.</string>
     <string name="just_now">just now</string>
     <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">Warm Gray</string>

@@ -4,10 +4,13 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.kodeelite.nooreislam.core.components.AppContentHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +26,7 @@ import com.kodeelite.nooreislam.feature.focus.presentation.PrayerFocusScreen
 import com.kodeelite.nooreislam.feature.home.presentation.HomeScreen
 import com.kodeelite.nooreislam.feature.miqat.presentation.MiqatTimesScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.NotificationsScreen
+import com.kodeelite.nooreislam.feature.notifications.presentation.QuranNotificationsScreen
 import com.kodeelite.nooreislam.feature.onboarding.presentation.OnboardingScreen
 import com.kodeelite.nooreislam.feature.qibla.presentation.QiblaScreen
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
@@ -48,6 +52,12 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController()
 ) {
     val edition = koinInject<AppEdition>()
+    // A tapped notification's destination, held until the graph exists — a cold-start tap lands
+    // here long before this composes. The route itself is the only thing either platform sends.
+    val pending by PendingNavigation.route.collectAsState()
+    LaunchedEffect(pending) {
+        pending?.let { navController.navigate(it); PendingNavigation.consume() }
+    }
     AppNavigatorHost(navController) {
         // drawer + overlay hoisted once around the NavHost; screens open it via LocalDrawerState
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -94,14 +104,18 @@ fun AppNavHost(
                     composable<AppRoute.Location> { LocationScreen() }
                     composable<AppRoute.PrayerCalc> { MiqatCalculationScreen() }
                     composable<AppRoute.Widgets> { WidgetGalleryScreen() }
-                    composable<AppRoute.Notifications> { NotificationsScreen() }
+                    // two separate screens, not one branching screen — the Quran app lists its
+                    // reminders inline, the main app keeps its prayer-shaped one
+                    composable<AppRoute.Notifications> {
+                        if (edition == AppEdition.QURAN) QuranNotificationsScreen() else NotificationsScreen()
+                    }
                     composable<AppRoute.PrayerFocus> { PrayerFocusScreen() }
                     composable<AppRoute.Sandbox> { SandboxScreen() }
                 }
             }
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
             // stays out of the tree entirely rather than being present-but-empty
-            if (edition == AppEdition.QURAN) navHost() else AppDrawer(drawerState) { navHost() }
+            if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
         }
     }
 }

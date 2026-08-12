@@ -17,12 +17,14 @@ import com.kodeelite.nooreislam.feature.quran.data.Highlight
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsDao
 import com.kodeelite.nooreislam.feature.quran.data.Note
 import com.kodeelite.nooreislam.feature.quran.data.NotesDao
+import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
+import com.kodeelite.nooreislam.feature.notifications.data.SurahReminderDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationEntity
 
 // exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
 @Database(
-    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class],
+    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
     version = AppConst.DB_VERSION,
     exportSchema = false
 )
@@ -37,6 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun notesDao(): NotesDao
     abstract fun collectionDao(): CollectionDao
     abstract fun collectionAyahDao(): CollectionAyahDao
+    abstract fun surahReminderDao(): SurahReminderDao
 }
 
 /** The Room compiler (KSP) generates the actual implementation per platform. */
