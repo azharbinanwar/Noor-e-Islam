@@ -1,5 +1,6 @@
 package com.kodeelite.nooreislam.feature.onboarding.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,9 +49,10 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MoonStar
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Type
-import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.config.theme.lightAppColors
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.noor_e_quran_logo
 import com.kodeelite.nooreislam.resources.a_calm_place_to_read
 import com.kodeelite.nooreislam.resources.al_mulk_al_kahf_and_any_surah_you_choose
 import com.kodeelite.nooreislam.resources.app_name_quran
@@ -67,6 +70,7 @@ import com.kodeelite.nooreislam.resources.set_your_own_reminders
 import com.kodeelite.nooreislam.resources.start_reading
 import com.kodeelite.nooreislam.resources.works_fully_offline_no_account
 import com.kodeelite.nooreislam.resources.write_notes_and_highlight_in_colour
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.launch
 
@@ -76,7 +80,9 @@ private const val INTRO_PAGES = 3
 
 @Composable
 fun QuranIntroScreen(onDone: () -> Unit) {
-    val accent = AppTheme.colors.primary
+    // always the light palette, whatever the device theme — the intro is a branded moment like the
+    // splash, and a fixed green keeps white text readable instead of turning pale in dark mode
+    val accent = remember { lightAppColors().primary }
     val pager = rememberPagerState(pageCount = { INTRO_PAGES })
     val scope = rememberCoroutineScope()
     val onLast = pager.currentPage == INTRO_PAGES - 1
@@ -85,7 +91,7 @@ fun QuranIntroScreen(onDone: () -> Unit) {
         Column(Modifier.fillMaxSize()) {
             HorizontalPager(state = pager, modifier = Modifier.weight(1f)) { i ->
                 when (i) {
-                    0 -> IntroPage(Lucide.MoonStar, stringResource(Res.string.app_name_quran), stringResource(Res.string.a_calm_place_to_read)) {
+                    0 -> IntroPage(Lucide.MoonStar, stringResource(Res.string.app_name_quran), stringResource(Res.string.a_calm_place_to_read), isLogo = true) {
                         IntroBullet(Lucide.Palette, stringResource(Res.string.fourteen_reading_themes))
                         IntroBullet(Lucide.Type, stringResource(Res.string.five_quran_fonts_your_size_and_spacing))
                         IntroBullet(Lucide.BookOpen, stringResource(Res.string.works_fully_offline_no_account))
@@ -147,7 +153,13 @@ fun QuranIntroScreen(onDone: () -> Unit) {
 }
 
 @Composable
-private fun IntroPage(icon: ImageVector, title: String, subtitle: String, content: @Composable ColumnScope.() -> Unit) {
+private fun IntroPage(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    isLogo: Boolean = false, // the first page carries the app's own mark, the rest carry an icon
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
         Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars).padding(horizontal = 36.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,7 +169,15 @@ private fun IntroPage(icon: ImageVector, title: String, subtitle: String, conten
             Modifier.size(84.dp).clip(RoundedCornerShape(26.dp)).background(Color.White.copy(alpha = 0.12f)),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icon, null, tint = Color.White, modifier = Modifier.size(38.dp))
+            if (isLogo) {
+                Image(
+                    painterResource(Res.drawable.noor_e_quran_logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(46.dp),
+                )
+            } else {
+                Icon(icon, null, tint = Color.White, modifier = Modifier.size(38.dp))
+            }
         }
         Spacer(Modifier.height(26.dp))
         Text(title, color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)

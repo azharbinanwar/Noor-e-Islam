@@ -2,6 +2,9 @@ package com.kodeelite.nooreislam.config.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.font.FontFamily
+import com.kodeelite.nooreislam.core.locale.Language
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -58,8 +61,12 @@ fun AppTheme(
         onTertiaryFixed = colors.onTertiaryFixed, onTertiaryFixedVariant = colors.onTertiaryFixedVariant,
     )
 
+    // One place stamps the UI face onto every text style; the family comes from the current
+    // language, so switching to Arabic reskins the whole app without a single per-widget check.
+    val typography = MaterialTheme.typography.withFontFamily(Language.current.font)
+
     CompositionLocalProvider(LocalAppColors provides colors) {
-        MaterialTheme(colorScheme = scheme, content = content)
+        MaterialTheme(colorScheme = scheme, typography = typography, content = content)
     }
 }
 
@@ -68,3 +75,22 @@ object AppTheme {
     val colors: AppColors
         @Composable @ReadOnlyComposable get() = LocalAppColors.current
 }
+
+/** Same scale and weights, one family — Material has no global font switch, so every style is stamped. */
+private fun Typography.withFontFamily(family: FontFamily) = Typography(
+    displayLarge = displayLarge.copy(fontFamily = family),
+    displayMedium = displayMedium.copy(fontFamily = family),
+    displaySmall = displaySmall.copy(fontFamily = family),
+    headlineLarge = headlineLarge.copy(fontFamily = family),
+    headlineMedium = headlineMedium.copy(fontFamily = family),
+    headlineSmall = headlineSmall.copy(fontFamily = family),
+    titleLarge = titleLarge.copy(fontFamily = family),
+    titleMedium = titleMedium.copy(fontFamily = family),
+    titleSmall = titleSmall.copy(fontFamily = family),
+    bodyLarge = bodyLarge.copy(fontFamily = family),
+    bodyMedium = bodyMedium.copy(fontFamily = family),
+    bodySmall = bodySmall.copy(fontFamily = family),
+    labelLarge = labelLarge.copy(fontFamily = family),
+    labelMedium = labelMedium.copy(fontFamily = family),
+    labelSmall = labelSmall.copy(fontFamily = family),
+)

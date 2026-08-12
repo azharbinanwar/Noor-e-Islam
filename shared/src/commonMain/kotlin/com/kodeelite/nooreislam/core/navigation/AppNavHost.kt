@@ -86,7 +86,6 @@ fun AppNavHost(
                 NavHost(
                     navController = navController,
                     // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
-                    // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
                     startDestination = when {
                         !SettingsStore.introSeen() -> AppRoute.Onboarding
                         edition == AppEdition.QURAN -> AppRoute.Quran

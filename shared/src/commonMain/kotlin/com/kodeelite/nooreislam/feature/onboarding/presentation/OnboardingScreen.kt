@@ -71,7 +71,7 @@ import com.kodeelite.nooreislam.resources.resume
 import com.kodeelite.nooreislam.resources.gentle_nudge_before_every_prayer
 import com.kodeelite.nooreislam.resources.madhab_hanafi
 import com.kodeelite.nooreislam.resources.madhab_shafi
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import com.kodeelite.nooreislam.resources.never_miss_a_prayer
 import com.kodeelite.nooreislam.resources.onboarding_before_at_time_alerts
 import com.kodeelite.nooreislam.resources.onboarding_city_presets
@@ -266,7 +266,7 @@ private fun OnboardingIcon(icon: ImageVector, isLogo: Boolean) {
         Box(Modifier.size(96.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.12f)))
         Box(Modifier.size(76.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.08f)))
         if (isLogo) {
-            Image(painterResource(Res.drawable.miqat_logo), null, modifier = Modifier.size(62.dp))
+            Image(painterResource(Res.drawable.noor_e_islam_logo), null, modifier = Modifier.size(62.dp))
         } else {
             Icon(icon, null, tint = Color.White, modifier = Modifier.size(40.dp))
         }

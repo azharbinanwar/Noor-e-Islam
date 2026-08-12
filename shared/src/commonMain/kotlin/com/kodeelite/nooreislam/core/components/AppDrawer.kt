@@ -74,7 +74,7 @@ import com.kodeelite.nooreislam.resources.developer_sandbox
 import com.kodeelite.nooreislam.resources.duas_and_adhkar
 import com.kodeelite.nooreislam.resources.home
 import com.kodeelite.nooreislam.resources.madhab
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import com.kodeelite.nooreislam.resources.prayer_times
 import com.kodeelite.nooreislam.resources.prayer_tracker
 import com.kodeelite.nooreislam.resources.qibla_compass
@@ -202,7 +202,7 @@ private fun DrawerHeader(onLocationClick: () -> Unit) {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painterResource(Res.drawable.miqat_logo),
+                painterResource(Res.drawable.noor_e_islam_logo),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                 modifier = Modifier.size(30.dp),
