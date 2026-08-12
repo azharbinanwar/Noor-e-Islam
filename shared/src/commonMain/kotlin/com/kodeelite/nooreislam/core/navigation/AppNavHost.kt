@@ -42,6 +42,7 @@ import com.kodeelite.nooreislam.feature.miqat.presentation.MiqatTimesScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.NotificationsScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.QuranNotificationsScreen
 import com.kodeelite.nooreislam.feature.onboarding.presentation.OnboardingScreen
+import com.kodeelite.nooreislam.feature.onboarding.presentation.QuranIntroScreen
 import com.kodeelite.nooreislam.feature.qibla.presentation.QiblaScreen
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
@@ -84,10 +85,13 @@ fun AppNavHost(
                 NavHost(
                     navController = navController,
                     // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
-                    startDestination = if (edition == AppEdition.QURAN) AppRoute.Quran else AppRoute.Home,
+                    startDestination = AppRoute.Onboarding, // TEMP: always show onboarding to review it
                     modifier = modifier
                 ) {
-                    composable<AppRoute.Onboarding> { OnboardingScreen() }
+                    composable<AppRoute.Onboarding> {
+                        if (edition == AppEdition.QURAN) QuranIntroScreen(onDone = { navController.navigate(AppRoute.Quran) })
+                        else OnboardingScreen()
+                    }
                     composable<AppRoute.Home> { HomeScreen() }
                     composable<AppRoute.PrayerTimes> { MiqatTimesScreen() }
                     composable<AppRoute.Qibla> { QiblaScreen() }
