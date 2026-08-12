@@ -9,8 +9,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppContentHost
+import com.kodeelite.nooreislam.core.database.DatabaseRecovery
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.got_it
+import com.kodeelite.nooreislam.resources.something_went_wrong_with_your_saved_data
+import com.kodeelite.nooreislam.resources.sorry_app_started_fresh_set_up_again
+import org.jetbrains.compose.resources.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -116,6 +130,26 @@ fun AppNavHost(
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
             // stays out of the tree entirely rather than being present-but-empty
             if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
+
+            // shown once, on the launch after a damaged database was moved aside
+            var recovered by remember { mutableStateOf(DatabaseRecovery.recoveredThisLaunch) }
+            if (recovered) AppBottomSheet(
+                onDismiss = { recovered = false; DatabaseRecovery.recoveredThisLaunch = false },
+                title = stringResource(Res.string.something_went_wrong_with_your_saved_data),
+                footer = {
+                    AppButton(
+                        text = stringResource(Res.string.got_it),
+                        onClick = { recovered = false; DatabaseRecovery.recoveredThisLaunch = false },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                },
+            ) {
+                Text(
+                    stringResource(Res.string.sorry_app_started_fresh_set_up_again),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppTheme.colors.onSurfaceVariant,
+                )
+            }
         }
     }
 }

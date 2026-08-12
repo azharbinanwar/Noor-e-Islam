@@ -469,6 +469,9 @@
     <string name="notif_jumuah_jamaat_body">Join the jamaat</string>
     <string name="notif_mulk_body">Recite tonight for protection till morning</string>
     <string name="notif_kahf_body">Light between the two Fridays</string>
+    <string name="something_went_wrong_with_your_saved_data">Something went wrong with your saved data</string>
+    <string name="sorry_app_started_fresh_set_up_again">Sorry, we couldn't open it, so the app has started fresh. Your bookmarks, notes and highlights will need setting up again.</string>
+    <string name="got_it">Got it</string>
     <string name="a_few_minutes_with_the_quran">A few minutes with the Quran</string>
     <string name="continue_from_ayah_x">Continue from ayah %1$d</string>
     <string name="surah_reminders">Surah reminders</string>
