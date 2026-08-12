@@ -42,6 +42,9 @@ android {
         versionCode = 1
         versionName = "1.0.0"
     }
+    buildFeatures {
+        buildConfig = true // BuildConfig.DEBUG drives the debug ribbon in MainActivity
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -59,6 +62,11 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            // installs alongside the store build: own icon, own data, "(dev)" label
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("release")

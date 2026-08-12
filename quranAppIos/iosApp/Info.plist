@@ -10,7 +10,7 @@
 		<string>SplashGreen</string>
 	</dict>
 	<key>CFBundleDisplayName</key>
-	<string>Noor e Quran</string>
+	<string>$(APP_DISPLAY_NAME)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
