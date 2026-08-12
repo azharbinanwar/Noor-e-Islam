@@ -20,6 +20,7 @@ import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppContentHost
 import com.kodeelite.nooreislam.core.database.DatabaseRecovery
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.got_it
 import com.kodeelite.nooreislam.resources.something_went_wrong_with_your_saved_data
@@ -85,12 +86,22 @@ fun AppNavHost(
                 NavHost(
                     navController = navController,
                     // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
-                    startDestination = AppRoute.Onboarding, // TEMP: always show onboarding to review it
+                    // the Quran-only app has nothing else to land on — its "home" is the Quran section itself
+                    startDestination = when {
+                        !SettingsStore.introSeen() -> AppRoute.Onboarding
+                        edition == AppEdition.QURAN -> AppRoute.Quran
+                        else -> AppRoute.Home
+                    },
                     modifier = modifier
                 ) {
                     composable<AppRoute.Onboarding> {
-                        if (edition == AppEdition.QURAN) QuranIntroScreen(onDone = { navController.navigate(AppRoute.Quran) })
-                        else OnboardingScreen()
+                        if (edition == AppEdition.QURAN) QuranIntroScreen(
+                            onDone = {
+                                SettingsStore.markIntroSeen()
+                                // popUpTo inclusive: back from the reader leaves the app, never returns here
+                                navController.navigate(AppRoute.Quran) { popUpTo(AppRoute.Onboarding) { inclusive = true } }
+                            },
+                        ) else OnboardingScreen()
                     }
                     composable<AppRoute.Home> { HomeScreen() }
                     composable<AppRoute.PrayerTimes> { MiqatTimesScreen() }

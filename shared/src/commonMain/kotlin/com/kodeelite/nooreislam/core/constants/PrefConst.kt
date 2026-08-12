@@ -17,6 +17,7 @@ object PrefConst {
     const val HIJRI_DATE_FORMAT = "hijri_date_format"         // HijriDateFormat enum name
     const val HIJRI_OFFSET = "hijri_offset"   // -2..+2
     const val SEHRI_REFERENCE = "sehri_reference" // Fajr | Imsak — which time the Ramadan "Sehri" label uses
+    const val INTRO_SEEN = "intro_seen"       // the onboarding pages have been through once
 
     // ── Prayer calculation ───────────────────────────────────
     const val CALC_METHOD = "calc_method"
