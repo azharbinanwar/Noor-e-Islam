@@ -15,39 +15,38 @@ import com.kodeelite.nooreislam.resources.plex_arabic_medium
 import com.kodeelite.nooreislam.resources.plex_arabic_regular
 import com.kodeelite.nooreislam.resources.plex_arabic_semibold
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.FontResource
 
 /**
  * Supported UI languages. The [label] stays in its own script (not translated — you always see "English"
  * and "العربية"). Add a language here and the Settings picker reflects it. [code] is stored in prefs;
  * [direction] drives the app's LTR/RTL layout — no per-language checks at the call site.
+ *
+ * The typeface is declared per entry too: Poppins has no Arabic script, Plex Arabic no Latin polish,
+ * so a language that needs its own face (Bengali, Thai) just names it here and nothing else changes.
  */
-enum class Language(val label: String, val code: String, val direction: LayoutDirection) {
-    English("English", "en", LayoutDirection.Ltr),
-    Arabic("العربية", "ar", LayoutDirection.Rtl),
-    // later: Urdu("اردو", "ur", LayoutDirection.Rtl), …
+enum class Language(
+    val label: String,
+    val code: String,
+    val direction: LayoutDirection,
+    private val regular: FontResource,
+    private val medium: FontResource,
+    private val bold: FontResource,
+) {
+    English("English", "en", LayoutDirection.Ltr, Res.font.poppins_regular, Res.font.poppins_medium, Res.font.poppins_semibold),
+    Arabic("العربية", "ar", LayoutDirection.Rtl, Res.font.plex_arabic_regular, Res.font.plex_arabic_medium, Res.font.plex_arabic_semibold),
+    Urdu("اردو", "ur", LayoutDirection.Rtl, Res.font.plex_arabic_regular, Res.font.plex_arabic_medium, Res.font.plex_arabic_semibold),
+    French("Français", "fr", LayoutDirection.Ltr, Res.font.poppins_regular, Res.font.poppins_medium, Res.font.poppins_semibold),
     ;
 
-    /**
-     * The UI face for this language — Poppins has no Arabic, so Arabic uses IBM Plex Sans Arabic —
-     * each script gets a family drawn for it. A new language brings its own here and
-     * nothing else changes; fall back to Plex Arabic, which covers both scripts.
-     */
+    /** SemiBold doubles as Bold — neither family ships a heavier cut. */
     val font: FontFamily
-        @Composable get() = when (this) {
-            English -> FontFamily(
-                Font(Res.font.poppins_regular, FontWeight.Normal),
-                Font(Res.font.poppins_medium, FontWeight.Medium),
-                Font(Res.font.poppins_semibold, FontWeight.SemiBold),
-                Font(Res.font.poppins_semibold, FontWeight.Bold),
-            )
-
-            else -> FontFamily(
-                Font(Res.font.plex_arabic_regular, FontWeight.Normal),
-                Font(Res.font.plex_arabic_medium, FontWeight.Medium),
-                Font(Res.font.plex_arabic_semibold, FontWeight.SemiBold),
-                Font(Res.font.plex_arabic_semibold, FontWeight.Bold),
-            )
-        }
+        @Composable get() = FontFamily(
+            Font(regular, FontWeight.Normal),
+            Font(medium, FontWeight.Medium),
+            Font(bold, FontWeight.SemiBold),
+            Font(bold, FontWeight.Bold),
+        )
 
     companion object {
         fun fromCode(code: String?) = entries.firstOrNull { it.code == code } ?: English
@@ -59,12 +58,16 @@ enum class Language(val label: String, val code: String, val direction: LayoutDi
 }
 
 /**
- * Pick an English vs Arabic value for the current language — the KMP take on Flutter's `getTr(en, ar)`.
- * Type-agnostic: strings, icons, alignments, whatever differs by locale. Since Arabic is the only RTL
- * language, this doubles as an LTR/RTL switch (`tr(startIcon, endIcon)`).
+ * Pick an LTR vs RTL value for the current language — the KMP take on Flutter's `getTr(en, ar)`.
+ * Type-agnostic: strings, icons, alignments, whatever differs by locale, so it doubles as a
+ * direction switch (`tr(startIcon, endIcon)`).
+ *
+ * Keyed on [Language.direction], not on Arabic: Urdu is RTL too, and matching the language itself
+ * would point every back chevron the wrong way for it.
  */
 @Composable
-fun <T> tr(en: T, ar: T): T = if (Language.current == Language.Arabic) ar else en
+fun <T> tr(en: T, ar: T): T = if (Language.current.direction == LayoutDirection.Rtl) ar else en
 
 /** [tr] for code outside composition — notification copy is built by the scheduler, not a screen. */
-fun <T> trValue(en: T, ar: T): T = if (SettingsStore.language.value == Language.Arabic) ar else en
+fun <T> trValue(en: T, ar: T): T =
+    if (SettingsStore.language.value.direction == LayoutDirection.Rtl) ar else en

@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">Aujourd'hui</string>
+    <string name="this_week">Cette semaine</string>
+    <string name="day_streak">jours de suite</string>
+    <string name="verse_of_the_day">Verset du jour</string>
+    <string name="surah_al_mulk">Sourate Al-Mulk</string>
+    <string name="daily_quran_reminder">Rappel de lecture quotidien</string>
+    <string name="every_day">Tous les jours</string>
+    <string name="recite_before_sleep_after_isha">À réciter avant de dormir · 30 min après Isha</string>
+    <string name="clear">Effacer</string>
+    <string name="mark_prayer">Marquer %1$s</string>
+    <string name="tap_header_to_preview_each_prayer">Touchez l'en-tête pour prévisualiser chaque prière</string>
+
+    <string name="app_name">Noor e Islam</string>
+    <string name="app_name_quran">Noor e Quran</string>
+    <string name="your_daily_prayer_companion">Votre compagnon de prière quotidien</string>
+    <string name="home">Accueil</string>
+    <string name="prayer_times">Heures de prière</string>
+    <string name="qibla_compass">Boussole Qibla</string>
+    <string name="prayer_tracker">Suivi des prières</string>
+    <string name="hijri_calendar">Calendrier hégirien</string>
+    <string name="duas_and_adhkar">Duas &amp; Adhkar</string>
+    <string name="quran">Coran</string>
+    <string name="tasbih_counter">Compteur de Tasbih</string>
+    <string name="settings">Paramètres</string>
+    <string name="about_miqat">À propos</string>
+    <string name="back">Retour</string>
+    <string name="discard">Ignorer</string>
+    <string name="makkah">La Mecque</string>
+    <string name="developer_sandbox">Bac à sable</string>
+
+    <string name="qibla">Qibla</string>
+    <string name="qibla_direction_degrees">Qibla %1$s°</string>
+    <string name="distance_to_makkah_km">%1$s km jusqu'à La Mecque</string>
+    <string name="turn_left_to_face_qibla">Tournez à gauche pour faire face à la Qibla</string>
+    <string name="turn_right_to_face_qibla">Tournez à droite pour faire face à la Qibla</string>
+    <string name="you_are_facing_qibla">Vous faites face à la Qibla</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">Précision faible, faites un mouvement en huit avec le téléphone</string>
+    <string name="compass_unavailable">Boussole indisponible</string>
+    <string name="device_has_no_compass_sensor">Votre appareil n'a pas de capteur de boussole, la direction de la Qibla ne peut pas être affichée</string>
+    <string name="location_needed_for_qibla">La localisation est nécessaire pour trouver la Qibla</string>
+    <string name="recalibrate_compass">Recalibrer</string>
+
+    <string name="best">Meilleur</string>
+    <string name="on_time">À l'heure</string>
+    <string name="prayed_with_jamaat">Jamaat</string>
+    <string name="prayed_kaza">Qada</string>
+    <string name="missed_prayer">Manquée</string>
+    <string name="not_tracked">Non défini</string>
+    <string name="coming_soon">Bientôt disponible</string>
+    <string name="best_days_streak_and_on_time_percentage">Meilleur %1$d jours · %2$d%% à l'heure</string>
+    <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>
+
+    <string name="gregorian_jan">janvier</string>
+    <string name="gregorian_feb">février</string>
+    <string name="gregorian_mar">mars</string>
+    <string name="gregorian_apr">avril</string>
+    <string name="gregorian_may">mai</string>
+    <string name="gregorian_jun">juin</string>
+    <string name="gregorian_jul">juillet</string>
+    <string name="gregorian_aug">août</string>
+    <string name="gregorian_sep">septembre</string>
+    <string name="gregorian_oct">octobre</string>
+    <string name="gregorian_nov">novembre</string>
+    <string name="gregorian_dec">décembre</string>
+
+
+    <string name="fajr_short">Fajr</string>
+    <string name="sunrise_short">Lever</string>
+    <string name="dhuhr_short">Dhuh</string>
+    <string name="asr_short">Asr</string>
+    <string name="maghrib_short">Magh</string>
+    <string name="isha_short">Isha</string>
+    <string name="yesterday">Hier</string>
+
+    <string name="tasbih">Tasbih</string>
+    <string name="rounds">Tours</string>
+    <string name="total">Total</string>
+    <string name="reset">Réinitialiser</string>
+    <string name="tap_to_count">Touchez pour compter</string>
+
+    <!-- Fonction Focus (outil de test) -->
+    <string name="test_background_focus_logic">Test en arrière-plan</string>
+    <string name="focus_test_instructions_survive_reboot">Les créneaux enregistrés survivent à un redémarrage et se déclenchent une fois. Ajoutez-en un, puis fermez l'application ou redémarrez.</string>
+    <string name="add_test_focus_slot">Ajouter un créneau</string>
+    <string name="start_silence_after">Démarrer dans</string>
+    <string name="silence_for_period">Silence pendant</string>
+    <string name="choose_silence_mode">Mode silence</string>
+    <string name="scheduled_test_slots">Planifiés</string>
+    <string name="remove_scheduled_slot">Supprimer</string>
+    <string name="silence_duration_summary">%1$s pendant %2$d min</string>
+
+    <!-- Fonction Tasbih -->
+    <string name="tasbih_back">Retour</string>
+    <string name="tasbih_counting_style">Style de comptage</string>
+    <string name="tasbih_mode_beads">Perles</string>
+    <string name="tasbih_mode_tap">Appui</string>
+    <string name="tasbih_mode_focus">Focus</string>
+    <string name="tasbih_paused">en pause</string>
+    <string name="tasbih_round_total">Tour %1$s  ·  Total %2$s</string>
+    <string name="tasbih_edit_count">Modifier le compte</string>
+    <string name="tasbih_resume">Reprendre</string>
+    <string name="tasbih_pause">Pause</string>
+    <string name="tasbih_history">Historique</string>
+    <string name="tasbih_customize">Personnaliser</string>
+    <string name="tasbih_vibration">Vibration</string>
+    <string name="tasbih_sound">Son</string>
+    <string name="tasbih_size">Taille</string>
+    <string name="tasbih_shape">Forme</string>
+    <string name="tasbih_shape_round">Rond</string>
+    <string name="tasbih_shape_oval">Ovale</string>
+    <string name="tasbih_finish">Finition</string>
+    <string name="tasbih_finish_glossy">Brillant</string>
+    <string name="tasbih_finish_marble">Marbré</string>
+    <string name="tasbih_color">Couleur</string>
+    <string name="tasbih_done">Terminé</string>
+    <string name="tasbih_repeat">Répéter</string>
+    <string name="tasbih_repeat_set">Répéter la série</string>
+    <string name="tasbih_dhikr_complete">Dhikr terminé</string>
+    <string name="tasbih_adhkar_complete">Adhkar terminés</string>
+    <string name="tasbih_in_time_mashaallah">en %1$s · MashaAllah</string>
+    <string name="tasbih_n_selected">%1$d sélectionné(s)</string>
+    <string name="tasbih_cancel_selection">Annuler la sélection</string>
+    <string name="tasbih_menu">Menu</string>
+    <string name="tasbih_cat_tasbihat">Tasbihat</string>
+    <string name="tasbih_cat_durood">Durood &amp; Salawat</string>
+    <string name="tasbih_cat_names">Noms d'Allah</string>
+    <string name="tasbih_cat_quranic">Coranique</string>
+    <string name="tasbih_n_azkar">%1$d azkar</string>
+    <string name="tasbih_show_less">Afficher moins</string>
+    <string name="tasbih_see_all">Tout voir (%1$d)</string>
+    <string name="tasbih_favorites">Favoris</string>
+    <string name="tasbih_my_sets">Mes séries</string>
+    <string name="tasbih_add_your_own">Ajouter le vôtre</string>
+    <string name="tasbih_view_set">Voir la série (%1$d)</string>
+    <string name="tasbih_checked">Coché</string>
+    <string name="tasbih_cancel">Annuler</string>
+    <string name="tasbih_create_start">Créer &amp; démarrer</string>
+    <string name="tasbih_new_set">Nouvelle série</string>
+    <string name="tasbih_set_name">Nom de la série</string>
+    <string name="tasbih_subtitle_optional">Sous-titre (facultatif)</string>
+    <string name="tasbih_favorited">Ajouté aux favoris</string>
+    <string name="tasbih_add_to_favorites">Ajouter aux favoris</string>
+    <string name="tasbih_add_more_azkar">Ajouter plus d'azkar</string>
+    <string name="tasbih_remove">Supprimer</string>
+    <string name="tasbih_repetitions">Répétitions</string>
+    <string name="tasbih_custom">Personnalisé</string>
+    <string name="tasbih_set_custom_count">Définir un compte personnalisé</string>
+    <string name="tasbih_dhikr">Dhikr</string>
+    <string name="tasbih_total_recited">Total récité</string>
+    <string name="tasbih_sessions">Séances</string>
+    <string name="tasbih_all_dhikr">Tous les dhikr</string>
+    <string name="tasbih_azkar">Azkar</string>
+    <string name="tasbih_all_sessions">Toutes les séances</string>
+    <string name="tasbih_no_history">Aucun historique pour l'instant</string>
+    <string name="tasbih_no_history_hint">Les séances de dhikr terminées apparaîtront ici.</string>
+
+    <string name="tasbih_material_theme">Thème</string>
+    <string name="tasbih_material_sandal">Santal</string>
+    <string name="tasbih_material_pearl">Perle</string>
+    <string name="tasbih_material_onyx">Onyx</string>
+    <string name="tasbih_material_emerald">Émeraude</string>
+    <string name="tasbih_material_amber">Ambre</string>
+    <string name="tasbih_material_amethyst">Améthyste</string>
+
+    <string name="welcome_to_miqat">Bienvenue sur Noor e Islam</string>
+    <string name="your_companion_for_every_prayer">Votre compagnon pour chaque prière : horaires précis, Qibla et suivi, le tout hors ligne.</string>
+    <string name="get_started">Commencer</string>
+    <string name="skip">Passer</string>
+    <string name="status_now">Maintenant</string>
+    <string name="status_soon">Bientôt</string>
+    <string name="status_upcoming">À venir</string>
+    <string name="now_caps">MAINTENANT</string>
+    <string name="next_caps">SUIVANT</string>
+    <string name="next_prayer_name">Suivant · %1$s</string>
+    <string name="time_at_in_summary">%1$s · dans %2$s</string>
+    <string name="prayer_and_time_summary">%1$s · %2$s</string>
+    <string name="sun_journey">Trajectoire du soleil</string>
+    <string name="night_sky">Ciel nocturne</string>
+    <string name="daytime">Journée</string>
+    <string name="home_prayer_quote">"En vérité, la prière préserve de la turpitude et du blâmable."</string>
+    <string name="home_prayer_quote_ref">Sourate Al-'Ankabut 29:45</string>
+    <string name="prayer_countdown_summary">%1$s %2$s · %3$s</string>
+    <string name="countdown_hms">dans %1$dh %2$dm %3$ds</string>
+    <string name="countdown_ms">dans %1$dm %2$ds</string>
+    <string name="time_with_period">%1$s %2$s</string>
+    <string name="about_sehri">À propos du Sehri</string>
+    <string name="never_miss_a_prayer">Ne manquez plus jamais une prière</string>
+    <string name="accurate_times_with_live_countdown">Horaires précis pour votre position, avec un compte à rebours en direct jusqu'à la prochaine prière.</string>
+    <string name="find_the_qibla_and_track">Trouvez la Qibla et suivez</string>
+    <string name="point_to_the_kaaba_and_log_every_prayer">Pointez vers la Kaaba et enregistrez chaque prière : séries, statistiques, le tout hors ligne.</string>
+
+    <string name="onboarding_live_countdown">Compte à rebours en direct jusqu'à la prochaine prière</string>
+    <string name="onboarding_qibla_offline">Boussole Qibla, entièrement hors ligne</string>
+    <string name="onboarding_track_streaks">Suivez chaque prière et vos séries</string>
+    <string name="your_madhab">Votre madhab</string>
+    <string name="affects_asr_calculation">Affecte le calcul de l'heure de la prière d'Asr.</string>
+    <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_shafi">Shafi'i</string>
+    <string name="shadow_length_2x">Longueur d'ombre 2× l'objet</string>
+    <string name="shadow_length_1x">Longueur d'ombre 1× l'objet</string>
+    <string name="asr_time">Heure d'Asr</string>
+    <string name="smart_reminders">Rappels intelligents</string>
+    <string name="gentle_nudge_before_every_prayer">Un rappel discret avant chaque prière.</string>
+    <string name="onboarding_before_at_time_alerts">Alertes avant et à l'heure</string>
+    <string name="onboarding_jumuah_mulk_kahf">Jumu'ah · Sourate Mulk · Kahf</string>
+    <string name="onboarding_jamaat_reminders">Rappels de jamaat</string>
+    <string name="set_your_location">Définissez votre position</string>
+    <string name="so_times_and_qibla_are_exact">Pour des horaires et une Qibla exacts.</string>
+    <string name="onboarding_gps_or_city_search">GPS ou recherche de ville</string>
+    <string name="onboarding_city_presets">Préréglages La Mecque · Médine · Karachi</string>
+    <string name="works_fully_offline">Fonctionne entièrement hors ligne</string>
+    <string name="resume">Continuer</string>
+    <string name="allow_notifications">Autoriser les notifications</string>
+    <string name="start_praying">Commencer à prier</string>
+
+    <!-- Noms des prières (rappels / focus) -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Lever du soleil</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="prayer_jumuah">Jumu'ah</string>
+
+    <!-- Points horaires du Miqat (hors prière) -->
+    <string name="miqat_imsak">Imsak</string>
+    <string name="miqat_zawal">Zawal</string>
+    <string name="miqat_sunset">Coucher du soleil</string>
+    <string name="miqat_midnight">Minuit</string>
+
+    <!-- Focus Prière -->
+    <string name="surah_number_place_ayah_count">Sourate %1$d · %2$s · %3$d versets</string>
+    <string name="remove_from_favorites">Retirer des favoris</string>
+    <string name="add_to_favorites">Ajouter aux favoris</string>
+    <string name="open_surah">Ouvrir la sourate</string>
+    <string name="juz_number">Juz %1$d</string>
+    <string name="juz_start_summary">Commence à la Sourate %1$d · Verset %2$d</string>
+    <string name="expand">Développer</string>
+    <string name="minutes_short">min</string>
+    <string name="silence_phone_around_each_prayer_set_separately">Mettez votre téléphone en silence autour de chaque prière, puis restaurez-le automatiquement. Réglez chaque prière séparément.</string>
+    <string name="start_after">Démarrer après</string>
+    <string name="silence_for">Silence pendant</string>
+    <string name="silence_silent">Silencieux</string>
+    <string name="silence_vibrate">Vibreur</string>
+    <string name="silence_mode">Mode silence</string>
+    <string name="notif_focus_title">Heure de %1$s</string>
+    <string name="notif_focus_body">Silence jusqu'à %1$s, soyez présent dans votre prière</string>
+    <string name="focus_unmute">Réactiver le son</string>
+    <string name="focus_extend">+5 min</string>
+    <string name="focus_prayed">Prié</string>
+    <string name="focus_allow_background">Autoriser l'exécution en arrière-plan</string>
+    <string name="focus_allow_background_sub">Touchez pour autoriser. Si vous l'avez déjà fait, ignorez ceci.</string>
+    <string name="focus_needs_attention">Nécessite votre attention</string>
+    <string name="focus_notif_needed">Activer les notifications</string>
+    <string name="focus_notif_sub">Pour voir et contrôler le silence</string>
+    <string name="focus_dnd_needed">Autoriser l'accès Ne pas déranger</string>
+    <string name="focus_dnd_sub">Nécessaire pour le mode Silencieux</string>
+    <string name="focus_notif_denied_title">Notifications désactivées</string>
+    <string name="focus_notif_denied_msg">Activez les notifications dans les Paramètres pour que Focus Prière puisse afficher l'état du silence.</string>
+
+    <!-- Paramètres -->
+    <string name="menu">Menu</string>
+    <string name="general">Général</string>
+    <string name="prayer_and_alerts">Prière &amp; alertes</string>
+    <string name="about">À propos</string>
+    <string name="quran_text_source">Texte du Coran</string>
+    <string name="appearance">Apparence</string>
+    <string name="time_format">Format de l'heure</string>
+    <string name="date_formats">Formats de date</string>
+    <string name="date_format">Format de date</string>
+    <string name="hijri_date_format">Format de date hégirienne</string>
+    <string name="date_format_short">Court</string>
+    <string name="date_format_medium">Moyen</string>
+    <string name="date_format_long">Long</string>
+    <string name="date_format_slash">Barre oblique</string>
+    <string name="date_format_dash">Tiret</string>
+    <string name="date_format_dot">Point</string>
+    <string name="date_format_iso">ISO</string>
+    <string name="date_format_year_first">Année en premier</string>
+    <string name="date_format_compact">Compact</string>
+    <string name="date_format_us">Style américain</string>
+    <string name="date_format_weekday">Jour de la semaine</string>
+    <string name="date_format_weekday_compact">Jour de la semaine compact</string>
+    <string name="date_format_day_month">Jour &amp; mois</string>
+    <string name="date_format_compact_year_first">Compact, année en premier</string>
+    <string name="language">Langue</string>
+    <string name="location">Position</string>
+    <string name="use_current_location">Utiliser la position actuelle</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
+    <string name="delete_collection_title">Supprimer la collection ?</string>
+    <string name="delete_collection_message">Ceci retire %1$d verset(s) de « %2$s ». Cette action est irréversible.</string>
+    <string name="remove_from_collection">Retirer de la collection</string>
+    <string name="open_settings">Ouvrir les Paramètres</string>
+    <string name="location_permission_needed">Accès à la position nécessaire</string>
+    <string name="location_permission_rationale">Noor e Islam a besoin de votre position pour calculer avec précision les horaires de prière et la direction de la Qibla. Activez-la dans les Paramètres.</string>
+    <string name="search_city">Rechercher une ville</string>
+    <string name="saved">Enregistré</string>
+    <string name="search_city_hint_title">Trouvez votre ville</string>
+    <string name="search_city_hint_message">Saisissez le nom d'une ville pour définir votre position et obtenir des horaires de prière précis.</string>
+    <string name="clear_search">Effacer la recherche</string>
+    <string name="no_cities_found">Aucune ville trouvée</string>
+    <string name="try_a_different_search">Essayez une autre orthographe</string>
+    <string name="prayer_calculation">Calcul des prières</string>
+    <string name="calculation_method">Méthode de calcul</string>
+    <string name="madhab">Madhab</string>
+    <string name="high_latitude_rule">Règle des hautes latitudes</string>
+    <string name="fajr_angle">Angle du Fajr</string>
+    <string name="isha_angle">Angle de l'Isha</string>
+    <string name="manual_adjustments">Ajustements manuels</string>
+    <string name="notifications">Notifications</string>
+    <string name="prayer_focus">Focus Prière</string>
+    <string name="auto_silence_around_prayer">Silence automatique autour de la prière</string>
+    <string name="all_alerts_on">Toutes les alertes activées</string>
+    <string name="all_alerts_off">Toutes les alertes désactivées</string>
+    <string name="light">Clair</string>
+    <string name="dark">Sombre</string>
+    <string name="system">Système</string>
+    <string name="time_12_hour">12 heures</string>
+    <string name="time_24_hour">24 heures</string>
+
+    <!-- Notifications -->
+    <string name="all_alerts">Toutes les alertes</string>
+    <string name="notif_needs_attention">Nécessite votre attention</string>
+    <string name="notif_permission_needed">Activer les notifications</string>
+    <string name="notif_permission_sub">Autorisez les notifications pour recevoir les rappels de prière</string>
+    <string name="notif_exact_alarm_needed">Autoriser la synchronisation précise</string>
+    <string name="notif_exact_alarm_sub">Pour que les rappels se déclenchent exactement à l'heure prévue</string>
+    <string name="notif_permission_denied_title">Notifications bloquées</string>
+    <string name="notif_permission_denied_msg">Activez les notifications pour %1$s dans les Paramètres pour recevoir les rappels.</string>
+    <string name="master_switch_for_every_reminder">Interrupteur principal pour chaque rappel</string>
+    <string name="remind_before">Rappeler avant</string>
+    <string name="minutes_before">Minutes avant</string>
+    <string name="at_prayer_time">À l'heure de la prière</string>
+    <string name="jamaat_reminder">Rappel de jamaat</string>
+    <string name="jamaat_after_start">Jamaat après le début</string>
+    <string name="after_isha">Après Isha</string>
+    <string name="surah_al_kahf">Sourate Al-Kahf</string>
+    <string name="friday">Vendredi</string>
+    <string name="reminder_time">Heure du rappel</string>
+    <string name="monday">Lundi</string>
+    <string name="tuesday">Mardi</string>
+    <string name="wednesday">Mercredi</string>
+    <string name="thursday">Jeudi</string>
+    <string name="saturday">Samedi</string>
+    <string name="sunday">Dimanche</string>
+    <string name="tahajjud">Tahajjud</string>
+    <string name="last_third_of_the_night">Dernier tiers de la nuit</string>
+    <string name="ishraq">Ishraq</string>
+    <string name="mid_morning">Milieu de matinée</string>
+    <string name="dhikr">Dhikr</string>
+    <string name="morning_adhkar">Adhkar du matin</string>
+    <string name="after_fajr">Après Fajr</string>
+    <string name="evening_adhkar">Adhkar du soir</string>
+    <string name="after_asr">Après Asr</string>
+
+    <string-array name="week_days">
+        <item>L</item>
+        <item>M</item>
+        <item>M</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
+
+    <!-- Calendrier hégirien -->
+    <string name="muharram">Muharram</string>
+    <string name="safar">Safar</string>
+    <string name="rabi_al_awwal">Rabi al-Awwal</string>
+    <string name="rabi_al_thani">Rabi al-Thani</string>
+    <string name="jumada_al_awwal">Jumada al-Awwal</string>
+    <string name="jumada_al_thani">Jumada al-Thani</string>
+    <string name="rajab">Rajab</string>
+    <string name="shaban">Sha'ban</string>
+    <string name="ramadan">Ramadan</string>
+    <string name="shawwal">Shawwal</string>
+    <string name="dhu_al_qadah">Dhu al-Qa'dah</string>
+    <string name="dhu_al_hijjah">Dhu al-Hijjah</string>
+    <string name="date_adjustment">Ajustement de date</string>
+    <string name="days">jours</string>
+    <string name="hijri_era">AH</string>
+    <!-- Duas & Adhkar -->
+    <string name="dua_of_the_day">Dua du jour</string>
+    <string name="collections">Collections</string>
+    <string name="favorites">Favoris</string>
+    <string name="surahs">Sourates</string>
+    <string name="surahs_label">Sourates</string>
+    <string name="n_duas">%1$d duas</string>
+    <string name="morning">Matin</string>
+    <string name="evening">Soir</string>
+    <string name="after_prayer">Après la prière</string>
+    <string name="everyday_duas">Duas quotidiennes</string>
+    <string name="tasbihat">Tasbihat</string>
+    <string name="start_on_tasbih">Démarrer sur Tasbih</string>
+    <string name="add_your_own">Ajouter le vôtre</string>
+    <string name="search_duas">Rechercher des duas…</string>
+    <string name="no_duas_found">Aucune dua trouvée</string>
+    <string name="try_a_different_dua_search">Essayez une autre recherche</string>
+    <string name="arabic">Arabe</string>
+    <string name="translation">Traduction</string>
+    <string name="translation_optional">Traduction (facultatif)</string>
+    <string name="repetitions">Répétitions</string>
+    <string name="added_by_you">Ajouté par vous</string>
+    <string name="save">Enregistrer</string>
+    <string name="see_more">Voir plus</string>
+    <string name="see_less">Voir moins</string>
+    <string name="completed">Terminé</string>
+    <string name="use_beads">Utiliser les perles</string>
+    <string name="all">Tout</string>
+    <string name="dua">Du'a</string>
+    <string name="zikr">Zikr</string>
+    <string name="new_collection">Nouvelle collection</string>
+    <string name="collection_name">Nom de la collection</string>
+    <string name="create_collection_n">Créer la collection (%1$d)</string>
+    <string name="n_items">%1$d éléments</string>
+    <string name="azkar_and_dua">Azkar &amp; Du'a</string>
+    <string name="continue_caps">CONTINUER</string>
+    <string name="today_caps">AUJOURD'HUI</string>
+    <string name="after_prayer_progress">%1$s · %2$d / %3$d</string>
+    <string name="tab_all">Tout</string>
+    <string name="tab_dua">Du'a</string>
+    <string name="tab_zikr">Zikr</string>
+    <string name="tab_tasbih">Tasbih</string>
+    <string name="everyday_dua">Du'a quotidien</string>
+    <string name="your_collections">Vos collections</string>
+    <string name="see_all_n">Tout voir (%1$d)</string>
+    <string name="count_of_total">%1$d / %2$d</string>
+    <string name="times_count">×%1$d</string>
+
+    <string name="names_of_allah">99 Noms d'Allah</string>
+    <string name="azkar">Azkar (aperçu)</string>
+
+    <string name="adjust_hijri_hint">Ajustez si votre date hégirienne locale diffère de celle calculée.</string>
+
+    <!-- Position : villes suggérées + invites de méthode de calcul -->
+    <string name="suggested">Suggéré</string>
+    <string name="sehri">Sehri</string>
+    <string name="iftar">Iftar</string>
+    <string name="sehri_info_title">Sehri, Imsak &amp; Iftar</string>
+    <string name="sehri_info_body">Le Sehri (repas avant l'aube) se termine au Fajr, vous pouvez donc manger jusqu'à la véritable aube. L'Imsak est une précaution d'environ 10 minutes avant le Fajr, pour arrêter tôt par sécurité. L'Iftar est au Maghrib, quand vous rompez le jeûne.</string>
+    <string name="sehri_info_regions">Les quatre écoles s'accordent sur le fait que la limite véritable est le Fajr, c'est pourquoi la plupart des musulmans arrêtent à ce moment-là. Suivre l'Imsak est plutôt une coutume régionale, courante en Asie du Sud, en Turquie et en Indonésie, tandis que le Golfe et une grande partie du monde arabe mangent jusqu'au Fajr. Les deux sont valables, choisissez ce que vous suivez.</string>
+    <string name="sehri_ends_at">Le Sehri se termine à</string>
+    <string name="switch_method_title">Changer de méthode de calcul ?</string>
+    <string name="switch_method_body">Vous êtes maintenant à %1$s, qui utilise la méthode %2$s. Passer à cette méthode pour des horaires de prière précis ?</string>
+    <string name="switch_to_method">Passer à la méthode %1$s</string>
+    <string name="keep_current_method">Garder la méthode actuelle</string>
+    <string name="location_changed">Position modifiée</string>
+    <string name="update_prayer_times_q">Mettre à jour les horaires de prière pour votre nouvelle position ?</string>
+    <string name="update">Mettre à jour</string>
+    <string name="keep_place">Garder %1$s</string>
+    <string name="also_switch_to">Passer aussi à %1$s</string>
+    <string name="method_official_explainer">%1$s est la méthode de calcul officielle là où vous êtes actuellement. Les régions utilisent des méthodes différentes, donc certains horaires de prière varient légèrement.</string>
+    <string name="why_switch_method">Pourquoi changer de méthode ?</string>
+
+    <!-- Messages de notification (titre + corps par type). %1$s=prière, %2$d=minutes, corps « à l'heure » %1$s=heure -->
+    <string name="notif_prayer_at_title">C'est l'heure de %1$s</string>
+    <string name="notif_prayer_at_body">Prenez un instant, tournez-vous vers Allah · %1$s</string>
+    <string name="notif_prayer_before_title">%1$s approche</string>
+    <string name="notif_prayer_before_body">Préparez votre cœur à vous tenir devant Allah</string>
+    <string name="notif_prayer_jamaat_title">Heure du jamaat de %1$s</string>
+    <string name="notif_prayer_jamaat_body">Rejoignez le jamaat et gagnez plus de récompense</string>
+    <string name="notif_jumuah_before_title">Le Jumu'ah approche</string>
+    <string name="notif_jumuah_before_body">Rendez-vous à la mosquée pour la prière du vendredi</string>
+    <string name="notif_jumuah_jamaat_title">Heure du Jumu'ah</string>
+    <string name="notif_jumuah_jamaat_body">Rejoignez le jamaat</string>
+    <string name="notif_mulk_body">Récitez ce soir pour votre protection jusqu'au matin</string>
+    <string name="notif_kahf_body">Lumière entre les deux vendredis</string>
+    <string name="something_went_wrong_with_your_saved_data">Un problème est survenu avec vos données enregistrées</string>
+    <string name="sorry_app_started_fresh_set_up_again">Désolé, nous n'avons pas pu l'ouvrir, l'application a donc redémarré à zéro. Vos signets, notes et surlignages devront être reconfigurés.</string>
+    <string name="got_it">Compris</string>
+    <string name="a_calm_place_to_read">Un endroit calme pour lire</string>
+    <string name="fourteen_reading_themes">Quatorze thèmes de lecture</string>
+    <string name="five_quran_fonts_your_size_and_spacing">Cinq polices coraniques, votre taille et votre espacement</string>
+    <string name="works_fully_offline_no_account">Fonctionne entièrement hors ligne, sans compte</string>
+    <string name="keep_your_place">Gardez votre place</string>
+    <string name="everything_stays_on_your_device">Tout reste sur votre appareil</string>
+    <string name="bookmark_any_ayah">Mettez n'importe quel verset en signet</string>
+    <string name="write_notes_and_highlight_in_colour">Écrivez des notes et surlignez en couleur</string>
+    <string name="resume_exactly_where_you_stopped">Reprenez exactement là où vous vous êtes arrêté</string>
+    <string name="set_your_own_reminders">Définissez vos propres rappels</string>
+    <string name="read_on_your_own_schedule">Lisez selon votre propre rythme</string>
+    <string name="al_mulk_al_kahf_and_any_surah_you_choose">Al-Mulk, Al-Kahf et toute sourate de votre choix</string>
+    <string name="pick_the_days_and_the_time">Choisissez les jours et l'heure</string>
+    <string name="every_reminder_starts_off_until_you_turn_it_on">Chaque rappel est désactivé par défaut jusqu'à ce que vous l'activiez</string>
+    <string name="next">Suivant</string>
+    <string name="start_reading">Commencer la lecture</string>
+    <string name="a_few_minutes_with_the_quran">Quelques minutes avec le Coran</string>
+    <string name="continue_from_ayah_x">Continuer depuis le verset %1$d</string>
+    <string name="surah_reminders">Rappels de sourates</string>
+    <string name="add_reminder">Ajouter un rappel</string>
+    <string name="no_reminders_yet">Aucun rappel pour l'instant</string>
+    <string name="reminder">Rappel</string>
+    <string name="name_this_reminder">Nommez ce rappel</string>
+    <string name="start_at_ayah_1_to_x">Commencer au verset (1-%1$d)</string>
+    <string name="days_of_the_week">Jours de la semaine</string>
+    <string name="notif_daily_reading_body">Votre moment quotidien avec le Coran</string>
+    <string name="notif_morning_body">Commencez votre journée dans le rappel d'Allah</string>
+    <string name="notif_evening_body">Terminez votre journée proche d'Allah</string>
+    <string name="notif_tahajjud_body">Levez-vous pour la prière de nuit, Il écoute</string>
+    <string name="notif_ishraq_body">Priez après le lever du soleil pour une grande récompense</string>
+    <string name="notif_verse_sub">Un verset quotidien pour méditer</string>
+    <!-- Libellés d'aperçu de l'heure de déclenchement affichés sous chaque alerte -->
+    <string name="notif_at_before">Avant</string>
+    <string name="notif_at_jamaah">Jamaat</string>
+    <!-- Canaux de notification Android (catégories réglables dans les paramètres système) -->
+    <string name="notification_channel_group">Rappels</string>
+    <string name="notification_channel_prayer">Rappels de prière</string>
+    <string name="notification_channel_quran">Rappels du Coran</string>
+    <string name="notification_channel_dhikr">Rappels de dhikr</string>
+    <string name="notification_channel_nafil">Rappels nafil</string>
+    <string name="notification_channel_verse">Verset quotidien</string>
+    <string name="notifications_prayers">Prières</string>
+    <string name="notifications_quran">Coran</string>
+    <string name="notifications_nafil">Nafil</string>
+    <string name="widgets">Widgets</string>
+    <string name="prayer_card">Carte de prière</string>
+    <string name="widgets_summary">Horaires de prière sur votre écran d'accueil</string>
+    <string name="bookmarks">Signets</string>
+    <string name="no_bookmarks">Aucun signet pour l'instant</string>
+    <string name="bookmarks_hint">Touchez un verset dans le lecteur pour le mettre en signet et y accéder rapidement.</string>
+    <string name="loading_bookmarks">Chargement des signets…</string>
+    <string name="no_highlights">Aucun surlignage pour l'instant</string>
+    <string name="highlights_hint">Touchez un verset pour le surligner, ou faites un appui long pour des actions rapides.</string>
+    <string name="loading_highlights">Chargement des surlignages…</string>
+    <string name="background_opacity">Opacité de l'arrière-plan</string>
+    <string name="add_to_home_screen">Ajouter à l'écran d'accueil</string>
+    <string name="card_color">Couleur de la carte</string>
+    <string name="widget_times">Horaires de prière</string>
+    <string name="widget_bar">Barre de prière</string>
+    <string name="widget_card">Carte de prière</string>
+    <string name="widget_minimal">Prière minimaliste</string>
+    <string name="widget_current">Prière actuelle</string>
+    <string name="widget_tile">Tuile de prière</string>
+    <string name="widget_icon">Icône de prière</string>
+    <string name="widget_add">Ajouter à l'accueil</string>
+    <string name="widget_customize">Personnaliser</string>
+
+    <!-- Coran -->
+    <string name="revelation_makkah">La Mecque</string>
+    <string name="revelation_madinah">Médine</string>
+    <string name="surah_ruku_count">%1$s rukus</string>
+    <string name="surah_ayah_count">%1$s versets</string>
+    <string name="sajda_recommended">Prosternation recommandée</string>
+    <string name="sajda_obligatory">Prosternation obligatoire</string>
+    <string name="quran_tab_surah">Sourates</string>
+    <string name="quran_tab_juz">Juz</string>
+    <string name="quran_tab_bookmarks">Signets</string>
+    <string name="quran_tab_notes">Notes</string>
+    <string name="quran_tab_highlights">Surlignages</string>
+    <string name="quran_tab_collections">Collections</string>
+    <string name="loading_collections">Chargement des collections…</string>
+    <string name="no_collections">Aucune collection pour l'instant</string>
+    <string name="collections_hint">Ajoutez un verset à une collection depuis sa feuille d'actions pour commencer.</string>
+    <string name="collection_empty_hint">Aucun verset dans cette collection pour l'instant.</string>
+    <string name="collection_details_empty_message">Ajoutez un verset à cette collection depuis sa feuille d'actions.</string>
+    <string name="quran_theme_system">Système</string>
+    <string name="quran_theme_light">Clair</string>
+    <string name="quran_theme_paper">Papier</string>
+    <string name="quran_theme_sepia">Sépia</string>
+    <string name="quran_theme_green">Vert</string>
+    <string name="quran_theme_mint">Menthe</string>
+    <string name="quran_theme_dark">Sombre</string>
+    <string name="quran_theme_night">Nuit</string>
+    <string name="quran_theme_charcoal">Charbon</string>
+    <string name="quran_theme_slate">Ardoise</string>
+    <string name="continue_reading">Continuer la lecture</string>
+    <string name="start_from_beginning">Commencer depuis le début</string>
+    <string name="reading_settings">Paramètres de lecture</string>
+    <string name="text_size">Taille du texte</string>
+    <string name="line_spacing">Interligne</string>
+    <string name="script">Écriture</string>
+    <string name="theme">Thème</string>
+    <string name="content">Contenu</string>
+    <string name="reading">Lecture</string>
+    <string name="tafsir_source">Source du tafsir</string>
+    <string name="word_by_word">Mot à mot</string>
+    <string name="auto_scroll">Défilement automatique</string>
+    <string name="pause">Pause</string>
+    <string name="auto_scroll_speed">Vitesse</string>
+    <string name="keep_screen_on">Garder l'écran allumé</string>
+    <string name="screen_stays_on_hint">L'écran reste allumé pendant la lecture</string>
+    <string name="jump_to">Aller à</string>
+    <string name="jump_to_search_placeholder">Sourate, verset, ou 2:255…</string>
+    <string name="jump_to_hint_title">Trouvez votre emplacement</string>
+    <string name="jump_to_hint_message">Saisissez un nom de sourate, un numéro, ou une référence de verset comme 2:255.</string>
+    <string name="no_surahs_found">Aucune sourate trouvée</string>
+    <string name="exact_match">Correspondance exacte</string>
+    <string name="recent">Récent</string>
+    <string name="favorites_and_common">Favoris &amp; courants</string>
+    <string name="jump_to_surah_field">Sourate</string>
+    <string name="jump_to_ayah_field">Verset</string>
+    <string name="jump_to_choose_surah">Choisissez une sourate</string>
+    <string name="search_quran">Rechercher dans le Coran</string>
+    <string name="search_quran_placeholder">Rechercher dans le Coran…</string>
+    <string name="search_quran_hint_title">Recherchez dans le Coran</string>
+    <string name="search_quran_hint_message">Recherchez un texte de verset, un nom de sourate, ou une référence comme 2:255.</string>
+    <string name="no_ayahs_found">Aucun verset trouvé</string>
+    <string name="more_actions">Plus d'actions</string>
+    <string name="surah_number_ayah_number">Sourate %1$d · Verset %2$d</string>
+    <string name="collection_item_count">%1$s (%2$d)</string>
+
+    <string name="action_audio">Audio</string>
+    <string name="action_play_recitation">Lire la récitation</string>
+    <string name="action_repeat_loop">Répéter / boucler</string>
+    <string name="action_play_from_here">Lire à partir d'ici</string>
+    <string name="action_choose_reciter">Choisir un récitateur</string>
+
+    <string name="action_personal">Personnel</string>
+    <string name="action_bookmark">Signet</string>
+    <string name="action_add_to_collection">Ajouter à une collection</string>
+    <string name="collection_name_placeholder">Nom de la collection</string>
+    <string name="rename_collection">Renommer la collection</string>
+    <string name="no_collections_found">Aucune collection trouvée</string>
+    <string name="no_collections_found_hint">Essayez un autre nom, ou créez-en une nouvelle ci-dessous</string>
+    <string name="action_add_note">Ajouter une note</string>
+    <string name="edit_note">Modifier la note</string>
+    <string name="remove_note">Supprimer la note</string>
+    <string name="note_placeholder">Écrivez une note…</string>
+    <string name="no_notes">Aucune note pour l'instant</string>
+    <string name="notes_hint">Touchez l'icône de note sur un verset, ou ajoutez-en une depuis la feuille d'actions.</string>
+    <string name="loading_notes">Chargement des notes…</string>
+    <string name="action_highlight">Surligner</string>
+    <string name="action_mark_memorized">Marquer comme mémorisé</string>
+
+    <string name="action_sharing">Partage</string>
+    <string name="share_as_text">Partager en texte</string>
+    <string name="action_share_image">Partager en image</string>
+    <string name="action_share_link">Partager le lien</string>
+
+    <string name="action_navigation">Navigation</string>
+    <string name="action_go_to_surah_start">Aller au début de la sourate</string>
+    <string name="action_set_last_read">Définir comme dernière lecture</string>
+
+    <string name="action_study">Étude</string>
+    <string name="action_related_ayahs">Versets liés</string>
+    <string name="action_context_revelation">Contexte de la révélation</string>
+
+    <string name="font_uthmani">Uthmani</string>
+    <string name="font_naskh">Naskh</string>
+    <string name="font_madani">Madani</string>
+    <string name="font_scheherazade">Scheherazade</string>
+    <string name="font_indopak">IndoPak</string>
+    <!-- Studio (éditeur de partage) -->
+    <string name="mode_templates">Modèles</string>
+    <string name="mode_layout">Disposition</string>
+    <string name="mode_background">Arrière-plan</string>
+    <string name="mode_gradient">Dégradé</string>
+    <string name="mode_fonts">Polices</string>
+    <string name="mode_size">Taille</string>
+    <string name="mode_style">Style</string>
+    <string name="mode_align">Alignement</string>
+    <string name="mode_content">Contenu</string>
+    <string name="mode_stickers">Autocollants</string>
+    <string name="mode_card">Carte</string>
+    <string name="mode_effects">Effets</string>
+    <string name="mode_dates">Dates</string>
+    <string name="mode_presets">Préréglages</string>
+    <string name="mode_branding">Détails</string>
+    <string name="pattern_none">Aucun</string>
+    <string name="pattern_grain">Grain</string>
+    <string name="pattern_geometric">Géométrique</string>
+
+    <string name="continue_editing">Continuer l'édition</string>
+    <string name="no_designs_saved">Aucun design enregistré pour l'instant</string>
+    <string name="watermark">Filigrane</string>
+    <string name="position">Position</string>
+    <string name="bismillah">Bismillah</string>
+    <string name="trans_size">Taille trad.</string>
+    <string name="size">Taille</string>
+    <string name="line_height">Ligne</string>
+    <string name="opacity">Opacité</string>
+    <string name="shadow">Ombre</string>
+    <string name="radius">Rayon</string>
+    <string name="blur">Flou</string>
+    <string name="vignette">Vignette</string>
+    <string name="shadow_spread">Étendue de l'ombre</string>
+    <string name="overlay">Superposition</string>
+    <string name="off">Désactivé</string>
+    <string name="top">Haut</string>
+    <string name="bottom">Bas</string>
+    <string name="show_less">Afficher moins</string>
+    <string name="view_all">Tout afficher</string>
+    <string name="generate">Générer</string>
+    <string name="generate_again">Générer à nouveau</string>
+    <string name="tap_generate_for_fresh_looks">Touchez Générer pour de nouveaux styles</string>
+    <string name="tap_generate_for_fresh_gradients">Touchez Générer pour de nouveaux dégradés</string>
+    <string name="surah_name">Nom de la sourate</string>
+    <string name="transliteration_coming_soon">Translittération (bientôt disponible)</string>
+    <string name="hijri_date">Date hégirienne</string>
+    <string name="gregorian">Grégorien</string>
+    <string name="reset_to_default">Réinitialiser par défaut</string>
+    <string name="save_as_creation">Enregistrer comme création</string>
+    <string name="share">Partager</string>
+    <string name="play">Lire</string>
+    <string name="include_ayah_text">Inclure le texte du verset</string>
+    <string name="add_a_message">Ajouter un message</string>
+    <string name="shared_with">Partagé avec %1$s</string>
+    <string name="leave_this_design">Quitter ce design ?</string>
+    <string name="you_have_unsaved_changes">Vous avez des modifications non enregistrées.</string>
+    <string name="save_exit">Enregistrer &amp; quitter</string>
+    <string name="my_creations">Mes créations</string>
+    <string name="saved_to_gallery">Enregistré dans la galerie</string>
+    <string name="couldnt_save">Impossible d'enregistrer</string>
+    <string name="photos_access_blocked">Accès aux photos bloqué</string>
+    <string name="allow_x_to_add_photos_in_settings">Autorisez %1$s à ajouter des photos dans les Paramètres pour enregistrer vos images de versets.</string>
+    <string name="just_now">À l'instant</string>
+    <string name="quran_label_arabic">القرآن</string>
+    <string name="quran_theme_warm_gray">Gris chaud</string>
+    <string name="quran_theme_amber">Ambre</string>
+    <string name="quran_theme_dusty_blue">Bleu poussière</string>
+    <string name="quran_theme_dim_gray">Gris terne</string>
+
+    <string name="copy_ayah">Copier le verset</string>
+    <string name="open_ayah">Ouvrir le verset</string>
+    <string name="remove_highlight">Supprimer le surlignage</string>
+    <string name="remove_bookmark">Supprimer le signet</string>
+    <string name="share_to_studio">Partager vers Studio</string>
+
+    <string name="search">Rechercher</string>
+    <string name="no_methods_found">Aucune méthode trouvée</string>
+    <string name="placeholder">espace réservé</string>
+    <string name="display">Affichage</string>
+    <string name="version_summary">Version %1$s</string>
+    <string name="dimension_format">%1$d × %2$d</string>
+    <string name="percent_format">%1$d%%</string>
+    <string-array name="surah_meanings">
+        <item>L’Ouverture</item>
+        <item>La Vache</item>
+        <item>La Famille d’Imran</item>
+        <item>Les Femmes</item>
+        <item>La Table servie</item>
+        <item>Les Bestiaux</item>
+        <item>Les Murailles</item>
+        <item>Le Butin</item>
+        <item>Le Repentir</item>
+        <item>Jonas</item>
+        <item>Hud</item>
+        <item>Joseph</item>
+        <item>Le Tonnerre</item>
+        <item>Abraham</item>
+        <item>Al-Hijr</item>
+        <item>Les Abeilles</item>
+        <item>Le Voyage nocturne</item>
+        <item>La Caverne</item>
+        <item>Marie</item>
+        <item>Ta-Ha</item>
+        <item>Les Prophètes</item>
+        <item>Le Pèlerinage</item>
+        <item>Les Croyants</item>
+        <item>La Lumière</item>
+        <item>Le Discernement</item>
+        <item>Les Poètes</item>
+        <item>Les Fourmis</item>
+        <item>Les Récits</item>
+        <item>L’Araignée</item>
+        <item>Les Romains</item>
+        <item>Luqman</item>
+        <item>La Prosternation</item>
+        <item>Les Coalisés</item>
+        <item>Saba</item>
+        <item>Le Créateur</item>
+        <item>Ya-Sin</item>
+        <item>Ceux qui sont rangés</item>
+        <item>Sad</item>
+        <item>Les Groupes</item>
+        <item>Le Pardonneur</item>
+        <item>Les Versets détaillés</item>
+        <item>La Consultation</item>
+        <item>Les Ornements</item>
+        <item>La Fumée</item>
+        <item>L’Agenouillée</item>
+        <item>Les Dunes</item>
+        <item>Muhammad</item>
+        <item>La Victoire éclatante</item>
+        <item>Les Appartements</item>
+        <item>Qaf</item>
+        <item>Les Ouragans</item>
+        <item>Le Mont</item>
+        <item>L’Étoile</item>
+        <item>La Lune</item>
+        <item>Le Tout Miséricordieux</item>
+        <item>L’Événement</item>
+        <item>Le Fer</item>
+        <item>La Discussion</item>
+        <item>L’Exode</item>
+        <item>L’Éprouvée</item>
+        <item>Les Rangs</item>
+        <item>Le Vendredi</item>
+        <item>Les Hypocrites</item>
+        <item>La Grande Perte</item>
+        <item>Le Divorce</item>
+        <item>L’Interdiction</item>
+        <item>La Royauté</item>
+        <item>La Plume</item>
+        <item>L’Inéluctable</item>
+        <item>Les Voies d’ascension</item>
+        <item>Noé</item>
+        <item>Les Djinns</item>
+        <item>L’Enveloppé</item>
+        <item>Le Revêtu d’un manteau</item>
+        <item>La Résurrection</item>
+        <item>L’Homme</item>
+        <item>Les Envoyés</item>
+        <item>La Nouvelle</item>
+        <item>Les Arracheurs</item>
+        <item>Il s’est renfrogné</item>
+        <item>L’Obscurcissement</item>
+        <item>La Fente</item>
+        <item>Les Fraudeurs</item>
+        <item>La Déchirure</item>
+        <item>Les Constellations</item>
+        <item>L’Astre nocturne</item>
+        <item>Le Très-Haut</item>
+        <item>L’Enveloppante</item>
+        <item>L’Aube</item>
+        <item>La Cité</item>
+        <item>Le Soleil</item>
+        <item>La Nuit</item>
+        <item>Le Matin</item>
+        <item>L’Expansion</item>
+        <item>Le Figuier</item>
+        <item>L’Adhérence</item>
+        <item>La Destinée</item>
+        <item>La Preuve</item>
+        <item>Le Séisme</item>
+        <item>Les Coursiers</item>
+        <item>Le Fracas</item>
+        <item>La Rivalité</item>
+        <item>Le Temps</item>
+        <item>Le Calomniateur</item>
+        <item>L’Éléphant</item>
+        <item>Quraysh</item>
+        <item>L’Ustensile</item>
+        <item>L’Abondance</item>
+        <item>Les Mécréants</item>
+        <item>Le Secours</item>
+        <item>Les Fibres</item>
+        <item>Le Monothéisme pur</item>
+        <item>L’Aube naissante</item>
+        <item>Les Hommes</item>
+    </string-array>
+</resources>
