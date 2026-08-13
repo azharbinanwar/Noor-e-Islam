@@ -49,7 +49,10 @@ import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.util.NameMatch
 import com.kodeelite.nooreislam.core.util.fromArabicIndicDigits
+import com.kodeelite.nooreislam.core.util.latinKeys
+import com.kodeelite.nooreislam.core.util.nameMatch
 import com.kodeelite.nooreislam.core.util.normalizeArabic
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
@@ -104,11 +107,26 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
 
         val textQuery = NUMBER.replace(normalized, "").trim().normalizeArabic()
         val textResults = if (textQuery.isEmpty()) emptyList() else {
-            val surahJumps = surahs.filter {
-                it.nameTransliterated.contains(textQuery, ignoreCase = true) ||
-                    it.nameEnglish.contains(textQuery, ignoreCase = true) ||
-                    it.nameArabic.normalizeArabic().contains(textQuery)
-            }.mapNotNull { bySurahAyah[it.number to 1] }
+            // surah names rank by match tier — exact spelling, then variant/prefix, and only when
+            // neither hit anything does the typo tier speak (so "bakara" works, "baqar" never fuzzes)
+            val queryKeys = latinKeys(textQuery)
+            val noMatch = NameMatch.entries.size
+            val byTier = surahs.mapNotNull { s ->
+                val latin = minOf(
+                    nameMatch(queryKeys, s.nameTransliterated)?.ordinal ?: noMatch,
+                    nameMatch(queryKeys, s.nameEnglish)?.ordinal ?: noMatch,
+                )
+                val tier = when {
+                    latin < noMatch -> latin
+                    s.nameArabic.normalizeArabic().contains(textQuery) -> NameMatch.PARTIAL.ordinal
+                    else -> return@mapNotNull null
+                }
+                s to tier
+            }.sortedBy { it.second }
+            val bestTier = byTier.firstOrNull()?.second
+            val surahJumps = byTier
+                .filter { it.second < NameMatch.FUZZY.ordinal || bestTier == NameMatch.FUZZY.ordinal }
+                .mapNotNull { bySurahAyah[it.first.number to 1] }
             val bodyMatches = searchAyahs.filter { it.text.contains(textQuery) }
                 .mapNotNull { realById[it.id] }
             surahJumps + bodyMatches
