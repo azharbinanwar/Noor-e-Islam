@@ -178,6 +178,9 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         meta
     }
 
+    // every jump landing — ruku top or exact ayah — keeps this much air above it instead of
+    // touching the bar; a negative scroll offset is how a LazyList shows space above the item
+    val jumpBreathPx = with(LocalDensity.current) { 12.dp.toPx() }
     // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
     var justJumpedAyah by remember { mutableStateOf<Ayah?>(null) }
     LaunchedEffect(rukus) {
@@ -186,7 +189,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
             // target > 0 means a real deep link (Jump To, search, bookmarks, notes…) — flash it on landing.
             // A plain default open (Al-Fatihah, target 0) never flashes.
             if (target > 0) {
-                listState.scrollToItem(target)
+                listState.scrollToItem(target, -jumpBreathPx.roundToInt())
                 justJumpedAyah = rukus[target].firstOrNull { it.surah == surah && it.ayah == ayah }
             }
             scrolled = true
@@ -206,7 +209,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     fun jumpTo(targetSurah: Int, targetAyah: Int) {
         val target = rukus.indexOfFirst { r -> r.any { it.surah == targetSurah && it.ayah == targetAyah } }.coerceAtLeast(0)
         scope.launch {
-            listState.scrollToItem(target)
+            listState.scrollToItem(target, -jumpBreathPx.roundToInt())
             justJumpedAyah = rukus.getOrNull(target)?.firstOrNull { it.surah == targetSurah && it.ayah == targetAyah }
         }
     }
@@ -268,10 +271,11 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                             onLongSelect = { quickHighlight = it },
                             onNoteTap = { viewingNote = it },
                             flashTarget = justJumpedAyah,
-                            // precise scroll-into-view for whichever ayah we just jumped to, since a coarse
-                            // scrollToItem(ruku index) can only land on the ruku's top, not this specific ayah
-                            targetAyah = justJumpedAyah,
-                            onTargetLocated = { offsetPx -> scope.launch { listState.scrollToItem(i, offsetPx.roundToInt()) } },
+                            // no per-ayah refinement — every jump lands on the ruku's top exactly like
+                            // opening a surah at ayah 1, with the flash marking the ayah in its context;
+                            // pinning the ayah to the very top scrolled the surah header and context away
+                            targetAyah = null,
+                            onTargetLocated = {},
                         )
                     }
                 }

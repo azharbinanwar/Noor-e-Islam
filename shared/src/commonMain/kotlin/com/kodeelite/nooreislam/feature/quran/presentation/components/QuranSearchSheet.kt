@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -27,7 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
@@ -82,7 +87,9 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
     // any digits in the query are treated as a surah/ayah reference (in either order — whichever
     // ordering is a real surah:ayah combo wins), on top of, not instead of, the text match below.
     // A lone number is ambiguous (surah N, or ayah N of every surah that has one) so both are offered.
-    val results = remember(query, searchAyahs, realById, bySurahAyah, surahs) {
+    // `matches` is every hit; `results` is what the list renders. Counting the full set costs nothing
+    // extra (the filter already walks all ayahs), so the header can show the true total past the cap.
+    val matches = remember(query, searchAyahs, realById, bySurahAyah, surahs) {
         val trimmed = query.trim()
         if (trimmed.isEmpty()) return@remember emptyList()
 
@@ -103,7 +110,6 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
                     it.nameArabic.normalizeArabic().contains(textQuery)
             }.mapNotNull { bySurahAyah[it.number to 1] }
             val bodyMatches = searchAyahs.filter { it.text.contains(textQuery) }
-                .take(QuranDefaults.QURAN_SEARCH_RESULT_LIMIT)
                 .mapNotNull { realById[it.id] }
             surahJumps + bodyMatches
         }
@@ -113,8 +119,10 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
 
     AppBottomSheet(
         onDismiss = onDismiss,
-        title = stringResource(Res.string.search_quran),
+        // no title at all — the search field is the header and gives the sheet its context
         fillHeight = true,
+        // the results LazyColumn below scrolls itself — every match renders, composed on demand
+        scrollBody = false,
         header = {
             // no forced direction — query can be Arabic, English (surah name), or a numeric reference,
             // so the field just follows the ambient app locale like any other input; pinned above the
@@ -127,6 +135,12 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
                 trailing = if (query.isNotEmpty()) {
                     { IconButton(onClick = { query = "" }) { Icon(Lucide.X, stringResource(Res.string.clear_search), tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp)) } }
                 } else null,
+            )
+            if (matches.isNotEmpty()) Text(
+                "${matches.size} results", // locale pass pending
+                style = MaterialTheme.typography.labelSmall,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.padding(top = 6.dp),
             )
         },
     ) {
@@ -146,20 +160,29 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
                     },
                 )
             }
-            results.isEmpty() -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            matches.isEmpty() -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 StateView(
                     title = stringResource(Res.string.no_ayahs_found),
                     message = stringResource(Res.string.try_a_different_search),
                     modifier = Modifier.padding(top = 24.dp),
                 )
             }
-            else -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                results.forEachIndexed { i, a ->
-                    QuranSearchResultItem(
-                        ayah = a,
-                        position = TilePosition.at(i, results.size),
-                        onClick = { onOpen(a.surah, a.ayah); onDismiss() },
-                    )
+            else -> {
+                // the text part of the query, normalized the same way the match ran — what the rows highlight
+                val tokens = remember(query) {
+                    NUMBER.replace(query.trim().fromArabicIndicDigits(), "").trim().normalizeArabic()
+                        .split(' ').filter { it.isNotEmpty() }
+                }
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    items(matches.size, key = { matches[it].id }) { i ->
+                        val a = matches[i]
+                        QuranSearchResultItem(
+                            ayah = a,
+                            highlight = tokens,
+                            position = TilePosition.at(i, matches.size),
+                            onClick = { onOpen(a.surah, a.ayah); onDismiss() },
+                        )
+                    }
                 }
             }
         }
@@ -172,10 +195,22 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
 // isn't on Ayah, so it's resolved in here (produceState + the already-cached QuranRepository.surahs()),
 // not passed in by the caller.
 @Composable
-private fun QuranSearchResultItem(ayah: Ayah, position: TilePosition, onClick: () -> Unit) {
+private fun QuranSearchResultItem(ayah: Ayah, highlight: List<String>, position: TilePosition, onClick: () -> Unit) {
     val colors = AppTheme.colors
     val surahName by produceState(ayah.surah.toString(), ayah.surah) {
         value = QuranRepository.surahs().firstOrNull { it.number == ayah.surah }?.nameTransliterated ?: ayah.surah.toString()
+    }
+    // matched words get a tinted background. Whole words, not character offsets: the match ran on
+    // normalized text and the row shows full tashkeel, so positions don't line up — words do.
+    val tint = colors.primary.copy(alpha = 0.15f)
+    val ayahText = remember(ayah.text, highlight) {
+        if (highlight.isEmpty()) AnnotatedString(ayah.text) else buildAnnotatedString {
+            ayah.text.split(' ').forEachIndexed { i, word ->
+                if (i > 0) append(' ')
+                val hit = highlight.any { word.normalizeArabic().contains(it) }
+                if (hit) withStyle(SpanStyle(background = tint)) { append(word) } else append(word)
+            }
+        }
     }
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Column(
@@ -196,7 +231,7 @@ private fun QuranSearchResultItem(ayah: Ayah, position: TilePosition, onClick: (
             Row(verticalAlignment = Alignment.CenterVertically) {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     Text(
-                        text = ayah.text,
+                        text = ayahText,
                         style = MaterialTheme.typography.titleMedium,
                         fontFamily = FontFamily(Font(QuranDefaults.FONT.res)),
                         color = colors.onSurface,

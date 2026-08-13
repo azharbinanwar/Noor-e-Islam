@@ -49,6 +49,7 @@ fun AppBottomSheet(
     fillHeight: Boolean = false,                          // true = body fills to the max height, so it stays put while a list filters
     skipPartiallyExpanded: Boolean = true,               // false = open at a half detent; drag the handle up to expand
     scrimAlpha: Float = SHEET_SCRIM_ALPHA,               // 0f = float as a non-dimming overlay (no scrim, no drawer blur)
+    scrollBody: Boolean = true,                          // false = content scrolls itself (e.g. hosts a LazyColumn) — a LazyColumn can't live inside the sheet's own scroll
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
@@ -89,7 +90,7 @@ fun AppBottomSheet(
             Column(
                 Modifier.fillMaxWidth()
                     .then(if (fillHeight) Modifier.weight(1f) else Modifier.heightIn(max = maxSheetHeight))
-                    .verticalScroll(rememberScrollState())
+                    .then(if (scrollBody) Modifier.verticalScroll(rememberScrollState()) else Modifier)
                     .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = if (footer == null) 16.dp else 8.dp),
                 content = content,
             )

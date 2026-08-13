@@ -32,8 +32,6 @@ object QuranDefaults {
     val COMMON_SURAHS = listOf(18, 36, 55, 67)  // Al-Kahf, Ya-Sin, Ar-Rahman, Al-Mulk — Jump To's shortcut list
     const val JUMP_TO_DEFAULT_SURAH = 1  // Jump To's pick before the user has ever picked one — Al-Fatihah
 
-    const val QURAN_SEARCH_RESULT_LIMIT = 50  // QuranSearchSheet caps matches shown
-
     const val KEEP_SCREEN_ON = true  // default on — the whole point is not fighting the lock timer mid-ayah
 
     const val READING_DWELL_MS = 10_000L  // minimum time on the reader before a visit counts as "reading" for Resume, not a glance
