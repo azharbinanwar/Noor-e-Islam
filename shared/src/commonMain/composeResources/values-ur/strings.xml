@@ -605,6 +605,7 @@
     <string name="search_quran_hint_title">قرآن تلاش کریں</string>
     <string name="search_quran_hint_message">آیت کا متن، سورت کا نام یا 2:255 جیسا حوالہ تلاش کریں۔</string>
     <string name="no_ayahs_found">کوئی آیت نہیں ملی</string>
+    <string name="x_results">%1$s نتائج</string>
     <string name="more_actions">مزید اختیارات</string>
     <string name="surah_number_ayah_number">سورۃ %1$d · آیت %2$d</string>
     <string name="collection_item_count">%1$s (%2$d)</string>

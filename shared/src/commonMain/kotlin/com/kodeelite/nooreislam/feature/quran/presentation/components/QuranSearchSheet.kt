@@ -49,11 +49,13 @@ import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.components.shapeFor
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.util.NameMatch
 import com.kodeelite.nooreislam.core.util.fromArabicIndicDigits
 import com.kodeelite.nooreislam.core.util.latinKeys
 import com.kodeelite.nooreislam.core.util.nameMatch
 import com.kodeelite.nooreislam.core.util.normalizeArabic
+import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
@@ -68,6 +70,7 @@ import com.kodeelite.nooreislam.resources.search_quran_hint_title
 import com.kodeelite.nooreislam.resources.search_quran_placeholder
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import com.kodeelite.nooreislam.resources.try_a_different_search
+import com.kodeelite.nooreislam.resources.x_results
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
@@ -155,7 +158,7 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
                 } else null,
             )
             if (matches.isNotEmpty()) Text(
-                "${matches.size} results", // locale pass pending
+                stringResource(Res.string.x_results, tr(matches.size.toString(), matches.size.toArabicIndic())),
                 style = MaterialTheme.typography.labelSmall,
                 color = colors.onSurfaceVariant,
                 modifier = Modifier.padding(top = 6.dp),

@@ -598,6 +598,7 @@
     <string name="search_quran_hint_title">Recherchez dans le Coran</string>
     <string name="search_quran_hint_message">Recherchez un texte de verset, un nom de sourate, ou une référence comme 2:255.</string>
     <string name="no_ayahs_found">Aucun verset trouvé</string>
+    <string name="x_results">%1$s résultats</string>
     <string name="more_actions">Plus d'actions</string>
     <string name="surah_number_ayah_number">Sourate %1$d · Verset %2$d</string>
     <string name="collection_item_count">%1$s (%2$d)</string>
