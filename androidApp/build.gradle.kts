@@ -61,11 +61,15 @@ android {
             }
         }
     }
+    sourceSets {
+        // dev-build resources (icon, "(dev)" label) live in src/dev, not the default src/debug
+        getByName("debug") { res.srcDirs("src/dev/res") }
+    }
     buildTypes {
         getByName("debug") {
             // installs alongside the store build: own icon, own data, "(dev)" label
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
         }
         getByName("release") {
             isMinifyEnabled = false
