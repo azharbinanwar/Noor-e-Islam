@@ -46,12 +46,19 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Trash2
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.displayName
+import com.kodeelite.nooreislam.core.folderName
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.SystemBackHandler
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.permissions.AppPermission
+import com.kodeelite.nooreislam.core.permissions.PermissionDeniedSheet
+import com.kodeelite.nooreislam.core.permissions.PermissionStatus
+import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.util.GalleryService
 import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toPngBytes
@@ -88,6 +95,8 @@ import com.kodeelite.nooreislam.resources.my_creations
 import com.kodeelite.nooreislam.resources.save_exit
 import com.kodeelite.nooreislam.resources.saved_to_gallery
 import com.kodeelite.nooreislam.resources.share
+import com.kodeelite.nooreislam.resources.allow_x_to_add_photos_in_settings
+import com.kodeelite.nooreislam.resources.photos_access_blocked
 import com.kodeelite.nooreislam.resources.shared_with
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -121,6 +130,7 @@ fun StudioScreen(
     }
 
     // all editing state + history now lives in the holder; the screen delegates to it (read + write)
+    val edition = koinInject<AppEdition>()
     val repo = koinInject<StudioCreationRepository>()
     val scope = rememberCoroutineScope()
     val store = remember { StudioStore(initialConfig, repo, scope) }
@@ -146,6 +156,8 @@ fun StudioScreen(
     val captureLayer = rememberGraphicsLayer()
     var sharing by remember { mutableStateOf(false) }   // spinner on Share while we capture + encode
     var savingToGallery by remember { mutableStateOf(false) }   // spinner on the Download button
+    var photoDeniedOpen by remember { mutableStateOf(false) }
+    val perms = rememberPermissionService()
     var galleryHint by remember { mutableStateOf<String?>(null) }   // transient "Saved to gallery" pill
     var shareSheetOpen by remember { mutableStateOf(false) }   // review/edit caption before sharing
     var confirmBackOpen by remember { mutableStateOf(false) }   // confirm discard before leaving with unsaved edits
@@ -283,9 +295,17 @@ fun StudioScreen(
                             savingToGallery = true
                             scope.launch {
                                 try {
+                                    when (perms.request(AppPermission.PhotoLibrary)) {
+                                        PermissionStatus.Granted -> Unit
+                                        PermissionStatus.DeniedPermanently -> {
+                                            photoDeniedOpen = true
+                                            return@launch
+                                        }
+                                        else -> return@launch
+                                    }
                                     val bitmap = captureLayer.toImageBitmap()
                                     val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
-                                    galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png"))
+                                    galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png", edition.folderName))
                                         getString(Res.string.saved_to_gallery) else getString(Res.string.couldnt_save)
                                 } finally {
                                     savingToGallery = false
@@ -320,12 +340,19 @@ fun StudioScreen(
                 }
             }
 
+            if (photoDeniedOpen) PermissionDeniedSheet(
+                title = stringResource(Res.string.photos_access_blocked),
+                message = stringResource(Res.string.allow_x_to_add_photos_in_settings, edition.displayName()),
+                onOpenSettings = { photoDeniedOpen = false; perms.openAppSettings() },
+                onDismiss = { photoDeniedOpen = false },
+            )
+
             if (shareSheetOpen) {
                 ShareSheet(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
                     ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
                             "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
-                    otherText = stringResource(Res.string.shared_with),
+                    otherText = stringResource(Res.string.shared_with, edition.displayName()),
                     onDismiss = { shareSheetOpen = false },
                     onShare = { caption ->
                         shareSheetOpen = false

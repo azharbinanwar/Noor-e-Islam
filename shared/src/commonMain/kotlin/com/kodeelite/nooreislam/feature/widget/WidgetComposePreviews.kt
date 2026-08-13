@@ -32,7 +32,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Sun
 import com.kodeelite.nooreislam.core.enums.WidgetColor
 import com.kodeelite.nooreislam.resources.Res
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import org.jetbrains.compose.resources.painterResource
 
 // 1:1 Compose replicas of the widgets. The box is the real cell footprint: a screen has COLUMNS cells across,
@@ -68,7 +68,7 @@ fun PrayerTimesPreview(color: WidgetColor, opacity: Float, modifier: Modifier = 
     CellWidget(cols = 4, rows = 1, modifier = modifier) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(20))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.06f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.06f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(34), y = fdp(34)).size(fdp(150))
             )
             Row(Modifier.fillMaxSize().padding(horizontal = fdp(18), vertical = fdp(10)), verticalAlignment = Alignment.CenterVertically) {
@@ -100,7 +100,7 @@ fun PrayerBarPreview(color: WidgetColor, opacity: Float, modifier: Modifier = Mo
     CellWidget(cols = 4, rows = 1, modifier = modifier) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(20))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.06f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.06f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(28), y = fdp(28)).size(fdp(120))
             )
             Row(Modifier.fillMaxSize().padding(horizontal = fdp(18)), verticalAlignment = Alignment.CenterVertically) {
@@ -141,7 +141,7 @@ fun PrayerCardPreview(color: WidgetColor, opacity: Float, modifier: Modifier = M
     CellWidget(cols = 4, rows = 2, modifier = modifier) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(28))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.06f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.06f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(36), y = fdp(36)).size(fdp(160))
             )
             Column(Modifier.fillMaxSize().padding(start = fdp(20), end = fdp(20), top = fdp(18), bottom = fdp(16))) {
@@ -195,7 +195,7 @@ fun PrayerMinimalPreview(color: WidgetColor, opacity: Float, modifier: Modifier 
     CellWidget(cols = 2, rows = 2, modifier = modifier, square = true) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(20))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.07f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.07f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(26), y = fdp(26)).size(fdp(120))
             )
             Column(Modifier.fillMaxSize().padding(fdp(18)), verticalArrangement = Arrangement.Center) {
@@ -222,7 +222,7 @@ fun PrayerCurrentPreview(color: WidgetColor, opacity: Float, modifier: Modifier 
     CellWidget(cols = 2, rows = 2, modifier = modifier, square = true) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(20))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.07f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.07f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(26), y = fdp(26)).size(fdp(120))
             )
             Column(
@@ -245,7 +245,7 @@ fun PrayerTilePreview(color: WidgetColor, opacity: Float, modifier: Modifier = M
     CellWidget(cols = 2, rows = 2, modifier = modifier, square = true) {
         Box(Modifier.fillMaxSize().clip(RoundedCornerShape(fdp(20))).background(cardBrush(color, opacity))) {
             Icon(
-                painterResource(Res.drawable.miqat_logo), null, tint = on.copy(alpha = 0.07f),
+                painterResource(Res.drawable.noor_e_islam_logo), null, tint = on.copy(alpha = 0.07f),
                 modifier = Modifier.align(Alignment.BottomEnd).offset(x = fdp(26), y = fdp(26)).size(fdp(120))
             )
             Column(

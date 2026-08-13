@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Deliberately invisible: without an animated icon the system splash falls back to the launcher
+     icon, which flashed before the Compose animation. This keeps the splash pure green. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+</shape>

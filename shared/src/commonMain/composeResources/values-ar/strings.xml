@@ -5,12 +5,15 @@
     <string name="day_streak">سلسلة الأيام</string>
     <string name="verse_of_the_day">آية اليوم</string>
     <string name="surah_al_mulk">سورة الملك</string>
+    <string name="daily_quran_reminder">تذكير القراءة اليومي</string>
+    <string name="every_day">كل يوم</string>
     <string name="recite_before_sleep_after_isha">اقرأها قبل النوم · 30 دقيقة بعد العشاء</string>
     <string name="clear">مسح</string>
     <string name="mark_prayer">تسجيل %1$s</string>
     <string name="tap_header_to_preview_each_prayer">اضغط على الرأس لمعاينة كل صلاة</string>
 
     <string name="app_name">نور الإسلام</string>
+    <string name="app_name_quran">نور القرآن</string>
     <string name="your_daily_prayer_companion">رفيقك اليومي للصلاة</string>
     <string name="home">الرئيسية</string>
     <string name="prayer_times">مواقيت الصلاة</string>
@@ -163,7 +166,6 @@
     <string name="your_companion_for_every_prayer">رفيقك في كل صلاة: مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
     <string name="get_started">ابدأ</string>
     <string name="skip">تخطّي</string>
-    <string name="next">التالي</string>
     <string name="status_now">الآن</string>
     <string name="status_soon">قريباً</string>
     <string name="status_upcoming">قادم</string>
@@ -262,6 +264,7 @@
     <string name="general">عام</string>
     <string name="prayer_and_alerts">الصلاة والتنبيهات</string>
     <string name="about">حول التطبيق</string>
+    <string name="quran_text_source">نص القرآن</string>
     <string name="appearance">المظهر</string>
     <string name="time_format">صيغة الوقت</string>
     <string name="date_formats">صيغ التاريخ</string>
@@ -310,6 +313,7 @@
     <string name="prayer_focus">تركيز الصلاة</string>
     <string name="auto_silence_around_prayer">كتم تلقائي حول الصلاة</string>
     <string name="all_alerts_on">جميع التنبيهات مفعّلة</string>
+    <string name="all_alerts_off">جميع التنبيهات متوقفة</string>
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
     <string name="system">النظام</string>
@@ -321,8 +325,16 @@
     <string name="notif_needs_attention">يتطلب انتباهك</string>
     <string name="notif_permission_needed">تفعيل الإشعارات</string>
     <string name="notif_permission_sub">اسمح بالإشعارات لتصلك تذكيرات الصلاة</string>
+    <string name="notif_exact_alarm_needed">السماح بالتوقيت الدقيق</string>
+    <string name="notif_exact_alarm_sub">لتصل التذكيرات في وقتها بالضبط</string>
+    <string name="exact_alarm_access">إذن التوقيت الدقيق</string>
+    <string name="allowed">مسموح</string>
+    <string name="not_allowed">غير مسموح</string>
+    <string name="allow">سماح</string>
+    <string name="reminder_permission_title">السماح بتشغيل التذكيرات</string>
+    <string name="reminder_permission_body">يفعّل الإشعارات والتوقيت الدقيق — مطلوب مرة واحدة، وينطبق على كل تذكير أدناه</string>
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
-    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق نور الإسلام من الإعدادات لتصلك التذكيرات.</string>
+    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق %1$s من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
     <string name="remind_before">التذكير قبل</string>
     <string name="minutes_before">الدقائق قبل الوقت</string>
@@ -349,14 +361,15 @@
     <string name="evening_adhkar">أذكار المساء</string>
     <string name="after_asr">بعد العصر</string>
 
+    <!-- Monday-first, matching the default array and DayOfWeek.ordinal — the code indexes by position -->
     <string-array name="week_days">
-        <item>ح</item>
         <item>ن</item>
         <item>ث</item>
         <item>ر</item>
         <item>خ</item>
         <item>ج</item>
         <item>س</item>
+        <item>ح</item>
     </string-array>
 
     <!-- Hijri calendar -->
@@ -462,6 +475,35 @@
     <string name="notif_jumuah_jamaat_body">صلِّ مع الجماعة</string>
     <string name="notif_mulk_body">اقرأها الليلة، حفظٌ حتى الصباح</string>
     <string name="notif_kahf_body">نورٌ بين الجمعتين</string>
+    <string name="something_went_wrong_with_your_saved_data">حدث خطأ في بياناتك المحفوظة</string>
+    <string name="sorry_app_started_fresh_set_up_again">نعتذر، تعذّر فتحها فبدأ التطبيق من جديد. ستحتاج إلى إعداد العلامات والملاحظات والتظليلات مرة أخرى.</string>
+    <string name="got_it">حسناً</string>
+    <string name="a_calm_place_to_read">مكان هادئ للقراءة</string>
+    <string name="fourteen_reading_themes">أربعة عشر مظهراً للقراءة</string>
+    <string name="five_quran_fonts_your_size_and_spacing">خمسة خطوط للمصحف، بحجمك وتباعدك</string>
+    <string name="works_fully_offline_no_account">يعمل بلا إنترنت، وبلا حساب</string>
+    <string name="keep_your_place">احفظ موضعك</string>
+    <string name="everything_stays_on_your_device">كل شيء يبقى على جهازك</string>
+    <string name="bookmark_any_ayah">ضع علامة على أي آية</string>
+    <string name="write_notes_and_highlight_in_colour">اكتب ملاحظات وظلّل بالألوان</string>
+    <string name="resume_exactly_where_you_stopped">تابع من حيث توقفت تماماً</string>
+    <string name="set_your_own_reminders">اضبط تذكيراتك</string>
+    <string name="read_on_your_own_schedule">اقرأ وفق جدولك</string>
+    <string name="al_mulk_al_kahf_and_any_surah_you_choose">الملك والكهف وأي سورة تختارها</string>
+    <string name="pick_the_days_and_the_time">اختر الأيام والوقت</string>
+    <string name="every_reminder_starts_off_until_you_turn_it_on">كل تذكير يبدأ متوقفاً حتى تفعّله</string>
+    <string name="next">التالي</string>
+    <string name="start_reading">ابدأ القراءة</string>
+    <string name="a_few_minutes_with_the_quran">دقائق قليلة مع القرآن</string>
+    <string name="continue_from_ayah_x">تابع من الآية %1$d</string>
+    <string name="surah_reminders">تذكيرات السور</string>
+    <string name="add_reminder">إضافة تذكير</string>
+    <string name="no_reminders_yet">لا توجد تذكيرات بعد</string>
+    <string name="reminder">تذكير</string>
+    <string name="name_this_reminder">سمِّ هذا التذكير</string>
+    <string name="start_at_ayah_1_to_x">ابدأ من الآية (1-%1$d)</string>
+    <string name="days_of_the_week">أيام الأسبوع</string>
+    <string name="notif_daily_reading_body">لحظتك اليومية مع القرآن</string>
     <string name="notif_morning_body">ابدأ يومك بذكر الله</string>
     <string name="notif_evening_body">اختم يومك قريبًا من الله</string>
     <string name="notif_tahajjud_body">قم لصلاة الليل، فهو يسمعك</string>
@@ -664,13 +706,15 @@
     <string name="play">تشغيل</string>
     <string name="include_ayah_text">تضمين نص الآية</string>
     <string name="add_a_message">أضف رسالة</string>
-    <string name="shared_with">تمت المشاركة عبر نور الإسلام</string>
+    <string name="shared_with">تمت المشاركة عبر %1$s</string>
     <string name="leave_this_design">مغادرة التصميم؟</string>
     <string name="you_have_unsaved_changes">لديك تغييرات غير محفوظة.</string>
     <string name="save_exit">حفظ وخروج</string>
     <string name="my_creations">أعمالي</string>
     <string name="saved_to_gallery">تم الحفظ في المعرض</string>
     <string name="couldnt_save">تعذر الحفظ</string>
+    <string name="photos_access_blocked">الوصول إلى الصور محظور</string>
+    <string name="allow_x_to_add_photos_in_settings">اسمح لتطبيق %1$s بإضافة الصور من الإعدادات لحفظ صور الآيات.</string>
     <string name="just_now">الآن</string>
     <string name="quran_label_arabic">القرآن</string>
     <string name="quran_theme_warm_gray">رمادي دافئ</string>

@@ -5,9 +5,14 @@ import com.kodeelite.nooreislam.core.datetime.currentDate
 import com.kodeelite.nooreislam.core.datetime.currentTime
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.NotificationType
+import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.notifications.data.NotificationScheduleRepository
+import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
+import com.kodeelite.nooreislam.feature.notifications.data.firesOn
+import com.kodeelite.nooreislam.feature.notifications.store.SurahReminderStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationSettings
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationTestStore
@@ -34,6 +39,7 @@ import kotlin.time.Duration.Companion.minutes
 // The brain: settings + prayer times -> the nearest 63 alerts. Rebuilds on any change; writes the OS + the mirror.
 object NotificationScheduler {
     private val repo: NotificationScheduleRepository by lazy { KoinPlatform.getKoin().get<NotificationScheduleRepository>() }
+    private val reminderStore: SurahReminderStore by lazy { KoinPlatform.getKoin().get<SurahReminderStore>() }
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val mutex = Mutex()
     private var started = false
@@ -44,7 +50,10 @@ object NotificationScheduler {
         started = true
         rebuildAsync()
         scope.launch {
-            combine(MiqatTimesStore.today, NotificationStore.settings) { t, s -> t to s }
+            // language included: copy is resolved here, not at fire time, so a switch must reschedule
+            combine(MiqatTimesStore.today, NotificationStore.settings, reminderStore.reminders, SettingsStore.language) { t, s, r, l ->
+                listOf(t, s, r, l)
+            }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect { rebuild() }
@@ -76,7 +85,8 @@ object NotificationScheduler {
         // Master gate: when All alerts is off, no real alerts are scheduled (test slots still fire — dev tool).
         val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
             val date = today.plus(d, DateTimeUnit.DAY)
-            eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz)
+            eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz) +
+                    reminderEventsFor(date, reminderStore.reminders.value, tz)
         }
         val test = NotificationTestStore.items.value.map {
             NotificationEvent("test:${it.id}", "test", NotificationType.REMINDER, it.fireAtMillis)
@@ -106,10 +116,16 @@ object NotificationScheduler {
             if (j.jamaat) add(ev(Miqat.jumuahKey, NotificationType.JAMAAT, d + j.jamaatAfter.mins(), ds))
         }
         // Surahs
-        if (s.mulk.enabled) at(Miqat.Isha)?.let { add(ev(NotificationTarget.MULK, NotificationType.REMINDER, it + s.mulk.afterIsha.mins(), ds)) }
+        if (s.mulk.enabled) at(Miqat.Isha)?.let {
+            add(ev(NotificationTarget.MULK, NotificationType.REMINDER, it + s.mulk.afterIsha.mins(), ds, AppRoute.QuranReader(67, 1)))
+        }
         if (friday && s.kahf.enabled) {
             val k = LocalDateTime(date, LocalTime(s.kahf.hour, s.kahf.minute)).toInstant(tz).toEpochMilliseconds()
-            add(ev(NotificationTarget.KAHF, NotificationType.REMINDER, k, ds))
+            add(ev(NotificationTarget.KAHF, NotificationType.REMINDER, k, ds, AppRoute.QuranReader(18, 1)))
+        }
+        if (s.dailyReading.enabled) {
+            val r = LocalDateTime(date, LocalTime(s.dailyReading.hour, s.dailyReading.minute)).toInstant(tz).toEpochMilliseconds()
+            add(ev(NotificationTarget.DAILY_READING, NotificationType.REMINDER, r, ds, AppRoute.Quran))
         }
         // Dhikr
         if (s.dhikr.morningEnabled) at(Miqat.Fajr)?.let {
@@ -118,7 +134,8 @@ object NotificationScheduler {
                     NotificationTarget.MORNING,
                     NotificationType.REMINDER,
                     it + s.dhikr.afterFajr.mins(),
-                    ds
+                    ds,
+                    AppRoute.Azkar,
                 )
             )
         }
@@ -128,7 +145,8 @@ object NotificationScheduler {
                     NotificationTarget.EVENING,
                     NotificationType.REMINDER,
                     it + s.dhikr.afterAsr.mins(),
-                    ds
+                    ds,
+                    AppRoute.Azkar,
                 )
             )
         }
@@ -137,8 +155,21 @@ object NotificationScheduler {
         if (s.nafil.ishraq) at(Miqat.Ishraq)?.let { add(ev(NotificationTarget.ISHRAQ, NotificationType.REMINDER, it, ds)) }
     }
 
-    private fun ev(target: String, kind: NotificationType, fireAt: Long, date: String) =
-        NotificationEvent("$target:$kind:$date", target, kind, fireAt)
+    // User-defined reminders: one event per enabled reminder whose day mask covers this date.
+    private fun reminderEventsFor(date: LocalDate, reminders: List<SurahReminder>, tz: TimeZone): List<NotificationEvent> =
+        reminders.filter { it.enabled && it.firesOn(date.dayOfWeek) }.map { r ->
+            NotificationEvent(
+                eventKey = "${NotificationTarget.SURAH_REMINDER}:${r.id}:$date",
+                target = NotificationTarget.SURAH_REMINDER,
+                kind = NotificationType.REMINDER,
+                fireAtMillis = LocalDateTime(date, LocalTime(r.hour, r.minute)).toInstant(tz).toEpochMilliseconds(),
+                title = r.title.ifBlank { null }, // blank = never named; copy resolves the seed name
+                route = AppRoute.QuranReader(r.surah, r.ayah ?: 1),
+            )
+        }
+
+    private fun ev(target: String, kind: NotificationType, fireAt: Long, date: String, route: AppRoute? = null) =
+        NotificationEvent("$target:$kind:$date", target, kind, fireAt, route = route)
 
     private fun Int.mins() = this.minutes.inWholeMilliseconds
 }

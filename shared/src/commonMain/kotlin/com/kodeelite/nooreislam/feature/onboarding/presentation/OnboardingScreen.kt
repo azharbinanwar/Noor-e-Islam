@@ -60,6 +60,7 @@ import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Users
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.affects_asr_calculation
@@ -70,7 +71,7 @@ import com.kodeelite.nooreislam.resources.resume
 import com.kodeelite.nooreislam.resources.gentle_nudge_before_every_prayer
 import com.kodeelite.nooreislam.resources.madhab_hanafi
 import com.kodeelite.nooreislam.resources.madhab_shafi
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import com.kodeelite.nooreislam.resources.never_miss_a_prayer
 import com.kodeelite.nooreislam.resources.onboarding_before_at_time_alerts
 import com.kodeelite.nooreislam.resources.onboarding_city_presets
@@ -123,7 +124,10 @@ fun OnboardingScreen() {
     val onLast = pager.currentPage == styles.lastIndex
     var madhabIsHanafi by remember { mutableStateOf(true) }
 
-    val finish = { nav.navigate(AppRoute.Home) { popUpTo(AppRoute.Onboarding) { inclusive = true } } }
+    val finish = {
+        SettingsStore.markIntroSeen()
+        nav.navigate(AppRoute.Home) { popUpTo(AppRoute.Onboarding) { inclusive = true } }
+    }
     val top by animateColorAsState(style.top, tween(450), label = "top")
     val bottom by animateColorAsState(style.bottom, tween(450), label = "bottom")
     val accent by animateColorAsState(style.accent, tween(450), label = "accent")
@@ -262,7 +266,7 @@ private fun OnboardingIcon(icon: ImageVector, isLogo: Boolean) {
         Box(Modifier.size(96.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.12f)))
         Box(Modifier.size(76.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.08f)))
         if (isLogo) {
-            Image(painterResource(Res.drawable.miqat_logo), null, modifier = Modifier.size(62.dp))
+            Image(painterResource(Res.drawable.noor_e_islam_logo), null, modifier = Modifier.size(62.dp))
         } else {
             Icon(icon, null, tint = Color.White, modifier = Modifier.size(40.dp))
         }

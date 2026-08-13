@@ -79,6 +79,9 @@ object Now {
     /** An arbitrary stored timestamp's time, in the user's chosen 12h/24h format. */
     fun formattedTime(epochMillis: Long): String = localDateTime(epochMillis).time.format(SettingsStore.timeFormat.value.pattern)
 
+    /** A wall-clock time that isn't a timestamp (an alarm, a reminder), in the user's 12h/24h format. */
+    fun formattedTime(time: LocalTime): String = time.format(SettingsStore.timeFormat.value.pattern)
+
     /** An arbitrary stored timestamp, date + time together — each half in its own chosen format. */
     fun formattedDateTime(epochMillis: Long): String = "${formattedTimestamp(epochMillis)}, ${formattedTime(epochMillis)}"
 }

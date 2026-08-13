@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.composables.icons.lucide.SunMedium
 import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppSwitch
@@ -54,8 +56,12 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.permissions.AppPermission
+import com.kodeelite.nooreislam.core.permissions.PermissionStatus
+import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
+import com.kodeelite.nooreislam.feature.notifications.presentation.components.ExactAlarmNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
@@ -66,8 +72,10 @@ import com.kodeelite.nooreislam.resources.after_isha
 import com.kodeelite.nooreislam.resources.all_alerts
 import com.kodeelite.nooreislam.resources.at_prayer_time
 import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.daily_quran_reminder
 import com.kodeelite.nooreislam.resources.dhikr
 import com.kodeelite.nooreislam.resources.evening_adhkar
+import com.kodeelite.nooreislam.resources.every_day
 import com.kodeelite.nooreislam.resources.friday
 import com.kodeelite.nooreislam.resources.ishraq
 import com.kodeelite.nooreislam.resources.jamaat_after_start
@@ -93,23 +101,47 @@ import com.kodeelite.nooreislam.resources.surah_al_kahf
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.tahajjud
 import com.kodeelite.nooreislam.resources.verse_of_the_day
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen() {
     val nav = LocalAppNavigator.current
+    val edition = koinInject<AppEdition>()
     val c = AppTheme.colors
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val s by NotificationStore.settings.collectAsState()
     val today by MiqatTimesStore.today.collectAsState()
 
+    // Master switch stays dimmed until both are granted — same check the banners above use.
+    // Checked once on cold start, not polled: canScheduleExactAlarms() is only guaranteed accurate
+    // for a fresh process — Android kills the app outright when the user revokes it in Settings.
+    val perms = rememberPermissionService()
+    var notifGranted by remember { mutableStateOf(true) }
+    var exactAlarmGranted by remember { mutableStateOf(true) }
+    // Notifications can genuinely change while the app is running, so poll it like the banner tile
+    // does. Exact-alarm is checked once — Android only guarantees it accurate for a fresh process.
+    LaunchedEffect(Unit) {
+        while (true) {
+            notifGranted = perms.status(AppPermission.Notifications) == PermissionStatus.Granted
+            delay(1500.milliseconds)
+        }
+    }
+    LaunchedEffect(Unit) {
+        exactAlarmGranted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
+    }
+    val remindersLocked = !notifGranted || !exactAlarmGranted
+
     var kahfPicker by remember { mutableStateOf(false) }
     var taps by remember { mutableStateOf(0) } // 7 taps opens the dev test screen
     var showTest by remember { mutableStateOf(false) }
     var verseOfDay by remember { mutableStateOf(false) } // ponytail: UI shell only, not wired yet
+    var dailyReminderPicker by remember { mutableStateOf(false) }
     var sheetKey by remember { mutableStateOf<String?>(null) }
     if (showTest) {
         NotificationTestScreen(onBack = { showTest = false }); return
@@ -137,6 +169,7 @@ fun NotificationsScreen() {
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
             NotificationsNeedsAttention()
+            ExactAlarmNeedsAttention()
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true
@@ -146,14 +179,23 @@ fun NotificationsScreen() {
                         AppTileItem(
                             title = stringResource(Res.string.all_alerts),
                             subtitle = stringResource(Res.string.master_switch_for_every_reminder),
-                            trailing = { AppSwitch(checked = s.allAlerts, onCheckedChange = NotificationStore::setAllAlerts) })
+                            trailing = {
+                                AppSwitch(
+                                    checked = s.allAlerts && !remindersLocked,
+                                    enabled = !remindersLocked,
+                                    onCheckedChange = NotificationStore::setAllAlerts,
+                                )
+                            },
+                        )
                     )
                 )
             }
 
-            // off collapses the list; states stay saved
-            if (s.allAlerts) {
-                AppTileGroup(
+            // off collapses the list; states stay saved. Also collapsed while locked, even if the
+            // saved preference is still "on" — the switch above only shows on once access is granted.
+            if (s.allAlerts && !remindersLocked) {
+                // Quran app has no prayer-time engine — only the Quran reminders group applies
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.notifications_prayers),
                     items = buildList {
@@ -226,17 +268,35 @@ fun NotificationsScreen() {
 
                 val mk = s.mulk
                 val kf = s.kahf
+                val dr = s.dailyReading
                 AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.notifications_quran),
                     items = listOf(
                         AppTileItem(
+                            title = stringResource(Res.string.daily_quran_reminder),
+                            subtitle = timeSubtitle(stringResource(Res.string.every_day), LocalTime(dr.hour, dr.minute), dr.enabled),
+                            leadingIcon = Lucide.BookOpen,
+                            trailing = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    if (dr.enabled) IconButton(onClick = { dailyReminderPicker = true }) {
+                                        Icon(
+                                            Lucide.SlidersHorizontal,
+                                            contentDescription = null,
+                                            tint = c.primary
+                                        )
+                                    }
+                                    AppSwitch(checked = dr.enabled, onCheckedChange = NotificationStore::setDailyReadingEnabled)
+                                }
+                            },
+                            onClick = if (dr.enabled) ({ dailyReminderPicker = true }) else null,
+                        ),
+                        AppTileItem(
                             title = stringResource(Res.string.surah_al_mulk),
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_isha),
                                 shift(timeOf(today, Miqat.Isha), mk.afterIsha),
-                                mk.enabled,
-                                pat
+                                mk.enabled
                             ),
                             leadingIcon = Lucide.BookOpen,
                             trailing = {
@@ -248,14 +308,14 @@ fun NotificationsScreen() {
                                             tint = c.primary
                                         )
                                     }
-                                    AppSwitch(checked = mk.enabled, onCheckedChange = { NotificationStore.setMulkEnabled(it) })
+                                    AppSwitch(checked = mk.enabled, onCheckedChange = NotificationStore::setMulkEnabled)
                                 }
                             },
                             onClick = if (mk.enabled) ({ sheetKey = "mulk" }) else null,
                         ),
                         AppTileItem(
                             title = stringResource(Res.string.surah_al_kahf),
-                            subtitle = timeSubtitle(stringResource(Res.string.friday), LocalTime(kf.hour, kf.minute), kf.enabled, pat),
+                            subtitle = timeSubtitle(stringResource(Res.string.friday), LocalTime(kf.hour, kf.minute), kf.enabled),
                             leadingIcon = Lucide.BookOpen,
                             trailing = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -266,7 +326,7 @@ fun NotificationsScreen() {
                                             tint = c.primary
                                         )
                                     }
-                                    AppSwitch(checked = kf.enabled, onCheckedChange = { NotificationStore.setKahfEnabled(it) })
+                                    AppSwitch(checked = kf.enabled, onCheckedChange = NotificationStore::setKahfEnabled)
                                 }
                             },
                             onClick = if (kf.enabled) ({ kahfPicker = true }) else null,
@@ -275,7 +335,7 @@ fun NotificationsScreen() {
                 )
 
                 val d = s.dhikr
-                AppTileGroup(
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     title = stringResource(Res.string.dhikr),
                     items = listOf(
@@ -284,8 +344,7 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_fajr),
                                 shift(timeOf(today, Miqat.Fajr), d.afterFajr),
-                                d.morningEnabled,
-                                pat
+                                d.morningEnabled
                             ),
                             leadingIcon = Lucide.Sunrise,
                             trailing = {
@@ -307,8 +366,7 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.after_asr),
                                 shift(timeOf(today, Miqat.Asr), d.afterAsr),
-                                d.eveningEnabled,
-                                pat
+                                d.eveningEnabled
                             ),
                             leadingIcon = Lucide.Sunset,
                             trailing = {
@@ -328,7 +386,7 @@ fun NotificationsScreen() {
                     ),
                 )
 
-                AppTileGroup(
+                if (edition != AppEdition.QURAN) AppTileGroup(
                     modifier = Modifier.fillMaxWidth(),
                     title = stringResource(Res.string.notifications_nafil),
                     items = listOf(
@@ -337,20 +395,20 @@ fun NotificationsScreen() {
                             subtitle = timeSubtitle(
                                 stringResource(Res.string.last_third_of_the_night),
                                 timeOf(today, Miqat.LastThird),
-                                s.nafil.tahajjud,
-                                pat
+                                s.nafil.tahajjud
                             ),
                             leadingIcon = Lucide.Moon,
                             trailing = { AppSwitch(checked = s.nafil.tahajjud, onCheckedChange = NotificationStore::setTahajjud) }),
                         AppTileItem(
                             title = stringResource(Res.string.ishraq),
-                            subtitle = timeSubtitle(stringResource(Res.string.mid_morning), timeOf(today, Miqat.Ishraq), s.nafil.ishraq, pat),
+                            subtitle = timeSubtitle(stringResource(Res.string.mid_morning), timeOf(today, Miqat.Ishraq), s.nafil.ishraq),
                             leadingIcon = Lucide.SunMedium,
                             trailing = { AppSwitch(checked = s.nafil.ishraq, onCheckedChange = NotificationStore::setIshraq) }),
                     ),
                 )
 
-                AppTileGroup(
+                // parked for now — not wired to a real trigger yet
+                if (false) AppTileGroup(
                     items = listOf(
                         AppTileItem(
                             title = stringResource(Res.string.verse_of_the_day),
@@ -377,6 +435,24 @@ fun NotificationsScreen() {
                 AppButton(
                     text = stringResource(Res.string.save),
                     onClick = { NotificationStore.setKahfTime(state.hour, state.minute); kahfPicker = false },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+
+    if (dailyReminderPicker) {
+        val state = rememberTimePickerState(initialHour = s.dailyReading.hour, initialMinute = s.dailyReading.minute, is24Hour = timeFormat == TimeFormat.TwentyFour)
+        AppBottomSheet(onDismiss = { dailyReminderPicker = false }, title = stringResource(Res.string.reminder_time)) {
+            Column(
+                Modifier.fillMaxWidth().padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TimePicker(state = state)
+                AppButton(
+                    text = stringResource(Res.string.save),
+                    onClick = { NotificationStore.setDailyReadingTime(state.hour, state.minute); dailyReminderPicker = false },
                     modifier = Modifier.fillMaxWidth()
                 )
             }

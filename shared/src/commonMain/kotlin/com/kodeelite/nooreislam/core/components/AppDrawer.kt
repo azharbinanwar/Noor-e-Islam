@@ -74,7 +74,7 @@ import com.kodeelite.nooreislam.resources.developer_sandbox
 import com.kodeelite.nooreislam.resources.duas_and_adhkar
 import com.kodeelite.nooreislam.resources.home
 import com.kodeelite.nooreislam.resources.madhab
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import com.kodeelite.nooreislam.resources.prayer_times
 import com.kodeelite.nooreislam.resources.prayer_tracker
 import com.kodeelite.nooreislam.resources.qibla_compass
@@ -105,14 +105,6 @@ private val footerItems = listOf(
 /** Shared drawer state, hoisted at the nav host so navigating never rebuilds the drawer. */
 val LocalDrawerState = staticCompositionLocalOf<DrawerState> { error("LocalDrawerState not provided") }
 
-/** Counts open modal overlays (bottom sheets) so the drawer can blur the app behind them too. */
-class OverlayState {
-    var sheetCount by mutableStateOf(0)
-    var drawerGesturesEnabled by mutableStateOf(true) // a screen can switch off edge-swipe-to-open
-}
-
-val LocalOverlay = staticCompositionLocalOf<OverlayState> { error("LocalOverlay not provided") }
-
 /**
  * App-wide side navigation drawer. Hoisted once around the NavHost; open via [drawerState].
  * Items with no route yet are still shown but do nothing (built when their screen lands).
@@ -130,8 +122,6 @@ fun AppDrawer(
     val currentEntry by nav.currentBackStackEntryAsState()
     val topLevelRoutes = (drawerItems + footerItems).mapNotNull { it.route }
     val onTopLevel = topLevelRoutes.any { currentEntry?.destination?.hasRoute(it::class) == true }
-    val blurred = drawerState.targetValue == DrawerValue.Open || overlay.sheetCount > 0
-    val blurRadius by animateDpAsState(if (blurred) 18.dp else 0.dp, label = "blur")
 
     // Top-level destinations: replace instead of stacking. Back always returns to Home.
     val onSelect: (DrawerEntry) -> Unit = { entry ->
@@ -196,7 +186,7 @@ fun AppDrawer(
                 }
             }
         },
-        content = { Box(Modifier.fillMaxSize().blur(blurRadius)) { content() } },
+        content = { Box(Modifier.fillMaxSize().overlayBlur(drawerState.targetValue == DrawerValue.Open)) { content() } },
     )
 }
 
@@ -212,7 +202,7 @@ private fun DrawerHeader(onLocationClick: () -> Unit) {
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painterResource(Res.drawable.miqat_logo),
+                painterResource(Res.drawable.noor_e_islam_logo),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                 modifier = Modifier.size(30.dp),

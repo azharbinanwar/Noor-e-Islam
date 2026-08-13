@@ -11,6 +11,14 @@ import platform.CoreLocation.kCLAuthorizationStatusDenied
 import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.CoreLocation.kCLAuthorizationStatusRestricted
 import platform.Foundation.NSURL
+import platform.Photos.PHAccessLevelAddOnly
+import platform.Photos.PHAuthorizationStatus
+import platform.Photos.PHAuthorizationStatusAuthorized
+import platform.Photos.PHAuthorizationStatusDenied
+import platform.Photos.PHAuthorizationStatusLimited
+import platform.Photos.PHAuthorizationStatusNotDetermined
+import platform.Photos.PHAuthorizationStatusRestricted
+import platform.Photos.PHPhotoLibrary
 import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationOpenSettingsURLString
 import platform.UserNotifications.UNAuthorizationOptionAlert
@@ -36,6 +44,9 @@ private class IosPermissionService : PermissionService {
     override suspend fun status(permission: AppPermission): PermissionStatus = when (permission) {
         AppPermission.Location -> locationManager.authorizationStatus.toStatus()
         AppPermission.Notifications -> notificationStatus()
+        AppPermission.ExactAlarm -> PermissionStatus.Granted // no such concept on iOS
+        AppPermission.PhotoLibrary ->
+            PHPhotoLibrary.authorizationStatusForAccessLevel(PHAccessLevelAddOnly).toStatus()
     }
 
     override suspend fun request(permission: AppPermission): PermissionStatus = when (permission) {
@@ -61,6 +72,15 @@ private class IosPermissionService : PermissionService {
                 ) { granted, _ -> cont.resume(granted) }
             }
             if (granted) PermissionStatus.Granted else PermissionStatus.DeniedPermanently
+        }
+
+        AppPermission.ExactAlarm -> PermissionStatus.Granted // no such concept on iOS
+
+        // Add-only: the app writes images but never reads the library.
+        AppPermission.PhotoLibrary -> suspendCoroutine { cont ->
+            PHPhotoLibrary.requestAuthorizationForAccessLevel(PHAccessLevelAddOnly) { status ->
+                cont.resume(status.toStatus())
+            }
         }
     }
 
@@ -95,6 +115,14 @@ private class LocationAuthDelegate(
         resumed = true
         cont.resume(status.toStatus())
     }
+}
+
+// Limited counts as granted — add-only access never reads the library, so the cap doesn't apply.
+private fun PHAuthorizationStatus.toStatus(): PermissionStatus = when (this) {
+    PHAuthorizationStatusAuthorized, PHAuthorizationStatusLimited -> PermissionStatus.Granted
+    PHAuthorizationStatusDenied, PHAuthorizationStatusRestricted -> PermissionStatus.DeniedPermanently
+    PHAuthorizationStatusNotDetermined -> PermissionStatus.NotDetermined
+    else -> PermissionStatus.NotDetermined
 }
 
 private fun CLAuthorizationStatus.toStatus(): PermissionStatus = when (this) {

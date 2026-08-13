@@ -2,8 +2,19 @@ package com.kodeelite.nooreislam.core.locale
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.poppins_medium
+import com.kodeelite.nooreislam.resources.poppins_regular
+import com.kodeelite.nooreislam.resources.poppins_semibold
+import com.kodeelite.nooreislam.resources.plex_arabic_medium
+import com.kodeelite.nooreislam.resources.plex_arabic_regular
+import com.kodeelite.nooreislam.resources.plex_arabic_semibold
+import org.jetbrains.compose.resources.Font
 
 /**
  * Supported UI languages. The [label] stays in its own script (not translated — you always see "English"
@@ -15,6 +26,28 @@ enum class Language(val label: String, val code: String, val direction: LayoutDi
     Arabic("العربية", "ar", LayoutDirection.Rtl),
     // later: Urdu("اردو", "ur", LayoutDirection.Rtl), …
     ;
+
+    /**
+     * The UI face for this language — Poppins has no Arabic, so Arabic uses IBM Plex Sans Arabic —
+     * each script gets a family drawn for it. A new language brings its own here and
+     * nothing else changes; fall back to Plex Arabic, which covers both scripts.
+     */
+    val font: FontFamily
+        @Composable get() = when (this) {
+            English -> FontFamily(
+                Font(Res.font.poppins_regular, FontWeight.Normal),
+                Font(Res.font.poppins_medium, FontWeight.Medium),
+                Font(Res.font.poppins_semibold, FontWeight.SemiBold),
+                Font(Res.font.poppins_semibold, FontWeight.Bold),
+            )
+
+            else -> FontFamily(
+                Font(Res.font.plex_arabic_regular, FontWeight.Normal),
+                Font(Res.font.plex_arabic_medium, FontWeight.Medium),
+                Font(Res.font.plex_arabic_semibold, FontWeight.SemiBold),
+                Font(Res.font.plex_arabic_semibold, FontWeight.Bold),
+            )
+        }
 
     companion object {
         fun fromCode(code: String?) = entries.firstOrNull { it.code == code } ?: English
@@ -32,3 +65,6 @@ enum class Language(val label: String, val code: String, val direction: LayoutDi
  */
 @Composable
 fun <T> tr(en: T, ar: T): T = if (Language.current == Language.Arabic) ar else en
+
+/** [tr] for code outside composition — notification copy is built by the scheduler, not a screen. */
+fun <T> trValue(en: T, ar: T): T = if (SettingsStore.language.value == Language.Arabic) ar else en

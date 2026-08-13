@@ -127,10 +127,20 @@ class QuranStore(
 
     fun toggleAutoScroll() {
         _autoScrollEnabled.value = !_autoScrollEnabled.value
+        _autoScrollPaused.value = false
     }
 
     fun stopAutoScroll() {
         _autoScrollEnabled.value = false
+        _autoScrollPaused.value = false
+    }
+
+    // held down on the text: scrolling waits while the finger is on the page, resumes on release
+    private val _autoScrollPaused = MutableStateFlow(false)
+    val autoScrollPaused: StateFlow<Boolean> = _autoScrollPaused.asStateFlow()
+
+    fun setAutoScrollPaused(paused: Boolean) {
+        _autoScrollPaused.value = paused
     }
 
     private val _keepScreenOn = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, QuranDefaults.KEEP_SCREEN_ON))

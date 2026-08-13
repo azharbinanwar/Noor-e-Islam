@@ -3,12 +3,15 @@ package com.kodeelite.nooreislam.feature.notifications.scheduler
 import android.app.NotificationChannel
 import android.app.NotificationChannelGroup
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
+import com.kodeelite.nooreislam.core.navigation.encodeRoute
 import com.kodeelite.nooreislam.core.platform.AppCtx
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.notification_channel_dhikr
@@ -29,11 +32,12 @@ class NotificationReceiver : BroadcastReceiver() {
         val key = intent.getStringExtra(EXTRA_KEY) ?: return
         val title = intent.getStringExtra(EXTRA_TITLE) ?: return
         val body = intent.getStringExtra(EXTRA_BODY).orEmpty()
+        val route = intent.getStringExtra(NOTIF_ROUTE_KEY)
         android.util.Log.i("MiqatNotif", "fired $key") // dev: watch in Logcat
-        post(context, key, title, body)
+        post(context, key, title, body, route)
     }
 
-    private fun post(ctx: Context, key: String, title: String, body: String) {
+    private fun post(ctx: Context, key: String, title: String, body: String, route: String?) {
         val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         registerChannels(ctx)
         val channel = channelFor(key.substringBefore(':')) // target is the eventKey's first segment
@@ -44,6 +48,7 @@ class NotificationReceiver : BroadcastReceiver() {
             .setSmallIcon(if (iconId != 0) iconId else android.R.drawable.ic_popup_reminder)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setContentIntent(launchIntent(ctx, key, route))
             .build()
         if (NotificationManagerCompat.from(ctx).areNotificationsEnabled()) nm.notify(key.hashCode(), notification) // unique per event
     }
@@ -89,5 +94,20 @@ class NotificationReceiver : BroadcastReceiver() {
                 .putExtra(EXTRA_KEY, e.eventKey)
                 .putExtra(EXTRA_TITLE, title)
                 .putExtra(EXTRA_BODY, body)
+                .putExtra(NOTIF_ROUTE_KEY, encodeRoute(e.route))
+
+        // Reopens the launcher activity with the payload attached. Same one-key contract as iOS —
+        // MainActivity reads it and hands the raw string to PendingNavigation.
+        private fun launchIntent(ctx: Context, key: String, route: String?): PendingIntent? {
+            val launch = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName) ?: return null
+            launch.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            launch.putExtra(NOTIF_ROUTE_KEY, route)
+            return PendingIntent.getActivity(
+                ctx,
+                key.hashCode(), // unique per event, so payloads don't overwrite each other
+                launch,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
     }
 }

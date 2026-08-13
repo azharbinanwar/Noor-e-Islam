@@ -59,7 +59,7 @@ import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.SurahPlacement
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.hijri_era
-import com.kodeelite.nooreislam.resources.miqat_logo
+import com.kodeelite.nooreislam.resources.noor_e_islam_logo
 import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.quran_label_arabic
 import com.kodeelite.nooreislam.resources.quran_surah_name
@@ -191,7 +191,7 @@ fun DesignCanvas(
                 LogoCorner.BottomRight -> Alignment.BottomEnd
             }
             Icon(
-                painter = painterResource(Res.drawable.miqat_logo),
+                painter = painterResource(Res.drawable.noor_e_islam_logo),
                 contentDescription = null,
                 modifier = Modifier.align(align).padding(16.dp).size(24.dp).graphicsLayer { alpha = 0.25f },
                 tint = config.textColor

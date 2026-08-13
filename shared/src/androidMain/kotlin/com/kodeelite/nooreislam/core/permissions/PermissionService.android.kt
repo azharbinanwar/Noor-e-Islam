@@ -50,6 +50,16 @@ private class AndroidPermissionService(
     }
 
     override suspend fun request(permission: AppPermission): PermissionStatus {
+        if (permission == AppPermission.ExactAlarm) {
+            // Always opens Settings, even if already granted — lets the user manually verify the
+            // real toggle state, not just request it when missing. No runtime dialog for this one.
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = Uri.fromParts("package", context.packageName, null)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+            return if (isGranted(permission)) PermissionStatus.Granted else PermissionStatus.Denied
+        }
         if (isGranted(permission)) return PermissionStatus.Granted
         val perms = runtimePermissions(permission) ?: return PermissionStatus.Granted
         suspendCoroutine<Unit> { cont ->
@@ -79,6 +89,12 @@ private class AndroidPermissionService(
         AppPermission.Notifications ->
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     granted(android.Manifest.permission.POST_NOTIFICATIONS)
+
+        AppPermission.ExactAlarm ->
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+                    (context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager).canScheduleExactAlarms()
+
+        AppPermission.PhotoLibrary -> true // MediaStore needs no permission from minSdk 29 up
     }
 
     private fun granted(perm: String) =
@@ -95,6 +111,10 @@ private class AndroidPermissionService(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 arrayOf(android.Manifest.permission.POST_NOTIFICATIONS)
             } else null
+
+        AppPermission.ExactAlarm -> null // handled via the Settings intent in request(), not the launcher
+
+        AppPermission.PhotoLibrary -> null
     }
 }
 

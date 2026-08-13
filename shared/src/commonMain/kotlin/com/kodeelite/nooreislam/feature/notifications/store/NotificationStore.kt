@@ -23,6 +23,7 @@ data class PrayerAlertConfig(
 data class JumuahConfig(val enabled: Boolean, val remindBeforeOn: Boolean, val remindBefore: Int, val jamaat: Boolean, val jamaatAfter: Int)
 data class MulkConfig(val enabled: Boolean, val afterIsha: Int)
 data class KahfConfig(val enabled: Boolean, val hour: Int, val minute: Int)
+data class DailyReadingConfig(val enabled: Boolean, val hour: Int, val minute: Int)
 data class DhikrConfig(val morningEnabled: Boolean, val afterFajr: Int, val eveningEnabled: Boolean, val afterAsr: Int)
 data class NafilConfig(val tahajjud: Boolean, val ishraq: Boolean)
 
@@ -33,6 +34,7 @@ data class NotificationSettings(
     val jumuah: JumuahConfig,
     val mulk: MulkConfig,
     val kahf: KahfConfig,
+    val dailyReading: DailyReadingConfig,
     val dhikr: DhikrConfig,
     val nafil: NafilConfig,
 )
@@ -62,6 +64,11 @@ object NotificationStore {
             enabled = PrefsService.getBoolean(PrefConst.SURAH_KAHF, N.Kahf.enabled),
             hour = PrefsService.getInt(PrefConst.SURAH_KAHF_HOUR, N.Kahf.hour),
             minute = PrefsService.getInt(PrefConst.SURAH_KAHF_MINUTE, N.Kahf.minute),
+        ),
+        dailyReading = DailyReadingConfig(
+            enabled = PrefsService.getBoolean(PrefConst.DAILY_READING, N.DailyReading.enabled),
+            hour = PrefsService.getInt(PrefConst.DAILY_READING_HOUR, N.DailyReading.hour),
+            minute = PrefsService.getInt(PrefConst.DAILY_READING_MINUTE, N.DailyReading.minute),
         ),
         dhikr = DhikrConfig(
             morningEnabled = PrefsService.getBoolean(PrefConst.DHIKR_MORNING, N.Dhikr.morningEnabled),
@@ -136,6 +143,16 @@ object NotificationStore {
         PrefsService.putInt(PrefConst.SURAH_KAHF_HOUR, hour)
         PrefsService.putInt(PrefConst.SURAH_KAHF_MINUTE, minute)
         update { it.copy(kahf = it.kahf.copy(hour = hour, minute = minute)) }
+    }
+
+    fun setDailyReadingEnabled(v: Boolean) {
+        PrefsService.putBoolean(PrefConst.DAILY_READING, v); update { it.copy(dailyReading = it.dailyReading.copy(enabled = v)) }
+    }
+
+    fun setDailyReadingTime(hour: Int, minute: Int) {
+        PrefsService.putInt(PrefConst.DAILY_READING_HOUR, hour)
+        PrefsService.putInt(PrefConst.DAILY_READING_MINUTE, minute)
+        update { it.copy(dailyReading = it.dailyReading.copy(hour = hour, minute = minute)) }
     }
 
     // ── Dhikr ────────────────────────────────────────────────

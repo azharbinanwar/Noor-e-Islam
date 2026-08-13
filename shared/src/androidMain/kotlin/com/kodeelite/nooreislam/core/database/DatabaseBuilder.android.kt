@@ -9,5 +9,6 @@ import com.kodeelite.nooreislam.core.constants.AppConst
 fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
     val appContext = context.applicationContext
     val dbFile = appContext.getDatabasePath(AppConst.DATABASE_NAME)
+    DatabaseRecovery.recoveredThisLaunch = quarantineIfUnreadable(dbFile.absolutePath)
     return Room.databaseBuilder<AppDatabase>(appContext, dbFile.absolutePath)
 }

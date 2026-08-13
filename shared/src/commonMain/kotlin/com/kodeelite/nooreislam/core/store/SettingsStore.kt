@@ -83,6 +83,11 @@ object SettingsStore {
         _theme.value = value
     }
 
+    /** True once the intro has been through. Read at start-up to choose the first screen. */
+    fun introSeen(): Boolean = PrefsService.getBoolean(PrefConst.INTRO_SEEN, false)
+
+    fun markIntroSeen() = PrefsService.putBoolean(PrefConst.INTRO_SEEN, true)
+
     fun setLanguage(value: Language) {
         PrefsService.putString(PrefConst.LANGUAGE, value.code)
         _language.value = value

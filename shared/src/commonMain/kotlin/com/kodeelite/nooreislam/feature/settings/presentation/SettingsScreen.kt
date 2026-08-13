@@ -20,12 +20,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.CalendarDays
 import com.composables.icons.lucide.Check
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Globe
@@ -37,6 +41,8 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.Palette
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
+import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
@@ -47,18 +53,22 @@ import com.kodeelite.nooreislam.core.datetime.HijriMonth
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.Language
+import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.platform.appVersion
 import com.kodeelite.nooreislam.core.platform.canControlDnd
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
+import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
+import com.kodeelite.nooreislam.resources.all_alerts_off
 import com.kodeelite.nooreislam.resources.all_alerts_on
-import com.kodeelite.nooreislam.resources.app_name
 import com.kodeelite.nooreislam.resources.appearance
 import com.kodeelite.nooreislam.resources.auto_silence_around_prayer
+import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
@@ -73,6 +83,7 @@ import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
+import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
@@ -80,13 +91,16 @@ import com.kodeelite.nooreislam.resources.widgets
 import com.kodeelite.nooreislam.resources.widgets_summary
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
     val nav = LocalAppNavigator.current
+    val edition = koinInject<AppEdition>()
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
+    val uriHandler = LocalUriHandler.current
 
     // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
     val theme by SettingsStore.theme.collectAsState()
@@ -107,7 +121,12 @@ fun SettingsScreen() {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.settings)) },
                 navigationIcon = {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.menu)) }
+                    // the Quran app reached Settings by pushing it (no drawer), so it goes back instead of opening one
+                    if (edition == AppEdition.QURAN) {
+                        IconButton(onClick = { nav.back() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) }
+                    } else {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.menu)) }
+                    }
                 },
             )
         },
@@ -117,44 +136,57 @@ fun SettingsScreen() {
         ) {
             AppTileGroup(
                 title = stringResource(Res.string.general),
-                items = listOf(
-                    AppTileItem(
-                        leadingIcon = Lucide.Palette,
-                        title = stringResource(Res.string.appearance),
-                        subtitle = theme.label(),
-                        onClick = { showTheme = true }),
-                    AppTileItem(
-                        leadingIcon = Lucide.Clock,
-                        title = stringResource(Res.string.time_format),
-                        trailing = { SwapPill(timeFormat.label()) },
-                        onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) }),
-                    AppTileItem(
-                        leadingIcon = Lucide.Globe,
-                        title = stringResource(Res.string.language),
-                        subtitle = language.label,
-                        onClick = { showLanguage = true }),
-                    AppTileItem(
-                        leadingIcon = Lucide.LayoutGrid,
-                        title = stringResource(Res.string.widgets),
-                        subtitle = stringResource(Res.string.widgets_summary),
-                        onClick = { nav.navigate(AppRoute.Widgets) }),
-                    AppTileItem(
-                        leadingIcon = Lucide.Calendar,
-                        title = stringResource(Res.string.hijri_calendar),
-                        subtitle = "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}",
-                        trailing = {
-                            MiniStepper(
-                                hijriOffset,
-                                stringResource(Res.string.days),
-                                { SettingsStore.setHijriOffset(it) },
-                                min = -2,
-                                max = 2
-                            )
-                        },
-                    ),
-                ),
+                items = buildList {
+                    add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Palette,
+                            title = stringResource(Res.string.appearance),
+                            subtitle = theme.label(),
+                            onClick = { showTheme = true })
+                    )
+                    // time format and the Hijri offset only matter for prayer times — not shown in the reading-only app
+                    if (edition != AppEdition.QURAN) add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Clock,
+                            title = stringResource(Res.string.time_format),
+                            trailing = { SwapPill(timeFormat.label()) },
+                            onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) })
+                    )
+                    add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Globe,
+                            title = stringResource(Res.string.language),
+                            subtitle = language.label,
+                            onClick = { showLanguage = true })
+                    )
+                    // hidden for now — no Quran-specific widgets exist yet, current gallery is prayer widgets only
+                    if (edition != AppEdition.QURAN) add(
+                        AppTileItem(
+                            leadingIcon = Lucide.LayoutGrid,
+                            title = stringResource(Res.string.widgets),
+                            subtitle = stringResource(Res.string.widgets_summary),
+                            onClick = { nav.navigate(AppRoute.Widgets) })
+                    )
+                    if (edition != AppEdition.QURAN) add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Calendar,
+                            title = stringResource(Res.string.hijri_calendar),
+                            subtitle = "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}",
+                            trailing = {
+                                MiniStepper(
+                                    hijriOffset,
+                                    stringResource(Res.string.days),
+                                    { SettingsStore.setHijriOffset(it) },
+                                    min = -2,
+                                    max = 2
+                                )
+                            },
+                        )
+                    )
+                },
             )
-            AppTileGroup(
+            // Gregorian/Hijri date formats only matter where a date is actually shown — not in the reading-only app
+            if (edition != AppEdition.QURAN) AppTileGroup(
                 title = stringResource(Res.string.date_formats),
                 items = listOf(
                     AppTileItem(
@@ -169,6 +201,7 @@ fun SettingsScreen() {
                         onClick = { showHijriDateFormat = true }),
                 ),
             )
+            val notificationSettings by NotificationStore.settings.collectAsState()
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
@@ -176,7 +209,8 @@ fun SettingsScreen() {
             AppTileGroup(
                 title = stringResource(Res.string.prayer_and_alerts),
                 items = buildList {
-                    add(
+                    // location and calculation method only feed prayer-time math — not used by the reading-only app
+                    if (edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.MapPin,
                             title = stringResource(Res.string.location),
@@ -184,7 +218,7 @@ fun SettingsScreen() {
                             onClick = { nav.navigate(AppRoute.Location) })
                     )
                     // madhab · method · high-lat — one line, ellipsized by the tile if long
-                    add(
+                    if (edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.Compass,
                             title = stringResource(Res.string.prayer_calculation),
@@ -195,10 +229,10 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Bell,
                             title = stringResource(Res.string.notifications),
-                            subtitle = stringResource(Res.string.all_alerts_on),
+                            subtitle = stringResource(if (notificationSettings.allAlerts) Res.string.all_alerts_on else Res.string.all_alerts_off),
                             onClick = { nav.navigate(AppRoute.Notifications) })
                     )
-                    if (canControlDnd) add(
+                    if (canControlDnd && edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.BellOff,
                             title = stringResource(Res.string.prayer_focus),
@@ -211,9 +245,16 @@ fun SettingsScreen() {
                 title = stringResource(Res.string.about),
                 items = listOf(
                     AppTileItem(
-                        title = stringResource(Res.string.app_name),
-                        subtitle = stringResource(Res.string.version_summary, "1.0.0"),
+                        title = edition.displayName(),
+                        subtitle = stringResource(Res.string.version_summary, appVersion),
                         leadingIcon = Lucide.Info
+                    ),
+                    // Tanzil's terms: name the source and link out so readers can check for text updates
+                    AppTileItem(
+                        title = stringResource(Res.string.quran_text_source),
+                        subtitle = "Tanzil Project · tanzil.net",
+                        leadingIcon = Lucide.BookOpen,
+                        onClick = { uriHandler.openUri("https://tanzil.net") },
                     ),
                 ),
             )

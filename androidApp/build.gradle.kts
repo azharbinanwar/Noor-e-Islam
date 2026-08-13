@@ -1,4 +1,11 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+// Same upload key as the Quran app. keystore.properties and the .jks are gitignored.
+val keystoreProperties = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
 
 plugins {
     alias(libs.plugins.androidApplication)
@@ -15,6 +22,10 @@ dependencies {
     implementation(projects.shared)
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
+    // the splash animation is drawn here rather than by the system — see NoorSplash.kt
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.ui)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
@@ -29,18 +40,36 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
+    }
+    buildFeatures {
+        buildConfig = true // BuildConfig.DEBUG drives the debug ribbon in MainActivity
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        create("release") {
+            // details live in the gitignored keystore.properties; falls back to unsigned if absent
+            keystoreProperties.getProperty("storeFile")?.let {
+                storeFile = rootProject.file(it)
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
     buildTypes {
+        getByName("debug") {
+            // installs alongside the store build: own icon, own data, "(dev)" label
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         getByName("release") {
             isMinifyEnabled = false
-            // ponytail: reuse the debug keystore so release can install for perf testing.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

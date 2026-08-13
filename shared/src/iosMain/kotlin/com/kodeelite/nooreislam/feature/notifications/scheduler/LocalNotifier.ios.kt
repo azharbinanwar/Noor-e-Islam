@@ -1,5 +1,7 @@
 package com.kodeelite.nooreislam.feature.notifications.scheduler
 
+import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
+import com.kodeelite.nooreislam.core.navigation.encodeRoute
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendarUnitDay
@@ -21,6 +23,8 @@ actual object LocalNotifier {
         val content = UNMutableNotificationContent()
         content.setTitle(title)
         if (body.isNotEmpty()) content.setBody(body)
+        // Same one-key contract as Android: the delegate reads this and hands it to PendingNavigation.
+        encodeRoute(event.route)?.let { content.setUserInfo(mapOf(NOTIF_ROUTE_KEY to it)) }
         val date = NSDate.dateWithTimeIntervalSince1970(event.fireAtMillis / 1000.0)
         val units = NSCalendarUnitYear or NSCalendarUnitMonth or NSCalendarUnitDay or
                 NSCalendarUnitHour or NSCalendarUnitMinute or NSCalendarUnitSecond

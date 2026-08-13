@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
+import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.permissions.AppPermission
@@ -30,6 +32,7 @@ import com.kodeelite.nooreislam.resources.notif_permission_sub
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import kotlin.time.Duration.Companion.milliseconds
 
 // Red tile at the top when notifications aren't granted. Polls so it clears on return from Settings.
@@ -50,7 +53,7 @@ fun NotificationsNeedsAttention() {
 
     if (showDenied) PermissionDeniedSheet(
         title = stringResource(Res.string.notif_permission_denied_title),
-        message = stringResource(Res.string.notif_permission_denied_msg),
+        message = stringResource(Res.string.notif_permission_denied_msg, koinInject<AppEdition>().displayName()),
         onOpenSettings = { showDenied = false; perms.openAppSettings() },
         onDismiss = { showDenied = false },
     )

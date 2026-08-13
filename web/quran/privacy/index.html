@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Noor e Quran</title>
+<meta name="description" content="Privacy policy for the Noor e Quran app. No personal data is collected; everything stays on your device.">
+<style>
+  /* Palette lifted from AppColors.kt so the page matches the app exactly. */
+  :root {
+    --bg: #F8F9FA;
+    --card: #F3F4F5;
+    --ink: #191C1D;
+    --ink-muted: #404944;
+    --outline: #707974;
+    --primary: #1E7D55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111415;
+      --card: #191C1D;
+      --ink: #E1E3E4;
+      --ink-muted: #BFC9C3;
+      --outline: #89938D;
+      --primary: #95D3BA;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 680px; margin: 0 auto; padding: 40px 16px 72px; }
+
+  /* plain header, background from theme — same as the app's app bars */
+  header { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--primary); margin-bottom: 8px;
+  }
+  h1 { font-size: 27px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .updated { font-size: 13px; color: var(--ink-muted); margin: 0; opacity: 0.85; }
+
+  /* section titles: primary, bold, small — the AppTileGroup header treatment */
+  h2 {
+    font-size: 14px; font-weight: 700; color: var(--primary);
+    margin: 30px 0 8px; padding-left: 4px;
+  }
+
+  /* borderless, theme-filled, 16px radius — the AppTile look */
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 8px;
+  }
+  .card > :last-child { margin-bottom: 0; }
+
+  p { margin: 0 0 12px; color: var(--ink-muted); font-size: 15px; }
+  p.lead { color: var(--ink); font-size: 15.5px; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  ul { margin: 0 0 12px; padding-left: 20px; color: var(--ink-muted); font-size: 15px; }
+  li { margin-bottom: 6px; }
+  li:last-child { margin-bottom: 0; }
+
+  /* permission rows echo the app's tile list: divided, not boxed */
+  .perm { padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--outline) 25%, transparent); }
+  .perm:first-child { padding-top: 0; }
+  .perm:last-child { border-bottom: none; padding-bottom: 0; }
+  .perm-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .perm-why { font-size: 14px; color: var(--ink-muted); margin: 0; }
+
+  a { color: var(--primary); }
+
+  footer {
+    margin-top: 36px; padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--outline) 25%, transparent);
+    font-size: 13px; color: var(--ink-muted); opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Noor e Quran</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: 10 August 2026</p>
+  </header>
+
+  <div class="card">
+    <p class="lead" style="margin:0"><strong>Noor e Quran does not collect any personal data.</strong> There is no account to create, nothing is uploaded, and no information about you or your reading ever leaves your device.</p>
+  </div>
+
+  <h2>Information we collect</h2>
+  <div class="card">
+    <p>None. The app has no sign-in, no user profile, and no analytics or crash-reporting services. We do not collect your name, email address, phone number, location, contacts, or any identifier that could be used to recognise you.</p>
+  </div>
+
+  <h2>What is stored on your device</h2>
+  <div class="card">
+    <p>The app saves your reading data locally so it is there when you return. It stays in the app's private storage and is never transmitted to us or anyone else:</p>
+    <ul>
+      <li>Bookmarks, notes, highlights and collections you create</li>
+      <li>Your last reading position, so you can resume where you left off</li>
+      <li>Preferences such as reading theme, text size, script, language and reminder times</li>
+    </ul>
+    <p>Uninstalling the app removes all of it. Because nothing is stored on a server, it cannot be recovered afterwards.</p>
+  </div>
+
+  <h2>Permissions</h2>
+  <div class="card">
+    <div class="perm">
+      <div class="perm-name">Notifications</div>
+      <p class="perm-why">To show the reminders you switch on, such as Surah Al-Mulk, Surah Al-Kahf and the daily reading reminder. Reminders stay off until you enable them.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Alarms &amp; reminders</div>
+      <p class="perm-why">So a reminder arrives at the time you set, rather than whenever the system next happens to wake the app.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Run at startup</div>
+      <p class="perm-why">To restore your scheduled reminders after the device restarts, which would otherwise clear them.</p>
+    </div>
+  </div>
+  <div class="card">
+    <p style="margin:0">Reminders are generated entirely on your device. No reminder, and no information about which surah you are reading, is sent anywhere.</p>
+  </div>
+
+  <h2>Saving an image</h2>
+  <div class="card">
+    <p style="margin:0">When you share an ayah as an image from Studio, the image is created on your device and saved to your gallery or passed to whichever app you choose to share it with. We never receive a copy.</p>
+  </div>
+
+  <h2>Third parties</h2>
+  <div class="card">
+    <p style="margin:0">The app contains no advertising, no analytics, no tracking software, and no third-party accounts or services. Nothing is shared or sold, because nothing is collected in the first place.</p>
+  </div>
+
+  <h2>Children</h2>
+  <div class="card">
+    <p style="margin:0">The app is suitable for all ages and collects no personal data from anyone, including children under 13.</p>
+  </div>
+
+  <h2>Changes to this policy</h2>
+  <div class="card">
+    <p style="margin:0">If the app ever gains a feature that changes how data is handled, this page will be updated and the date at the top revised before that feature is released.</p>
+  </div>
+
+  <h2>Contact</h2>
+  <div class="card">
+    <p style="margin:0">Questions about this policy or the app are welcome at <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>.</p>
+  </div>
+
+  <footer>Noor e Quran is developed by KodeElite.</footer>
+
+</div>
+</body>
+</html>

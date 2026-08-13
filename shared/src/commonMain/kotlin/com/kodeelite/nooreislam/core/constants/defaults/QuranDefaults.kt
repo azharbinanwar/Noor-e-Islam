@@ -14,7 +14,7 @@ object QuranDefaults {
     val FONT = QuranFont.Hafs
     val HIGHLIGHT_COLOR = HighlightColor.Green
 
-    const val FONT_SP = 15        // default reading size
+    const val FONT_SP = 20        // default reading size
     const val MIN_FONT_SP = 12    // stepper floor
     const val MAX_FONT_SP = 40    // stepper ceiling
 

@@ -115,6 +115,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val colors = AppTheme.colors
     val store = koinInject<QuranStore>()
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
+    val autoScrollPaused by store.autoScrollPaused.collectAsState()
     val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
     val keepScreenOn by store.keepScreenOn.collectAsState()
     KeepScreenOn(enabled = keepScreenOn)
@@ -130,8 +131,8 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     LaunchedEffect(listState) {
         listState.interactionSource.interactions.collect { if (it is DragInteraction.Start) store.stopAutoScroll() }
     }
-    LaunchedEffect(autoScrollEnabled, autoScrollPxPerTick) {
-        if (!autoScrollEnabled) return@LaunchedEffect
+    LaunchedEffect(autoScrollEnabled, autoScrollPaused, autoScrollPxPerTick) {
+        if (!autoScrollEnabled || autoScrollPaused) return@LaunchedEffect
         while (isActive) {
             listState.scrollBy(autoScrollPxPerTick)
             delay(store.autoScrollTickInterval)
