@@ -9,10 +9,10 @@ entry is tagged with the editions it actually ships to:
 | `[islam]` | Noor e Islam only, so prayer times, qibla, tasbih, focus, tracker, widgets |
 | `[quran]` | Noor e Quran only |
 
-The two apps have their own package IDs and version codes and do not release in
-lockstep, so their Play listings get separate release notes. At release time,
-copy only the lines tagged for that app. Play caps release notes at 500
-characters, so keep what a user would notice and drop the rest.
+The two apps have their own package IDs but share one version number, so a single
+heading covers both. Their store listings still get separate release notes: at
+release time copy only the lines tagged for that app. Play caps release notes at
+500 characters, so keep what a user would notice and drop the rest.
 
 An entry marked **Android** or **iOS** only affects that platform, so it stays out
 of the other store's notes. Untagged entries apply to both.
@@ -20,6 +20,12 @@ of the other store's notes. Untagged entries apply to both.
 Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
+
+### Notes
+
+- Reminder seeds are still the temporary hourly test list. Restore the real list and remove the permission readout per the `todo` markers in `NotificationDefaults.kt` before any store build.
+
+## [1.0.0+6] - 2026-08-19
 
 ### Added
 
@@ -47,10 +53,6 @@ Newest first. Dates are the release date, not the merge date.
 - `[both]` **Android.** The exact-alarm warning banner no longer reports the permission as granted when it is not. A permission with no runtime dialog now returns a real denial instead of an optimistic one.
 - `[quran]` **Android.** The needs-attention banner keys on background restriction, which is the flag Funtouch actually exposes, so Vivo devices get a prompt that can be acted on instead of one that leads nowhere.
 - `[quran]` **Android.** Surah and daily-reading reminders post on a channel that exists. The Quran edition registers only its own channels, deletes stale ones, and no longer routes unmapped reminders to a missing channel.
-
-### Notes
-
-- Reminder seeds are still the temporary hourly test list. Restore the real list and remove the permission readout per the `todo` markers in `NotificationDefaults.kt` before any store build.
 
 ## [1.0.0] - Noor e Quran
 

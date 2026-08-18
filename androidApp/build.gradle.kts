@@ -39,7 +39,7 @@ android {
         applicationId = "com.kodeelite.nooreislam"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        versionCode = 6 // kept in step with the Quran app so one number covers both
         versionName = "1.0.0"
     }
     buildFeatures {
