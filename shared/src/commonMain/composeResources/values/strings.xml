@@ -473,6 +473,8 @@
     <string name="something_went_wrong_with_your_saved_data">Something went wrong with your saved data</string>
     <string name="sorry_app_started_fresh_set_up_again">Sorry, we couldn't open it, so the app has started fresh. Your bookmarks, notes and highlights will need setting up again.</string>
     <string name="got_it">Got it</string>
+    <string name="a_new_version_is_available">A new version is available</string>
+    <string name="update_now_for_the_latest_fixes">Update now for the latest fixes and improvements.</string>
     <string name="a_calm_place_to_read">A calm place to read</string>
     <string name="fourteen_reading_themes">Fourteen reading themes</string>
     <string name="five_quran_fonts_your_size_and_spacing">Five Quran fonts, your size and spacing</string>

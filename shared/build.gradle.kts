@@ -44,6 +44,7 @@ kotlin {
             implementation(libs.androidx.glance.appwidget)
             implementation(libs.ktorOkHttp)
             implementation(libs.androidx.palette)
+            implementation(libs.play.app.update)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

@@ -21,8 +21,12 @@ import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppContentHost
 import com.kodeelite.nooreislam.core.database.DatabaseRecovery
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.core.update.AppUpdateService
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.a_new_version_is_available
 import com.kodeelite.nooreislam.resources.got_it
+import com.kodeelite.nooreislam.resources.update
+import com.kodeelite.nooreislam.resources.update_now_for_the_latest_fixes
 import com.kodeelite.nooreislam.resources.something_went_wrong_with_your_saved_data
 import com.kodeelite.nooreislam.resources.sorry_app_started_fresh_set_up_again
 import org.jetbrains.compose.resources.stringResource
@@ -164,6 +168,27 @@ fun AppNavHost(
             ) {
                 Text(
                     stringResource(Res.string.sorry_app_started_fresh_set_up_again),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppTheme.colors.onSurfaceVariant,
+                )
+            }
+
+            // asked once per launch; dismissing the sheet is the "not now", so nobody gets trapped
+            var updateAvailable by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) { updateAvailable = AppUpdateService.isUpdateAvailable() }
+            if (updateAvailable) AppBottomSheet(
+                onDismiss = { updateAvailable = false },
+                title = stringResource(Res.string.a_new_version_is_available),
+                footer = {
+                    AppButton(
+                        text = stringResource(Res.string.update),
+                        onClick = { updateAvailable = false; AppUpdateService.startUpdate() },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                },
+            ) {
+                Text(
+                    stringResource(Res.string.update_now_for_the_latest_fixes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = AppTheme.colors.onSurfaceVariant,
                 )

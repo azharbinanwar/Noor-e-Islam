@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.kodeelite.nooreislam.core.platform.AppCtx
 import com.kodeelite.nooreislam.core.focus.PhoneSilencer
 import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
 import com.kodeelite.nooreislam.core.navigation.PendingNavigation
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        AppCtx.activity = this // Play's update screen has to be launched from an Activity
         PendingNavigation.offer(intent?.getStringExtra(NOTIF_ROUTE_KEY))
 
         setContent {
