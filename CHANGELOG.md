@@ -23,6 +23,7 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Added
 
+- `[both]` The app offers an update when the store has a newer build, once per launch, in a sheet that dismisses as "not now". Android hands over to Play's own update screen; iOS asks the App Store lookup endpoint and opens the listing, since Apple ships no update API. Each app checks its own package, so the two editions never see each other's releases. *(Play only reports updates for builds it installed, so this stays quiet on sideloaded and dev builds — test it through Internal App Sharing.)*
 - `[both]` Urdu and French, bringing the app to four languages. Each language names its own typeface on its `Language` entry, so Arabic and Urdu render in IBM Plex Sans Arabic while English and French use Poppins, and a future language only adds a line.
 - `[quran]` Search shows how many results it found, above the list and updating as you type.
 - `[quran]` Matched words are tinted in each search result. Matching is word-level, since the search text is normalised and the displayed text keeps its tashkeel, so character offsets would not line up.
