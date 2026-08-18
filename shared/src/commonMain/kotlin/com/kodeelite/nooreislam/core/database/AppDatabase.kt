@@ -21,17 +21,22 @@ import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
 import com.kodeelite.nooreislam.feature.notifications.data.SurahReminderDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationEntity
+import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriod
+import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriodDao
+import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayer
+import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayerDao
 
 // exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
 @Database(
-    entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
+    entities = [TrackedPrayer::class, ExcusedPeriod::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
     version = AppConst.DB_VERSION,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun prayerLogDao(): PrayerLogDao
+    abstract fun trackedPrayerDao(): TrackedPrayerDao
+    abstract fun excusedPeriodDao(): ExcusedPeriodDao
     abstract fun scheduledNotificationDao(): ScheduledNotificationDao
     abstract fun studioCreationDao(): StudioCreationDao
     abstract fun bookmarksDao(): BookmarksDao

@@ -8,6 +8,7 @@ import com.kodeelite.nooreislam.feature.quran.data.CollectionRepository
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsRepository
 import com.kodeelite.nooreislam.feature.quran.data.NotesRepository
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationRepository
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerRepository
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -28,6 +29,9 @@ val databaseModule = module {
     single { get<AppDatabase>().collectionAyahDao() }
     single { CollectionRepository(get(), get()) }
     single { get<AppDatabase>().surahReminderDao() }
+    single { get<AppDatabase>().trackedPrayerDao() }
+    single { get<AppDatabase>().excusedPeriodDao() }
+    single { TrackerRepository(get(), get()) }
 }
 
 // Android needs a Context, iOS a file path.

@@ -24,15 +24,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.Minus
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
+import com.kodeelite.nooreislam.core.datetime.Now
+import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.Miqat
-import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
-import com.kodeelite.nooreislam.feature.tracker.store.PrayerTrackingStore
+import com.kodeelite.nooreislam.core.enums.color
+import com.kodeelite.nooreislam.core.enums.label
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import org.koin.compose.koinInject
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best_days_streak_and_on_time_percentage
 import com.kodeelite.nooreislam.resources.day_streak
@@ -41,15 +47,21 @@ import com.kodeelite.nooreislam.resources.week_days
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Today's tracked count + streak. Streak/best/on-time are placeholders until history lands (Room). */
+/** Today's tracked count, the streak, and this week's days. */
 @Composable
 fun StreakCard() {
-    val tracked by PrayerTrackingStore.tracked.collectAsState()
+    val tracker = koinInject<TrackerStore>()
+    val tracked by tracker.tracked.collectAsState()
+    val stats by tracker.stats.collectAsState()
+    val history by tracker.history.collectAsState()
+    val excused by tracker.excused.collectAsState()
+    val clock by Now.now.collectAsState()
+    val today = clock.date
     val total = Miqat.PRAYERS.size
-    val done = tracked.count { it.value != PrayerTrackerStatus.Missed }
-    val streak = 12;
-    val best = 21;
-    val onTimePct = 85 // ponytail: demo values until history exists
+    val done = tracked.count { it.value.isPrayed }
+    val streak = stats.current
+    val best = stats.best
+    val onTimePct = stats.onTimePercent
 
     AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -83,13 +95,14 @@ fun StreakCard() {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(Res.string.this_week), color = AppTheme.colors.onSurfaceVariant, fontSize = 11.sp)
             val days = stringArrayResource(Res.array.week_days)
-            val levels = listOf(2, 2, 1, 2, 2, 0, 2)
-            val todayIndex = 4
+            // week_days is Monday-first, matching DayOfWeek's ordinal
+            val weekStart = today.minus(today.dayOfWeek.ordinal, DateTimeUnit.DAY)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 days.forEachIndexed { i, d ->
-                    val isToday = i == todayIndex
+                    val date = weekStart.plus(i, DateTimeUnit.DAY)
+                    val isToday = date == today
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        DayDot(levels[i])
+                        DayDot(dayProgress(history[date], date, excused, today))
                         Text(
                             d,
                             color = if (isToday) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,
@@ -103,19 +116,14 @@ fun StreakCard() {
     }
 }
 
-/** Day status dot: full = check, partial = dash, none = empty outline. */
 @Composable
-private fun DayDot(level: Int) {
-    val c = AppTheme.colors
-    when (level) {
-        2 -> Box(Modifier.size(34.dp).clip(CircleShape).background(c.success.copy(alpha = 0.25f)), contentAlignment = Alignment.Center) {
-            Icon(Lucide.Check, null, tint = c.success, modifier = Modifier.size(18.dp))
+private fun DayDot(progress: DayProgress) {
+    if (progress == DayProgress.None) {
+        Box(Modifier.size(34.dp).clip(CircleShape).border(1.5.dp, AppTheme.colors.outlineVariant, CircleShape))
+    } else {
+        val c = progress.color
+        Box(Modifier.size(34.dp).clip(CircleShape).background(c.copy(alpha = 0.25f)), contentAlignment = Alignment.Center) {
+            Icon(progress.icon, progress.label, tint = c, modifier = Modifier.size(18.dp))
         }
-
-        1 -> Box(Modifier.size(34.dp).clip(CircleShape).background(c.warning.copy(alpha = 0.25f)), contentAlignment = Alignment.Center) {
-            Icon(Lucide.Minus, null, tint = c.warning, modifier = Modifier.size(18.dp))
-        }
-
-        else -> Box(Modifier.size(34.dp).clip(CircleShape).border(1.5.dp, c.outlineVariant, CircleShape))
     }
 }

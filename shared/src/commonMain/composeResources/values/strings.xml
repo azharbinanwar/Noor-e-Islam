@@ -48,6 +48,9 @@
     <string name="prayed_kaza">Kaza</string>
     <string name="missed_prayer">Missed</string>
     <string name="not_tracked">Not set</string>
+    <string name="day_complete">Complete</string>
+    <string name="day_partial">Partial</string>
+    <string name="day_excused">Excused</string>
     <string name="coming_soon">Coming soon</string>
     <string name="best_days_streak_and_on_time_percentage">Best %1$d days · %2$d%% on time</string>
     <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>

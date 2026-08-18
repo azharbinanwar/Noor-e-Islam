@@ -16,8 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,11 +35,17 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.labelRes
+import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
+import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best
 import com.kodeelite.nooreislam.resources.day_streak
@@ -65,41 +71,32 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
-private val cycleOrder = listOf(
-    PrayerTrackerStatus.PrayedOnTime,
-    PrayerTrackerStatus.PrayedWithJamaat,
-    PrayerTrackerStatus.PrayedKaza,
-    PrayerTrackerStatus.Missed,
-)
 private val trackablePrayers = Miqat.PRAYERS
 
-/**
- * Miqat tracker UI. Log each prayer's status per day; month heatmap tints days by
- * completion. Mock stats + local state until the Room repo is wired.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackerScreen() {
-    val today = remember { Now.date() }
+    val tracker = koinInject<TrackerStore>()
+    val clock by Now.now.collectAsState()
+    val today = clock.date
+    val history by tracker.history.collectAsState()
+    val excused by tracker.excused.collectAsState()
+    val stats by tracker.stats.collectAsState()
+
     var visible by remember { mutableStateOf(today) }
     var selected by remember { mutableStateOf(today) }
-    val tracked = remember { mutableStateMapOf<Pair<LocalDate, Miqat>, PrayerTrackerStatus>() }
+    var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
 
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
     val statusColors = PrayerTrackerStatus.entries.associateWith { it.color }
+    val excusedColor = DayProgress.Excused.color
     val emptyDot = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.22f)
 
-    fun cycle(p: Miqat) {
-        val key = selected to p
-        val next = when (val cur = tracked[key]) {
-            null -> cycleOrder.first()
-            PrayerTrackerStatus.Missed -> null
-            else -> cycleOrder[cycleOrder.indexOf(cur) + 1]
-        }
-        if (next == null) tracked.remove(key) else tracked[key] = next
-    }
+    val selectedStatuses = history[selected].orEmpty()
+    val selectedExcused = dayProgress(selectedStatuses, selected, excused, today) == DayProgress.Excused
 
     Scaffold(
         topBar = {
@@ -116,7 +113,7 @@ fun TrackerScreen() {
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            StatsHeader()
+            StatsHeader(stats)
 
             MonthCalendar(
                 year = visible.year,
@@ -127,9 +124,13 @@ fun TrackerScreen() {
                 onPrevMonth = { visible = visible.minus(1, DateTimeUnit.MONTH) },
                 onNextMonth = { visible = visible.plus(1, DateTimeUnit.MONTH) },
                 dayDots = { date ->
-                    trackablePrayers.map { p ->
-                        val s = tracked[date to p] ?: mockStatus(date, p, today)
-                        if (s != null) statusColors.getValue(s) else emptyDot
+                    val statuses = history[date]
+                    if (dayProgress(statuses, date, excused, today) == DayProgress.Excused) {
+                        List(trackablePrayers.size) { excusedColor }
+                    } else {
+                        trackablePrayers.map { p ->
+                            statuses?.get(p)?.let { statusColors.getValue(it) } ?: emptyDot
+                        }
                     }
                 },
             )
@@ -140,40 +141,40 @@ fun TrackerScreen() {
                 color = AppTheme.colors.onSurface,
             )
 
-            val items = mutableListOf<AppTileItem>()
-            for (p in trackablePrayers) {
-                val status = tracked[selected to p]
-                val localizedTitle = p.label(selected)
-                items.add(
+            AppTileGroup(
+                items = trackablePrayers.map { p ->
+                    val status = selectedStatuses[p]
                     AppTileItem(
-                        title = localizedTitle,
+                        title = p.label(selected),
                         leadingIcon = p.icon,
-                        leadingColor = p.color,
-                        trailing = {
-                            if (status != null) {
-                                Text(status.label, color = status.color, fontWeight = FontWeight.Medium)
-                            } else {
-                                Text(stringResource(Res.string.not_tracked), color = AppTheme.colors.onSurfaceVariant)
-                            }
-                        },
-                        onClick = { cycle(p) },
+                        leadingColor = AppTheme.colors.primary,
+                        trailing = { TrackControl(status, excused = selectedExcused) },
+                        // future days and excused days aren't markable
+                        onClick = if (selected > today || selectedExcused) null else ({ sheetPrayer = p }),
                     )
-                )
-            }
-
-            AppTileGroup(items = items)
+                }
+            )
         }
+    }
+
+    sheetPrayer?.let { p ->
+        TrackingSheet(
+            prayer = p,
+            date = selected,
+            current = selectedStatuses[p],
+            onSelect = { tracker.setStatus(selected, p, it); sheetPrayer = null },
+            onDismiss = { sheetPrayer = null },
+        )
     }
 }
 
 @Composable
-private fun StatsHeader() {
+private fun StatsHeader(stats: StreakStats) {
     AppCard {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            // ponytail: mock stats — wire to Room aggregates later
-            Stat("12", stringResource(Res.string.day_streak))
-            Stat("21", stringResource(Res.string.best))
-            Stat("85%", stringResource(Res.string.on_time))
+            Stat("${stats.current}", stringResource(Res.string.day_streak))
+            Stat("${stats.best}", stringResource(Res.string.best))
+            Stat("${stats.onTimePercent}%", stringResource(Res.string.on_time))
         }
     }
 }
@@ -183,17 +184,6 @@ private fun Stat(value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(value, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = AppTheme.colors.primary)
         Text(label, style = MaterialTheme.typography.bodySmall, color = AppTheme.colors.onSurfaceVariant)
-    }
-}
-
-// mock per-prayer status for past days (deterministic); future = untracked. ponytail: replace with Room.
-private fun mockStatus(date: LocalDate, p: Miqat, today: LocalDate): PrayerTrackerStatus? {
-    if (date > today) return null
-    return when ((date.dayOfMonth + p.ordinal * 3) % 5) {
-        0, 1 -> PrayerTrackerStatus.PrayedOnTime
-        2 -> PrayerTrackerStatus.PrayedWithJamaat
-        3 -> PrayerTrackerStatus.Missed
-        else -> PrayerTrackerStatus.PrayedKaza
     }
 }
 

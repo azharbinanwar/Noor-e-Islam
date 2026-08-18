@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Minus
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.X
 import com.kodeelite.nooreislam.config.theme.AppTheme
@@ -41,7 +44,10 @@ import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
-import com.kodeelite.nooreislam.feature.tracker.store.PrayerTrackingStore
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
+import org.koin.compose.koinInject
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.clear
 import com.kodeelite.nooreislam.resources.mark_prayer
@@ -56,7 +62,8 @@ fun TodayPrayers() {
     val clock by Now.now.collectAsState()
     val now = clock.time
     val todayTimes by MiqatTimesStore.today.collectAsState()
-    val tracked by PrayerTrackingStore.tracked.collectAsState()
+    val tracker = koinInject<TrackerStore>()
+    val tracked by tracker.tracked.collectAsState()
 
     val dailyTimes = remember(todayTimes) { todayTimes.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
@@ -115,57 +122,12 @@ fun TodayPrayers() {
     sheetPrayer?.let { p ->
         TrackingSheet(
             prayer = p,
+            date = Now.date(),
             current = tracked[p],
-            onSelect = { PrayerTrackingStore.setStatus(p, it); sheetPrayer = null },
+            onSelect = { tracker.setStatus(p, it); sheetPrayer = null },
             onDismiss = { sheetPrayer = null },
         )
     }
 }
 
-@Composable
-private fun TrackControl(status: PrayerTrackerStatus?) {
-    if (status != null) {
-        val sc = status.color
-        Box(Modifier.size(32.dp).clip(CircleShape).background(sc.copy(alpha = 0.25f)), contentAlignment = Alignment.Center) {
-            Icon(status.icon, status.label, tint = sc, modifier = Modifier.size(18.dp))
-        }
-    } else {
-        Box(Modifier.size(32.dp).clip(CircleShape).border(1.dp, AppTheme.colors.outlineVariant, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(Lucide.Plus, "Track", tint = AppTheme.colors.onSurfaceVariant, modifier = Modifier.size(18.dp))
-        }
-    }
-}
 
-@Composable
-private fun TrackingSheet(
-    prayer: Miqat,
-    current: PrayerTrackerStatus?,
-    onSelect: (PrayerTrackerStatus?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AppBottomSheet(onDismiss = onDismiss) {
-        val titleLabel = prayer.label(Now.date())
-        Text(
-            stringResource(Res.string.mark_prayer, titleLabel), color = AppTheme.colors.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
-        )
-        AppTileGroup(
-            items = PrayerTrackerStatus.entries.map { st ->
-                val sc = st.color
-                AppTileItem(
-                    title = st.label,
-                    selected = st == current,
-                    leadingIcon = st.icon,
-                    leadingColor = sc,
-                    onClick = { onSelect(st) }
-                )
-            }
-        )
-        AppTileItem(
-            title = stringResource(Res.string.clear),
-            leadingIcon = Lucide.X,
-            leadingColor = AppTheme.colors.onSurfaceVariant,
-            onClick = { onSelect(null) }
-        )
-    }
-}
