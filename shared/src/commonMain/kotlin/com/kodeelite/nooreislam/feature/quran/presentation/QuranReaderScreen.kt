@@ -178,9 +178,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
         meta
     }
 
-    // every jump landing — ruku top or exact ayah — keeps this much air above it instead of
-    // touching the bar; a negative scroll offset is how a LazyList shows space above the item
-    val jumpBreathPx = with(LocalDensity.current) { 12.dp.toPx() }
+    // a surah's opening ayahs land exactly on target — the ornate name and bismillah above them are
+    // already the breathing space. Every other ayah sits a little down from the bar.
+    val density = LocalDensity.current
+    fun jumpGapPx(ayahNo: Int) = if (ayahNo <= 2) 0f else with(density) { 80.dp.toPx() }
     // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
     var justJumpedAyah by remember { mutableStateOf<Ayah?>(null) }
     LaunchedEffect(rukus) {
@@ -189,7 +190,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
             // target > 0 means a real deep link (Jump To, search, bookmarks, notes…) — flash it on landing.
             // A plain default open (Al-Fatihah, target 0) never flashes.
             if (target > 0) {
-                listState.scrollToItem(target, -jumpBreathPx.roundToInt())
+                listState.scrollToItem(target, -jumpGapPx(ayah).roundToInt())
                 justJumpedAyah = rukus[target].firstOrNull { it.surah == surah && it.ayah == ayah }
             }
             scrolled = true
@@ -209,7 +210,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     fun jumpTo(targetSurah: Int, targetAyah: Int) {
         val target = rukus.indexOfFirst { r -> r.any { it.surah == targetSurah && it.ayah == targetAyah } }.coerceAtLeast(0)
         scope.launch {
-            listState.scrollToItem(target, -jumpBreathPx.roundToInt())
+            listState.scrollToItem(target, -jumpGapPx(targetAyah).roundToInt())
             justJumpedAyah = rukus.getOrNull(target)?.firstOrNull { it.surah == targetSurah && it.ayah == targetAyah }
         }
     }
@@ -257,8 +258,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize().then(tapAway),
-                    // reserved regardless of chromeVisible — the app bar overlays this space, never resizes it
-                    contentPadding = PaddingValues(top = topBarHeight),
+                    // reserved regardless of chromeVisible — the app bar overlays this space, never resizes it.
+                    // The bottom inset lets the closing ayahs scroll clear of the floating controls, which
+                    // otherwise sit on top of the very last ayah with nothing below it to scroll into.
+                    contentPadding = PaddingValues(top = topBarHeight, bottom = 160.dp),
                 ) {
                     items(rukus.size) { i ->
                         val ruku = rukus[i]
@@ -271,11 +274,15 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                             onLongSelect = { quickHighlight = it },
                             onNoteTap = { viewingNote = it },
                             flashTarget = justJumpedAyah,
-                            // no per-ayah refinement — every jump lands on the ruku's top exactly like
-                            // opening a surah at ayah 1, with the flash marking the ayah in its context;
-                            // pinning the ayah to the very top scrolled the surah header and context away
-                            targetAyah = null,
-                            onTargetLocated = {},
+                            // land the jumped-to ayah itself near the top: a ruku is one flowing Text, so
+                            // scrollToItem alone can only reach the ruku's top, which leaves an ayah near a
+                            // long ruku's end sitting at the bottom or off screen.
+                            // Ayah 1 opts out — the ornate surah name and bismillah sit directly above it,
+                            // and the ruku top is already exactly where they are.
+                            targetAyah = justJumpedAyah?.takeIf { it.ayah > 1 },
+                            onTargetLocated = { offsetPx ->
+                                scope.launch { listState.scrollToItem(i, (offsetPx - jumpGapPx(justJumpedAyah?.ayah ?: 3)).roundToInt()) }
+                            },
                         )
                     }
                 }
