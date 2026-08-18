@@ -105,7 +105,6 @@ fun QuranNotificationsScreen() {
     val perms = rememberPermissionService()
     var notifGranted by remember { mutableStateOf(true) }
     var exactAlarmGranted by remember { mutableStateOf(true) }
-    // todo : remove permDump after testing for release
     val focus = rememberFocusSetup()
     var permDump by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
@@ -154,11 +153,11 @@ fun QuranNotificationsScreen() {
         Column(
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
-            // todo : remove after testing for release — live permission readout
-            if (permDump.isNotEmpty()) {
-                Text(permDump, fontSize = 11.sp, color = c.onSurfaceVariant)
-                Spacer(Modifier.height(12.dp))
-            }
+            // live permission readout, for testing only — uncomment with permDump above
+//            if (permDump.isNotEmpty()) {
+//                Text(permDump, fontSize = 11.sp, color = c.onSurfaceVariant)
+//                Spacer(Modifier.height(12.dp))
+//            }
             NotificationsNeedsAttention()
             ExactAlarmNeedsAttention()
             BatteryNeedsAttention()

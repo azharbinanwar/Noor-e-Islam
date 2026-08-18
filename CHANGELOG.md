@@ -21,10 +21,6 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
-### Notes
-
-- Reminder seeds are still the temporary hourly test list. Restore the real list and remove the permission readout per the `todo` markers in `NotificationDefaults.kt` before any store build.
-
 ## [1.0.0+6] - 2026-08-19
 
 ### Added
