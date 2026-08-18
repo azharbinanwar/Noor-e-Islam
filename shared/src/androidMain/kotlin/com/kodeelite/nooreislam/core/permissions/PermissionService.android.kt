@@ -41,7 +41,8 @@ private class AndroidPermissionService(
 
     override suspend fun status(permission: AppPermission): PermissionStatus {
         if (isGranted(permission)) return PermissionStatus.Granted
-        val perms = runtimePermissions(permission) ?: return PermissionStatus.Granted
+        // no runtime dialog and isGranted already said no (e.g. ExactAlarm) — that's a real denial
+        val perms = runtimePermissions(permission) ?: return PermissionStatus.Denied
         val activity = context.findActivity()
         // Android can't tell "never asked" from "don't ask again". rationale==true means we've been
         // refused at least once (Denied); otherwise treat as NotDetermined until the first denial.

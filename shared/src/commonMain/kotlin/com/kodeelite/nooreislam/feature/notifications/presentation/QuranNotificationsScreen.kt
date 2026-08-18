@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.BellPlus
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.ChevronLeft
@@ -48,6 +49,7 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.TimeFormat
+import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
@@ -103,14 +105,18 @@ fun QuranNotificationsScreen() {
     val perms = rememberPermissionService()
     var notifGranted by remember { mutableStateOf(true) }
     var exactAlarmGranted by remember { mutableStateOf(true) }
+    // todo : remove permDump after testing for release
+    val focus = rememberFocusSetup()
+    var permDump by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
         while (true) {
             notifGranted = perms.status(AppPermission.Notifications) == PermissionStatus.Granted
+            exactAlarmGranted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
+            permDump = "exact=${perms.status(AppPermission.ExactAlarm)} · notif=${perms.status(AppPermission.Notifications)}" +
+                    " · battery=${if (focus.batteryUnrestricted()) "unrestricted" else "optimized"}" +
+                    " · bgRestricted=${focus.backgroundRestricted()}"
             delay(1500.milliseconds)
         }
-    }
-    LaunchedEffect(Unit) {
-        exactAlarmGranted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
     }
     val remindersLocked = !notifGranted || !exactAlarmGranted
 
@@ -148,6 +154,11 @@ fun QuranNotificationsScreen() {
         Column(
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
+            // todo : remove after testing for release — live permission readout
+            if (permDump.isNotEmpty()) {
+                Text(permDump, fontSize = 11.sp, color = c.onSurfaceVariant)
+                Spacer(Modifier.height(12.dp))
+            }
             NotificationsNeedsAttention()
             ExactAlarmNeedsAttention()
             BatteryNeedsAttention()

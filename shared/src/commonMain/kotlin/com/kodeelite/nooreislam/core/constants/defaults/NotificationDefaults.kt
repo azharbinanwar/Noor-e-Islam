@@ -118,8 +118,9 @@ object NotificationDefaults {
 //            seed(19, EVERY_DAY, 10, 30),
 //            seed(12, EVERY_DAY, 20, 30),
             // todo : comment after testing for release
-            // test run: the same 17, every day, one per hour on the hour from 01:00 to 17:00,
-            // pre-enabled so a fresh install starts firing without touching 17 switches
+            // test run: 24 reminders, every day, one per hour on the hour around the clock,
+            // pre-enabled so a fresh install starts firing without touching the switches
+            seed(1, EVERY_DAY, 0, 0).copy(enabled = true),
             seed(67, EVERY_DAY, 1, 0).copy(enabled = true),
             seed(18, EVERY_DAY, 2, 0).copy(enabled = true),
             seed(2, EVERY_DAY, 3, 0, ayah = 285, title = "Last 2 ayah of Al-Baqara").copy(enabled = true),
@@ -137,6 +138,12 @@ object NotificationDefaults {
             seed(2, EVERY_DAY, 15, 0).copy(enabled = true),
             seed(19, EVERY_DAY, 16, 0).copy(enabled = true),
             seed(12, EVERY_DAY, 17, 0).copy(enabled = true),
+            seed(113, EVERY_DAY, 18, 0).copy(enabled = true),
+            seed(114, EVERY_DAY, 19, 0).copy(enabled = true),
+            seed(103, EVERY_DAY, 20, 0).copy(enabled = true),
+            seed(108, EVERY_DAY, 21, 0).copy(enabled = true),
+            seed(97, EVERY_DAY, 22, 0).copy(enabled = true),
+            seed(95, EVERY_DAY, 23, 0).copy(enabled = true),
         )
 
         // id and createdAt are assigned on insert; enabled and isSeed are the same for every row.
