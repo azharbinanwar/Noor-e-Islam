@@ -20,6 +20,7 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
+import com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationScheduler
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.notif_exact_alarm_needed
 import com.kodeelite.nooreislam.resources.notif_exact_alarm_sub
@@ -51,6 +52,8 @@ fun ExactAlarmNeedsAttention() {
                     scope.launch {
                         perms.request(AppPermission.ExactAlarm)
                         granted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
+                        // alarms armed while denied went out inexact — re-arm them as exact ones
+                        if (granted) NotificationScheduler.rebuildAsync()
                     }
                 },
             )

@@ -57,6 +57,7 @@ import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.notifications.data.EVERY_DAY
 import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
 import com.kodeelite.nooreislam.feature.notifications.data.toDaySet
+import com.kodeelite.nooreislam.feature.notifications.presentation.components.BatteryNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.ExactAlarmNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
@@ -149,6 +150,7 @@ fun QuranNotificationsScreen() {
         ) {
             NotificationsNeedsAttention()
             ExactAlarmNeedsAttention()
+            BatteryNeedsAttention()
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true

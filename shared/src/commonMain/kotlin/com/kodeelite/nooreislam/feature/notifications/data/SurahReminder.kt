@@ -55,6 +55,11 @@ interface SurahReminderDao {
     @Query("SELECT * FROM surah_reminder ORDER BY id")
     fun allFlow(): Flow<List<SurahReminder>>
 
+    // One-shot read. A receiver-woken process rebuilds before allFlow() has had a chance to emit,
+    // so the scheduler asks the table directly instead of trusting the store's initial empty value.
+    @Query("SELECT * FROM surah_reminder ORDER BY id")
+    suspend fun all(): List<SurahReminder>
+
     @Query("SELECT COUNT(*) FROM surah_reminder")
     suspend fun count(): Int
 

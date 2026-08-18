@@ -24,8 +24,15 @@ class SurahReminderStore(
     val reminders: StateFlow<List<SurahReminder>> =
         dao.allFlow().stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    init {
-        scope.launch { seedOnce() }
+    // The only seeding call — anything else waits on this job, so two racing callers can't both
+    // see an empty table and each write the full seed list.
+    private val seeded = scope.launch { seedOnce() }
+
+    // For the scheduler: [reminders] starts empty and fills asynchronously, which is a lie a
+    // cold rebuild would act on. This waits for the real rows.
+    suspend fun current(): List<SurahReminder> {
+        seeded.join()
+        return dao.all()
     }
 
     fun save(row: SurahReminder) {

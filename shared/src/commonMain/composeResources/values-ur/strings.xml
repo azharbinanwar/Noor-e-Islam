@@ -335,6 +335,8 @@
     <string name="notif_permission_sub">نماز کی یاد دہانیوں کے لیے اطلاعات کی اجازت دیں</string>
     <string name="notif_exact_alarm_needed">درست وقت کی اجازت دیں</string>
     <string name="notif_exact_alarm_sub">تاکہ یاد دہانیاں عین مقررہ وقت پر آئیں</string>
+    <string name="notif_battery_needed">پس منظر میں چلنے کی اجازت دیں</string>
+    <string name="notif_battery_sub">تاکہ ایپ بند ہونے پر بھی یاد دہانیاں آتی رہیں</string>
     <string name="notif_permission_denied_title">اطلاعات مسدود ہیں</string>
     <string name="notif_permission_denied_msg">یاد دہانیاں وصول کرنے کے لیے ترتیبات میں %1$s کی اطلاعات آن کریں۔</string>
     <string name="master_switch_for_every_reminder">ہر یاد دہانی کا مرکزی سوئچ</string>

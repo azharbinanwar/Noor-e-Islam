@@ -29,10 +29,12 @@ object NotificationTarget {
     const val SURAH_REMINDER = "surah_reminder"
 }
 
-fun NotificationEvent.toEntity() = ScheduledNotificationEntity(
+fun NotificationEvent.toEntity(title: String, body: String) = ScheduledNotificationEntity(
     slotId = slotId,
     eventKey = eventKey,
     target = target,
     kind = kind.name,
     fireAtMillis = fireAtMillis,
+    title = title,
+    body = body,
 )

@@ -15,4 +15,6 @@ data class ScheduledNotificationEntity(
     val target: String,              // Miqat.key | Miqat.jumuahKey | mulk|kahf|morning_adhkar|evening_adhkar|tahajjud|ishraq
     val kind: String,                // NotificationType name: AT_TIME|REMIND_BEFORE|JAMAAT|REMINDER
     val fireAtMillis: Long,          // epoch millis when it fires
+    val title: String,               // resolved copy, as armed with the OS — what the user will read
+    val body: String,
 )

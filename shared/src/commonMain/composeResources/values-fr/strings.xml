@@ -328,6 +328,8 @@
     <string name="notif_permission_sub">Autorisez les notifications pour recevoir les rappels de prière</string>
     <string name="notif_exact_alarm_needed">Autoriser la synchronisation précise</string>
     <string name="notif_exact_alarm_sub">Pour que les rappels se déclenchent exactement à l'heure prévue</string>
+    <string name="notif_battery_needed">Autoriser l'activité en arrière-plan</string>
+    <string name="notif_battery_sub">Pour que les rappels arrivent même quand l'application est fermée</string>
     <string name="notif_permission_denied_title">Notifications bloquées</string>
     <string name="notif_permission_denied_msg">Activez les notifications pour %1$s dans les Paramètres pour recevoir les rappels.</string>
     <string name="master_switch_for_every_reminder">Interrupteur principal pour chaque rappel</string>

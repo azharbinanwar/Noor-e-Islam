@@ -32,6 +32,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.kodeelite.nooreislam.App
 import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
 import com.kodeelite.nooreislam.core.navigation.PendingNavigation
+import com.kodeelite.nooreislam.feature.notifications.scheduler.NotificationScheduler
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +80,11 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         PendingNavigation.offer(intent.getStringExtra(NOTIF_ROUTE_KEY))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        NotificationScheduler.rebuildAsync() // app-open refill: top up the notification window
     }
 }
 

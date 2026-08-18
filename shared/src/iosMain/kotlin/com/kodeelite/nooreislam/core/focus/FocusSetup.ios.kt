@@ -7,6 +7,7 @@ private object NoopFocusSetup : FocusSetup {
     override val supported = false
     override fun batteryUnrestricted() = true
     override fun requestBatteryUnrestricted() {}
+    override fun backgroundRestricted() = false
     override fun hasSilenceAccess() = false
     override fun requestSilenceAccess() {}
 }

@@ -60,23 +60,32 @@ object NotificationScheduler {
         }
     }
 
-    // Fire-and-forget rebuild (app open, receivers).
+    // Fire-and-forget rebuild (app open).
     fun rebuildAsync() {
         scope.launch { rebuild() }
     }
+
+    // Same work, but the caller waits. Android receivers use this under goAsync() so the process
+    // isn't killed with the alarms half-armed.
+    suspend fun rebuildNow() = rebuild()
 
     // Dev test sheet: the current scheduled mirror.
     fun scheduled() = repo.observeUpcoming()
 
     private suspend fun rebuild() = mutex.withLock {
-        val events = computeDesired().mapIndexed { i, e -> e.copy(slotId = i) }
+        val reminders = reminderStore.current()
+        val events = computeDesired(reminders).mapIndexed { i, e -> e.copy(slotId = i) }
         LocalNotifier.cancelAll()
-        events.forEach { e -> val c = notificationCopy(e); LocalNotifier.schedule(e, c.title, c.body) }
-        repo.replaceAll(events.map { it.toEntity() })
+        val armed = events.map { e ->
+            val c = notificationCopy(e)
+            LocalNotifier.schedule(e, c.title, c.body)
+            e.toEntity(c.title, c.body)
+        }
+        repo.replaceAll(armed)
     }
 
     // Expand settings + times over the horizon, drop past, keep the nearest 63 by time.
-    private fun computeDesired(): List<NotificationEvent> {
+    private fun computeDesired(reminders: List<SurahReminder>): List<NotificationEvent> {
         val tz = TimeZone.currentSystemDefault()
         val settings = NotificationStore.settings.value
         val today = currentDate()
@@ -86,7 +95,7 @@ object NotificationScheduler {
         val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
             val date = today.plus(d, DateTimeUnit.DAY)
             eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz) +
-                    reminderEventsFor(date, reminderStore.reminders.value, tz)
+                    reminderEventsFor(date, reminders, tz)
         }
         val test = NotificationTestStore.items.value.map {
             NotificationEvent("test:${it.id}", "test", NotificationType.REMINDER, it.fireAtMillis)

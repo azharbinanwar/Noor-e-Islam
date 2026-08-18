@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.navigation.NOTIF_ROUTE_KEY
 import com.kodeelite.nooreislam.core.navigation.encodeRoute
 import com.kodeelite.nooreislam.core.platform.AppCtx
@@ -23,6 +24,7 @@ import com.kodeelite.nooreislam.resources.notification_channel_verse
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import org.koin.mp.KoinPlatform
 
 // Fires at an alert's time and posts it. Title/body were resolved at schedule time and ride the intent;
 // the channel is picked from the target so users can tune each category in system settings.
@@ -63,11 +65,14 @@ class NotificationReceiver : BroadcastReceiver() {
     }
 
     private fun channelFor(target: String): Channel = when (target) {
-        NotificationTarget.MULK, NotificationTarget.KAHF -> Channel.QURAN
+        NotificationTarget.MULK, NotificationTarget.KAHF, NotificationTarget.SURAH_REMINDER,
+        NotificationTarget.DAILY_READING -> Channel.QURAN
         NotificationTarget.MORNING, NotificationTarget.EVENING -> Channel.DHIKR
         NotificationTarget.TAHAJJUD, NotificationTarget.ISHRAQ -> Channel.NAFIL
         "verse", "hadith" -> Channel.VERSE
-        else -> Channel.PRAYER // fajr..isha, jumuah, test — anything unmapped still posts
+        // fajr..isha, jumuah, test — anything unmapped still posts. The Quran app never registers
+        // the prayer channel, so there it coerces to its own.
+        else -> if (edition() == AppEdition.QURAN) Channel.QURAN else Channel.PRAYER
     }
 
     companion object {
@@ -77,14 +82,23 @@ class NotificationReceiver : BroadcastReceiver() {
         const val EXTRA_TITLE = "title"
         const val EXTRA_BODY = "body"
 
-        // Create the group + every channel together (lazily, on the first notification that fires),
-        // so all categories show up in system settings at once. Idempotent.
+        private fun edition() = KoinPlatform.getKoin().get<AppEdition>()
+
+        // Only the categories this edition can actually fire — the Quran app has no prayer, dhikr
+        // or nafil alerts, so those channels shouldn't clutter its system settings page.
+        private fun channelsFor(edition: AppEdition) =
+            if (edition == AppEdition.QURAN) listOf(Channel.QURAN, Channel.VERSE) else Channel.entries.toList()
+
+        // Create the group + this edition's channels together (lazily, on the first notification
+        // that fires), so all categories show up in system settings at once. Idempotent.
         fun registerChannels(ctx: Context) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
             val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            RETIRED_CHANNELS.forEach { nm.deleteNotificationChannel(it) }
+            val keep = channelsFor(edition())
+            val drop = RETIRED_CHANNELS + Channel.entries.filterNot(keep::contains).map { it.id }
+            drop.forEach { nm.deleteNotificationChannel(it) }
             nm.createNotificationChannelGroup(NotificationChannelGroup(GROUP, runBlocking { getString(Res.string.notification_channel_group) }))
-            Channel.entries.forEach { c ->
+            keep.forEach { c ->
                 nm.createNotificationChannel(NotificationChannel(c.id, runBlocking { getString(c.nameRes) }, c.importance).apply { group = GROUP })
             }
         }

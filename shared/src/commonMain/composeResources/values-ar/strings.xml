@@ -327,6 +327,8 @@
     <string name="notif_permission_sub">اسمح بالإشعارات لتصلك تذكيرات الصلاة</string>
     <string name="notif_exact_alarm_needed">السماح بالتوقيت الدقيق</string>
     <string name="notif_exact_alarm_sub">لتصل التذكيرات في وقتها بالضبط</string>
+    <string name="notif_battery_needed">السماح بالنشاط في الخلفية</string>
+    <string name="notif_battery_sub">لتصل التذكيرات حتى عند إغلاق التطبيق</string>
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
     <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق %1$s من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>

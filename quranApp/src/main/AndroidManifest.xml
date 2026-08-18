@@ -8,6 +8,12 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <!-- Notifications: re-arm the alarms after a reboot. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Notifications: one-tap battery exemption dialog, so OEMs (Vivo/Xiaomi) can't freeze the
+         app and defer its reminder alarms. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Notifications: one-tap battery exemption dialog, so OEMs (Vivo/Xiaomi) can't freeze the
+         app and defer its reminder alarms. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".QuranApplication"

@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -101,16 +102,24 @@ fun NotificationTestScreen(onBack: () -> Unit) {
                 Spacer(Modifier.height(12.dp))
             }
             Text("All scheduled (${scheduled.size})", fontSize = 12.sp, color = c.onSurfaceVariant)
-            scheduled.forEach { e ->
-                val t = kotlin.time.Instant.fromEpochMilliseconds(e.fireAtMillis).toLocalDateTime(tz).time.format(pattern)
-                val name = if (e.target == "test") "Test #${e.eventKey.substringAfterLast(':')}" else e.target
+            scheduled.forEachIndexed { i, e ->
+                val dt = kotlin.time.Instant.fromEpochMilliseconds(e.fireAtMillis).toLocalDateTime(tz)
+                if (i > 0) HorizontalDivider(color = c.outlineVariant)
                 Row(
                     Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("#${e.slotId} · $name · ${e.kind}", color = c.onSurface)
-                    Text(t, fontSize = 13.sp, color = c.onSurfaceVariant)
+                    Column(Modifier.weight(1f)) {
+                        // the armed copy — exactly what the notification will say
+                        Text(e.title, color = c.onSurface)
+                        if (e.body.isNotEmpty()) Text(e.body, fontSize = 13.sp, color = c.onSurfaceVariant)
+                        Text("#${e.slotId} · ${e.target} · ${e.kind}", fontSize = 11.sp, color = c.onSurfaceVariant)
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(dt.time.format(pattern), fontSize = 13.sp, color = c.onSurfaceVariant)
+                        Text("${dt.date.dayOfMonth}/${dt.date.monthNumber}", fontSize = 11.sp, color = c.onSurfaceVariant)
+                    }
                 }
             }
             Spacer(Modifier.height(8.dp))
