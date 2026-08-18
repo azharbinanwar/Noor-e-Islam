@@ -42,6 +42,10 @@ sealed interface AppRoute {
     @SerialName("QuranReader")
     data class QuranReader(val surah: Int = 1, val ayah: Int = 1) : AppRoute
 
+    @Serializable
+    @SerialName("ReadingMarks")
+    data object ReadingMarks : AppRoute
+
     // canonical surah:ayah keys (one ayah now, list later); the screen loads the real Ayah
     @Serializable
     @SerialName("Studio")

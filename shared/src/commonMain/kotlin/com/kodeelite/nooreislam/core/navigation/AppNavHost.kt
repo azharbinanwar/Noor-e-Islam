@@ -51,6 +51,7 @@ import com.kodeelite.nooreislam.feature.quran.presentation.CollectionDetailsScre
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranIndexScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranReaderScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranThemeHost
+import com.kodeelite.nooreislam.feature.quran.presentation.ReadingMarksScreen
 import com.kodeelite.nooreislam.feature.sandbox.presentation.SandboxScreen
 import com.kodeelite.nooreislam.feature.settings.presentation.LocationScreen
 import com.kodeelite.nooreislam.feature.settings.presentation.MiqatCalculationScreen
@@ -113,6 +114,9 @@ fun AppNavHost(
                     composable<AppRoute.QuranReader> { entry ->
                         val r = entry.toRoute<AppRoute.QuranReader>()
                         QuranThemeHost { QuranReaderScreen(surah = r.surah, ayah = r.ayah) }
+                    }
+                    composable<AppRoute.ReadingMarks> {
+                        QuranThemeHost { ReadingMarksScreen() }
                     }
                     composable<AppRoute.Studio> { entry ->
                         val r = entry.toRoute<AppRoute.Studio>()

@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import com.composables.icons.lucide.ChevronsDown
+import com.composables.icons.lucide.CircleHelp
 import com.composables.icons.lucide.Gauge
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Navigation
@@ -32,6 +33,8 @@ import com.kodeelite.nooreislam.resources.keep_screen_on
 import com.kodeelite.nooreislam.resources.reading
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.search_quran
+import com.kodeelite.nooreislam.resources.reading_marks
+import com.kodeelite.nooreislam.resources.the_marks_printed_above_the_arabic_text
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -98,6 +101,18 @@ fun ReaderSettingsSheet(onDismiss: () -> Unit) {
                 ),
                 AppTileItem(title = stringResource(Res.string.jump_to), leadingIcon = Lucide.Navigation, onClick = { showJumpTo = true }),
                 AppTileItem(title = stringResource(Res.string.search_quran), leadingIcon = Lucide.Search, onClick = { showSearchQuran = true }),
+                // Reading marks — parked while we settle how the specimen glyphs should look. The screen,
+                // route and strings all still exist; restore this row (and the matching imports above)
+                // to bring it back.
+                // AppTileItem(
+                //     title = stringResource(Res.string.reading_marks),
+                //     subtitle = stringResource(Res.string.the_marks_printed_above_the_arabic_text),
+                //     leadingIcon = Lucide.CircleHelp,
+                //     onClick = {
+                //         nav.navigate(AppRoute.ReadingMarks)
+                //         onDismiss()
+                //     },
+                // ),
             ),
         )
     }
