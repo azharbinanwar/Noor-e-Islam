@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.core.di
 
 import com.kodeelite.nooreislam.core.AppEdition
+import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
@@ -32,12 +33,12 @@ val appModule = module {
 
 val appModules = listOf(appModule, databaseModule, platformDatabaseModule())
 
-/** Start Koin once per platform entry point. [edition] is injectable wherever UI needs to branch on it. */
-fun initKoin(edition: AppEdition = AppEdition.MAIN) {
+/** Start Koin once per platform entry point. [edition] and [build] are injectable wherever UI needs to branch on them. */
+fun initKoin(edition: AppEdition = AppEdition.MAIN, build: BuildType = BuildType.RELEASE) {
     startKoin {
-        modules(appModules + module { single { edition } })
+        modules(appModules + module { single { edition }; single { build } })
     }
 }
 
 /** Swift-friendly entry point — call from iOSApp.init(). */
-fun startKoinForIos(edition: AppEdition = AppEdition.MAIN) = initKoin(edition)
+fun startKoinForIos(edition: AppEdition = AppEdition.MAIN, build: BuildType = BuildType.RELEASE) = initKoin(edition, build)

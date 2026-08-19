@@ -21,13 +21,16 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.config.theme.ThemeMode
 import com.kodeelite.nooreislam.core.locale.LocalAppLocale
 import com.kodeelite.nooreislam.core.navigation.AppNavHost
+import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import org.koin.compose.koinInject
 
 @Composable
 @Preview
 fun App() {
     val systemDark = isSystemInDarkTheme()
-    // ponytail: dev-only — long-press anywhere (empty area) flips light/dark to eyeball both. Not persisted.
+    val build = koinInject<BuildType>()
+    // dev-only — long-press anywhere (empty area) flips light/dark to eyeball both. Not persisted.
     var override by remember { mutableStateOf<Boolean?>(null) }
     // override (dev long-press) wins, else the saved theme, else the system; System theme's dark == null falls through
     val dark = override ?: SettingsStore.theme.collectAsState().value.dark ?: systemDark
@@ -42,7 +45,11 @@ fun App() {
             AppTheme(themeMode = if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
                 Box(
                     Modifier.fillMaxSize().background(AppTheme.colors.background)
-                        .pointerInput(Unit) { detectTapGestures(onLongPress = { override = !dark }) }) {
+                        .then(
+                            if (build.isDebug) {
+                                Modifier.pointerInput(Unit) { detectTapGestures(onLongPress = { override = !dark }) }
+                            } else Modifier
+                        )) {
                     AppNavHost()
                 }
             }

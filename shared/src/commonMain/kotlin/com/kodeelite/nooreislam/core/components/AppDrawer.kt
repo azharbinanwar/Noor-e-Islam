@@ -1,6 +1,5 @@
 package com.kodeelite.nooreislam.core.components
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,13 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -63,6 +59,7 @@ import com.composables.icons.lucide.SquareCheck
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.datetime.HijriMonth
 import com.kodeelite.nooreislam.core.enums.Madhab
+import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
 import com.kodeelite.nooreislam.core.store.LocationStore
@@ -82,24 +79,27 @@ import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.settings
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
+import org.koin.compose.koinInject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /** One drawer row. [route] null = not built yet (no-op for now). */
 private data class DrawerEntry(val label: StringResource, val icon: ImageVector, val route: AppRoute?)
 
-private val drawerItems = listOf(
+private fun drawerItems(streakEnabled: Boolean, debug: Boolean) = listOfNotNull(
     DrawerEntry(Res.string.home, Lucide.House, AppRoute.Home),
     DrawerEntry(Res.string.prayer_times, Lucide.Clock, AppRoute.PrayerTimes),
     DrawerEntry(Res.string.qibla_compass, Lucide.Compass, AppRoute.Qibla),
-    DrawerEntry(Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker),
-    DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar),
+    DrawerEntry(Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker).takeIf { streakEnabled },
+    // duas still run off the hardcoded catalog, so they stay out of store builds
+    DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar).takeIf { debug },
     DrawerEntry(Res.string.quran, Lucide.BookOpen, AppRoute.Quran),
 )
 
-private val footerItems = listOf(
+private fun footerItems(debug: Boolean) = listOfNotNull(
     DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings),
-    DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
+    // the sandbox is design QA, never shipped to users
+    DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox).takeIf { debug },
 )
 
 /** Shared drawer state, hoisted at the nav host so navigating never rebuilds the drawer. */
@@ -119,6 +119,9 @@ fun AppDrawer(
     val scope = rememberCoroutineScope()
     val overlay = LocalOverlay.current
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
+    val debug = koinInject<BuildType>().isDebug
+    val drawerItems = drawerItems(streakEnabled, debug)
+    val footerItems = footerItems(debug)
     // edge-swipe-to-open only on the burger-icon (top-level) screens, never on pushed detail screens
     val currentEntry by nav.currentBackStackEntryAsState()
     val topLevelRoutes = (drawerItems + footerItems).mapNotNull { it.route }
