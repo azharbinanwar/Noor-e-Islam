@@ -23,9 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
-import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.BellOff
-import com.composables.icons.lucide.Pause
+import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.CalendarDays
 import com.composables.icons.lucide.Check
@@ -42,9 +41,9 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.Palette
+import com.composables.icons.lucide.Pause
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.AppEdition
-import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -54,6 +53,7 @@ import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.components.SwapPill
 import com.kodeelite.nooreislam.core.datetime.HijriMonth
 import com.kodeelite.nooreislam.core.datetime.Now
+import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.Language
 import com.kodeelite.nooreislam.core.locale.tr
@@ -77,23 +77,23 @@ import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
 import com.kodeelite.nooreislam.resources.excused_days
-import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
-import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
+import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.hijri_era
 import com.kodeelite.nooreislam.resources.language
 import com.kodeelite.nooreislam.resources.location
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.notifications
+import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_streak
-import com.kodeelite.nooreislam.resources.show_streaks_best_run_and_on_time_percentage
-import com.kodeelite.nooreislam.resources.streak
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.settings
+import com.kodeelite.nooreislam.resources.show_streaks_best_run_and_on_time_percentage
+import com.kodeelite.nooreislam.resources.streak
 import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
 import com.kodeelite.nooreislam.resources.widgets
@@ -101,6 +101,7 @@ import com.kodeelite.nooreislam.resources.widgets_summary
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

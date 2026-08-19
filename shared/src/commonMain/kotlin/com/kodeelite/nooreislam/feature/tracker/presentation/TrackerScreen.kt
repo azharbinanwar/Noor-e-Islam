@@ -34,8 +34,6 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.PulseDot
-import com.kodeelite.nooreislam.core.datetime.format
-import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.DayProgress
@@ -43,7 +41,10 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
+import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.miqat.domain.currentPrayer
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
+import com.kodeelite.nooreislam.feature.miqat.presentation.components.prayerWindow
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
@@ -77,6 +78,7 @@ import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
+
 private val trackablePrayers = Miqat.PRAYERS
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,7 +111,7 @@ fun TrackerScreen() {
     val started: (Miqat) -> Boolean = { p ->
         !isToday || todayTimes.firstOrNull { it.miqat == p }?.at?.time?.let { it <= clock.time } == true
     }
-    val currentPrayer = todayTimes.filter { it.miqat.isPrayer }.lastOrNull { it.at.time <= clock.time }?.miqat
+    val currentPrayer = todayTimes.currentPrayer(clock.time)
 
     Scaffold(
         topBar = {
@@ -161,7 +163,7 @@ fun TrackerScreen() {
                     val markable = !selectedExcused && started(p)
                     AppTileItem(
                         title = p.label(selected),
-                        subtitle = if (isToday) todayTimes.firstOrNull { it.miqat == p }?.at?.time?.format(timeFormat.pattern) else null,
+                        subtitle = if (isToday) prayerWindow(todayTimes, p, timeFormat.pattern) else null,
                         selected = isToday && p == currentPrayer,
                         leadingIcon = p.icon,
                         leadingColor = AppTheme.colors.primary,

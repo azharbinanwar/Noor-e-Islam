@@ -58,6 +58,7 @@
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">Mettre la série en pause les jours où vous êtes dispensée de prière</string>
     <string name="coming_soon">Bientôt disponible</string>
     <string name="best_days_streak_and_on_time_percentage">Meilleur %1$d jours · %2$d%% à l'heure</string>
+    <string name="time_from_to">%1$s - %2$s</string>
     <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>
 
     <string name="gregorian_jan">janvier</string>

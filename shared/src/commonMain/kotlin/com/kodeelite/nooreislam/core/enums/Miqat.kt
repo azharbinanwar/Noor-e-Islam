@@ -77,6 +77,20 @@ enum class Miqat(
             else -> null
         }
 
+    /**
+     * The time point that closes this prayer's window. Fajr is the only one that closes
+     * before the next prayer opens, which is why sunrise to Dhuhr has no current prayer.
+     */
+    val endsAt: Miqat?
+        get() = when (this) {
+            Fajr -> Sunrise
+            Dhuhr -> Asr
+            Asr -> Maghrib
+            Maghrib -> Isha
+            Isha -> Fajr // valid until dawn; midnight is only the preferred cutoff
+            else -> null
+        }
+
     /** Localized display name. Pass the day for date rules (Friday Dhuhr reads as Jumu'ah); no date gives the plain name. */
     @Composable
     fun label(date: LocalDate? = null): String =
