@@ -51,6 +51,15 @@
     <string name="day_complete">Complete</string>
     <string name="day_partial">Partial</string>
     <string name="day_excused">Excused</string>
+    <string name="streak">Streak</string>
+    <string name="prayer_streak">Prayer streak</string>
+    <string name="prayer_streak_summary">Show streaks, best run and on-time percentage</string>
+    <string name="excused_days">Excused days</string>
+    <string name="excused_days_summary">Pause the streak on days you are exempt from prayer</string>
+    <string name="excused_start">Start excused days</string>
+    <string name="excused_end">Excused days ended</string>
+    <string name="excused_since">Since %1$s</string>
+    <string name="excused_start_hint">Tap when it begins, tap again when it ends</string>
     <string name="coming_soon">Coming soon</string>
     <string name="best_days_streak_and_on_time_percentage">Best %1$d days · %2$d%% on time</string>
     <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>

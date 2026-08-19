@@ -35,6 +35,8 @@ import com.kodeelite.nooreislam.feature.home.presentation.components.PrayerScene
 import com.kodeelite.nooreislam.feature.home.presentation.components.SceneDebugOverlay
 import com.kodeelite.nooreislam.feature.home.presentation.components.StreakCard
 import com.kodeelite.nooreislam.feature.home.presentation.components.TodayPrayers
+import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExcusedControl
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import kotlinx.coroutines.launch
 
@@ -60,15 +62,17 @@ fun HomeScreen() {
     val fraction = (scroll.value / rangePx).coerceIn(0f, 1f)
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
+    val streakEnabled by SettingsStore.streakEnabled.collectAsState()
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                StreakCard()
+                if (streakEnabled) StreakCard()
                 TodayPrayers()
                 MulkReminderCard()
                 DailyVerseCard()
+                ExcusedControl()
                 Spacer(Modifier.height(8.dp))
             }
         }

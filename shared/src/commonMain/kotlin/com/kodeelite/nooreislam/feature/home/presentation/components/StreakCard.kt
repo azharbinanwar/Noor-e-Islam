@@ -62,18 +62,24 @@ fun StreakCard() {
     val streak = stats.current
     val best = stats.best
     val onTimePct = stats.onTimePercent
+    val todayExcused = dayProgress(tracked, today, excused, today) == DayProgress.Excused
 
     AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    progress = { done / total.toFloat() },
+                    progress = { if (todayExcused) 1f else done / total.toFloat() },
                     modifier = Modifier.size(72.dp),
                     strokeWidth = 7.dp,
-                    color = AppTheme.colors.surfaceTint,
+                    color = if (todayExcused) DayProgress.Excused.color else AppTheme.colors.surfaceTint,
                     trackColor = AppTheme.colors.neutralMutedContainer,
                 )
-                Text("$done/$total", color = AppTheme.colors.onSurface, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                // nothing is expected on an excused day, so don't show it as 0 of 5
+                if (todayExcused) {
+                    Icon(DayProgress.Excused.icon, DayProgress.Excused.label, tint = DayProgress.Excused.color, modifier = Modifier.size(24.dp))
+                } else {
+                    Text("$done/$total", color = AppTheme.colors.onSurface, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                }
             }
             Spacer(Modifier.width(18.dp))
             Column(Modifier.weight(1f)) {

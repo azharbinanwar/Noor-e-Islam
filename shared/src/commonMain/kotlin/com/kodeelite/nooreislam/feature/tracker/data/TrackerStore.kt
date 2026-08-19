@@ -4,6 +4,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.domain.PrayerHistory
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
@@ -53,11 +54,19 @@ class TrackerStore(
 
     fun setStatus(prayer: Miqat, status: PrayerTrackerStatus?) = setStatus(Now.date(), prayer, status)
 
-    fun startExcused() {
-        scope.launch { repo.startExcused(Now.date()) }
+    /** The setting is the period: turning it on opens the range, off closes it. */
+    fun setExcused(on: Boolean) {
+        SettingsStore.setTrackExcusedDays(on)
+        scope.launch { if (on) repo.startExcused(Now.date()) else repo.endExcused(Now.date()) }
     }
 
-    fun endExcused() {
-        scope.launch { repo.endExcused(Now.date()) }
+    /** Excused only exists to pause a streak, so it can't outlive one. */
+    fun setStreakEnabled(on: Boolean) {
+        SettingsStore.setStreakEnabled(on)
+        if (!on) setExcused(false)
+    }
+
+    fun deleteExcused(id: Long) {
+        scope.launch { repo.deleteExcused(id) }
     }
 }

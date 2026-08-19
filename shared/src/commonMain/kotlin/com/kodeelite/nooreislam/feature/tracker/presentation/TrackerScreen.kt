@@ -28,11 +28,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.Trash
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
+import com.kodeelite.nooreislam.core.components.AppIconAction
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
+import com.kodeelite.nooreislam.core.components.PulseDot
+import com.kodeelite.nooreislam.core.datetime.format
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.DayProgress
@@ -41,14 +46,20 @@ import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
+import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExcusedControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best
 import com.kodeelite.nooreislam.resources.day_streak
+import com.kodeelite.nooreislam.resources.excused_end
+import com.kodeelite.nooreislam.resources.excused_since
+import com.kodeelite.nooreislam.resources.excused_start
+import com.kodeelite.nooreislam.resources.excused_start_hint
 import com.kodeelite.nooreislam.resources.gregorian_apr
 import com.kodeelite.nooreislam.resources.gregorian_aug
 import com.kodeelite.nooreislam.resources.gregorian_dec
@@ -97,6 +108,15 @@ fun TrackerScreen() {
 
     val selectedStatuses = history[selected].orEmpty()
     val selectedExcused = dayProgress(selectedStatuses, selected, excused, today) == DayProgress.Excused
+    val todayTimes by MiqatTimesStore.today.collectAsState()
+    val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val streakEnabled by SettingsStore.streakEnabled.collectAsState()
+    val isToday = selected == today
+    // a prayer can only be logged once its time has come; past days are all fair game
+    val started: (Miqat) -> Boolean = { p ->
+        !isToday || todayTimes.firstOrNull { it.miqat == p }?.at?.time?.let { it <= clock.time } == true
+    }
+    val currentPrayer = todayTimes.filter { it.miqat.isPrayer }.lastOrNull { it.at.time <= clock.time }?.miqat
 
     Scaffold(
         topBar = {
@@ -113,7 +133,7 @@ fun TrackerScreen() {
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            StatsHeader(stats)
+            if (streakEnabled) StatsHeader(stats)
 
             MonthCalendar(
                 year = visible.year,
@@ -123,6 +143,7 @@ fun TrackerScreen() {
                 onSelect = { selected = it },
                 onPrevMonth = { visible = visible.minus(1, DateTimeUnit.MONTH) },
                 onNextMonth = { visible = visible.plus(1, DateTimeUnit.MONTH) },
+                lastSelectable = today,
                 dayDots = { date ->
                     val statuses = history[date]
                     if (dayProgress(statuses, date, excused, today) == DayProgress.Excused) {
@@ -144,16 +165,25 @@ fun TrackerScreen() {
             AppTileGroup(
                 items = trackablePrayers.map { p ->
                     val status = selectedStatuses[p]
+                    val markable = !selectedExcused && started(p)
                     AppTileItem(
                         title = p.label(selected),
+                        subtitle = if (isToday) todayTimes.firstOrNull { it.miqat == p }?.at?.time?.format(timeFormat.pattern) else null,
+                        selected = isToday && p == currentPrayer,
                         leadingIcon = p.icon,
                         leadingColor = AppTheme.colors.primary,
-                        trailing = { TrackControl(status, excused = selectedExcused) },
-                        // future days and excused days aren't markable
-                        onClick = if (selected > today || selectedExcused) null else ({ sheetPrayer = p }),
+                        badge = if (isToday && p == currentPrayer) {
+                            { PulseDot(color = AppTheme.colors.primary) }
+                        } else null,
+                        trailing = if (markable || selectedExcused) {
+                            { TrackControl(status, excused = selectedExcused) }
+                        } else null,
+                        onClick = if (markable) ({ sheetPrayer = p }) else null,
                     )
                 }
             )
+
+            ExcusedControl()
         }
     }
 

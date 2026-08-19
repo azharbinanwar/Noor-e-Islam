@@ -69,6 +69,18 @@ object SettingsStore {
     private val _hijriOffset = MutableStateFlow(PrefsService.getInt(PrefConst.HIJRI_OFFSET, SettingsDefaults.HIJRI_OFFSET))
     val hijriOffset: StateFlow<Int> = _hijriOffset.asStateFlow()
 
+    /** Off hides the streak card and stats; logging still records. */
+    private val _streakEnabled = MutableStateFlow(
+        PrefsService.getBoolean(PrefConst.STREAK_ENABLED, SettingsDefaults.STREAK_ENABLED),
+    )
+    val streakEnabled: StateFlow<Boolean> = _streakEnabled.asStateFlow()
+
+    /** Shows the excused-days control in the tracker; hidden entirely while off. */
+    private val _trackExcusedDays = MutableStateFlow(
+        PrefsService.getBoolean(PrefConst.TRACK_EXCUSED_DAYS, SettingsDefaults.TRACK_EXCUSED_DAYS),
+    )
+    val trackExcusedDays: StateFlow<Boolean> = _trackExcusedDays.asStateFlow()
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /** Today's Hijri date with the offset applied; follows Now, so it rolls with the clock. */
@@ -116,5 +128,15 @@ object SettingsStore {
     fun setHijriOffset(value: Int) {
         PrefsService.putInt(PrefConst.HIJRI_OFFSET, value)
         _hijriOffset.value = value
+    }
+
+    fun setStreakEnabled(value: Boolean) {
+        PrefsService.putBoolean(PrefConst.STREAK_ENABLED, value)
+        _streakEnabled.value = value
+    }
+
+    fun setTrackExcusedDays(value: Boolean) {
+        PrefsService.putBoolean(PrefConst.TRACK_EXCUSED_DAYS, value)
+        _trackExcusedDays.value = value
     }
 }

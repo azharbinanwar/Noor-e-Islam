@@ -43,8 +43,11 @@ import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
+import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import org.koin.compose.koinInject
@@ -64,6 +67,10 @@ fun TodayPrayers() {
     val todayTimes by MiqatTimesStore.today.collectAsState()
     val tracker = koinInject<TrackerStore>()
     val tracked by tracker.tracked.collectAsState()
+    val excusedPeriods by tracker.excused.collectAsState()
+    val todayExcused = dayProgress(tracked, clock.date, excusedPeriods, clock.date) == DayProgress.Excused
+    val streakEnabled by SettingsStore.streakEnabled.collectAsState()
+    val markable: (MiqatTime) -> Boolean = { streakEnabled && !todayExcused && it.at.time <= now }
 
     val dailyTimes = remember(todayTimes) { todayTimes.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
@@ -97,17 +104,19 @@ fun TodayPrayers() {
                 badge = if (status == MiqatTimeStatus.Current) {
                     { PulseDot(color = AppTheme.colors.primary) }
                 } else null,
+                // a prayer can only be logged once its time has come
                 trailing = if (mt.miqat.isPrayer) {
                     {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             if (status == MiqatTimeStatus.Soon) {
                                 Text(MiqatTimeStatus.Soon.label, color = MiqatTimeStatus.Soon.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
-                            TrackControl(tracked[mt.miqat])
+                            // hidden while excused (the card says so) and while the streak is off
+                            if (markable(mt)) TrackControl(tracked[mt.miqat])
                         }
                     }
                 } else null,
-                onClick = if (mt.miqat.isPrayer) {
+                onClick = if (mt.miqat.isPrayer && markable(mt)) {
                     { sheetPrayer = mt.miqat }
                 } else null,
             )

@@ -118,6 +118,7 @@ fun AppDrawer(
     val nav = LocalNavController.current
     val scope = rememberCoroutineScope()
     val overlay = LocalOverlay.current
+    val streakEnabled by SettingsStore.streakEnabled.collectAsState()
     // edge-swipe-to-open only on the burger-icon (top-level) screens, never on pushed detail screens
     val currentEntry by nav.currentBackStackEntryAsState()
     val topLevelRoutes = (drawerItems + footerItems).mapNotNull { it.route }
@@ -170,7 +171,8 @@ fun AppDrawer(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 // main nav takes the available height; the footer (Settings) is pinned to the bottom
                 Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(vertical = 8.dp)) {
-                    drawerItems.forEach { entry ->
+                    // the tracker is only a streak surface, so it goes away with the streak
+                    drawerItems.filter { streakEnabled || it.route != AppRoute.Tracker }.forEach { entry ->
                         DrawerRow(entry) { onSelect(entry) }
                     }
                 }

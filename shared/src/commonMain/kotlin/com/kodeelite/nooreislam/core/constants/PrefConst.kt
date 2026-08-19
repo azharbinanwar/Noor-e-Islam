@@ -88,6 +88,10 @@ object PrefConst {
     const val QURAN_KEEP_SCREEN_ON = "quran_keep_screen_on" // keep the display awake while the reader is open
     const val QURAN_LAST_READ = "quran_last_read" // "surah:ayah" — "Resume" target, only set after a real reading dwell, not a quick glance
 
+    // ── Tracker ──────────────────────────────────────────────
+    const val STREAK_ENABLED = "streak_enabled"
+    const val TRACK_EXCUSED_DAYS = "track_excused_days"
+
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus
     const val TASBIH_SIZE = "tasbih_size"

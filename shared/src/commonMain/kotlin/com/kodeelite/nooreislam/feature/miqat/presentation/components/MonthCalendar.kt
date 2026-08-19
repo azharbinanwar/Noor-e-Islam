@@ -52,6 +52,7 @@ fun MonthCalendar(
     onNextMonth: () -> Unit,
     modifier: Modifier = Modifier,
     dayDots: (LocalDate) -> List<Color> = { emptyList() }, // optional per-prayer dots under each day
+    lastSelectable: LocalDate? = null, // days after this are dimmed and unselectable; null = any day
 ) {
     val c = AppTheme.colors
     val first = LocalDate(year, month, 1)
@@ -96,7 +97,14 @@ fun MonthCalendar(
             Row(Modifier.fillMaxWidth()) {
                 week.forEach { date ->
                     Box(Modifier.weight(1f).padding(2.dp), contentAlignment = Alignment.Center) {
-                        if (date != null) DayCell(date, date == selected, date == today, dayDots(date), onSelect)
+                        if (date != null) DayCell(
+                            date = date,
+                            selected = date == selected,
+                            today = date == today,
+                            dots = dayDots(date),
+                            enabled = lastSelectable == null || date <= lastSelectable,
+                            onSelect = onSelect,
+                        )
                     }
                 }
                 repeat(7 - week.size) { Box(Modifier.weight(1f)) } // pad short last week
@@ -106,10 +114,17 @@ fun MonthCalendar(
 }
 
 @Composable
-private fun DayCell(date: LocalDate, selected: Boolean, today: Boolean, dots: List<Color>, onSelect: (LocalDate) -> Unit) {
+private fun DayCell(
+    date: LocalDate,
+    selected: Boolean,
+    today: Boolean,
+    dots: List<Color>,
+    enabled: Boolean,
+    onSelect: (LocalDate) -> Unit,
+) {
     val c = AppTheme.colors
     Column(
-        Modifier.fillMaxWidth().clickable { onSelect(date) },
+        Modifier.fillMaxWidth().let { if (enabled) it.clickable { onSelect(date) } else it },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         var circle = Modifier.size(32.dp).clip(CircleShape)
@@ -123,6 +138,7 @@ private fun DayCell(date: LocalDate, selected: Boolean, today: Boolean, dots: Li
                 color = when {
                     selected -> c.onPrimary
                     today -> c.primary
+                    !enabled -> c.onSurfaceVariant.copy(alpha = 0.35f)
                     else -> c.onSurface
                 },
             )

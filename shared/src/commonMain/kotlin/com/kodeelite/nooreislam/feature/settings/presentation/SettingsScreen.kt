@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.BellOff
+import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.CalendarDays
 import com.composables.icons.lucide.Check
@@ -32,6 +33,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
+import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Globe
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.LayoutGrid
@@ -44,6 +46,7 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
@@ -62,6 +65,7 @@ import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
 import com.kodeelite.nooreislam.resources.all_alerts_off
@@ -72,6 +76,8 @@ import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
+import com.kodeelite.nooreislam.resources.excused_days
+import com.kodeelite.nooreislam.resources.excused_days_summary
 import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
@@ -83,6 +89,9 @@ import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
+import com.kodeelite.nooreislam.resources.prayer_streak
+import com.kodeelite.nooreislam.resources.prayer_streak_summary
+import com.kodeelite.nooreislam.resources.streak
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.time_format
@@ -204,6 +213,9 @@ fun SettingsScreen() {
             val notificationSettings by NotificationStore.settings.collectAsState()
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
+            val trackExcused by SettingsStore.trackExcusedDays.collectAsState()
+            val streakEnabled by SettingsStore.streakEnabled.collectAsState()
+            val tracker = koinInject<TrackerStore>()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
             val highLat by MiqatCalculationStore.highLatRule.collectAsState()
             AppTileGroup(
@@ -238,6 +250,30 @@ fun SettingsScreen() {
                             title = stringResource(Res.string.prayer_focus),
                             subtitle = stringResource(Res.string.auto_silence_around_prayer),
                             onClick = { nav.navigate(AppRoute.PrayerFocus) })
+                    )
+                },
+            )
+            if (edition != AppEdition.QURAN) AppTileGroup(
+                title = stringResource(Res.string.streak),
+                items = buildList {
+                    add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Flame,
+                            title = stringResource(Res.string.prayer_streak),
+                            subtitle = stringResource(Res.string.prayer_streak_summary),
+                            trailing = { AppSwitch(streakEnabled, tracker::setStreakEnabled) },
+                            onClick = { tracker.setStreakEnabled(!streakEnabled) },
+                        )
+                    )
+                    // excused only pauses a streak, so it has no meaning without one
+                    if (streakEnabled) add(
+                        AppTileItem(
+                            leadingIcon = Lucide.Pause,
+                            title = stringResource(Res.string.excused_days),
+                            subtitle = stringResource(Res.string.excused_days_summary),
+                            trailing = { AppSwitch(trackExcused, tracker::setExcused) },
+                            onClick = { tracker.setExcused(!trackExcused) },
+                        )
                     )
                 },
             )
