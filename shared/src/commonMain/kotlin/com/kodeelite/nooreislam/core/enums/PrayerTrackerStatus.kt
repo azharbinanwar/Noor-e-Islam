@@ -25,9 +25,6 @@ enum class PrayerTrackerStatus(val labelRes: StringResource, val icon: ImageVect
     PrayedKaza(Res.string.prayed_kaza, Lucide.History),
     Missed(Res.string.missed_prayer, Lucide.X);
 
-    /** Stable lowercase key for prefs/config, matching Miqat's. */
-    val key: String get() = name.lowercase()
-
     /** Kaza counts — late is not skipped, so it keeps a streak alive. */
     val isPrayed: Boolean get() = this != Missed
 

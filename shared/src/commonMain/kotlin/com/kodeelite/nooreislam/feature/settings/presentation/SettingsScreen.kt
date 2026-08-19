@@ -77,7 +77,7 @@ import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
 import com.kodeelite.nooreislam.resources.excused_days
-import com.kodeelite.nooreislam.resources.excused_days_summary
+import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
 import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
@@ -90,7 +90,7 @@ import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_streak
-import com.kodeelite.nooreislam.resources.prayer_streak_summary
+import com.kodeelite.nooreislam.resources.show_streaks_best_run_and_on_time_percentage
 import com.kodeelite.nooreislam.resources.streak
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.settings
@@ -260,7 +260,7 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Flame,
                             title = stringResource(Res.string.prayer_streak),
-                            subtitle = stringResource(Res.string.prayer_streak_summary),
+                            subtitle = stringResource(Res.string.show_streaks_best_run_and_on_time_percentage),
                             trailing = { AppSwitch(streakEnabled, tracker::setStreakEnabled) },
                             onClick = { tracker.setStreakEnabled(!streakEnabled) },
                         )
@@ -270,7 +270,7 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Pause,
                             title = stringResource(Res.string.excused_days),
-                            subtitle = stringResource(Res.string.excused_days_summary),
+                            subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
                             trailing = { AppSwitch(trackExcused, tracker::setExcused) },
                             onClick = { tracker.setExcused(!trackExcused) },
                         )

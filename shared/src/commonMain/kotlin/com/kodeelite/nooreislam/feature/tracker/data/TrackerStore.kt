@@ -1,13 +1,11 @@
 package com.kodeelite.nooreislam.feature.tracker.data
 
 import com.kodeelite.nooreislam.core.datetime.Now
-import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.domain.PrayerHistory
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
-import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
 import com.kodeelite.nooreislam.feature.tracker.domain.streakStats
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,14 +38,6 @@ class TrackerStore(
         combine(repo.history, repo.excusedPeriods, today) { h, e, d -> streakStats(h, e, d) }
             .stateIn(scope, SharingStarted.WhileSubscribed(5000), StreakStats(0, 0, 0))
 
-    /** Drives whether the UI offers Start or Ended. */
-    val excusedOngoing: StateFlow<Boolean> =
-        repo.excusedPeriods.map { list -> list.any { it.endDate == null } }
-            .stateIn(scope, SharingStarted.WhileSubscribed(5000), false)
-
-    fun progressOn(date: LocalDate): DayProgress =
-        dayProgress(history.value[date], date, excused.value, Now.date())
-
     fun setStatus(date: LocalDate, prayer: Miqat, status: PrayerTrackerStatus?) {
         scope.launch { repo.setStatus(date, prayer, status) }
     }
@@ -64,9 +54,5 @@ class TrackerStore(
     fun setStreakEnabled(on: Boolean) {
         SettingsStore.setStreakEnabled(on)
         if (!on) setExcused(false)
-    }
-
-    fun deleteExcused(id: Long) {
-        scope.launch { repo.deleteExcused(id) }
     }
 }

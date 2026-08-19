@@ -28,10 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
-import com.composables.icons.lucide.Trash
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
-import com.kodeelite.nooreislam.core.components.AppIconAction
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
@@ -56,10 +54,6 @@ import com.kodeelite.nooreislam.feature.tracker.presentation.components.Tracking
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.best
 import com.kodeelite.nooreislam.resources.day_streak
-import com.kodeelite.nooreislam.resources.excused_end
-import com.kodeelite.nooreislam.resources.excused_since
-import com.kodeelite.nooreislam.resources.excused_start
-import com.kodeelite.nooreislam.resources.excused_start_hint
 import com.kodeelite.nooreislam.resources.gregorian_apr
 import com.kodeelite.nooreislam.resources.gregorian_aug
 import com.kodeelite.nooreislam.resources.gregorian_dec
@@ -72,7 +66,6 @@ import com.kodeelite.nooreislam.resources.gregorian_may
 import com.kodeelite.nooreislam.resources.gregorian_nov
 import com.kodeelite.nooreislam.resources.gregorian_oct
 import com.kodeelite.nooreislam.resources.gregorian_sep
-import com.kodeelite.nooreislam.resources.not_tracked
 import com.kodeelite.nooreislam.resources.on_time
 import com.kodeelite.nooreislam.resources.prayer_tracker
 import com.kodeelite.nooreislam.resources.selected_full_date

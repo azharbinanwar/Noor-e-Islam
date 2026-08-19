@@ -13,7 +13,7 @@ import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.excused_days
-import com.kodeelite.nooreislam.resources.excused_days_summary
+import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -32,7 +32,7 @@ fun ExcusedControl() {
                 leadingIcon = Lucide.Pause,
                 leadingColor = AppTheme.colors.primary,
                 title = stringResource(Res.string.excused_days),
-                subtitle = stringResource(Res.string.excused_days_summary),
+                subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
                 trailing = { AppSwitch(on, tracker::setExcused) },
                 onClick = { tracker.setExcused(!on) },
             )

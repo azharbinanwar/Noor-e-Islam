@@ -37,6 +37,4 @@ class TrackerRepository(
         val last = to.minus(1, DateTimeUnit.DAY)
         if (last < open.startDate) excused.delete(open.id) else excused.upsert(open.copy(endDate = last))
     }
-
-    suspend fun deleteExcused(id: Long) = excused.delete(id)
 }

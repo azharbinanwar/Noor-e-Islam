@@ -55,6 +55,17 @@ class StreakMathTest {
     }
 
     @Test
+    fun runsEitherSideOfAPauseAddUp() {
+        // 5 complete, 10 excused, then 5 complete ending today
+        val days = ((-19..-15) + (-4..0)).map { it to allPrayed() }
+        val h = history(*days.toTypedArray())
+        val excused = listOf(ExcusedPeriod(startDate = day(-14), endDate = day(-5)))
+        val stats = streakStats(h, excused, today)
+        assertEquals(10, stats.current)
+        assertEquals(10, stats.best)
+    }
+
+    @Test
     fun excusedWinsOverLoggedPrayers() {
         val excused = listOf(ExcusedPeriod(startDate = today, endDate = null))
         assertEquals(DayProgress.Excused, dayProgress(allPrayed(), today, excused, today))
