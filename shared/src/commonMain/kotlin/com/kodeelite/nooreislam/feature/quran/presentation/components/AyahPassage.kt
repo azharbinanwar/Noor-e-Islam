@@ -156,7 +156,7 @@ fun AyahPassage(
                 }
 
                 append(RTL_MARKER)
-                append("   ")
+                append(" ")
 
                 ranges.add(ayah to (start until length))
             }
