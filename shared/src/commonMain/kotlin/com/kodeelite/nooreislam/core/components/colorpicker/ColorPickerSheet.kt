@@ -26,6 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.cancel
+import com.kodeelite.nooreislam.resources.done
+import com.kodeelite.nooreislam.resources.pick_a_color
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Modal "pick and confirm" wrapper over [AppBottomSheet]. Commits on Done via [onConfirm];
@@ -43,11 +48,11 @@ fun ColorPickerSheet(
     var current by remember { mutableStateOf(initialColor) }
     AppBottomSheet(
         onDismiss = onDismiss,
-        title = "Pick a color",
+        title = stringResource(Res.string.pick_a_color),
         footer = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) { Text("Cancel") }
-                Button(onClick = { onConfirm(current); onDismiss() }, modifier = Modifier.weight(1f)) { Text("Done") }
+                OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.cancel)) }
+                Button(onClick = { onConfirm(current); onDismiss() }, modifier = Modifier.weight(1f)) { Text(stringResource(Res.string.done)) }
             }
         },
     ) {

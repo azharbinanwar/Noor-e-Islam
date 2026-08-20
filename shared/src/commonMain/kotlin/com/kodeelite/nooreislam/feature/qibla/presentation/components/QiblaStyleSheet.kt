@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.dp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.enums.QiblaStyle
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.compass_style
+import org.jetbrains.compose.resources.stringResource
 
 /** The single place that maps a [QiblaStyle] to its dial composable — screen and picker both use it. */
 @Composable
@@ -53,7 +56,7 @@ fun QiblaStyleSheet(
     onSelect: (QiblaStyle) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    AppBottomSheet(onDismiss = onDismiss, title = "Compass style") {
+    AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.compass_style)) {
         Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             QiblaStyle.entries.forEach { style ->
                 val selected = style == current

@@ -48,16 +48,21 @@ import com.kodeelite.nooreislam.feature.qibla.presentation.components.QiblaDialF
 import com.kodeelite.nooreislam.feature.qibla.presentation.components.QiblaStyleSheet
 import com.kodeelite.nooreislam.feature.qibla.store.QiblaStyleStore
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.calibrate_compass
+import com.kodeelite.nooreislam.resources.compass_style
 import com.kodeelite.nooreislam.resources.compass_unavailable
 import com.kodeelite.nooreislam.resources.device_has_no_compass_sensor
+import com.kodeelite.nooreislam.resources.direction
+import com.kodeelite.nooreislam.resources.distance_to_makkah
+import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.qibla
 import com.kodeelite.nooreislam.resources.turn_left_to_face_qibla
 import com.kodeelite.nooreislam.resources.turn_right_to_face_qibla
 import com.kodeelite.nooreislam.resources.you_are_facing_qibla
-import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 private const val ALIGN_TOLERANCE_DEG = 5f
 
@@ -83,10 +88,10 @@ fun QiblaScreen() {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.qibla)) },
                 navigationIcon = {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") }
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.menu)) }
                 },
                 actions = {
-                    IconButton(onClick = { showStyleSheet = true }) { Icon(Lucide.SwatchBook, "Compass style") }
+                    IconButton(onClick = { showStyleSheet = true }) { Icon(Lucide.SwatchBook, stringResource(Res.string.compass_style)) }
                 },
             )
         },
@@ -137,16 +142,16 @@ fun QiblaScreen() {
                 Row(
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)).background(AppTheme.colors.cardColor).height(IntrinsicSize.Min),
                 ) {
-                    InfoCell("Direction", "${qiblaDeg.roundToInt()}° ${cardinal(qiblaDeg)}", Modifier.weight(1f))
+                    InfoCell(stringResource(Res.string.direction), "${qiblaDeg.roundToInt()}° ${cardinal(qiblaDeg)}", Modifier.weight(1f))
                     VerticalDivider(color = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.15f))
-                    InfoCell("Distance to Makkah", "${distance.roundToInt()} km", Modifier.weight(1f))
+                    InfoCell(stringResource(Res.string.distance_to_makkah), "${distance.roundToInt()} km", Modifier.weight(1f))
                 }
             }
 
             if (needsCalibration && !calibrationDismissed) {
                 AppBottomSheet(
                     onDismiss = { calibrationDismissed = true },
-                    title = "Calibrate compass", // ponytail: inline copy like the rest of this screen; move to resources with them
+                    title = stringResource(Res.string.calibrate_compass),
                 ) {
                     CompassCalibration(Modifier.padding(vertical = 8.dp))
                 }

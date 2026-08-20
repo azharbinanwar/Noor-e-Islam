@@ -785,6 +785,13 @@
     <string name="search_settings">Search settings…</string>
     <string name="nothing_matches">Nothing matches “%1$s”</string>
     <string name="try_a_feature_name_like_qibla_or_language">Try a feature name, like Qibla or Language.</string>
+    <string name="done">Done</string>
+    <string name="pick_a_color">Pick a color</string>
+    <string name="compass_style">Compass style</string>
+    <string name="calibrate_compass">Calibrate compass</string>
+    <string name="direction">Direction</string>
+    <string name="distance_to_makkah">Distance to Makkah</string>
+    <string name="glory_is_to_allah_and_praise_is_to_him">Glory is to Allah and praise is to Him.</string>
     <string name="no_methods_found">No methods found</string>
     <string name="placeholder">placeholder</string>
     <string name="display">Display</string>

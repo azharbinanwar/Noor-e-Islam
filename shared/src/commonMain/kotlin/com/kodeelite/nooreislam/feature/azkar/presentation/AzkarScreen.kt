@@ -78,6 +78,7 @@ import com.kodeelite.nooreislam.resources.azkar_and_dua
 import com.kodeelite.nooreislam.resources.continue_caps
 import com.kodeelite.nooreislam.resources.everyday_dua
 import com.kodeelite.nooreislam.resources.favorites
+import com.kodeelite.nooreislam.resources.glory_is_to_allah_and_praise_is_to_him
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.n_items
 import com.kodeelite.nooreislam.resources.new_collection
@@ -150,7 +151,7 @@ fun AzkarScreen() {
     openSection?.let { s -> AzkarCollectionReader(s, onBack = { openSection = null }); return }
     openColl?.let { coll -> AzkarListReader(coll.name, coll.items, onBack = { openColl = null }); return }
     if (showFavs) {
-        AzkarListReader("Favorites", favDuas, onBack = { showFavs = false }); return
+        AzkarListReader(stringResource(Res.string.favorites), favDuas, onBack = { showFavs = false }); return
     }
     if (creating) {
         CreateCollectionScreen(onBack = { creating = false }); return
@@ -331,7 +332,7 @@ private fun TodayCard() {
             )
         }
         Spacer(Modifier.height(12.dp))
-        Text("Glory is to Allah and praise is to Him.", fontSize = 14.sp, color = c.onSurfaceVariant, lineHeight = 21.sp)
+        Text(stringResource(Res.string.glory_is_to_allah_and_praise_is_to_him), fontSize = 14.sp, color = c.onSurfaceVariant, lineHeight = 21.sp)
     }
 }
 
