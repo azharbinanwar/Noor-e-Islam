@@ -81,3 +81,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+// Studio's Play button runs whichever variant the Build Variants panel has selected, so release needs
+// its own entry — this is the `flutter run --release` equivalent: install the signed build, then start it.
+tasks.register<Exec>("runRelease") {
+    group = "install"
+    description = "Installs and launches the signed release build on the attached device."
+    dependsOn("installRelease")
+    val adb = providers.environmentVariable("ANDROID_HOME")
+        .orElse(providers.environmentVariable("ANDROID_SDK_ROOT"))
+        .map { "$it/platform-tools/adb" }
+        .getOrElse("adb")
+    commandLine(adb, "shell", "am", "start", "-n", "com.kodeelite.nooreislam/.MainActivity")
+}
