@@ -1,6 +1,11 @@
 package com.kodeelite.nooreislam.feature.notifications.presentation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -107,6 +112,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import kotlin.time.Duration.Companion.milliseconds
 import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
+
+// the options button grows in from the switch rather than popping the row wider
+private val optionsEnter = fadeIn() + expandHorizontally()
+private val optionsExit = fadeOut() + shrinkHorizontally()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -218,12 +227,14 @@ fun NotificationsScreen() {
                                     leadingIcon = p.icon,
                                     trailing = {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
-                                            if (cfg.enabled) IconButton(onClick = { sheetKey = p.key }) {
-                                                Icon(
-                                                    Lucide.SlidersHorizontal,
-                                                    contentDescription = null,
-                                                    tint = c.primary
-                                                )
+                                            AnimatedVisibility(cfg.enabled, enter = optionsEnter, exit = optionsExit) {
+                                                IconButton(onClick = { sheetKey = p.key }) {
+                                                    Icon(
+                                                        Lucide.SlidersHorizontal,
+                                                        contentDescription = null,
+                                                        tint = c.primary
+                                                    )
+                                                }
                                             }
                                             AppSwitch(checked = cfg.enabled, onCheckedChange = { NotificationStore.setPrayerEnabled(p.key, it) })
                                         }
@@ -250,12 +261,14 @@ fun NotificationsScreen() {
                                 leadingIcon = Lucide.Calendar,
                                 trailing = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        if (j.enabled) IconButton(onClick = { sheetKey = Miqat.jumuahKey }) {
-                                            Icon(
-                                                Lucide.SlidersHorizontal,
-                                                contentDescription = null,
-                                                tint = c.primary
-                                            )
+                                        AnimatedVisibility(j.enabled, enter = optionsEnter, exit = optionsExit) {
+                                            IconButton(onClick = { sheetKey = Miqat.jumuahKey }) {
+                                                Icon(
+                                                    Lucide.SlidersHorizontal,
+                                                    contentDescription = null,
+                                                    tint = c.primary
+                                                )
+                                            }
                                         }
                                         AppSwitch(checked = j.enabled, onCheckedChange = { NotificationStore.setJumuahEnabled(it) })
                                     }

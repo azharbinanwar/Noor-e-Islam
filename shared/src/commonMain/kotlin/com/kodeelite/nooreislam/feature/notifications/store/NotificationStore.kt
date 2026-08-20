@@ -92,14 +92,44 @@ object NotificationStore {
     )
 
     // ── master ───────────────────────────────────────────────
-    fun setAllAlerts(v: Boolean) = putBool(PrefConst.ALL_ALERTS, v) { it.copy(allAlerts = v) }
+    /**
+     * Every prayer ships off, so switching the master on with nothing under it would be a switch that
+     * does nothing. When no prayer is on yet, the five daily ones start alerting at their time. A setup
+     * that already has something on is left exactly as it is.
+     */
+    fun setAllAlerts(v: Boolean) {
+        PrefsService.putBoolean(PrefConst.ALL_ALERTS, v)
+        val seed = v && _settings.value.prayers.values.none { it.enabled }
+        if (seed) Miqat.PRAYERS.forEach {
+            PrefsService.putBoolean(PrefConst.alert(it.key, Field.ENABLED), true)
+            PrefsService.putBoolean(PrefConst.alert(it.key, Field.AT_TIME), true)
+        }
+        update { s ->
+            s.copy(
+                allAlerts = v,
+                prayers = if (!seed) s.prayers else s.prayers.mapValues { (_, cfg) -> cfg.copy(enabled = true, atTime = true) },
+            )
+        }
+    }
 
     // ── per prayer ───────────────────────────────────────────
-    fun setPrayerEnabled(key: String, v: Boolean) = putPrayerBool(key, Field.ENABLED, v) { it.copy(enabled = v) }
-    fun setPrayerRemindBeforeOn(key: String, v: Boolean) = putPrayerBool(key, Field.REMIND_BEFORE_ON, v) { it.copy(remindBeforeOn = v) }
+    /**
+     * A prayer with none of its three options set has nothing to say, so the row switch stays in step
+     * with them: switching the row on picks at-prayer-time when nothing is remembered, and clearing the
+     * last option switches the row off. Options set earlier survive a trip through off and come back.
+     */
+    fun setPrayerEnabled(key: String, v: Boolean) {
+        val cfg = _settings.value.prayers.getValue(key)
+        val seed = v && !cfg.remindBeforeOn && !cfg.atTime && !cfg.jamaat
+        PrefsService.putBoolean(PrefConst.alert(key, Field.ENABLED), v)
+        if (seed) PrefsService.putBoolean(PrefConst.alert(key, Field.AT_TIME), true)
+        updatePrayer(key) { it.copy(enabled = v, atTime = seed || it.atTime) }
+    }
+
+    fun setPrayerRemindBeforeOn(key: String, v: Boolean) = putPrayerOption(key, Field.REMIND_BEFORE_ON, v) { it.copy(remindBeforeOn = v) }
     fun setPrayerRemindBefore(key: String, v: Int) = putPrayerInt(key, Field.REMIND_BEFORE, v) { it.copy(remindBefore = v) }
-    fun setPrayerAtTime(key: String, v: Boolean) = putPrayerBool(key, Field.AT_TIME, v) { it.copy(atTime = v) }
-    fun setPrayerJamaat(key: String, v: Boolean) = putPrayerBool(key, Field.JAMAAT, v) { it.copy(jamaat = v) }
+    fun setPrayerAtTime(key: String, v: Boolean) = putPrayerOption(key, Field.AT_TIME, v) { it.copy(atTime = v) }
+    fun setPrayerJamaat(key: String, v: Boolean) = putPrayerOption(key, Field.JAMAAT, v) { it.copy(jamaat = v) }
     fun setPrayerJamaatAfter(key: String, v: Int) = putPrayerInt(key, Field.JAMAAT_AFTER, v) { it.copy(jamaatAfter = v) }
 
     // ── Jumu'ah (prayer-shaped, keyed "jumuah") ──────────────
@@ -193,8 +223,13 @@ object NotificationStore {
         PrefsService.putBoolean(pref, v); update(f)
     }
 
-    private fun putPrayerBool(key: String, field: String, v: Boolean, g: (PrayerAlertConfig) -> PrayerAlertConfig) {
-        PrefsService.putBoolean(PrefConst.alert(key, field), v); updatePrayer(key, g)
+    /** One of the three alert options — writes it, then lets the row switch follow whether any survive. */
+    private fun putPrayerOption(key: String, field: String, v: Boolean, g: (PrayerAlertConfig) -> PrayerAlertConfig) {
+        val next = g(_settings.value.prayers.getValue(key))
+        val enabled = next.remindBeforeOn || next.atTime || next.jamaat
+        PrefsService.putBoolean(PrefConst.alert(key, field), v)
+        PrefsService.putBoolean(PrefConst.alert(key, Field.ENABLED), enabled)
+        updatePrayer(key) { next.copy(enabled = enabled) }
     }
 
     private fun putPrayerInt(key: String, field: String, v: Int, g: (PrayerAlertConfig) -> PrayerAlertConfig) {
