@@ -59,6 +59,7 @@ import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.AppTileVariant
+import com.kodeelite.nooreislam.core.components.LocalNotice
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.navigation.AppRoute
@@ -95,6 +96,7 @@ fun SandboxScreen() {
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 variant = AppButtonVariant.Outline,
             )
+            NoticeShowcase()
             TileVariantShowcase()
             FormatShowcase()
             Panel("LIGHT", ThemeMode.LIGHT)
@@ -297,6 +299,54 @@ private fun TileShowcase() {
         ),
     )
     AppTile(title = "About Miqat", subtitle = "Standalone tile", onClick = {})
+}
+
+/** The transient message that replaces a toast — Android has one, iOS has none, so this is both. */
+@Composable
+private fun NoticeShowcase() {
+    val notice = LocalNotice.current
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionTitle("Notice")
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AppButton(
+                "Saved",
+                onClick = {
+                    notice.show(
+                        title = "Saved to gallery",
+                        icon = Lucide.Download,
+                        variant = AppTileVariant.Success,
+                        actionLabel = "Undo",
+                        onAction = {},
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                size = AppButtonSize.Small,
+                variant = AppButtonVariant.Outline,
+            )
+            AppButton(
+                "Not saved",
+                onClick = {
+                    notice.show(
+                        title = "Photo access was declined",
+                        message = "Allow it in Settings to save your ayah image. Until then the Save button will keep asking.",
+                        icon = Lucide.Info,
+                        variant = AppTileVariant.Warning,
+                        dismissible = true,
+                    )
+                },
+                modifier = Modifier.weight(1f),
+                size = AppButtonSize.Small,
+                variant = AppButtonVariant.Outline,
+            )
+        }
+        AppButton(
+            "Plain",
+            onClick = { notice.show("Copied") },
+            modifier = Modifier.fillMaxWidth(),
+            size = AppButtonSize.Small,
+            variant = AppButtonVariant.Outline,
+        )
+    }
 }
 
 /** Every tile variant, in the live theme — group title, leading icon and fill all follow it. */

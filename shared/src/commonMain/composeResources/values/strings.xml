@@ -763,6 +763,7 @@
     <string name="my_creations">My Creations</string>
     <string name="saved_to_gallery">Saved to gallery</string>
     <string name="couldnt_save">Couldn't save</string>
+    <string name="photo_access_declined">Photo access was declined</string>
     <string name="photos_access_blocked">Photos access blocked</string>
     <string name="allow_x_to_add_photos_in_settings">Allow %1$s to add photos in Settings to save your ayah images.</string>
     <string name="just_now">just now</string>

@@ -862,4 +862,5 @@
     <string name="focus_dnd_sheet_note">Sans cela, le téléphone vibrera au lieu de se taire.</string>
     <string name="focus_dnd_use_vibrate">Utiliser le vibreur à la place</string>
     <string name="location_permission_sub">Les horaires de prière et la Qibla dépendent de votre position.</string>
+    <string name="photo_access_declined">L'accès aux photos a été refusé</string>
 </resources>

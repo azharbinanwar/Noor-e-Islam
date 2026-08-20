@@ -869,4 +869,5 @@
     <string name="focus_dnd_sheet_note">اس کے بغیر فون خاموش ہونے کے بجائے ارتعاش کرے گا۔</string>
     <string name="focus_dnd_use_vibrate">اس کے بجائے ارتعاش استعمال کریں</string>
     <string name="location_permission_sub">نماز کے اوقات اور قبلہ آپ کے مقام پر منحصر ہیں۔</string>
+    <string name="photo_access_declined">تصاویر تک رسائی مسترد کر دی گئی</string>
 </resources>

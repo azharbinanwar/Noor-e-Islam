@@ -42,7 +42,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bookmark
+import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.Images
+import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Trash2
@@ -57,6 +59,8 @@ import com.kodeelite.nooreislam.core.components.SystemBackHandler
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
+import com.kodeelite.nooreislam.core.components.AppTileVariant
+import com.kodeelite.nooreislam.core.components.LocalNotice
 import com.kodeelite.nooreislam.core.permissions.PhotosDeniedSheet
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
@@ -94,6 +98,7 @@ import com.kodeelite.nooreislam.resources.you_have_unsaved_changes
 import com.kodeelite.nooreislam.resources.leave_this_design
 import com.kodeelite.nooreislam.resources.my_creations
 import com.kodeelite.nooreislam.resources.save_exit
+import com.kodeelite.nooreislam.resources.photo_access_declined
 import com.kodeelite.nooreislam.resources.saved_to_gallery
 import com.kodeelite.nooreislam.resources.share
 import com.kodeelite.nooreislam.resources.allow_x_to_add_photos_in_settings
@@ -159,7 +164,7 @@ fun StudioScreen(
     var savingToGallery by remember { mutableStateOf(false) }   // spinner on the Download button
     var photoDeniedOpen by remember { mutableStateOf(false) }
     val perms = rememberPermissionService()
-    var galleryHint by remember { mutableStateOf<String?>(null) }   // transient "Saved to gallery" pill
+    val notice = LocalNotice.current
     var shareSheetOpen by remember { mutableStateOf(false) }   // review/edit caption before sharing
     var confirmBackOpen by remember { mutableStateOf(false) }   // confirm discard before leaving with unsaved edits
 
@@ -302,12 +307,20 @@ fun StudioScreen(
                                             photoDeniedOpen = true
                                             return@launch
                                         }
-                                        else -> return@launch
+                                        // refused for now — say so, rather than the button doing nothing
+                                        else -> {
+                                            notice.show(getString(Res.string.photo_access_declined), variant = AppTileVariant.Warning, icon = Lucide.Images)
+                                            return@launch
+                                        }
                                     }
                                     val bitmap = captureLayer.toImageBitmap()
                                     val bytes = withContext(Dispatchers.Default) { bitmap.toPngBytes() }
-                                    galleryHint = if (GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png", edition.folderName))
-                                        getString(Res.string.saved_to_gallery) else getString(Res.string.couldnt_save)
+                                    val ok = GalleryService.saveImage(bytes, "noor_ayah_${config.ayahs.first().surah}.png", edition.folderName)
+                                    notice.show(
+                                        title = getString(if (ok) Res.string.saved_to_gallery else Res.string.couldnt_save),
+                                        icon = if (ok) Lucide.Download else Lucide.Info,
+                                        variant = if (ok) AppTileVariant.Success else AppTileVariant.Error,
+                                    )
                                 } finally {
                                     savingToGallery = false
                                 }
@@ -320,18 +333,6 @@ fun StudioScreen(
                 )
 
                 // transient confirmation for save-to-gallery (share has the system sheet as its own signal)
-                galleryHint?.let {
-                    Box(Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 132.dp)) {
-                        Text(
-                            it,
-                            color = colors.onSurface,
-                            fontSize = 12.sp,
-                            modifier = Modifier.clip(RoundedCornerShape(20.dp)).background(colors.surface.copy(alpha = 0.9f))
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                        )
-                    }
-                    LaunchedEffect(it) { delay(1600.milliseconds); galleryHint = null }
-                }
             }
 
             // tools hidden → floating pen (our style) to bring the panel back

@@ -9,6 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +40,9 @@ import androidx.navigation.toRoute
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.components.AppDrawer
+import com.kodeelite.nooreislam.core.components.AppNotice
+import com.kodeelite.nooreislam.core.components.LocalNotice
+import com.kodeelite.nooreislam.core.components.NoticeState
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.LocalOverlay
 import com.kodeelite.nooreislam.core.components.OverlayState
@@ -86,9 +91,11 @@ fun AppNavHost(
         // drawer + overlay hoisted once around the NavHost; screens open it via LocalDrawerState
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val overlay = remember { OverlayState() }
+        val notice = remember { NoticeState() }
         CompositionLocalProvider(
             LocalDrawerState provides drawerState,
             LocalOverlay provides overlay,
+            LocalNotice provides notice,
         ) {
             val navHost = @Composable {
                 NavHost(
@@ -157,7 +164,10 @@ fun AppNavHost(
             }
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
             // stays out of the tree entirely rather than being present-but-empty
-            if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
+            Box(Modifier.fillMaxSize()) {
+                if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
+                AppNotice(notice)
+            }
 
             // shown once, on the launch after a damaged database was moved aside
             var recovered by remember { mutableStateOf(DatabaseRecovery.recoveredThisLaunch) }

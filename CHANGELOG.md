@@ -27,6 +27,7 @@ Newest first. Dates are the release date, not the merge date.
 - `[islam]` **Android.** The notifications screen warns when the phone is set to restrict this app in the background, the state that stops reminders arriving. The Quran app already had this; the app whose alerts are time-critical did not.
 - `[islam]` Prayer Focus explains what Do Not Disturb access is before handing you to system settings, and Silent is only applied once that access exists — picking it no longer leaves the setting saying Silent while the phone quietly vibrates instead.
 - `[both]` The location screen warns when location is refused, instead of the request silently doing nothing.
+- `[both]` Saving an ayah image says what happened: saved, couldn't save, or photo access declined. Declining used to stop the spinner and say nothing, so the button looked broken.
 
 ### Changed
 

@@ -866,4 +866,5 @@
     <string name="focus_dnd_sheet_note">بدونه سيهتز الهاتف بدل أن يصمت.</string>
     <string name="focus_dnd_use_vibrate">استخدم الاهتزاز بدلاً من ذلك</string>
     <string name="location_permission_sub">مواقيت الصلاة والقبلة تعتمد على مكانك.</string>
+    <string name="photo_access_declined">تم رفض الوصول إلى الصور</string>
 </resources>
