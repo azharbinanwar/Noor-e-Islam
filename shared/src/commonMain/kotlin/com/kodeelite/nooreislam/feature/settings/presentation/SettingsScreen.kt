@@ -315,6 +315,8 @@ fun SettingsScreen() {
             items = Language.entries.map { lang ->
                 AppTileItem(
                     title = lang.label,
+                    // each name in the face it will actually be read in
+                    titleFontFamily = lang.font,
                     selected = lang == language,
                     trailing = { if (lang == language) Icon(Lucide.Check, null, tint = AppTheme.colors.primary, modifier = Modifier.size(20.dp)) },
                     onClick = { SettingsStore.setLanguage(lang); showLanguage = false },

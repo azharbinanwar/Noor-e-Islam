@@ -94,6 +94,7 @@ class AppIconAction(val icon: ImageVector, val onClick: () -> Unit)
 /** Data for one tile in an [AppTileGroup]. */
 class AppTileItem(
     val title: String,
+    val titleFontFamily: FontFamily? = null,
     val subtitle: String? = null,
     val leadingIcon: ImageVector? = null,
     val leadingColor: Color? = null,
@@ -114,8 +115,9 @@ class AppTileItem(
 fun AppTile(
     title: String,
     modifier: Modifier = Modifier,
+    titleFontFamily: FontFamily? = null,
     subtitle: String? = null,
-    subtitleFont: FontFamily? = null,
+    subtitleFontFamilyFamily: FontFamily? = null,
     subtitleAlign: TextAlign? = null,
     subtitleMaxLines: Int = Int.MAX_VALUE,
     leadingIcon: ImageVector? = null,
@@ -134,8 +136,9 @@ fun AppTile(
     Column(modifier.fillMaxWidth().clip(shapeFor(position)).background(bg)) {
         TileRow(
             title,
+            titleFontFamily,
             subtitle,
-            subtitleFont,
+            subtitleFontFamilyFamily,
             subtitleAlign,
             subtitleMaxLines,
             leadingIcon,
@@ -239,6 +242,7 @@ private fun ActionIcons(actions: List<AppIconAction>) {
 private fun Tile(item: AppTileItem, position: TilePosition) {
     AppTile(
         title = item.title,
+        titleFontFamily = item.titleFontFamily,
         subtitle = item.subtitle,
         leadingIcon = item.leadingIcon,
         leadingColor = item.leadingColor,
@@ -341,8 +345,9 @@ private fun positionFor(index: Int, size: Int): TilePosition = when {
 @Composable
 private fun TileRow(
     title: String,
+    titleFontFamily: FontFamily?,
     subtitle: String?,
-    subtitleFont: FontFamily?,
+    subtitleFontFamilyFamily: FontFamily?,
     subtitleAlign: TextAlign?,
     subtitleMaxLines: Int,
     leadingIcon: ImageVector?,
@@ -379,6 +384,7 @@ private fun TileRow(
                     modifier = Modifier.weight(1f, fill = false),
                     style = MaterialTheme.typography.titleSmall,
                     color = if (selected) c.primary else c.onSurface,
+                    fontFamily = titleFontFamily,
                     fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                 )
                 if (badge != null) {
@@ -392,7 +398,7 @@ private fun TileRow(
                     subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = c.onSurfaceVariant,
-                    fontFamily = subtitleFont,
+                    fontFamily = subtitleFontFamilyFamily,
                     textAlign = subtitleAlign,
                     maxLines = subtitleMaxLines,
                     overflow = TextOverflow.Ellipsis,
