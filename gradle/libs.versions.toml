@@ -27,6 +27,7 @@ coil = "3.5.0"
 ktor = "3.5.1"
 palette = "1.0.0"
 playAppUpdate = "2.1.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
@@ -63,6 +64,7 @@ coilNetworkKtor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref 
 ktorOkHttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktorDarwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 play-app-update = { module = "com.google.android.play:app-update-ktx", version.ref = "playAppUpdate" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 androidx-palette-ktx = { module = "androidx.palette:palette-ktx", version.ref = "palette" }
 

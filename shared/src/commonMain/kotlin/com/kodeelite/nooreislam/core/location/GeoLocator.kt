@@ -16,6 +16,15 @@ data class Coordinates(val latitude: Double, val longitude: Double)
  */
 interface GeoLocator {
     suspend fun current(): Coordinates?
+
+    /** The device's own location switch, which is a separate thing from the permission being granted. */
+    fun servicesEnabled(): Boolean
+
+    /**
+     * Gets location switched back on by whatever route the platform allows: the in-app system dialog
+     * where there is one, the settings page otherwise. Watch [servicesEnabled] on resume for the answer.
+     */
+    fun requestLocationOn()
 }
 
 /** Platform-backed [GeoLocator], bound to the current Compose context. */

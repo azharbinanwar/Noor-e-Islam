@@ -45,6 +45,7 @@ kotlin {
             implementation(libs.ktorOkHttp)
             implementation(libs.androidx.palette)
             implementation(libs.play.app.update)
+            implementation(libs.play.services.location)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

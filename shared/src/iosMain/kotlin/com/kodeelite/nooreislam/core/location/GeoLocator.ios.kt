@@ -8,6 +8,9 @@ import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
 import platform.Foundation.NSError
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
+import platform.UIKit.UIApplicationOpenSettingsURLString
 import platform.darwin.NSObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -25,6 +28,13 @@ private class IosGeoLocator : GeoLocator {
         delegate = d
         manager.delegate = d
         manager.requestLocation() // one-shot; delivered via the delegate below
+    }
+
+    override fun servicesEnabled(): Boolean = CLLocationManager.locationServicesEnabled()
+
+    // iOS offers no dialog and no route to the system switch, so the app's own page is the only move.
+    override fun requestLocationOn() {
+        NSURL.URLWithString(UIApplicationOpenSettingsURLString)?.let { UIApplication.sharedApplication.openURL(it) }
     }
 }
 

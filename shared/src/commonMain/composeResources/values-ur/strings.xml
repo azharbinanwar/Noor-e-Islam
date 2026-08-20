@@ -870,4 +870,6 @@
     <string name="focus_dnd_use_vibrate">اس کے بجائے ارتعاش استعمال کریں</string>
     <string name="location_permission_sub">نماز کے اوقات اور قبلہ آپ کے مقام پر منحصر ہیں۔</string>
     <string name="photo_access_declined">تصاویر تک رسائی مسترد کر دی گئی</string>
+    <string name="location_is_off">مقام کی سہولت بند ہے</string>
+    <string name="location_is_off_sub">اسے آن کریں تاکہ نماز کے اوقات آپ کے مقام کے مطابق ہوں۔</string>
 </resources>

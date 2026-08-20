@@ -310,6 +310,8 @@
     <string name="location_permission_needed">Location access needed</string>
     <string name="location_permission_rationale">%1$s needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
     <string name="location_permission_sub">Prayer times and Qibla depend on where you are.</string>
+    <string name="location_is_off">Location is off</string>
+    <string name="location_is_off_sub">Turn it on so prayer times can follow where you are.</string>
     <string name="search_city">Search for a city</string>
     <string name="saved">Saved</string>
     <string name="search_city_hint_title">Find your city</string>

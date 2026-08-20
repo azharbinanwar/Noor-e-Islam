@@ -867,4 +867,6 @@
     <string name="focus_dnd_use_vibrate">استخدم الاهتزاز بدلاً من ذلك</string>
     <string name="location_permission_sub">مواقيت الصلاة والقبلة تعتمد على مكانك.</string>
     <string name="photo_access_declined">تم رفض الوصول إلى الصور</string>
+    <string name="location_is_off">خدمة الموقع مغلقة</string>
+    <string name="location_is_off_sub">شغّلها لتتبع مواقيت الصلاة مكانك.</string>
 </resources>

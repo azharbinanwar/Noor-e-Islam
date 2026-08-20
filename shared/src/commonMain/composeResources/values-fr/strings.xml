@@ -863,4 +863,6 @@
     <string name="focus_dnd_use_vibrate">Utiliser le vibreur à la place</string>
     <string name="location_permission_sub">Les horaires de prière et la Qibla dépendent de votre position.</string>
     <string name="photo_access_declined">L'accès aux photos a été refusé</string>
+    <string name="location_is_off">La localisation est désactivée</string>
+    <string name="location_is_off_sub">Activez-la pour que les horaires de prière suivent votre position.</string>
 </resources>

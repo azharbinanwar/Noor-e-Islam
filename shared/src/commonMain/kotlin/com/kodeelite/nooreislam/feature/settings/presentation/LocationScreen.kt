@@ -59,6 +59,8 @@ import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.permissions.LocationPermissionTile
+import com.kodeelite.nooreislam.core.components.LocalNotice
+import com.kodeelite.nooreislam.core.location.LocationServiceTile
 import com.kodeelite.nooreislam.core.permissions.LocationDeniedSheet
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
@@ -66,6 +68,11 @@ import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.settings.presentation.components.MethodSwitchSheet
 import com.kodeelite.nooreislam.resources.Res
+import org.jetbrains.compose.resources.getString
+import com.kodeelite.nooreislam.resources.open_settings
+import com.kodeelite.nooreislam.resources.location_is_off_sub
+import com.kodeelite.nooreislam.resources.location_is_off
+import com.composables.icons.lucide.LocateOff
 import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.clear_search
@@ -118,6 +125,7 @@ fun LocationScreen() {
     // GPS: request permission → get a fix → snap to the nearest catalog city (offline) → save it.
     val perms = rememberPermissionService()
     val geo = rememberGeoLocator()
+    val notice = LocalNotice.current
     val scope = rememberCoroutineScope()
     var showDeniedSheet by remember { mutableStateOf(false) }
     var locating by remember { mutableStateOf(false) } // GPS in flight — drives the tile spinner
@@ -128,6 +136,18 @@ fun LocationScreen() {
             try {
                 when (perms.request(AppPermission.Location)) {
                     PermissionStatus.Granted -> {
+                        // allowed, but the device switch is off — there is no location to read
+                        if (!geo.servicesEnabled()) {
+                            notice.show(
+                                title = getString(Res.string.location_is_off),
+                                message = getString(Res.string.location_is_off_sub),
+                                icon = Lucide.LocateOff,
+                                variant = AppTileVariant.Warning,
+                                actionLabel = getString(Res.string.open_settings),
+                                onAction = { geo.requestLocationOn() },
+                            )
+                            return@launch
+                        }
                         val fix = geo.current()
                         val place = fix?.let { all.nearestTo(it.latitude, it.longitude) }
                         if (place != null) selectPlace(place) // else: no fix / catalog still loading — keep current
@@ -182,7 +202,7 @@ fun LocationScreen() {
             AppTileGroup(
                 title = stringResource(Res.string.notif_needs_attention),
                 variant = AppTileVariant.Warning,
-                items = listOf(LocationPermissionTile()),
+                items = listOf(LocationServiceTile(), LocationPermissionTile()),
             )
             AppTileGroup(
                 items = listOf(
