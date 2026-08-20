@@ -8,10 +8,10 @@ import androidx.compose.ui.Modifier
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.focus.SilenceMode
-import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
 import com.kodeelite.nooreislam.core.permissions.BatteryPermissionTile
 import com.kodeelite.nooreislam.core.permissions.DndPermissionTile
 import com.kodeelite.nooreislam.core.permissions.NotificationPermissionTile
+import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.store.PrayerFocusStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.focus_allow_background
@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 // once a prayer is set to Silent — before that it is a heads-up.
 @Composable
 fun FocusNeedsAttention() {
-    if (!rememberFocusSetup().supported) return
+    if (!Platform.canControlDnd) return
     val configs by PrayerFocusStore.configs.collectAsState()
     val anySilent = configs.values.any { it.enabled && it.mode == SilenceMode.Silent }
 

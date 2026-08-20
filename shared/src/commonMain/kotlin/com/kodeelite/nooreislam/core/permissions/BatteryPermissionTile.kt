@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.composables.icons.lucide.BatteryCharging
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.core.components.AppTileItem
+import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
 import com.kodeelite.nooreislam.resources.Res
@@ -33,7 +34,7 @@ fun BatteryPermissionTile(
     val setup = rememberFocusSetup()
     var unrestricted by remember { mutableStateOf(true) }
     LifecycleResumeEffect(Unit) {
-        unrestricted = !setup.supported ||
+        unrestricted = !Platform.canControlDnd ||
                 if (strict) !setup.backgroundRestricted() else setup.batteryUnrestricted()
         onPauseOrDispose { }
     }

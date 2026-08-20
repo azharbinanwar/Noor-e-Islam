@@ -45,6 +45,7 @@ import com.composables.icons.lucide.Pause
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
@@ -60,7 +61,6 @@ import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.platform.appVersion
-import com.kodeelite.nooreislam.core.platform.canControlDnd
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
@@ -170,7 +170,7 @@ fun SettingsScreen() {
                             onClick = { showLanguage = true })
                     )
                     // hidden for now — no Quran-specific widgets exist yet, current gallery is prayer widgets only
-                    if (edition != AppEdition.QURAN) add(
+                    if (Platform.hasHomeScreenWidgets && edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.LayoutGrid,
                             title = stringResource(Res.string.widgets),
@@ -245,7 +245,7 @@ fun SettingsScreen() {
                             subtitle = stringResource(if (notificationSettings.allAlerts) Res.string.all_alerts_on else Res.string.all_alerts_off),
                             onClick = { nav.navigate(AppRoute.Notifications) })
                     )
-                    if (canControlDnd && edition != AppEdition.QURAN) add(
+                    if (Platform.canControlDnd && edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.BellOff,
                             title = stringResource(Res.string.prayer_focus),

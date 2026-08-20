@@ -1,5 +1,4 @@
 package com.kodeelite.nooreislam.core.platform
 
-// ponytail: temporarily true to preview the Prayer Focus UI on iOS. Real iOS can't control system DND —
-// flip back to false before shipping.
-actual val canControlDnd: Boolean = true
+internal actual val platformCanControlDnd: Boolean = false
+internal actual val platformHasHomeScreenWidgets: Boolean = false

@@ -1,8 +1,16 @@
 package com.kodeelite.nooreislam.core.platform
 
 /**
- * Whether the app can drive the system's Do-Not-Disturb / silent state.
- * Android: yes (with the DND-access permission). iOS: no — Apple forbids third-party apps from
- * toggling system DND/Focus, so the Prayer Focus feature is hidden there.
+ * What the OS itself allows, fixed for the whole run. Anything that has to ask the device — a
+ * permission, a setting the user can change while the app is open — belongs to its own feature.
  */
-expect val canControlDnd: Boolean
+object Platform {
+    /** Apple forbids third-party apps from touching system Do Not Disturb, so Prayer Focus is Android-only. */
+    val canControlDnd: Boolean get() = platformCanControlDnd
+
+    /** iOS's widget is still a stub, so the gallery would offer something that can't be pinned. */
+    val hasHomeScreenWidgets: Boolean get() = platformHasHomeScreenWidgets
+}
+
+internal expect val platformCanControlDnd: Boolean
+internal expect val platformHasHomeScreenWidgets: Boolean

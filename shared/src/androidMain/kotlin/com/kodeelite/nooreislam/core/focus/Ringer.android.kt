@@ -13,7 +13,7 @@ object Ringer {
     private val am get() = AppCtx.context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val nm get() = AppCtx.context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    fun hasDndAccess() = nm.isNotificationPolicyAccessGranted
+    fun hasDndAccess(): Boolean = nm.isNotificationPolicyAccessGranted
     fun hasSaved() = PrefsService.getInt(PrefConst.FOCUS_SAVED_RINGER, NONE) != NONE
 
     // Mute to the given mode, saving the prior ringer once. Silent needs DND access, else falls back to Vibrate.

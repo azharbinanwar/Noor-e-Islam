@@ -7,7 +7,7 @@ import com.kodeelite.nooreislam.core.constants.AppConst
 
 /** Android builder — needs a Context (wire via DI later). */
 fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
-    val appContext = context.applicationContext
+    val appContext: Context = context.applicationContext
     val dbFile = appContext.getDatabasePath(AppConst.DATABASE_NAME)
     DatabaseRecovery.recoveredThisLaunch = quarantineIfUnusable(dbFile.absolutePath, AppConst.DB_VERSION, DATABASE_TABLES)
     return Room.databaseBuilder<AppDatabase>(appContext, dbFile.absolutePath)

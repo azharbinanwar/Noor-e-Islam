@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.VolumeX
 import com.kodeelite.nooreislam.core.components.AppTileItem
+import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
 import com.kodeelite.nooreislam.resources.Res
@@ -22,7 +23,7 @@ fun DndPermissionTile(variant: AppTileVariant = AppTileVariant.Error): AppTileIt
     val setup = rememberFocusSetup()
     var granted by remember { mutableStateOf(true) }
     LifecycleResumeEffect(Unit) {
-        granted = !setup.supported || setup.hasSilenceAccess()
+        granted = !Platform.canControlDnd || setup.hasSilenceAccess()
         onPauseOrDispose { }
     }
     if (granted) return null

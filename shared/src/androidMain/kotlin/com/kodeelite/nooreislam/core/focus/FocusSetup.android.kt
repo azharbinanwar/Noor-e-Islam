@@ -11,8 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 
 class AndroidFocusSetup(context: Context) : FocusSetup {
-    private val app = context.applicationContext
-    override val supported = true
+    private val app: Context = context.applicationContext
 
     override fun batteryUnrestricted(): Boolean {
         val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -40,7 +39,7 @@ class AndroidFocusSetup(context: Context) : FocusSetup {
     override fun backgroundRestricted(): Boolean =
         (app.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).isBackgroundRestricted
 
-    override fun hasSilenceAccess() = Ringer.hasDndAccess()
+    override fun hasSilenceAccess(): Boolean = Ringer.hasDndAccess()
 
     override fun requestSilenceAccess() {
         launch(Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
