@@ -1,7 +1,10 @@
 package com.kodeelite.nooreislam.feature.settings.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -22,10 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
@@ -48,14 +50,14 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Pause
+import com.composables.icons.lucide.Search
+import com.composables.icons.lucide.X
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.AppEdition
-import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.catalog.Anchor
-import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchField
-import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchResults
-import com.kodeelite.nooreislam.core.platform.Platform
+import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppSwitch
+import com.kodeelite.nooreislam.core.components.AppTextField
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
@@ -69,11 +71,13 @@ import com.kodeelite.nooreislam.core.locale.Language
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.platform.appVersion
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
+import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchResults
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
@@ -100,6 +104,7 @@ import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_streak
 import com.kodeelite.nooreislam.resources.quran_text_source
+import com.kodeelite.nooreislam.resources.search_settings
 import com.kodeelite.nooreislam.resources.settings
 import com.kodeelite.nooreislam.resources.show_streaks_best_run_and_on_time_percentage
 import com.kodeelite.nooreislam.resources.streak
@@ -107,11 +112,11 @@ import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
 import com.kodeelite.nooreislam.resources.widgets
 import com.kodeelite.nooreislam.resources.widgets_summary
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import kotlin.time.Duration.Companion.milliseconds
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -168,8 +173,25 @@ fun SettingsScreen(open: String? = null) {
         Column(
             Modifier.fillMaxSize().padding(innerPadding).verticalScroll(scroll).padding(16.dp),
         ) {
-            SettingsSearchField(query) { query = it }
-            if (query.isNotBlank()) {
+            val searchable = edition != AppEdition.QURAN
+            if (searchable) {
+                AppTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    placeholder = stringResource(Res.string.search_settings),
+                    leading = { Icon(Lucide.Search, null, tint = AppTheme.colors.onSurfaceVariant, modifier = Modifier.size(20.dp)) },
+                    trailing = {
+                        if (query.isNotEmpty()) {
+                            Icon(
+                                Lucide.X, null, tint = AppTheme.colors.onSurfaceVariant,
+                                modifier = Modifier.clickable { query = "" }.size(20.dp),
+                            )
+                        }
+                    },
+                )
+                Spacer(Modifier.height(16.dp))
+            }
+            if (searchable && query.isNotBlank()) {
                 SettingsSearchResults(query) { feature ->
                     query = ""
                     focus.clearFocus()
