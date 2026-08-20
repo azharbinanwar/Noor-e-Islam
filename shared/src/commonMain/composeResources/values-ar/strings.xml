@@ -588,6 +588,7 @@
     <string name="reading_settings">إعدادات القراءة</string>
     <string name="text_size">حجم الخط</string>
     <string name="line_spacing">تباعد الأسطر</string>
+    <string name="alignment">محاذاة النص</string>
     <string name="script">الرسم</string>
     <string name="theme">المظهر</string>
     <string name="content">المحتوى</string>

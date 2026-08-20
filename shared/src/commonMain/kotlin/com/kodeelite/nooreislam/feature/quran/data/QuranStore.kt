@@ -143,6 +143,16 @@ class QuranStore(
         _autoScrollPaused.value = paused
     }
 
+    // off = centered. Justify has no kashida here, so big font sizes stretch word gaps wide
+    private val _justifyText = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_JUSTIFY_TEXT, QuranDefaults.JUSTIFY_TEXT))
+    val justifyText: StateFlow<Boolean> = _justifyText.asStateFlow()
+
+    fun toggleJustifyText() {
+        val next = !_justifyText.value
+        PrefsService.putBoolean(PrefConst.QURAN_JUSTIFY_TEXT, next)
+        _justifyText.value = next
+    }
+
     private val _keepScreenOn = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, QuranDefaults.KEEP_SCREEN_ON))
     val keepScreenOn: StateFlow<Boolean> = _keepScreenOn.asStateFlow()
 

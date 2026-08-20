@@ -33,6 +33,7 @@ object QuranDefaults {
     const val JUMP_TO_DEFAULT_SURAH = 1  // Jump To's pick before the user has ever picked one — Al-Fatihah
 
     const val KEEP_SCREEN_ON = true  // default on — the whole point is not fighting the lock timer mid-ayah
+    const val JUSTIFY_TEXT = true    // default on — matches a printed mushaf; off centers each line instead
 
     const val READING_DWELL_MS = 10_000L  // minimum time on the reader before a visit counts as "reading" for Resume, not a glance
 

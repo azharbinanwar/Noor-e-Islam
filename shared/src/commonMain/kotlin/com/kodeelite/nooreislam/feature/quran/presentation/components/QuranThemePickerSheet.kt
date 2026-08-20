@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,9 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.AlignCenter
 import com.composables.icons.lucide.AlignJustify
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Type
+import com.composables.icons.lucide.UnfoldVertical
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.config.theme.LocalBaseAppColors
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
@@ -41,6 +44,7 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranFont
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.alignment
 import com.kodeelite.nooreislam.resources.line_spacing
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.script
@@ -60,7 +64,8 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
     val lineSpacing by store.lineSpacing.collectAsState()
     val font by store.font.collectAsState()
     val theme by store.theme.collectAsState()
-    AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings)) {
+    val justify by store.justifyText.collectAsState()
+    AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings), scrimAlpha = 0f) {
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             QuranTheme.entries.forEach { t -> ThemeChip(t, selected = t == theme, onClick = { store.setTheme(t) }) }
         }
@@ -92,7 +97,7 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
                 ),
                 AppTileItem(
                     title = stringResource(Res.string.line_spacing),
-                    leadingIcon = Lucide.AlignJustify,
+                    leadingIcon = Lucide.UnfoldVertical,
                     trailing = {
                         MiniStepper(
                             value = lineSpacing,
@@ -102,6 +107,26 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
                             max = QuranDefaults.MAX_LINE_SPACING_PERCENT,
                             step = QuranDefaults.LINE_SPACING_STEP_PERCENT,
                         )
+                    },
+                ),
+                AppTileItem(
+                    title = stringResource(Res.string.alignment),
+                    leadingIcon = Lucide.AlignJustify,
+                    trailing = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            listOf(false to Lucide.AlignCenter, true to Lucide.AlignJustify).forEach { (wantJustify, icon) ->
+                                val on = justify == wantJustify
+                                Box(
+                                    Modifier.size(34.dp).clip(RoundedCornerShape(10.dp))
+                                        .background(if (on) colors.primary.copy(alpha = 0.1f) else colors.onSurface.copy(alpha = 0.05f))
+                                        .border(1.5.dp, if (on) colors.primary else Color.Transparent, RoundedCornerShape(10.dp))
+                                        .clickable(enabled = !on) { store.toggleJustifyText() },
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(icon, null, tint = if (on) colors.primary else colors.onSurfaceVariant, modifier = Modifier.size(17.dp))
+                                }
+                            }
+                        }
                     },
                 ),
             ),

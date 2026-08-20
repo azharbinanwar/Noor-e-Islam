@@ -21,6 +21,10 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
+### Added
+
+- `[both]` Reading text can be centred instead of justified, from a two-icon Alignment row in the reader's appearance sheet. Justify stays the default and matches a printed mushaf, but with no kashida it stretches word gaps wide at large text sizes, so centred is there for anyone who reads that way.
+
 ## [1.0.0+6] - 2026-08-19
 
 ### Added

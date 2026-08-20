@@ -591,6 +591,7 @@
     <string name="reading_settings">مطالعہ کی ترتیبات</string>
     <string name="text_size">متن کا سائز</string>
     <string name="line_spacing">سطروں کا وقفہ</string>
+    <string name="alignment">متن کی سیدھ</string>
     <string name="script">رسم الخط</string>
     <string name="theme">تھیم</string>
     <string name="content">مواد</string>

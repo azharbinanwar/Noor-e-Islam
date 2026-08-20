@@ -92,6 +92,7 @@ fun AyahPassage(
     val autoScrolling by store.autoScrollEnabled.collectAsState()
     val lineHeightRatio by store.lineHeightRatio.collectAsState()
     val script by store.font.collectAsState()
+    val justify by store.justifyText.collectAsState()
     val bodyFont = FontFamily(Font(script.res))
     val markerFont = FontFamily(Font(Res.font.tanzil_hafs))
 
@@ -211,7 +212,7 @@ fun AyahPassage(
             },
         fontSize = fontSize.sp,
         lineHeight = (fontSize * lineHeightRatio).sp,
-        textAlign = TextAlign.Justify,
+        textAlign = if (justify) TextAlign.Justify else TextAlign.Center,
         onTextLayout = { layout = it }
     )
 }

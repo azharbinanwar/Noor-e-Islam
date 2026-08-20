@@ -86,6 +86,7 @@ object PrefConst {
     const val QURAN_HIGHLIGHT_COLOR = "quran_highlight_color" // last-used highlight color (sticky default)
     const val QURAN_AUTO_SCROLL_SPEED = "quran_auto_scroll_speed" // sticky speed level for the reader's auto-scroll
     const val QURAN_KEEP_SCREEN_ON = "quran_keep_screen_on" // keep the display awake while the reader is open
+    const val QURAN_JUSTIFY_TEXT = "quran_justify_text" // stretch reading lines to both margins, mushaf-style
     const val QURAN_LAST_READ = "quran_last_read" // "surah:ayah" — "Resume" target, only set after a real reading dwell, not a quick glance
 
     // ── Tracker ──────────────────────────────────────────────

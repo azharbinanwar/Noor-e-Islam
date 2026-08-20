@@ -13,6 +13,12 @@ private func scheduleNotifRefresh() {
     try? BGTaskScheduler.shared.submit(req)
 }
 
+#if DEBUG
+private let buildType = BuildType.debug
+#else
+private let buildType = BuildType.release
+#endif
+
 @main
 struct iOSApp: App {
     @Environment(\.scenePhase) private var scenePhase
@@ -21,7 +27,7 @@ struct iOSApp: App {
     init() {
         // AppEdition.quran — Kotlin/Native lowercases the first letter of enum entries for Swift.
         // If Xcode's autocomplete disagrees (e.g. AppEdition.QURAN), use whatever it suggests.
-        DIKt.startKoinForIos(edition: AppEdition.quran)
+        DIKt.startKoinForIos(edition: AppEdition.quran, build: buildType)
         // Set before launch finishes, so a tap that cold-starts the app is still delivered.
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }

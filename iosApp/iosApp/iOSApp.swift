@@ -13,13 +13,19 @@ private func scheduleNotifRefresh() {
     try? BGTaskScheduler.shared.submit(req)
 }
 
+#if DEBUG
+private let buildType = BuildType.debug
+#else
+private let buildType = BuildType.release
+#endif
+
 @main
 struct iOSApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @State private var showSplash = true
 
     init() {
-        DIKt.startKoinForIos(edition: AppEdition.main)
+        DIKt.startKoinForIos(edition: AppEdition.main, build: buildType)
         // Set before launch finishes, so a tap that cold-starts the app is still delivered.
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }

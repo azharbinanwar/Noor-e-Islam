@@ -584,6 +584,7 @@
     <string name="reading_settings">Paramètres de lecture</string>
     <string name="text_size">Taille du texte</string>
     <string name="line_spacing">Interligne</string>
+    <string name="alignment">Alignement</string>
     <string name="script">Écriture</string>
     <string name="theme">Thème</string>
     <string name="content">Contenu</string>
