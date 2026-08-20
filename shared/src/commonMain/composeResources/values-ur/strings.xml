@@ -64,7 +64,7 @@
     <string name="excused_days">عذر کے دن</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">جن دنوں نماز معاف ہے ان دنوں تسلسل روک دیں</string>
     <string name="coming_soon">جلد آ رہا ہے</string>
-    <string name="best_days_streak_and_on_time_percentage">بہترین %1$d دن · %2$d%% وقت پر</string>
+    <string name="best_days_streak_and_on_time_percentage">بہترین %1$d دن · %2$d% وقت پر</string>
     <string name="time_from_to">%1$s - %2$s</string>
     <string name="selected_full_date">%1$s، %2$d %3$s %4$d</string>
 
@@ -488,6 +488,8 @@
     <string name="notif_kahf_body">دو جمعوں کے درمیان نور</string>
     <string name="something_went_wrong_with_your_saved_data">آپ کے محفوظ ڈیٹا میں کچھ خرابی آ گئی</string>
     <string name="sorry_app_started_fresh_set_up_again">معذرت، ہم اسے کھول نہیں سکے، اس لیے ایپ نئے سرے سے شروع ہوئی ہے۔ آپ کے بک مارکس، نوٹس اور ہائی لائٹس دوبارہ ترتیب دینے ہوں گے۔</string>
+    <string name="a_new_version_is_available">نیا ورژن دستیاب ہے</string>
+    <string name="update_now_for_the_latest_fixes">تازہ ترین بہتری اور اصلاحات کے لیے ابھی اپ ڈیٹ کریں۔</string>
     <string name="got_it">سمجھ گیا</string>
     <string name="a_calm_place_to_read">پڑھنے کے لیے ایک پرسکون جگہ</string>
     <string name="fourteen_reading_themes">چودہ ریڈنگ تھیمز</string>

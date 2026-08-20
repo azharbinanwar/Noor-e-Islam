@@ -56,7 +56,7 @@
     <string name="excused_days">أيام العذر</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">إيقاف المواظبة في الأيام التي تُعذرين فيها عن الصلاة</string>
     <string name="coming_soon">قريباً</string>
-    <string name="best_days_streak_and_on_time_percentage">الأفضل %1$d يوماً · %2$d%% في الوقت</string>
+    <string name="best_days_streak_and_on_time_percentage">الأفضل %1$d يوماً · %2$d% في الوقت</string>
     <string name="time_from_to">%1$s - %2$s</string>
     <string name="selected_full_date">%1$s، %2$d %3$s %4$d</string>
 
@@ -482,6 +482,8 @@
     <string name="notif_kahf_body">نورٌ بين الجمعتين</string>
     <string name="something_went_wrong_with_your_saved_data">حدث خطأ في بياناتك المحفوظة</string>
     <string name="sorry_app_started_fresh_set_up_again">نعتذر، تعذّر فتحها فبدأ التطبيق من جديد. ستحتاج إلى إعداد العلامات والملاحظات والتظليلات مرة أخرى.</string>
+    <string name="a_new_version_is_available">يتوفر إصدار جديد</string>
+    <string name="update_now_for_the_latest_fixes">حدّث الآن للحصول على آخر الإصلاحات والتحسينات.</string>
     <string name="got_it">حسناً</string>
     <string name="a_calm_place_to_read">مكان هادئ للقراءة</string>
     <string name="fourteen_reading_themes">أربعة عشر مظهراً للقراءة</string>

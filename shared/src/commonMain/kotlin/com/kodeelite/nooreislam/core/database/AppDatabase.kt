@@ -26,11 +26,11 @@ import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriodDao
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayer
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayerDao
 
-// exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
+// schemas land in shared/schemas and are committed — Room validates every migration against them.
 @Database(
     entities = [TrackedPrayer::class, ExcusedPeriod::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
     version = AppConst.DB_VERSION,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -57,6 +57,6 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
-        // ponytail: no persisted data shipped yet, so wipe on schema bump. Add real Migrations before that changes.
-        .fallbackToDestructiveMigration(dropAllTables = true)
+        // no destructive fallback: a schema bump without a Migration must fail loudly here,
+        // not silently wipe someone's bookmarks, notes and prayer history.
         .build()

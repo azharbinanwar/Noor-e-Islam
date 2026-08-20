@@ -36,6 +36,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.kodeelite.nooreislam.core.AppEdition
+import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.components.AppDrawer
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.LocalOverlay
@@ -73,6 +74,7 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController()
 ) {
     val edition = koinInject<AppEdition>()
+    val build = koinInject<BuildType>()
     // A tapped notification's destination, held until the graph exists — a cold-start tap lands
     // here long before this composes. The route itself is the only thing either platform sends.
     val pending by PendingNavigation.route.collectAsState()
@@ -111,7 +113,9 @@ fun AppNavHost(
                     composable<AppRoute.PrayerTimes> { MiqatTimesScreen() }
                     composable<AppRoute.Qibla> { QiblaScreen() }
                     composable<AppRoute.Tracker> { TrackerScreen() }
-                    composable<AppRoute.Azkar> { AzkarScreen() }
+                    // duas still run off the hardcoded catalog; the dhikr notifications deep-link here,
+                    // so the route stays registered and lands on Home instead of crashing.
+                    composable<AppRoute.Azkar> { if (build.isDebug) AzkarScreen() else HomeScreen() }
                     composable<AppRoute.Quran> {
                         QuranThemeHost { QuranIndexScreen() }
                     }

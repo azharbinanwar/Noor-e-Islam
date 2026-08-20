@@ -39,7 +39,7 @@ android {
         applicationId = "com.kodeelite.noorequran"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 6 // Play consumes a code on upload, even into an unpublished draft — always bump
+        versionCode = 7 // Play consumes a code on upload, even into an unpublished draft — always bump
         versionName = "1.0.0"
     }
     buildFeatures {

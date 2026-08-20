@@ -57,7 +57,7 @@
     <string name="excused_days">Jours dispensés</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">Mettre la série en pause les jours où vous êtes dispensée de prière</string>
     <string name="coming_soon">Bientôt disponible</string>
-    <string name="best_days_streak_and_on_time_percentage">Meilleur %1$d jours · %2$d%% à l'heure</string>
+    <string name="best_days_streak_and_on_time_percentage">Meilleur %1$d jours · %2$d% à l'heure</string>
     <string name="time_from_to">%1$s - %2$s</string>
     <string name="selected_full_date">%1$s, %2$d %3$s %4$d</string>
 
@@ -481,6 +481,8 @@
     <string name="notif_kahf_body">Lumière entre les deux vendredis</string>
     <string name="something_went_wrong_with_your_saved_data">Un problème est survenu avec vos données enregistrées</string>
     <string name="sorry_app_started_fresh_set_up_again">Désolé, nous n'avons pas pu l'ouvrir, l'application a donc redémarré à zéro. Vos signets, notes et surlignages devront être reconfigurés.</string>
+    <string name="a_new_version_is_available">Une nouvelle version est disponible</string>
+    <string name="update_now_for_the_latest_fixes">Mettez à jour pour les derniers correctifs et améliorations.</string>
     <string name="got_it">Compris</string>
     <string name="a_calm_place_to_read">Un endroit calme pour lire</string>
     <string name="fourteen_reading_themes">Quatorze thèmes de lecture</string>
