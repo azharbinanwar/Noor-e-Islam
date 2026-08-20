@@ -25,6 +25,14 @@ Newest first. Dates are the release date, not the merge date.
 
 - `[both]` Reading text can be centred instead of justified, from a two-icon Alignment row in the reader's appearance sheet. Justify stays the default and matches a printed mushaf, but with no kashida it stretches word gaps wide at large text sizes, so centred is there for anyone who reads that way.
 
+### Changed
+
+- `[islam]` The sun and moon on the home header follow the prayer times instead of a sunrise-to-sunset curve. Each prayer pins its body to a fixed point on one closed loop, and the clock only decides how fast the gap between two points is crossed, so Maghrib looks the same in a nine-hour December day as in a sixteen-hour June one, anywhere in the world. The loop closes, so nothing snaps at the ends of the day.
+
+### Fixed
+
+- `[islam]` The sun sets at Maghrib. It used to hang above the ridge for the better part of an hour afterwards: the old curve put it at the horizon line rather than under it, and what read as a lingering sun was a hard-edged glow ring drawn well after the disc should have gone. The disc now exists only between the two points where the peaks cut the loop, and below them a soft wash is all that remains, lighting Fajr and Maghrib without ever showing a sun.
+
 ## [1.0.0+6] - 2026-08-19
 
 ### Added

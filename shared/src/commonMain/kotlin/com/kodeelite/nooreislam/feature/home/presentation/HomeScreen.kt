@@ -28,16 +28,17 @@ import com.kodeelite.nooreislam.core.enums.CalculationMethod
 import com.kodeelite.nooreislam.core.location.LocationMoveSheet
 import com.kodeelite.nooreislam.core.location.LocationResolver
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.feature.home.presentation.components.DailyVerseCard
 import com.kodeelite.nooreislam.feature.home.presentation.components.MulkReminderCard
-import com.kodeelite.nooreislam.feature.home.presentation.components.PrayerSceneHeader
 import com.kodeelite.nooreislam.feature.home.presentation.components.SceneDebugOverlay
 import com.kodeelite.nooreislam.feature.home.presentation.components.StreakCard
 import com.kodeelite.nooreislam.feature.home.presentation.components.TodayPrayers
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExcusedControl
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
+import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import kotlinx.coroutines.launch
 
 private val ExpandedHeader = 380.dp
@@ -63,6 +64,8 @@ fun HomeScreen() {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
+    val clock by Now.now.collectAsState()
+    val today by MiqatTimesStore.today.collectAsState()
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
@@ -77,7 +80,10 @@ fun HomeScreen() {
             }
         }
 
-        PrayerSceneHeader(
+        LoopSceneHeader(
+            now = clock.time,
+            date = clock.date,
+            times = today,
             fraction = fraction,
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,

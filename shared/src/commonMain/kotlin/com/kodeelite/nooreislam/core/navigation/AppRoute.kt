@@ -92,6 +92,10 @@ sealed interface AppRoute {
     data object Sandbox : AppRoute
 
     @Serializable
+    @SerialName("SkyLab")
+    data object SkyLab : AppRoute
+
+    @Serializable
     @SerialName("Calendar")
     data object Calendar : AppRoute
 

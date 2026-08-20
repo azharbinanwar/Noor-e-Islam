@@ -1,4 +1,4 @@
-package com.kodeelite.nooreislam.feature.home.presentation.components
+package com.kodeelite.nooreislam.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
@@ -49,74 +48,75 @@ import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.kodeelite.nooreislam.core.components.SehriInfoSheet
 import com.kodeelite.nooreislam.core.datetime.HijriMonth
-import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.datetime.labelRes
+import com.kodeelite.nooreislam.core.datetime.toHijri
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
-import com.kodeelite.nooreislam.feature.home.presentation.MosqueScene
-import com.kodeelite.nooreislam.feature.home.presentation.liveSkyState
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
-import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about_sehri
 import com.kodeelite.nooreislam.resources.countdown_hms
 import com.kodeelite.nooreislam.resources.countdown_ms
 import com.kodeelite.nooreislam.resources.hijri_era
 import com.kodeelite.nooreislam.resources.iftar
-import com.kodeelite.nooreislam.resources.time_with_period
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.now_caps
-import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_and_time_summary
 import com.kodeelite.nooreislam.resources.prayer_countdown_summary
 import com.kodeelite.nooreislam.resources.sehri
+import com.kodeelite.nooreislam.resources.time_with_period
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
 
-/** Collapsing prayer header with the live scene. Reads the stores itself; caller only passes [fraction]. */
+/**
+ * The whole header on the loop scene. Same content as the live one, but the clock and the day are
+ * passed in so the lab can scrub a date without touching the stores.
+ */
 @Composable
-fun PrayerSceneHeader(
-    fraction: Float,
+fun LoopSceneHeader(
+    now: LocalTime,
+    date: LocalDate,
+    times: List<MiqatTime>,
     modifier: Modifier = Modifier,
+    fraction: Float = 0f,
     expandedHeight: Dp = 380.dp,
     collapsedHeight: Dp = 116.dp,
+    showPoints: Boolean = false,
     onMenuClick: () -> Unit = {},
-    onNotificationsClick: () -> Unit = {},
 ) {
     val place by LocationStore.activePlace.collectAsState()
     val timeFormat by SettingsStore.timeFormat.collectAsState()
-    val hijri by SettingsStore.hijriDate.collectAsState()
     val sehriRef by SettingsStore.sehriReference.collectAsState()
-    val clock by Now.now.collectAsState()
-    val now = clock.time
-    val today by MiqatTimesStore.today.collectAsState()
 
-    val prayerTimes = today.filter { it.miqat.isPrayer }
+    val prayerTimes = times.filter { it.miqat.isPrayer }
     val nextMt = prayerTimes.firstOrNull { it.at.time > now } ?: prayerTimes.firstOrNull()
     val prayer = nextMt?.miqat ?: Miqat.Fajr
     val nextTime = nextMt?.at?.time?.format(timeFormat.pattern) ?: ""
     val countdown = nextMt?.let {
         val secs = ((it.at.time.toSecondOfDay() - now.toSecondOfDay()) + 24 * 3600) % (24 * 3600)
-        val h = secs / 3600;
-        val m = (secs % 3600) / 60;
+        val h = secs / 3600
+        val m = (secs % 3600) / 60
         val s = secs % 60
         if (h > 0) stringResource(Res.string.countdown_hms, h, m, s)
         else stringResource(Res.string.countdown_ms, m, s)
     } ?: ""
-    val sky = remember(now, today) { liveSkyState(now, today) }
-    val period = remember(now, today) { currentPeriod(now, today) }
-    val dateLabel = "${stringResource(clock.date.dayOfWeek.labelRes)}, ${hijri.day} ${
+
+    val sky = remember(now, times) { loopSky(now, times) }
+    val period = remember(now, times) { loopPeriod(now, times) }
+    val hijri = remember(date) { toHijri(date) }
+    val dateLabel = "${stringResource(date.dayOfWeek.labelRes)}, ${hijri.day} ${
         HijriMonth.of(hijri.month).label()
     } ${hijri.year} ${stringResource(Res.string.hijri_era)}"
 
     val ramadan = hijri.month == 9
-    val sehri = if (ramadan) today.firstOrNull { it.miqat == sehriRef }?.at?.time?.format(timeFormat.pattern) else null
-    val iftar = if (ramadan) today.firstOrNull { it.miqat == Miqat.Maghrib }?.at?.time?.format(timeFormat.pattern) else null
-    val sunrise = today.firstOrNull { it.miqat == Miqat.Sunrise }?.at?.time?.format(timeFormat.pattern)
-    val sunset = today.firstOrNull { it.miqat == Miqat.Sunset }?.at?.time?.format(timeFormat.pattern)
+    val sehri = if (ramadan) times.firstOrNull { it.miqat == sehriRef }?.at?.time?.format(timeFormat.pattern) else null
+    val iftar = if (ramadan) times.firstOrNull { it.miqat == Miqat.Maghrib }?.at?.time?.format(timeFormat.pattern) else null
+    val sunrise = times.firstOrNull { it.miqat == Miqat.Sunrise }?.at?.time?.format(timeFormat.pattern)
+    val sunset = times.firstOrNull { it.miqat == Miqat.Sunset }?.at?.time?.format(timeFormat.pattern)
     var showSehriInfo by remember { mutableStateOf(false) }
 
     val headerHeight = lerp(expandedHeight, collapsedHeight, fraction)
@@ -128,7 +128,7 @@ fun PrayerSceneHeader(
         modifier.fillMaxWidth().height(headerHeight)
             .clip(RoundedCornerShape(bottomStart = headerCorner, bottomEnd = headerCorner)),
     ) {
-        MosqueScene(sky, modifier = Modifier.fillMaxSize())
+        LoopScene(sky, Modifier.fillMaxSize(), showPoints)
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.45f)))))
 
         Row(
@@ -148,11 +148,11 @@ fun PrayerSceneHeader(
                     Text(
                         stringResource(Res.string.prayer_and_time_summary, prayer.label(), nextTime),
                         color = Color.White,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }
-            IconButton(onClick = onNotificationsClick) { Icon(Lucide.Bell, stringResource(Res.string.notifications), tint = Color.White) }
+            Spacer(Modifier.size(48.dp))
         }
 
         if (expandedAlpha > 0f) {
@@ -162,7 +162,7 @@ fun PrayerSceneHeader(
                     color = Color.White.copy(alpha = 0.7f),
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 1.6.sp
+                    letterSpacing = 1.6.sp,
                 )
                 Spacer(Modifier.height(3.dp))
                 Text(stringResource(period.labelRes), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
@@ -170,14 +170,14 @@ fun PrayerSceneHeader(
                 Text(
                     stringResource(Res.string.prayer_countdown_summary, prayer.label(), nextTime, countdown),
                     color = Color.White.copy(alpha = 0.92f),
-                    fontSize = 13.sp
+                    fontSize = 13.sp,
                 )
                 if (sehri != null || iftar != null) {
                     Spacer(Modifier.height(10.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        if (sehri != null) RamadanChip(Lucide.Moon, stringResource(Res.string.sehri), sehri)
+                        if (sehri != null) LoopChip(Lucide.Moon, stringResource(Res.string.sehri), sehri)
                         if (sehri != null && iftar != null) Spacer(Modifier.width(8.dp))
-                        if (iftar != null) RamadanChip(Lucide.Sunset, stringResource(Res.string.iftar), iftar)
+                        if (iftar != null) LoopChip(Lucide.Sunset, stringResource(Res.string.iftar), iftar)
                         Spacer(Modifier.width(6.dp))
                         Icon(
                             Lucide.Info, stringResource(Res.string.about_sehri), tint = Color.White.copy(alpha = 0.85f),
@@ -193,9 +193,9 @@ fun PrayerSceneHeader(
                     )
                     if (sunrise != null || sunset != null) {
                         Spacer(Modifier.width(12.dp))
-                        if (sunrise != null) SunTime(Lucide.Sunrise, sunrise)
+                        if (sunrise != null) LoopSunTime(Lucide.Sunrise, sunrise)
                         if (sunrise != null && sunset != null) Spacer(Modifier.width(10.dp))
-                        if (sunset != null) SunTime(Lucide.Sunset, sunset)
+                        if (sunset != null) LoopSunTime(Lucide.Sunset, sunset)
                     }
                 }
             }
@@ -206,7 +206,7 @@ fun PrayerSceneHeader(
 }
 
 /** The daily marker we're in now. Wraps overnight to Isha, so it's never blank. */
-private fun currentPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
+private fun loopPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
     val pts = Miqat.PERIODS
         .mapNotNull { m -> times.firstOrNull { it.miqat == m }?.let { m to (it.at.time.hour * 60 + it.at.time.minute) } }
         .sortedBy { it.second }
@@ -216,9 +216,8 @@ private fun currentPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
     return if (idx >= 0) pts[idx].first else pts.last().first
 }
 
-/** Muted sunrise / sunset time over the scene. */
 @Composable
-private fun SunTime(icon: ImageVector, time: String) {
+private fun LoopSunTime(icon: ImageVector, time: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = Color.White.copy(alpha = 0.7f), modifier = Modifier.size(14.dp))
         Spacer(Modifier.width(5.dp))
@@ -226,9 +225,8 @@ private fun SunTime(icon: ImageVector, time: String) {
     }
 }
 
-/** Small translucent pill for a Ramadan time (Sehri / Iftar). */
 @Composable
-private fun RamadanChip(icon: ImageVector, label: String, time: String) {
+private fun LoopChip(icon: ImageVector, label: String, time: String) {
     Row(
         Modifier.clip(RoundedCornerShape(8.dp)).background(Color.White.copy(alpha = 0.16f)).padding(horizontal = 10.dp, vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically,

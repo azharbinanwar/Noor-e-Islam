@@ -44,6 +44,7 @@ import com.kodeelite.nooreislam.core.components.OverlayState
 import com.kodeelite.nooreislam.feature.azkar.presentation.AzkarScreen
 import com.kodeelite.nooreislam.feature.focus.presentation.PrayerFocusScreen
 import com.kodeelite.nooreislam.feature.home.presentation.HomeScreen
+import com.kodeelite.nooreislam.feature.home.presentation.SkyLabScreen
 import com.kodeelite.nooreislam.feature.miqat.presentation.MiqatTimesScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.NotificationsScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.QuranNotificationsScreen
@@ -151,6 +152,7 @@ fun AppNavHost(
                     }
                     composable<AppRoute.PrayerFocus> { PrayerFocusScreen() }
                     composable<AppRoute.Sandbox> { SandboxScreen() }
+                    composable<AppRoute.SkyLab> { if (build.isDebug) SkyLabScreen() else HomeScreen() }
                 }
             }
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)

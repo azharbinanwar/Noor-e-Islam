@@ -60,6 +60,8 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.AdhanRoundingStyle
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
@@ -85,6 +87,13 @@ fun SandboxScreen() {
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
         ) {
+            val nav = LocalAppNavigator.current
+            AppButton(
+                text = "Sky lab",
+                onClick = { nav.navigate(AppRoute.SkyLab) },
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                variant = AppButtonVariant.Outline,
+            )
             FormatShowcase()
             Panel("LIGHT", ThemeMode.LIGHT)
             Panel("DARK", ThemeMode.DARK)
