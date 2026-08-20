@@ -25,6 +25,8 @@ import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.datetime.currentDate
 import com.kodeelite.nooreislam.core.datetime.currentTime
 import com.kodeelite.nooreislam.core.datetime.format
+import com.kodeelite.nooreislam.core.components.AppIconOption
+import com.kodeelite.nooreislam.core.components.AppIconToggle
 import com.kodeelite.nooreislam.core.focus.SilenceMode
 import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
 import com.kodeelite.nooreislam.core.store.FocusTestStore
@@ -84,10 +86,14 @@ fun FocusTestSheet(onDismiss: () -> Unit) {
         Spacer(Modifier.height(6.dp))
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
             Text(stringResource(Res.string.choose_silence_mode), color = c.onSurface)
-            ModeToggle(mode) { m ->
-                if (m == SilenceMode.Silent && !setup.hasSilenceAccess()) setup.requestSilenceAccess()
-                mode = m
-            }
+            AppIconToggle(
+                options = SilenceMode.entries.map { AppIconOption(it.icon, it, it.label()) },
+                selected = mode,
+                onPick = { m ->
+                    if (m == SilenceMode.Silent && !setup.hasSilenceAccess()) setup.requestSilenceAccess()
+                    mode = m
+                },
+            )
         }
         if (saved.isNotEmpty()) {
             Spacer(Modifier.height(12.dp))

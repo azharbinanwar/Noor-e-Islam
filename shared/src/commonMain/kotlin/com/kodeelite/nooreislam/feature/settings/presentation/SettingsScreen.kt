@@ -250,7 +250,7 @@ fun SettingsScreen() {
                             leadingIcon = Lucide.BellOff,
                             title = stringResource(Res.string.prayer_focus),
                             subtitle = stringResource(Res.string.auto_silence_around_prayer),
-                            onClick = { nav.navigate(AppRoute.PrayerFocus) })
+                            onClick = { nav.navigate(AppRoute.Focus) })
                     )
                 },
             )

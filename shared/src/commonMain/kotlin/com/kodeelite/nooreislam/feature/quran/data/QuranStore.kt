@@ -147,10 +147,9 @@ class QuranStore(
     private val _justifyText = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_JUSTIFY_TEXT, QuranDefaults.JUSTIFY_TEXT))
     val justifyText: StateFlow<Boolean> = _justifyText.asStateFlow()
 
-    fun toggleJustifyText() {
-        val next = !_justifyText.value
-        PrefsService.putBoolean(PrefConst.QURAN_JUSTIFY_TEXT, next)
-        _justifyText.value = next
+    fun setJustifyText(value: Boolean) {
+        PrefsService.putBoolean(PrefConst.QURAN_JUSTIFY_TEXT, value)
+        _justifyText.value = value
     }
 
     private val _keepScreenOn = MutableStateFlow(PrefsService.getBoolean(PrefConst.QURAN_KEEP_SCREEN_ON, QuranDefaults.KEEP_SCREEN_ON))

@@ -30,7 +30,7 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusNeedsAttention
-import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusPrayerList
+import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusPrayers
 import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusTestTiles
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.back
@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 // Prayer Focus (Android only): mute the phone around each prayer. Just layout; the pieces own their state.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrayerFocusScreen() {
+fun FocusScreen() {
     val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     var taps by remember { mutableStateOf(0) } // 7 taps on the blurb reveals the test tiles; resets on re-entry
@@ -71,7 +71,7 @@ fun PrayerFocusScreen() {
             Spacer(Modifier.height(12.dp))
             FocusNeedsAttention()
             if (taps >= 7) FocusTestTiles()
-            FocusPrayerList()
+            FocusPrayers()
             Spacer(Modifier.height(8.dp))
         }
     }

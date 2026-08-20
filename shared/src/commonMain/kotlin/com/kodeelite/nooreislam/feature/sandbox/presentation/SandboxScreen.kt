@@ -58,6 +58,7 @@ import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
+import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.navigation.AppRoute
@@ -94,6 +95,7 @@ fun SandboxScreen() {
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 variant = AppButtonVariant.Outline,
             )
+            TileVariantShowcase()
             FormatShowcase()
             Panel("LIGHT", ThemeMode.LIGHT)
             Panel("DARK", ThemeMode.DARK)
@@ -295,6 +297,37 @@ private fun TileShowcase() {
         ),
     )
     AppTile(title = "About Miqat", subtitle = "Standalone tile", onClick = {})
+}
+
+/** Every tile variant, in the live theme — group title, leading icon and fill all follow it. */
+@Composable
+private fun TileVariantShowcase() {
+    Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        SectionTitle("Tile variants")
+        AppTileVariant.entries.forEach { v ->
+            AppTileGroup(
+                title = v.name,
+                variant = v,
+                items = listOf(
+                    AppTileItem(
+                        title = "Battery is restricted",
+                        subtitle = "Reminders may arrive late",
+                        leadingIcon = Lucide.Info,
+                        onClick = {},
+                    ),
+                    AppTileItem(title = "Second row", trailing = { Text("value") }, onClick = {}),
+                ),
+            )
+        }
+        AppTileGroup(
+            title = "Mixed — a row overrides its group",
+            items = listOf(
+                AppTileItem(title = "Inherits Normal", leadingIcon = Lucide.Info, onClick = {}),
+                AppTileItem(title = "Says Warning", variant = AppTileVariant.Warning, leadingIcon = Lucide.Info, onClick = {}),
+                AppTileItem(title = "Says Error", variant = AppTileVariant.Error, leadingIcon = Lucide.Info, onClick = {}),
+            ),
+        )
+    }
 }
 
 /** Highlight color picker + a live preview of the tint drawn behind a sample ayah. */

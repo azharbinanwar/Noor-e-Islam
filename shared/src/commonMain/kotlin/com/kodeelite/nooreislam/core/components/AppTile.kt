@@ -56,10 +56,26 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.GripVertical
 import com.composables.icons.lucide.Lucide
+import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+
+/** What a tile is saying — drives the section title, the leading icon and the row's fill. */
+enum class AppTileVariant {
+    Normal, Success, Warning, Error;
+
+    fun accentOf(c: AppColors): Color = when (this) {
+        Normal -> c.primary
+        Success -> c.success
+        Warning -> c.warning
+        Error -> c.error
+    }
+
+    /** Normal keeps the card colour; the rest wash their accent over it. */
+    fun containerOf(c: AppColors): Color = if (this == Normal) c.cardColor else accentOf(c).copy(alpha = 0.12f)
+}
 
 /** Where a tile sits in a group — drives corner rounding (first/last differ). */
 enum class TilePosition {
@@ -94,6 +110,7 @@ class AppIconAction(val icon: ImageVector, val onClick: () -> Unit)
 /** Data for one tile in an [AppTileGroup]. */
 class AppTileItem(
     val title: String,
+    val variant: AppTileVariant? = null,
     val titleFontFamily: FontFamily? = null,
     val subtitle: String? = null,
     val leadingIcon: ImageVector? = null,
@@ -115,6 +132,7 @@ class AppTileItem(
 fun AppTile(
     title: String,
     modifier: Modifier = Modifier,
+    variant: AppTileVariant = AppTileVariant.Normal,
     titleFontFamily: FontFamily? = null,
     subtitle: String? = null,
     subtitleFontFamilyFamily: FontFamily? = null,
@@ -132,10 +150,11 @@ fun AppTile(
     onLongClick: (() -> Unit)? = null,
 ) {
     val c = AppTheme.colors
-    val bg = if (selected) c.primary.copy(alpha = 0.10f) else c.cardColor
+    val bg = if (selected) c.primary.copy(alpha = 0.10f) else variant.containerOf(c)
     Column(modifier.fillMaxWidth().clip(shapeFor(position)).background(bg)) {
         TileRow(
             title,
+            variant,
             titleFontFamily,
             subtitle,
             subtitleFontFamilyFamily,
@@ -163,11 +182,12 @@ fun AppTileGroup(
     items: List<AppTileItem>,
     modifier: Modifier = Modifier,
     title: String? = null,
+    variant: AppTileVariant = AppTileVariant.Normal,
     actions: List<AppIconAction> = emptyList(),
 ) {
-    TileGroupShell(modifier, title, actions) {
+    TileGroupShell(modifier, title, variant, actions) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            items.forEachIndexed { i, item -> Tile(item, positionFor(i, items.size)) }
+            items.forEachIndexed { i, item -> Tile(item, positionFor(i, items.size), variant) }
         }
     }
 }
@@ -182,9 +202,10 @@ fun AppTileGroupReorderable(
     onReorder: (from: Int, to: Int) -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    variant: AppTileVariant = AppTileVariant.Normal,
     actions: List<AppIconAction> = emptyList(),
 ) {
-    TileGroupShell(modifier, title, actions) { ReorderableTiles(items, onReorder) }
+    TileGroupShell(modifier, title, variant, actions) { ReorderableTiles(items, onReorder, variant) }
 }
 
 /** Chrome (outer padding + optional section title) for the two tile-group variants — tile-only, not shared with AppActionGroup. */
@@ -192,6 +213,7 @@ fun AppTileGroupReorderable(
 internal fun TileGroupShell(
     modifier: Modifier,
     title: String?,
+    variant: AppTileVariant = AppTileVariant.Normal,
     actions: List<AppIconAction> = emptyList(),
     bottomSpace: Dp = 16.dp,
     content: @Composable () -> Unit
@@ -207,7 +229,7 @@ internal fun TileGroupShell(
                     text = title,
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.titleSmall,
-                    color = c.primary,
+                    color = variant.accentOf(c),
                     fontWeight = FontWeight.Bold,
                 )
                 ActionIcons(actions)
@@ -239,9 +261,10 @@ private fun ActionIcons(actions: List<AppIconAction>) {
 }
 
 @Composable
-private fun Tile(item: AppTileItem, position: TilePosition) {
+private fun Tile(item: AppTileItem, position: TilePosition, group: AppTileVariant = AppTileVariant.Normal) {
     AppTile(
         title = item.title,
+        variant = item.variant ?: group,
         titleFontFamily = item.titleFontFamily,
         subtitle = item.subtitle,
         leadingIcon = item.leadingIcon,
@@ -259,7 +282,7 @@ private fun Tile(item: AppTileItem, position: TilePosition) {
 
 /** Long-press a tile to lift it, then drag up/down to reorder; onReorder(from, to) commits on release. */
 @Composable
-private fun ReorderableTiles(items: List<AppTileItem>, onReorder: (Int, Int) -> Unit) {
+private fun ReorderableTiles(items: List<AppTileItem>, onReorder: (Int, Int) -> Unit, group: AppTileVariant = AppTileVariant.Normal) {
     var dragIndex by remember { mutableStateOf<Int?>(null) }
     var dragOffset by remember { mutableFloatStateOf(0f) }
     val heights = remember { mutableStateMapOf<Int, Int>() }
@@ -345,6 +368,7 @@ private fun positionFor(index: Int, size: Int): TilePosition = when {
 @Composable
 private fun TileRow(
     title: String,
+    variant: AppTileVariant,
     titleFontFamily: FontFamily?,
     subtitle: String?,
     subtitleFontFamilyFamily: FontFamily?,
@@ -368,7 +392,7 @@ private fun TileRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (leadingIcon != null) {
-            val col = leadingColor ?: c.primary
+            val col = leadingColor ?: variant.accentOf(c)
             Box(Modifier.size(38.dp).clip(CircleShape).background(col.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
                 Icon(leadingIcon, null, tint = col, modifier = Modifier.size(20.dp))
             }

@@ -34,6 +34,8 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Type
 import com.composables.icons.lucide.UnfoldVertical
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppIconOption
+import com.kodeelite.nooreislam.core.components.AppIconToggle
 import com.kodeelite.nooreislam.config.theme.LocalBaseAppColors
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -113,20 +115,14 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
                     title = stringResource(Res.string.alignment),
                     leadingIcon = Lucide.AlignJustify,
                     trailing = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            listOf(false to Lucide.AlignCenter, true to Lucide.AlignJustify).forEach { (wantJustify, icon) ->
-                                val on = justify == wantJustify
-                                Box(
-                                    Modifier.size(34.dp).clip(RoundedCornerShape(10.dp))
-                                        .background(if (on) colors.primary.copy(alpha = 0.1f) else colors.onSurface.copy(alpha = 0.05f))
-                                        .border(1.5.dp, if (on) colors.primary else Color.Transparent, RoundedCornerShape(10.dp))
-                                        .clickable(enabled = !on) { store.toggleJustifyText() },
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Icon(icon, null, tint = if (on) colors.primary else colors.onSurfaceVariant, modifier = Modifier.size(17.dp))
-                                }
-                            }
-                        }
+                        AppIconToggle(
+                            options = listOf(
+                                AppIconOption(Lucide.AlignCenter, false),
+                                AppIconOption(Lucide.AlignJustify, true),
+                            ),
+                            selected = justify,
+                            onPick = { store.setJustifyText(it) },
+                        )
                     },
                 ),
             ),

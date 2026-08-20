@@ -84,8 +84,8 @@ sealed interface AppRoute {
     data object Widgets : AppRoute
 
     @Serializable
-    @SerialName("PrayerFocus")
-    data object PrayerFocus : AppRoute
+    @SerialName("Focus")
+    data object Focus : AppRoute
 
     @Serializable
     @SerialName("Sandbox")
