@@ -26,6 +26,16 @@ import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriodDao
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayer
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayerDao
 
+/**
+ * Every table the entities above create. Room only notices a mismatch after opening, and by then it
+ * throws rather than recovering, so [quarantineIfUnusable] checks this list first. Keep it in step
+ * with `entities` — a name added here that no entity creates would quarantine every install.
+ */
+val DATABASE_TABLES = listOf(
+    "tracked_prayer", "excused_period", "scheduled_notification", "studio_creation",
+    "bookmark", "highlight", "note", "collection", "collection_ayah", "surah_reminder",
+)
+
 // schemas land in shared/schemas and are committed — Room validates every migration against them.
 @Database(
     entities = [TrackedPrayer::class, ExcusedPeriod::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
@@ -57,6 +67,7 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
-        // no destructive fallback: a schema bump without a Migration must fail loudly here,
-        // not silently wipe someone's bookmarks, notes and prayer history.
+        // no destructive fallback: quarantineIfUnusable already moves aside anything Room could not
+        // open, keeping the file. A schema bump without a Migration must still fail loudly here,
+        // rather than silently wiping someone's bookmarks, notes and prayer history.
         .build()

@@ -11,7 +11,7 @@ import platform.Foundation.NSUserDomainMask
 /** iOS builder — stores the db in the app's Documents directory. */
 fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     val dbFilePath = documentDirectory() + "/" + AppConst.DATABASE_NAME
-    DatabaseRecovery.recoveredThisLaunch = quarantineIfUnusable(dbFilePath, AppConst.DB_VERSION)
+    DatabaseRecovery.recoveredThisLaunch = quarantineIfUnusable(dbFilePath, AppConst.DB_VERSION, DATABASE_TABLES)
     return Room.databaseBuilder<AppDatabase>(name = dbFilePath)
 }
 

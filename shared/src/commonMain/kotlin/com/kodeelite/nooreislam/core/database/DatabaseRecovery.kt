@@ -15,24 +15,42 @@ import com.kodeelite.nooreislam.core.datetime.Now
  * Deliberately narrow: a missing migration between versions this build knows about is still a hard
  * failure, because treating that as corruption would let one bad release wipe everyone's notes.
  */
-fun quarantineIfUnusable(path: String, expectedVersion: Int): Boolean {
+fun quarantineIfUnusable(path: String, expectedVersion: Int, expectedTables: List<String>): Boolean {
     if (!databaseFileExists(path)) return false
-    val version = runCatching {
+    val state = runCatching {
         val driver = BundledSQLiteDriver()
         val connection = driver.open(path)
         try {
-            val statement = connection.prepare("PRAGMA user_version")
+            var version = 0
+            val versionStatement = connection.prepare("PRAGMA user_version")
             try {
-                if (statement.step()) statement.getInt(0) else 0
+                if (versionStatement.step()) version = versionStatement.getInt(0)
             } finally {
-                statement.close()
+                versionStatement.close()
             }
+            val tables = mutableSetOf<String>()
+            val tableStatement = connection.prepare("SELECT name FROM sqlite_master WHERE type = 'table'")
+            try {
+                while (tableStatement.step()) tables += tableStatement.getText(0)
+            } finally {
+                tableStatement.close()
+            }
+            version to tables
         } finally {
             connection.close()
         }
     }.getOrNull()
-    // a fresh file reads 0 — Room stamps the version on first write, so it is not a downgrade
-    if (version != null && version <= expectedVersion) return false
+
+    if (state != null) {
+        val (version, tables) = state
+        // a fresh file reads 0 and has no tables yet — Room stamps both on first write
+        val fresh = version == 0 && tables.none { it in expectedTables }
+        val newer = version > expectedVersion
+        // same version, different shape: an entity renamed or added without a version bump. Room only
+        // finds this after opening, and then throws, so it has to be caught out here.
+        val drifted = !fresh && expectedTables.any { it !in tables }
+        if (!newer && !drifted) return false
+    }
     // the -wal and -shm siblings belong to the same database and must travel with it
     moveDatabaseAside(path, "$path.corrupt-${Now.epochMillis()}")
     return true
