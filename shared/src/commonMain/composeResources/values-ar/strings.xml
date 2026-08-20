@@ -258,8 +258,8 @@
     <string name="focus_unmute">إلغاء الكتم</string>
     <string name="focus_extend">+5 دقائق</string>
     <string name="focus_prayed">صلّيت</string>
-    <string name="focus_allow_background">تشغيل في الخلفية</string>
-    <string name="focus_allow_background_sub">اضغط للسماح. إذا كنت قد سمحت به مسبقاً، تجاهل هذا.</string>
+    <string name="focus_allow_background">السماح بالنشاط في الخلفية</string>
+    <string name="focus_allow_background_sub">قد يمنع أندرويد بدء الكتم أو إنهاءه في وقته.</string>
     <string name="focus_needs_attention">يحتاج انتباه</string>
     <string name="focus_notif_needed">فعّل الإشعارات</string>
     <string name="focus_notif_sub">لترى وتتحكم في الكتم</string>
@@ -303,7 +303,7 @@
     <string name="remove_from_collection">إزالة من المجموعة</string>
     <string name="open_settings">فتح الإعدادات</string>
     <string name="location_permission_needed">الوصول إلى الموقع مطلوب</string>
-    <string name="location_permission_rationale">يحتاج نور الإسلام إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
+    <string name="location_permission_rationale">يحتاج %1$s إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
     <string name="search_city">ابحث عن مدينة</string>
     <string name="saved">المحفوظة</string>
     <string name="search_city_hint_title">ابحث عن مدينتك</string>
@@ -861,4 +861,9 @@
     <string name="copy_ayah">نسخ الآية</string>
     <string name="remove_highlight">إزالة التظليل</string>
     <string name="share_to_studio">مشاركة إلى استوديو</string>
+    <string name="focus_dnd_sheet_title">الوضع الصامت يحتاج إذن عدم الإزعاج</string>
+    <string name="focus_dnd_sheet_body">لا يسمح أندرويد للتطبيق بكتم الرنين تماماً إلا بإذن عدم الإزعاج. امنحه مرة واحدة ليتمكن التطبيق من إسكات هاتفك وقت الصلاة، ثم يعيد الرنين كما كان تماماً.</string>
+    <string name="focus_dnd_sheet_note">بدونه سيهتز الهاتف بدل أن يصمت.</string>
+    <string name="focus_dnd_use_vibrate">استخدم الاهتزاز بدلاً من ذلك</string>
+    <string name="location_permission_sub">مواقيت الصلاة والقبلة تعتمد على مكانك.</string>
 </resources>

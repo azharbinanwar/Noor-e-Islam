@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +59,8 @@ fun FocusPrayers() {
     val c = AppTheme.colors
     val min = stringResource(Res.string.minutes_short)
     var sheetKey by remember { mutableStateOf<String?>(null) }
+    // the prayer waiting on Do Not Disturb access; Silent is only committed once it is granted
+    var dndKey by remember { mutableStateOf<String?>(null) }
 
     fun timeOf(key: String) = FocusDefaults.rows.first { it.key == key }
         .let { row -> today.firstOrNull { it.miqat == row.miqat }?.at?.time }
@@ -122,8 +125,8 @@ fun FocusPrayers() {
                                 options = SilenceMode.entries.map { AppIconOption(it.icon, it, it.label()) },
                                 selected = cfg.mode,
                                 onPick = { m ->
-                                    if (m == SilenceMode.Silent && !setup.hasSilenceAccess()) setup.requestSilenceAccess()
-                                    PrayerFocusStore.setMode(key, m)
+                                    if (m == SilenceMode.Silent && !setup.hasSilenceAccess()) dndKey = key
+                                    else PrayerFocusStore.setMode(key, m)
                                 },
                             )
                         },
@@ -131,6 +134,21 @@ fun FocusPrayers() {
                 ),
             )
         }
+    }
+
+    dndKey?.let { key ->
+        // granted while we were away — commit the Silent that was never applied, and close
+        LifecycleResumeEffect(key) {
+            if (setup.hasSilenceAccess()) {
+                PrayerFocusStore.setMode(key, SilenceMode.Silent)
+                dndKey = null
+            }
+            onPauseOrDispose { }
+        }
+        DndAccessSheet(
+            onOpenSettings = { setup.requestSilenceAccess() },
+            onDismiss = { PrayerFocusStore.setMode(key, SilenceMode.Vibrate); dndKey = null },
+        )
     }
 }
 

@@ -36,6 +36,7 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.MapPinOff
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Search
@@ -56,13 +57,16 @@ import com.kodeelite.nooreislam.core.location.nearestTo
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
-import com.kodeelite.nooreislam.core.permissions.PermissionDeniedSheet
+import com.kodeelite.nooreislam.core.components.AppTileVariant
+import com.kodeelite.nooreislam.core.permissions.LocationPermissionTile
+import com.kodeelite.nooreislam.core.permissions.LocationDeniedSheet
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.settings.presentation.components.MethodSwitchSheet
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.clear_search
 import com.kodeelite.nooreislam.resources.location
@@ -144,9 +148,7 @@ fun LocationScreen() {
     }
 
     if (showDeniedSheet) {
-        PermissionDeniedSheet(
-            title = stringResource(Res.string.location_permission_needed),
-            message = stringResource(Res.string.location_permission_rationale),
+        LocationDeniedSheet(
             onOpenSettings = { showDeniedSheet = false; perms.openAppSettings() },
             onDismiss = { showDeniedSheet = false },
         )
@@ -177,6 +179,11 @@ fun LocationScreen() {
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad).padding(16.dp).verticalScroll(rememberScrollState())) {
+            AppTileGroup(
+                title = stringResource(Res.string.notif_needs_attention),
+                variant = AppTileVariant.Warning,
+                items = listOf(LocationPermissionTile()),
+            )
             AppTileGroup(
                 items = listOf(
                     AppTileItem(

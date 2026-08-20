@@ -42,6 +42,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bookmark
+import com.composables.icons.lucide.Images
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Trash2
@@ -56,7 +57,7 @@ import com.kodeelite.nooreislam.core.components.SystemBackHandler
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
-import com.kodeelite.nooreislam.core.permissions.PermissionDeniedSheet
+import com.kodeelite.nooreislam.core.permissions.PhotosDeniedSheet
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.util.GalleryService
@@ -340,9 +341,7 @@ fun StudioScreen(
                 }
             }
 
-            if (photoDeniedOpen) PermissionDeniedSheet(
-                title = stringResource(Res.string.photos_access_blocked),
-                message = stringResource(Res.string.allow_x_to_add_photos_in_settings, edition.displayName()),
+            if (photoDeniedOpen) PhotosDeniedSheet(
                 onOpenSettings = { photoDeniedOpen = false; perms.openAppSettings() },
                 onDismiss = { photoDeniedOpen = false },
             )

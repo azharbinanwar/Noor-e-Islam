@@ -179,15 +179,19 @@ fun AppTile(
  */
 @Composable
 fun AppTileGroup(
-    items: List<AppTileItem>,
+    items: List<AppTileItem?>,
     modifier: Modifier = Modifier,
     title: String? = null,
     variant: AppTileVariant = AppTileVariant.Normal,
     actions: List<AppIconAction> = emptyList(),
 ) {
+    // nulls are rows that opted out (a granted permission, a hidden dev entry) — with none left there
+    // is nothing to head, so the title and its padding go too
+    val rows = items.filterNotNull()
+    if (rows.isEmpty()) return
     TileGroupShell(modifier, title, variant, actions) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            items.forEachIndexed { i, item -> Tile(item, positionFor(i, items.size), variant) }
+            rows.forEachIndexed { i, item -> Tile(item, positionFor(i, rows.size), variant) }
         }
     }
 }

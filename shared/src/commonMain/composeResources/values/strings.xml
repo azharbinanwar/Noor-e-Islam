@@ -259,13 +259,17 @@
     <string name="focus_unmute">Unmute now</string>
     <string name="focus_extend">+5 min</string>
     <string name="focus_prayed">Prayed</string>
-    <string name="focus_allow_background">Allow background running</string>
-    <string name="focus_allow_background_sub">Tap to allow. If you've already allowed it, ignore this.</string>
+    <string name="focus_allow_background">Allow background activity</string>
+    <string name="focus_allow_background_sub">Android may stop the mute starting or ending on time.</string>
     <string name="focus_needs_attention">Needs attention</string>
     <string name="focus_notif_needed">Turn on notifications</string>
     <string name="focus_notif_sub">So you can see and control the silence</string>
     <string name="focus_dnd_needed">Allow Do Not Disturb access</string>
     <string name="focus_dnd_sub">Needed for Silent mode</string>
+    <string name="focus_dnd_sheet_title">Silent needs Do Not Disturb access</string>
+    <string name="focus_dnd_sheet_body">Android only lets an app switch the ringer fully off when it has Do Not Disturb access. Grant it once and Focus can silence your phone at prayer time, then put the ringer back exactly as it was.</string>
+    <string name="focus_dnd_sheet_note">Without it, Focus will vibrate instead of going silent.</string>
+    <string name="focus_dnd_use_vibrate">Use vibrate instead</string>
     <string name="focus_notif_denied_title">Notifications are off</string>
     <string name="focus_notif_denied_msg">Enable notifications in Settings so Prayer Focus can show the silence status.</string>
 
@@ -304,7 +308,8 @@
     <string name="remove_from_collection">Remove from collection</string>
     <string name="open_settings">Open Settings</string>
     <string name="location_permission_needed">Location access needed</string>
-    <string name="location_permission_rationale">Noor e Islam needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
+    <string name="location_permission_rationale">%1$s needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
+    <string name="location_permission_sub">Prayer times and Qibla depend on where you are.</string>
     <string name="search_city">Search for a city</string>
     <string name="saved">Saved</string>
     <string name="search_city_hint_title">Find your city</string>

@@ -266,8 +266,8 @@
     <string name="focus_unmute">ابھی آواز بحال کریں</string>
     <string name="focus_extend">+5 منٹ</string>
     <string name="focus_prayed">ادا کر لی</string>
-    <string name="focus_allow_background">پس منظر میں چلنے کی اجازت دیں</string>
-    <string name="focus_allow_background_sub">اجازت دینے کے لیے ٹیپ کریں۔ اگر پہلے دے چکے ہیں تو نظر انداز کریں۔</string>
+    <string name="focus_allow_background">پس منظر کی سرگرمی کی اجازت دیں</string>
+    <string name="focus_allow_background_sub">اینڈرائیڈ خاموشی کے شروع یا ختم ہونے میں رکاوٹ ڈال سکتا ہے۔</string>
     <string name="focus_needs_attention">توجہ درکار ہے</string>
     <string name="focus_notif_needed">اطلاعات آن کریں</string>
     <string name="focus_notif_sub">تاکہ آپ خاموشی دیکھ اور کنٹرول کر سکیں</string>
@@ -311,7 +311,7 @@
     <string name="remove_from_collection">مجموعے سے ہٹائیں</string>
     <string name="open_settings">ترتیبات کھولیں</string>
     <string name="location_permission_needed">مقام کی رسائی درکار ہے</string>
-    <string name="location_permission_rationale">نورِ اسلام کو درست نماز کے اوقات اور قبلہ کی سمت کے لیے آپ کا مقام درکار ہے۔ اسے ترتیبات میں آن کریں۔</string>
+    <string name="location_permission_rationale">%1$s کو درست نماز کے اوقات اور قبلہ کی سمت کے لیے آپ کا مقام درکار ہے۔ اسے ترتیبات میں آن کریں۔</string>
     <string name="search_city">شہر تلاش کریں</string>
     <string name="saved">محفوظ شدہ</string>
     <string name="search_city_hint_title">اپنا شہر تلاش کریں</string>
@@ -864,4 +864,9 @@
         <item>الفلق</item>
         <item>الناس</item>
     </string-array>
+    <string name="focus_dnd_sheet_title">خاموش موڈ کو ڈسٹرب نہ کریں کی اجازت درکار ہے</string>
+    <string name="focus_dnd_sheet_body">اینڈرائیڈ کسی ایپ کو گھنٹی مکمل بند کرنے کی اجازت صرف ڈسٹرب نہ کریں کی رسائی کے ساتھ دیتا ہے۔ ایک بار اجازت دیں تاکہ نماز کے وقت فون خاموش ہو جائے اور بعد میں گھنٹی بالکل ویسی ہی بحال ہو جائے۔</string>
+    <string name="focus_dnd_sheet_note">اس کے بغیر فون خاموش ہونے کے بجائے ارتعاش کرے گا۔</string>
+    <string name="focus_dnd_use_vibrate">اس کے بجائے ارتعاش استعمال کریں</string>
+    <string name="location_permission_sub">نماز کے اوقات اور قبلہ آپ کے مقام پر منحصر ہیں۔</string>
 </resources>

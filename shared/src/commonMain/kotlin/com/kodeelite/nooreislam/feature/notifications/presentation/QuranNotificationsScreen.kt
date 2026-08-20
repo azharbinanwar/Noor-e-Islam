@@ -47,6 +47,10 @@ import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
+import com.kodeelite.nooreislam.core.components.AppTileVariant
+import com.kodeelite.nooreislam.core.permissions.BatteryPermissionTile
+import com.kodeelite.nooreislam.core.permissions.ExactAlarmPermissionTile
+import com.kodeelite.nooreislam.core.permissions.NotificationPermissionTile
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.focus.rememberFocusSetup
@@ -59,15 +63,13 @@ import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.notifications.data.EVERY_DAY
 import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
 import com.kodeelite.nooreislam.feature.notifications.data.toDaySet
-import com.kodeelite.nooreislam.feature.notifications.presentation.components.BatteryNeedsAttention
-import com.kodeelite.nooreislam.feature.notifications.presentation.components.ExactAlarmNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
-import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.SurahReminderSheet
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.notifications.store.SurahReminderStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.add_reminder
 import com.kodeelite.nooreislam.resources.all_alerts
 import com.kodeelite.nooreislam.resources.back
@@ -158,9 +160,16 @@ fun QuranNotificationsScreen() {
 //                Text(permDump, fontSize = 11.sp, color = c.onSurfaceVariant)
 //                Spacer(Modifier.height(12.dp))
 //            }
-            NotificationsNeedsAttention()
-            ExactAlarmNeedsAttention()
-            BatteryNeedsAttention()
+            AppTileGroup(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(Res.string.notif_needs_attention),
+                variant = AppTileVariant.Warning,
+                items = listOf(
+                    NotificationPermissionTile(AppTileVariant.Error),
+                    ExactAlarmPermissionTile(AppTileVariant.Error),
+                    BatteryPermissionTile(AppTileVariant.Warning, strict = true),
+                ),
+            )
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true

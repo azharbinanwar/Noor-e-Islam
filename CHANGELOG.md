@@ -24,13 +24,22 @@ Newest first. Dates are the release date, not the merge date.
 ### Added
 
 - `[both]` Reading text can be centred instead of justified, from a two-icon Alignment row in the reader's appearance sheet. Justify stays the default and matches a printed mushaf, but with no kashida it stretches word gaps wide at large text sizes, so centred is there for anyone who reads that way.
+- `[islam]` **Android.** The notifications screen warns when the phone is set to restrict this app in the background, the state that stops reminders arriving. The Quran app already had this; the app whose alerts are time-critical did not.
+- `[islam]` Prayer Focus explains what Do Not Disturb access is before handing you to system settings, and Silent is only applied once that access exists — picking it no longer leaves the setting saying Silent while the phone quietly vibrates instead.
+- `[both]` The location screen warns when location is refused, instead of the request silently doing nothing.
 
 ### Changed
 
+- `[both]` Every permission warning now appears together in one "Needs attention" card, coloured by how much it matters: red for what the feature cannot work without, amber for what keeps it reliable. Previously each warning was its own card with its own heading, and each was discovered only after fixing the last one.
+- `[islam]` Prayer Focus lists its prayers the way the notification screen does — one row each, with the window behind an options sheet, rather than six separate cards with their settings inline.
+- `[both]` The reader's alignment picker and the focus silence picker are the same control, so they look and behave alike.
 - `[islam]` The sun and moon on the home header follow the prayer times instead of a sunrise-to-sunset curve. Each prayer pins its body to a fixed point on one closed loop, and the clock only decides how fast the gap between two points is crossed, so Maghrib looks the same in a nine-hour December day as in a sixteen-hour June one, anywhere in the world. The loop closes, so nothing snaps at the ends of the day.
 
 ### Fixed
 
+- `[both]` A database written by a newer build no longer crashes the app on every launch. It is moved aside, the app starts fresh and says so — the same recovery a damaged file already had. A missing migration between known versions is still a hard failure, so a bad release cannot quietly wipe anyone's notes.
+- `[islam]` The prayer times screen no longer offers a settings button that did nothing.
+- `[both]` The location permission message names the app you are actually running rather than always saying Noor e Islam.
 - `[islam]` The sun sets at Maghrib. It used to hang above the ridge for the better part of an hour afterwards: the old curve put it at the horizon line rather than under it, and what read as a lingering sun was a hard-edged glow ring drawn well after the disc should have gone. The disc now exists only between the two points where the peaks cut the loop, and below them a soft wash is all that remains, lighting Fajr and Maghrib without ever showing a sun.
 
 ## [1.0.0+6] - 2026-08-19

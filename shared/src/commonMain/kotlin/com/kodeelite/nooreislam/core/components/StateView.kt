@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 
@@ -30,9 +31,10 @@ object StateView {
         message: String? = null,
         icon: (@Composable () -> Unit)? = null,
         action: (@Composable () -> Unit)? = null,
+        padding: Dp = 24.dp,   // a sheet already pads its content — pass 0.dp there
     ) {
         Column(
-            modifier = modifier.fillMaxWidth().padding(24.dp),
+            modifier = modifier.fillMaxWidth().padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {

@@ -259,8 +259,8 @@
     <string name="focus_unmute">Réactiver le son</string>
     <string name="focus_extend">+5 min</string>
     <string name="focus_prayed">Prié</string>
-    <string name="focus_allow_background">Autoriser l'exécution en arrière-plan</string>
-    <string name="focus_allow_background_sub">Touchez pour autoriser. Si vous l'avez déjà fait, ignorez ceci.</string>
+    <string name="focus_allow_background">Autoriser l'activité en arrière-plan</string>
+    <string name="focus_allow_background_sub">Android peut empêcher la mise en silence de démarrer ou de finir à l'heure.</string>
     <string name="focus_needs_attention">Nécessite votre attention</string>
     <string name="focus_notif_needed">Activer les notifications</string>
     <string name="focus_notif_sub">Pour voir et contrôler le silence</string>
@@ -304,7 +304,7 @@
     <string name="remove_from_collection">Retirer de la collection</string>
     <string name="open_settings">Ouvrir les Paramètres</string>
     <string name="location_permission_needed">Accès à la position nécessaire</string>
-    <string name="location_permission_rationale">Noor e Islam a besoin de votre position pour calculer avec précision les horaires de prière et la direction de la Qibla. Activez-la dans les Paramètres.</string>
+    <string name="location_permission_rationale">%1$s a besoin de votre position pour calculer avec précision les horaires de prière et la direction de la Qibla. Activez-la dans les Paramètres.</string>
     <string name="search_city">Rechercher une ville</string>
     <string name="saved">Enregistré</string>
     <string name="search_city_hint_title">Trouvez votre ville</string>
@@ -857,4 +857,9 @@
         <item>L’Aube naissante</item>
         <item>Les Hommes</item>
     </string-array>
+    <string name="focus_dnd_sheet_title">Le mode silencieux exige l'accès Ne pas déranger</string>
+    <string name="focus_dnd_sheet_body">Android n'autorise une application à couper entièrement la sonnerie qu'avec l'accès Ne pas déranger. Accordez-le une fois pour que le téléphone se taise à l'heure de la prière, puis retrouve exactement la sonnerie d'avant.</string>
+    <string name="focus_dnd_sheet_note">Sans cela, le téléphone vibrera au lieu de se taire.</string>
+    <string name="focus_dnd_use_vibrate">Utiliser le vibreur à la place</string>
+    <string name="location_permission_sub">Les horaires de prière et la Qibla dépendent de votre position.</string>
 </resources>

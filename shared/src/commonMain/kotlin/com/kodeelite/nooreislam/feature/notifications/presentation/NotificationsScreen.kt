@@ -55,6 +55,7 @@ import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
+import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.Miqat
@@ -63,11 +64,12 @@ import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.permissions.PermissionStatus
+import com.kodeelite.nooreislam.core.permissions.BatteryPermissionTile
+import com.kodeelite.nooreislam.core.permissions.NotificationPermissionTile
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
-import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.after_asr
@@ -95,6 +97,7 @@ import com.kodeelite.nooreislam.resources.notif_at_jamaah
 import com.kodeelite.nooreislam.resources.notif_verse_sub
 import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.notifications_nafil
+import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.notifications_prayers
 import com.kodeelite.nooreislam.resources.notifications_quran
 import com.kodeelite.nooreislam.resources.prayer_jumuah
@@ -170,7 +173,15 @@ fun NotificationsScreen() {
         Column(
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
-            NotificationsNeedsAttention()
+            AppTileGroup(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(Res.string.notif_needs_attention),
+                variant = AppTileVariant.Warning,
+                items = listOf(
+                    NotificationPermissionTile(AppTileVariant.Error),
+                    BatteryPermissionTile(AppTileVariant.Warning, strict = true),
+                ),
+            )
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true
