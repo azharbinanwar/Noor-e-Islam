@@ -66,7 +66,6 @@ import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
-import com.kodeelite.nooreislam.feature.notifications.presentation.components.ExactAlarmNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
@@ -128,23 +127,17 @@ fun NotificationsScreen() {
     val today by MiqatTimesStore.today.collectAsState()
 
     // Master switch stays dimmed until both are granted — same check the banners above use.
-    // Checked once on cold start, not polled: canScheduleExactAlarms() is only guaranteed accurate
-    // for a fresh process — Android kills the app outright when the user revokes it in Settings.
+    // Notifications can change while the app is running, so poll it like the banner tile does. Exact
+    // alarms need no check here: this app declares USE_EXACT_ALARM, which the system grants outright.
     val perms = rememberPermissionService()
     var notifGranted by remember { mutableStateOf(true) }
-    var exactAlarmGranted by remember { mutableStateOf(true) }
-    // Notifications can genuinely change while the app is running, so poll it like the banner tile
-    // does. Exact-alarm is checked once — Android only guarantees it accurate for a fresh process.
     LaunchedEffect(Unit) {
         while (true) {
             notifGranted = perms.status(AppPermission.Notifications) == PermissionStatus.Granted
             delay(1500.milliseconds)
         }
     }
-    LaunchedEffect(Unit) {
-        exactAlarmGranted = perms.status(AppPermission.ExactAlarm) == PermissionStatus.Granted
-    }
-    val remindersLocked = !notifGranted || !exactAlarmGranted
+    val remindersLocked = !notifGranted
 
     var kahfPicker by remember { mutableStateOf(false) }
     var taps by remember { mutableStateOf(0) } // 7 taps opens the dev test screen
@@ -178,7 +171,6 @@ fun NotificationsScreen() {
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
             NotificationsNeedsAttention()
-            ExactAlarmNeedsAttention()
 
             Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                 taps++; if (taps >= 7) showTest = true
