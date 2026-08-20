@@ -13,13 +13,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
@@ -45,6 +51,9 @@ import com.composables.icons.lucide.Pause
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.catalog.Anchor
+import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchField
+import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchResults
 import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -98,14 +107,16 @@ import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.version_summary
 import com.kodeelite.nooreislam.resources.widgets
 import com.kodeelite.nooreislam.resources.widgets_summary
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(open: String? = null) {
     val nav = LocalAppNavigator.current
     val edition = koinInject<AppEdition>()
     val drawerState = LocalDrawerState.current
@@ -118,10 +129,23 @@ fun SettingsScreen() {
     val gregorianDateFormat by SettingsStore.gregorianDateFormat.collectAsState()
     val hijriDateFormat by SettingsStore.hijriDateFormat.collectAsState()
     val language by SettingsStore.language.collectAsState()
-    var showTheme by remember { mutableStateOf(false) }
-    var showLanguage by remember { mutableStateOf(false) }
-    var showGregorianDateFormat by remember { mutableStateOf(false) }
-    var showHijriDateFormat by remember { mutableStateOf(false) }
+    var sheet by remember { mutableStateOf(open) }
+    fun close() { sheet = null }
+    var query by remember { mutableStateOf("") }
+    val focus = LocalFocusManager.current
+    var highlight by remember { mutableStateOf(open) }
+    val scroll = rememberScrollState()
+    val groupTop = remember { mutableStateMapOf<String, Int>() }
+    // search lands on the group, then marks the exact row so the eye finds it
+    LaunchedEffect(highlight, groupTop[Anchor.groupOf(highlight)]) {
+        val y = groupTop[Anchor.groupOf(highlight)] ?: return@LaunchedEffect
+        scroll.animateScrollTo((y - 24).coerceAtLeast(0))
+        delay(2600.milliseconds)
+        highlight = null
+    }
+    fun anchored(anchor: String) = Modifier.onGloballyPositioned {
+        groupTop[anchor] = it.positionInParent().y.toInt()
+    }
     // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
     val hijriOffset by SettingsStore.hijriOffset.collectAsState()
     val hijri by SettingsStore.hijriDate.collectAsState()
@@ -142,23 +166,36 @@ fun SettingsScreen() {
         },
     ) { innerPadding ->
         Column(
-            Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()).padding(16.dp),
+            Modifier.fillMaxSize().padding(innerPadding).verticalScroll(scroll).padding(16.dp),
         ) {
+            SettingsSearchField(query) { query = it }
+            if (query.isNotBlank()) {
+                SettingsSearchResults(query) { feature ->
+                    query = ""
+                    focus.clearFocus()
+                    val target = feature.route
+                    if (target is AppRoute.Settings) highlight = feature.anchor else nav.navigate(target)
+                }
+                return@Column
+            }
             AppTileGroup(
+                modifier = anchored(Anchor.GENERAL),
                 title = stringResource(Res.string.general),
                 items = buildList {
                     add(
                         AppTileItem(
                             leadingIcon = Lucide.Palette,
                             title = stringResource(Res.string.appearance),
+                            selected = highlight == Anchor.APPEARANCE,
                             subtitle = theme.label(),
-                            onClick = { showTheme = true })
+                            onClick = { sheet = Anchor.APPEARANCE })
                     )
                     // time format and the Hijri offset only matter for prayer times — not shown in the reading-only app
                     if (edition != AppEdition.QURAN) add(
                         AppTileItem(
                             leadingIcon = Lucide.Clock,
                             title = stringResource(Res.string.time_format),
+                            selected = highlight == Anchor.TIME_FORMAT,
                             trailing = { SwapPill(timeFormat.label()) },
                             onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) })
                     )
@@ -166,8 +203,9 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Globe,
                             title = stringResource(Res.string.language),
+                            selected = highlight == Anchor.LANGUAGE,
                             subtitle = language.label,
-                            onClick = { showLanguage = true })
+                            onClick = { sheet = Anchor.LANGUAGE })
                     )
                     // hidden for now — no Quran-specific widgets exist yet, current gallery is prayer widgets only
                     if (Platform.hasHomeScreenWidgets && edition != AppEdition.QURAN) add(
@@ -181,6 +219,7 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Calendar,
                             title = stringResource(Res.string.hijri_calendar),
+                            selected = highlight == Anchor.HIJRI_CALENDAR,
                             subtitle = "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}",
                             trailing = {
                                 MiniStepper(
@@ -197,18 +236,21 @@ fun SettingsScreen() {
             )
             // Gregorian/Hijri date formats only matter where a date is actually shown — not in the reading-only app
             if (edition != AppEdition.QURAN) AppTileGroup(
+                modifier = anchored(Anchor.DATE_FORMATS),
                 title = stringResource(Res.string.date_formats),
                 items = listOf(
                     AppTileItem(
                         leadingIcon = Lucide.CalendarDays,
                         title = stringResource(Res.string.date_format),
+                            selected = highlight == Anchor.DATE_FORMAT,
                         subtitle = Now.formattedDate(),
-                        onClick = { showGregorianDateFormat = true }),
+                        onClick = { sheet = Anchor.DATE_FORMAT }),
                     AppTileItem(
                         leadingIcon = Lucide.Moon,
                         title = stringResource(Res.string.hijri_date_format),
+                            selected = highlight == Anchor.HIJRI_DATE_FORMAT,
                         subtitle = Now.formattedHijri(hijriOffset),
-                        onClick = { showHijriDateFormat = true }),
+                        onClick = { sheet = Anchor.HIJRI_DATE_FORMAT }),
                 ),
             )
             val notificationSettings by NotificationStore.settings.collectAsState()
@@ -220,6 +262,7 @@ fun SettingsScreen() {
             val calcMethod by MiqatCalculationStore.method.collectAsState()
             val highLat by MiqatCalculationStore.highLatRule.collectAsState()
             AppTileGroup(
+                modifier = anchored(Anchor.PRAYER_AND_ALERTS),
                 title = stringResource(Res.string.prayer_and_alerts),
                 items = buildList {
                     // location and calculation method only feed prayer-time math — not used by the reading-only app
@@ -255,12 +298,14 @@ fun SettingsScreen() {
                 },
             )
             if (edition != AppEdition.QURAN) AppTileGroup(
+                modifier = anchored(Anchor.STREAK_GROUP),
                 title = stringResource(Res.string.streak),
                 items = buildList {
                     add(
                         AppTileItem(
                             leadingIcon = Lucide.Flame,
                             title = stringResource(Res.string.prayer_streak),
+                            selected = highlight == Anchor.STREAK,
                             subtitle = stringResource(Res.string.show_streaks_best_run_and_on_time_percentage),
                             trailing = { AppSwitch(streakEnabled, tracker::setStreakEnabled) },
                             onClick = { tracker.setStreakEnabled(!streakEnabled) },
@@ -271,6 +316,7 @@ fun SettingsScreen() {
                         AppTileItem(
                             leadingIcon = Lucide.Pause,
                             title = stringResource(Res.string.excused_days),
+                            selected = highlight == Anchor.EXCUSED,
                             subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
                             trailing = { AppSwitch(trackExcused, tracker::setExcused) },
                             onClick = { tracker.setExcused(!trackExcused) },
@@ -279,16 +325,19 @@ fun SettingsScreen() {
                 },
             )
             AppTileGroup(
+                modifier = anchored(Anchor.ABOUT_GROUP),
                 title = stringResource(Res.string.about),
                 items = listOf(
                     AppTileItem(
                         title = edition.displayName(),
+                        selected = highlight == Anchor.ABOUT,
                         subtitle = stringResource(Res.string.version_summary, appVersion),
                         leadingIcon = Lucide.Info
                     ),
                     // Tanzil's terms: name the source and link out so readers can check for text updates
                     AppTileItem(
                         title = stringResource(Res.string.quran_text_source),
+                            selected = highlight == Anchor.TEXT_SOURCE,
                         subtitle = "Tanzil Project · tanzil.net",
                         leadingIcon = Lucide.BookOpen,
                         onClick = { uriHandler.openUri("https://tanzil.net") },
@@ -298,19 +347,19 @@ fun SettingsScreen() {
         }
     }
 
-    if (showTheme) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); showTheme = false }, onDismiss = { showTheme = false })
-    if (showGregorianDateFormat) GregorianDateFormatPickerSheet(
+    if (sheet == Anchor.APPEARANCE) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); close() }, onDismiss = ::close)
+    if (sheet == Anchor.DATE_FORMAT) GregorianDateFormatPickerSheet(
         gregorianDateFormat,
-        onSelect = { SettingsStore.setGregorianDateFormat(it); showGregorianDateFormat = false },
-        onDismiss = { showGregorianDateFormat = false },
+        onSelect = { SettingsStore.setGregorianDateFormat(it); close() },
+        onDismiss = ::close,
     )
-    if (showHijriDateFormat) HijriDateFormatPickerSheet(
+    if (sheet == Anchor.HIJRI_DATE_FORMAT) HijriDateFormatPickerSheet(
         hijriDateFormat,
         hijriToday = hijri,
-        onSelect = { SettingsStore.setHijriDateFormat(it); showHijriDateFormat = false },
-        onDismiss = { showHijriDateFormat = false },
+        onSelect = { SettingsStore.setHijriDateFormat(it); close() },
+        onDismiss = ::close,
     )
-    if (showLanguage) AppBottomSheet(onDismiss = { showLanguage = false }, title = stringResource(Res.string.language)) {
+    if (sheet == Anchor.LANGUAGE) AppBottomSheet(onDismiss = ::close, title = stringResource(Res.string.language)) {
         AppTileGroup(
             items = Language.entries.map { lang ->
                 AppTileItem(
@@ -319,7 +368,7 @@ fun SettingsScreen() {
                     titleFontFamily = lang.font,
                     selected = lang == language,
                     trailing = { if (lang == language) Icon(Lucide.Check, null, tint = AppTheme.colors.primary, modifier = Modifier.size(20.dp)) },
-                    onClick = { SettingsStore.setLanguage(lang); showLanguage = false },
+                    onClick = { SettingsStore.setLanguage(lang); close() },
                 )
             },
         )

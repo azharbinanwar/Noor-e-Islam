@@ -67,9 +67,10 @@ sealed interface AppRoute {
     @SerialName("TasbihCounter")
     data object TasbihCounter : AppRoute
 
+    // [open] is a catalog anchor: search lands on Settings with that row already open
     @Serializable
     @SerialName("Settings")
-    data object Settings : AppRoute
+    data class Settings(val open: String? = null) : AppRoute
 
     @Serializable
     @SerialName("Location")

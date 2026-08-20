@@ -81,7 +81,6 @@
     <string name="gregorian_nov">نومبر</string>
     <string name="gregorian_dec">دسمبر</string>
 
-
     <string name="fajr_short">فجر</string>
     <string name="sunrise_short">طلوع</string>
     <string name="dhuhr_short">ظہر</string>
@@ -742,6 +741,9 @@
     <string name="share_to_studio">اسٹوڈیو میں شیئر کریں</string>
 
     <string name="search">تلاش</string>
+    <string name="search_settings">ترتیبات میں تلاش کریں…</string>
+    <string name="nothing_matches">”%1$s“ سے کچھ نہیں ملا</string>
+    <string name="try_a_feature_name_like_qibla_or_language">کسی خصوصیت کا نام لکھیں، جیسے قبلہ یا زبان۔</string>
     <string name="no_methods_found">کوئی طریقہ نہیں ملا</string>
     <string name="placeholder">جگہ دار</string>
     <string name="display">ڈسپلے</string>
@@ -872,4 +874,5 @@
     <string name="photo_access_declined">تصاویر تک رسائی مسترد کر دی گئی</string>
     <string name="location_is_off">مقام کی سہولت بند ہے</string>
     <string name="location_is_off_sub">اسے آن کریں تاکہ نماز کے اوقات آپ کے مقام کے مطابق ہوں۔</string>
+
 </resources>

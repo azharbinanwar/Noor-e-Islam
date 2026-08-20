@@ -74,7 +74,6 @@
     <string name="gregorian_nov">novembre</string>
     <string name="gregorian_dec">décembre</string>
 
-
     <string name="fajr_short">Fajr</string>
     <string name="sunrise_short">Lever</string>
     <string name="dhuhr_short">Dhuh</string>
@@ -735,6 +734,9 @@
     <string name="share_to_studio">Partager vers Studio</string>
 
     <string name="search">Rechercher</string>
+    <string name="search_settings">Rechercher dans les réglages…</string>
+    <string name="nothing_matches">Aucun résultat pour « %1$s »</string>
+    <string name="try_a_feature_name_like_qibla_or_language">Essayez un nom de fonction, comme Qibla ou Langue.</string>
     <string name="no_methods_found">Aucune méthode trouvée</string>
     <string name="placeholder">espace réservé</string>
     <string name="display">Affichage</string>
@@ -865,4 +867,5 @@
     <string name="photo_access_declined">L'accès aux photos a été refusé</string>
     <string name="location_is_off">La localisation est désactivée</string>
     <string name="location_is_off_sub">Activez-la pour que les horaires de prière suivent votre position.</string>
+
 </resources>

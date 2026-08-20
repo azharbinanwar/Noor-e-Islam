@@ -97,7 +97,7 @@ private fun drawerItems(streakEnabled: Boolean, debug: Boolean) = listOfNotNull(
 )
 
 private fun footerItems(debug: Boolean) = listOfNotNull(
-    DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings),
+    DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings()),
     // the sandbox is design QA, never shipped to users
     DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox).takeIf { debug },
 )

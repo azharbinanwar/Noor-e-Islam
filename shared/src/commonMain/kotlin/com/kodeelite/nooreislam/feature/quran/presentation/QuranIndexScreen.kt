@@ -125,7 +125,7 @@ fun QuranIndexScreen() {
                 },
                 actions = {
                     // no drawer means no other way in — the Quran app gets a direct settings entry instead
-                    if (edition == AppEdition.QURAN) IconButton(onClick = { nav.navigate(AppRoute.Settings) }) {
+                    if (edition == AppEdition.QURAN) IconButton(onClick = { nav.navigate(AppRoute.Settings()) }) {
                         Icon(Lucide.Settings, stringResource(Res.string.settings))
                     }
                 },

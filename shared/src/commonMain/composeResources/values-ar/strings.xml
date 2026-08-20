@@ -734,6 +734,9 @@
     <string name="quran_theme_dim_gray">رمادي خافت</string>
 
     <string name="search">بحث</string>
+    <string name="search_settings">ابحث في الإعدادات…</string>
+    <string name="nothing_matches">لا يوجد ما يطابق «%1$s»</string>
+    <string name="try_a_feature_name_like_qibla_or_language">جرّب اسم ميزة، مثل القبلة أو اللغة.</string>
     <string name="no_methods_found">لم يتم العثور على طرق</string>
     <string name="placeholder">مكان محجوز</string>
     <string name="display">العرض</string>
@@ -869,4 +872,5 @@
     <string name="photo_access_declined">تم رفض الوصول إلى الصور</string>
     <string name="location_is_off">خدمة الموقع مغلقة</string>
     <string name="location_is_off_sub">شغّلها لتتبع مواقيت الصلاة مكانك.</string>
+
 </resources>

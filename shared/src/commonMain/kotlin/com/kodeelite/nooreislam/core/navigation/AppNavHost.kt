@@ -148,7 +148,7 @@ fun AppNavHost(
                     composable<AppRoute.Tasbih> { TasbihHubScreen() }
                     composable<AppRoute.TasbihHistory> { /* TasbihHistoryScreen() */ }
                     composable<AppRoute.TasbihCounter> { TasbihScreen() }
-                    composable<AppRoute.Settings> { SettingsScreen() }
+                    composable<AppRoute.Settings> { SettingsScreen(open = it.toRoute<AppRoute.Settings>().open) }
                     composable<AppRoute.Location> { LocationScreen() }
                     composable<AppRoute.PrayerCalc> { MiqatCalculationScreen() }
                     composable<AppRoute.Widgets> { WidgetGalleryScreen() }

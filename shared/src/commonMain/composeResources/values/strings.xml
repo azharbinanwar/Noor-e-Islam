@@ -782,6 +782,9 @@
     <string name="share_to_studio">Share to Studio</string>
 
     <string name="search">Search</string>
+    <string name="search_settings">Search settings…</string>
+    <string name="nothing_matches">Nothing matches “%1$s”</string>
+    <string name="try_a_feature_name_like_qibla_or_language">Try a feature name, like Qibla or Language.</string>
     <string name="no_methods_found">No methods found</string>
     <string name="placeholder">placeholder</string>
     <string name="display">Display</string>
@@ -904,4 +907,5 @@
         <item>The Dawn</item>
         <item>Mankind</item>
     </string-array>
+
 </resources>
