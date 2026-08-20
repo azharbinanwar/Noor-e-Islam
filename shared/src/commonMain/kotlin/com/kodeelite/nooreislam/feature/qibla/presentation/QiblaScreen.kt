@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
-import com.composables.icons.lucide.Palette
+import com.composables.icons.lucide.SwatchBook
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.LocalDrawerState
@@ -86,7 +86,7 @@ fun QiblaScreen() {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") }
                 },
                 actions = {
-                    IconButton(onClick = { showStyleSheet = true }) { Icon(Lucide.Palette, "Compass style") }
+                    IconButton(onClick = { showStyleSheet = true }) { Icon(Lucide.SwatchBook, "Compass style") }
                 },
             )
         },

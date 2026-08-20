@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
-import com.composables.icons.lucide.Settings
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
@@ -82,9 +81,6 @@ fun MiqatTimesScreen() {
                 title = { Text(stringResource(Res.string.prayer_times)) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO settings */ }) { Icon(Lucide.Settings, "Settings") }
                 },
             )
         },
