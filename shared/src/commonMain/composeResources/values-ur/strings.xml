@@ -789,6 +789,7 @@
     <string name="the_marks_printed_above_the_arabic_text">عربی متن کے اوپر چھپی چھوٹی علامات، اور ہر ایک کا تقاضا۔</string>
     <string name="these_marks_are_not_printed_in_this_qurans_text">اس قرآن میں نہیں چھپی، دوسری جگہ پہچاننے کے لیے دکھائی گئی ہیں۔</string>
     <string name="tap_any_example_to_open_that_ayah">کسی بھی مثال پر ٹیپ کریں تاکہ وہ آیت کھل جائے۔</string>
+    <string name="pick_a_shortcut">شارٹ کٹ منتخب کریں</string>
     <string name="no_methods_found">کوئی طریقہ نہیں ملا</string>
     <string name="placeholder">جگہ دار</string>
     <string name="display">ڈسپلے</string>

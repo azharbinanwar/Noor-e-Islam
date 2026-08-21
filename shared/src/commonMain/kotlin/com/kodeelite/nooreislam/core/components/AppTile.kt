@@ -37,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -59,8 +60,8 @@ import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 /** What a tile is saying — drives the section title, the leading icon and the row's fill. */
 enum class AppTileVariant {
@@ -120,6 +121,7 @@ class AppTileItem(
     val badge: (@Composable () -> Unit)? = null,
     val actions: List<AppIconAction> = emptyList(),
     val selected: Boolean = false,
+    val enabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
     val onLongClick: (() -> Unit)? = null,
 )
@@ -145,13 +147,14 @@ fun AppTile(
     badge: (@Composable () -> Unit)? = null,
     actions: List<AppIconAction> = emptyList(),
     selected: Boolean = false,
+    enabled: Boolean = true,
     position: TilePosition = TilePosition.Single,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
 ) {
     val c = AppTheme.colors
     val bg = if (selected) c.primary.copy(alpha = 0.10f) else variant.containerOf(c)
-    Column(modifier.fillMaxWidth().clip(shapeFor(position)).background(bg)) {
+    Column(modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.45f).clip(shapeFor(position)).background(bg)) {
         TileRow(
             title,
             variant,
@@ -167,8 +170,8 @@ fun AppTile(
             badge,
             actions,
             selected,
-            onClick,
-            onLongClick
+            onClick.takeIf { enabled },
+            onLongClick.takeIf { enabled }
         )
     }
 }
@@ -278,6 +281,7 @@ private fun Tile(item: AppTileItem, position: TilePosition, group: AppTileVarian
         badge = item.badge,
         actions = item.actions,
         selected = item.selected,
+        enabled = item.enabled,
         position = position,
         onClick = item.onClick,
         onLongClick = item.onLongClick,

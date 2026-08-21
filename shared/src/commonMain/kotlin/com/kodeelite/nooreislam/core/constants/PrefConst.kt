@@ -102,6 +102,8 @@ object PrefConst {
     const val TASBIH_VIBRATE = "tasbih_vibrate"
     const val TASBIH_SOUND = "tasbih_sound"
 
+    const val HOME_SHORTCUTS = "home_shortcuts"
+
     // common field names for the per-prayer helpers
     object Field {
         const val ENABLED = "enabled"

@@ -782,6 +782,7 @@
     <string name="the_marks_printed_above_the_arabic_text">Les petits signes imprimés au-dessus du texte arabe, et ce que chacun demande.</string>
     <string name="these_marks_are_not_printed_in_this_qurans_text">Absents de ce Coran, montrés pour que vous les reconnaissiez ailleurs.</string>
     <string name="tap_any_example_to_open_that_ayah">Touchez un exemple pour ouvrir ce verset dans le lecteur.</string>
+    <string name="pick_a_shortcut">Choisir un raccourci</string>
     <string name="no_methods_found">Aucune méthode trouvée</string>
     <string name="placeholder">espace réservé</string>
     <string name="display">Affichage</string>

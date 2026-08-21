@@ -52,8 +52,7 @@ import com.kodeelite.nooreislam.resources.widgets
 
 private val MAIN = setOf(AppEdition.MAIN)
 private val DRAWER_HOME = setOf(Surface.Drawer, Surface.Home)
-private val SETTINGS = setOf(Surface.Settings)
-private val SETTINGS_HOME = setOf(Surface.Settings, Surface.Home)
+private val SETTINGS = setOf(Surface.Settings, Surface.Home)
 
 /** Ids for rows inside the Settings screen, and the group each one sits in. */
 object Anchor {
@@ -98,27 +97,27 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         editions = MAIN, surfaces = DRAWER_HOME,
         available = { SettingsStore.streakEnabled.value },
     ),
-    AppFeature(Res.string.settings, Lucide.Settings, AppRoute.Settings(), surfaces = setOf(Surface.Drawer)),
-    AppFeature(Res.string.reading_marks, Lucide.BookOpen, AppRoute.ReadingMarks),
+    AppFeature(Res.string.settings, Lucide.Settings, AppRoute.Settings(), surfaces = DRAWER_HOME),
+    AppFeature(Res.string.reading_marks, Lucide.BookOpen, AppRoute.ReadingMarks, surfaces = setOf(Surface.Home)),
 
     AppFeature(
-        Res.string.notifications, Lucide.Bell, AppRoute.Notifications, surfaces = SETTINGS_HOME,
+        Res.string.notifications, Lucide.Bell, AppRoute.Notifications, surfaces = SETTINGS,
         keywords = listOf("alerts", "reminders", "notification", "adhan", "azan", "sound", "jamaat", "تنبيهات", "إشعارات", "أذان", "صوت", "جماعة", "اطلاعات", "یاد دہانی", "اذان", "آواز", "جماعت", "alertes", "rappels", "notifications", "son"),
     ),
     AppFeature(
         Res.string.prayer_focus, Lucide.BellOff, AppRoute.Focus,
-        editions = MAIN, surfaces = SETTINGS_HOME,
+        editions = MAIN, surfaces = SETTINGS,
         keywords = listOf("silent", "dnd", "do not disturb", "mute", "vibrate", "ringer", "focus", "صامت", "عدم الإزعاج", "كتم", "اهتزاز", "الرنين", "خاموش", "ڈسٹرب نہ کریں", "میوٹ", "ارتعاش", "گھنٹی", "silencieux", "ne pas déranger", "muet", "vibreur", "sonnerie"),
         available = { Platform.canControlDnd },
     ),
     AppFeature(
         Res.string.widgets, Lucide.LayoutGrid, AppRoute.Widgets,
-        editions = MAIN, surfaces = SETTINGS_HOME,
+        editions = MAIN, surfaces = SETTINGS,
         keywords = listOf("home screen", "shortcut", "widget", "الشاشة الرئيسية", "اختصار", "أداة", "ہوم اسکرین", "شارٹ کٹ", "ویجٹ", "écran d'accueil", "raccourci", "widget"),
         available = { Platform.hasHomeScreenWidgets },
     ),
     AppFeature(
-        Res.string.location, Lucide.MapPin, AppRoute.Location, editions = MAIN, surfaces = SETTINGS_HOME,
+        Res.string.location, Lucide.MapPin, AppRoute.Location, editions = MAIN, surfaces = SETTINGS,
         keywords = listOf("city", "gps", "place", "coordinates", "timezone", "المدينة", "الموقع", "الإحداثيات", "المنطقة الزمنية", "شہر", "مقام", "جی پی ایس", "ٹائم زون", "ville", "lieu", "coordonnées", "fuseau horaire"),
     ),
     AppFeature(
@@ -172,7 +171,7 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         keywords = listOf("tanzil", "uthmani", "script", "mushaf", "arabic text", "تنزيل", "عثماني", "المصحف", "الرسم", "النص العربي", "تنزیل", "عثمانی", "مصحف", "رسم الخط", "عربی متن", "tanzil", "graphie", "texte arabe"),
     ),
 
-    AppFeature(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar, available = { debug }),
+    AppFeature(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar, surfaces = DRAWER_HOME, available = { debug }),
     AppFeature(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox, available = { debug }),
 )
 

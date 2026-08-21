@@ -21,6 +21,10 @@ data class AppFeature(
     val keywords: List<String> = emptyList(),
     val available: () -> Boolean = { true },
 ) {
+    /** Where tapping this goes — a settings row carries its anchor into the route. */
+    val target: AppRoute
+        get() = if (route is AppRoute.Settings && anchor != null) AppRoute.Settings(anchor) else route
+
     fun isIn(edition: AppEdition): Boolean = edition in editions
 
     fun offeredIn(edition: AppEdition): Boolean = isIn(edition) && available()
