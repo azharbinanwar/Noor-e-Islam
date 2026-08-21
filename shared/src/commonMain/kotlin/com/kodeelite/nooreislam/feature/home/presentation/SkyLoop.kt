@@ -73,6 +73,17 @@ fun splashAt(point: Float): Float {
     return (1f - under / SPLASH_SPAN).coerceIn(0f, 1f)
 }
 
+/** The daily marker we're in now. Wraps overnight to Isha, so it's never blank. */
+fun loopPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
+    val pts = Miqat.PERIODS
+        .mapNotNull { m -> times.firstOrNull { it.miqat == m }?.let { m to (it.at.time.hour * 60 + it.at.time.minute) } }
+        .sortedBy { it.second }
+    if (pts.isEmpty()) return Miqat.Isha
+    val n = now.hour * 60 + now.minute
+    val idx = pts.indexOfLast { it.second <= n }
+    return if (idx >= 0) pts[idx].first else pts.last().first
+}
+
 /**
  * The thinnest the moon ever gets here. A real new moon vanishes; ours holds at the width of a
  * proper crescent, a little under a quarter of the disc, so there is always a moon to look at.

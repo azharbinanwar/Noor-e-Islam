@@ -91,7 +91,8 @@ fun LoopSceneHeader(
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val sehriRef by SettingsStore.sehriReference.collectAsState()
 
-    val prayerTimes = times.filter { it.miqat.isPrayer }
+    // Shuruq counts here: it is what closes Fajr, and leaving it out named Dhuhr instead
+    val prayerTimes = times.filter { it.miqat in Miqat.DAILY }
     val nextMt = prayerTimes.firstOrNull { it.at.time > now } ?: prayerTimes.firstOrNull()
     val prayer = nextMt?.miqat ?: Miqat.Fajr
     val nextTime = nextMt?.at?.time?.format(timeFormat.pattern) ?: ""
@@ -106,7 +107,7 @@ fun LoopSceneHeader(
 
     val hijri = remember(date) { toHijri(date) }
     val sky = remember(now, times, hijri.day) { loopSky(now, times, hijri.day) }
-    val period = remember(now, times) { loopPeriod(now, times) }
+    val period = sky.period
     val dateLabel = "${stringResource(date.dayOfWeek.labelRes)}, ${hijri.day} ${
         HijriMonth.of(hijri.month).label()
     } ${hijri.year} ${stringResource(Res.string.hijri_era)}"
@@ -202,17 +203,6 @@ fun LoopSceneHeader(
     }
 
     if (showSehriInfo) SehriInfoSheet(onDismiss = { showSehriInfo = false })
-}
-
-/** The daily marker we're in now. Wraps overnight to Isha, so it's never blank. */
-private fun loopPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
-    val pts = Miqat.PERIODS
-        .mapNotNull { m -> times.firstOrNull { it.miqat == m }?.let { m to (it.at.time.hour * 60 + it.at.time.minute) } }
-        .sortedBy { it.second }
-    if (pts.isEmpty()) return Miqat.Isha
-    val n = now.hour * 60 + now.minute
-    val idx = pts.indexOfLast { it.second <= n }
-    return if (idx >= 0) pts[idx].first else pts.last().first
 }
 
 @Composable

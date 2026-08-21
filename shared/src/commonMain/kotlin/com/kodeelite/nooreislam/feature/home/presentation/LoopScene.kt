@@ -31,6 +31,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
 import kotlin.math.abs
 import kotlinx.datetime.LocalTime
@@ -42,12 +43,13 @@ data class LoopSky(
     val sunPoint: Float,
     val moonPoint: Float,
     val moonFull: Float,
+    val period: Miqat,
 )
 
 fun loopSky(now: LocalTime, times: List<MiqatTime>, hijriDay: Int): LoopSky {
     val palette = skyPalette(now, times)
     val sun = sunPointAt(now, times)
-    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay))
+    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay), loopPeriod(now, times))
 }
 
 /** How much of the moon shows through on its unlit side. */
@@ -163,6 +165,17 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
                 lineTo(w * 0.30f, horizonY + h * 0.08f); lineTo(w * 0.55f, horizonY + h * 0.17f)
                 lineTo(w * 0.80f, horizonY + h * 0.09f); lineTo(w, horizonY + h * 0.15f); lineTo(w, h); close()
             }, front)
+
+            // every marker the day is measured by, drawn over the ridge so the ones below it
+            // still show — this is what makes Fajr ending at Shuruq visible rather than implied
+            LOOP_ANCHORS.filter { it.first in Miqat.DAILY }.forEach { (miqat, point) ->
+                val here = miqat == state.period
+                drawCircle(
+                    Color.White.copy(alpha = if (here) 0.95f else 0.40f),
+                    (if (here) 4.5f else 2.5f).dp.toPx(),
+                    at(point),
+                )
+            }
 
             if (showPoints) {
                 for (i in 0 until 96) {
