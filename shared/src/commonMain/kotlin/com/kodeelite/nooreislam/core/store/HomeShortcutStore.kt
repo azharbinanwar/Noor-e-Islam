@@ -15,10 +15,10 @@ import kotlinx.serialization.json.Json
  */
 object HomeShortcutStore {
 
-    private val defaults = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.Focus)
+    private val defaults: List<AppRoute> = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.Focus)
     private val serializer = ListSerializer(AppRoute.serializer())
 
-    private val _pinned = MutableStateFlow(
+    private val _pinned = MutableStateFlow<List<AppRoute>>(
         PrefsService.getStringOrNull(PrefConst.HOME_SHORTCUTS)
             ?.let { runCatching { Json.decodeFromString(serializer, it) }.getOrNull() }
             ?.takeIf { it.isNotEmpty() }

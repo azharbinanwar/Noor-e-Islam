@@ -112,9 +112,12 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
                 // carries on through the dark side
                 val ex = r * abs(1f - 2f * state.moonFull)
                 val terminator = Path().apply { addOval(Rect(moonAt.x - ex, moonAt.y - r, moonAt.x + ex, moonAt.y + r)) }
+                // the lit half, cut with a rectangle rather than an arc angle — the platforms
+                // disagree on where a negative start angle begins, and iOS came out the other way
                 val half = Path().apply {
-                    arcTo(Rect(moonAt.x - r, moonAt.y - r, moonAt.x + r, moonAt.y + r), -90f, 180f, true)
-                    close()
+                    val disc = Path().apply { addOval(Rect(moonAt, r)) }
+                    val side = Path().apply { addRect(Rect(moonAt.x - r, moonAt.y - r, moonAt.x, moonAt.y + r)) }
+                    op(disc, side, PathOperation.Intersect)
                 }
                 val shape = Path().apply {
                     op(half, terminator, if (state.moonFull < 0.5f) PathOperation.Difference else PathOperation.Union)
