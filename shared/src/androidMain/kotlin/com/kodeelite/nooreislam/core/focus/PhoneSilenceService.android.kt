@@ -83,7 +83,9 @@ class PhoneSilenceService : Service() {
         PrefsService.getStringOrNull(PrefConst.LANGUAGE)?.let { java.util.Locale.setDefault(java.util.Locale(it)) }
         val pattern = SettingsStore.timeFormat.value.pattern
         fun action(a: String, code: Int) = PendingIntent.getBroadcast(
-            this, code, Intent(this, FocusActionReceiver::class.java).setAction(a),
+            this, code,
+            // the label rides along so Prayed knows which prayer it is logging
+            Intent(this, FocusActionReceiver::class.java).setAction(a).putExtra(EXTRA_LABEL, label),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
@@ -107,7 +109,12 @@ class PhoneSilenceService : Service() {
             .setSmallIcon(if (iconId != 0) iconId else android.R.drawable.ic_lock_silent_mode)
             .setOngoing(true)
             .addAction(0, extend, action(FocusActionReceiver.ACTION_EXTEND, 2))
-            .addAction(0, prayed, action(FocusActionReceiver.ACTION_PRAYED, 4))
+            // Prayed logs the prayer, so it has nothing to do with the tracker switched off
+            .apply {
+                if (SettingsStore.streakEnabled.value) {
+                    addAction(0, prayed, action(FocusActionReceiver.ACTION_PRAYED, 4))
+                }
+            }
             .addAction(0, unmute, action(FocusActionReceiver.ACTION_UNMUTE, 1))
             .build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

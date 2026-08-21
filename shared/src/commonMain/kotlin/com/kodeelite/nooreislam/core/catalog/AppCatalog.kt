@@ -161,8 +161,7 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
     AppFeature(
         Res.string.prayer_exemption, Lucide.Pause, AppRoute.Settings(), Anchor.EXEMPTION,
         editions = MAIN, surfaces = SETTINGS,
-        keywords = listOf("period", "menstruation", "hayd", "nifas", "exempt", "exemption", "exempt", "pause", "الحيض", "النفاس", "الدورة الشهرية", "معذورة", "ماہواری", "حیض", "نفاس", "معذور", "règles", "menstruation", "dispensée"),
-        available = { SettingsStore.streakEnabled.value },
+        keywords = listOf("period", "menstruation", "hayd", "nifas", "exempt", "exemption", "pause", "الحيض", "النفاس", "الدورة الشهرية", "معذورة", "ماہواری", "حیض", "نفاس", "معذور", "règles", "menstruation", "dispensée"),
     ),
     AppFeature(
         Res.string.about, Lucide.Info, AppRoute.Settings(), Anchor.ABOUT, surfaces = SETTINGS,

@@ -98,7 +98,7 @@ import com.kodeelite.nooreislam.resources.language
 import com.kodeelite.nooreislam.resources.location
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.notifications
-import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
+import com.kodeelite.nooreislam.resources.skip_the_days_prayer_is_not_owed
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_focus
@@ -333,13 +333,12 @@ fun SettingsScreen(open: String? = null) {
                             onClick = { tracker.setStreakEnabled(!streakEnabled) },
                         )
                     )
-                    // exempt only pauses a streak, so it has no meaning without one
-                    if (streakEnabled) add(
+                    add(
                         AppTileItem(
                             leadingIcon = Lucide.Pause,
                             title = stringResource(Res.string.prayer_exemption),
                             selected = highlight == Anchor.EXEMPTION,
-                            subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
+                            subtitle = stringResource(Res.string.skip_the_days_prayer_is_not_owed),
                             trailing = { AppSwitch(trackExemption, tracker::setExemption) },
                             onClick = { tracker.setExemption(!trackExemption) },
                         )

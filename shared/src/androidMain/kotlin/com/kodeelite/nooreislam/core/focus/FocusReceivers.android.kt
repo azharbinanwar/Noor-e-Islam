@@ -3,7 +3,12 @@ package com.kodeelite.nooreislam.core.focus
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.kodeelite.nooreislam.core.enums.Miqat
+import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.platform.AppCtx
+import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import org.koin.core.context.GlobalContext
 
 // Fires ~20s before a slot: starts the service, which mutes at the slot and restores at the end.
 class FocusAlarmReceiver : BroadcastReceiver() {
@@ -26,12 +31,25 @@ class FocusActionReceiver : BroadcastReceiver() {
             ACTION_UNMUTE -> PhoneSilencer.unmuteNow()
             ACTION_EXTEND -> PhoneSilencer.extend()
             ACTION_MODE -> PhoneSilencer.toggleMode()
-            // TODO(streak): also mark the prayer as completed once prayer tracking exists.
-            ACTION_PRAYED -> PhoneSilencer.unmuteNow()
+            // iOS bakes its buttons in when it schedules, so the guard lives here too, not only
+            // in whether the button was drawn
+            ACTION_PRAYED -> {
+                logPrayed(intent.getStringExtra(PhoneSilenceService.EXTRA_LABEL))
+                PhoneSilencer.unmuteNow()
+            }
             // End alarm ("double alarm"): fires at the window end. If the service already restored,
             // this finds nothing saved and exits. If the OEM froze/killed the service, this restores.
             ACTION_RESTORE -> PhoneSilencer.restoreIfStuck()
         }
+    }
+
+    /** The window's own prayer, logged as prayed on time — the button only exists inside it. */
+    private fun logPrayed(label: String?) {
+        if (!SettingsStore.streakEnabled.value) return
+        // Friday windows are labelled Jumu'ah, which is still Dhuhr as far as the tracker goes
+        val prayer = if (label == "Jumu'ah") Miqat.Dhuhr else label?.let { runCatching { Miqat.valueOf(it) }.getOrNull() }
+        prayer ?: return
+        GlobalContext.getOrNull()?.get<TrackerStore>()?.setStatus(prayer, PrayerTrackerStatus.PrayedOnTime)
     }
 
     companion object {

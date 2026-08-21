@@ -62,7 +62,7 @@
     <string name="prayer_streak">نماز کا تسلسل</string>
     <string name="show_streaks_best_run_and_on_time_percentage">تسلسل، بہترین سلسلہ اور وقت پر نماز کا تناسب دکھائیں</string>
     <string name="prayer_exemption">نماز سے استثنا</string>
-    <string name="pause_streak_on_days_you_are_exempt_from_prayer">جن دنوں نماز معاف ہے ان دنوں تسلسل روک دیں</string>
+    <string name="skip_the_days_prayer_is_not_owed">وہ دن چھوڑ دیں جن میں نماز واجب نہیں</string>
     <string name="coming_soon">جلد آ رہا ہے</string>
     <string name="best_days_streak_and_on_time_percentage">بہترین %1$d دن · %2$d% وقت پر</string>
     <string name="time_from_to">%1$s - %2$s</string>

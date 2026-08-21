@@ -50,9 +50,6 @@ class TrackerStore(
         scope.launch { if (on) repo.startExemption(Now.date()) else repo.endExemption(Now.date()) }
     }
 
-    /** Exempt only exists to pause a streak, so it can't outlive one. */
-    fun setStreakEnabled(on: Boolean) {
-        SettingsStore.setStreakEnabled(on)
-        if (!on) setExemption(false)
-    }
+    /** The streak is a score. It reads the exemption, it never ends one. */
+    fun setStreakEnabled(on: Boolean) = SettingsStore.setStreakEnabled(on)
 }
