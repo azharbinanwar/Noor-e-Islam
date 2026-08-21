@@ -18,7 +18,7 @@ object HomeShortcutStore {
     private val defaults: List<AppRoute> = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.Focus)
     private val serializer = ListSerializer(AppRoute.serializer())
 
-    private val _pinned = MutableStateFlow<List<AppRoute>>(
+    private val _pinned = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.HOME_SHORTCUTS)
             ?.let { runCatching { Json.decodeFromString(serializer, it) }.getOrNull() }
             ?.takeIf { it.isNotEmpty() }

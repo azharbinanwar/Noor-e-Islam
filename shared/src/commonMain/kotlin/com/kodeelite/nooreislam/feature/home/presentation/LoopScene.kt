@@ -50,6 +50,9 @@ fun loopSky(now: LocalTime, times: List<MiqatTime>, hijriDay: Int): LoopSky {
     return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay))
 }
 
+/** How much of the moon shows through on its unlit side. */
+private const val EARTHSHINE = 0.13f
+
 /** Which corner the lit side sits in. The shape is the real one; the lean is ours. */
 private const val MOON_TILT = -45f
 
@@ -112,16 +115,19 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
                 // carries on through the dark side
                 val ex = r * abs(1f - 2f * state.moonFull)
                 val terminator = Path().apply { addOval(Rect(moonAt.x - ex, moonAt.y - r, moonAt.x + ex, moonAt.y + r)) }
+                val disc = Path().apply { addOval(Rect(moonAt, r)) }
                 // the lit half, cut with a rectangle rather than an arc angle — the platforms
                 // disagree on where a negative start angle begins, and iOS came out the other way
                 val half = Path().apply {
-                    val disc = Path().apply { addOval(Rect(moonAt, r)) }
                     val side = Path().apply { addRect(Rect(moonAt.x - r, moonAt.y - r, moonAt.x, moonAt.y + r)) }
                     op(disc, side, PathOperation.Intersect)
                 }
                 val shape = Path().apply {
                     op(half, terminator, if (state.moonFull < 0.5f) PathOperation.Difference else PathOperation.Union)
                 }
+                // earthshine: the sphere is faintly there behind the crescent, so a sliver still
+                // reads as a moon rather than a curved sliver of nothing
+                drawPath(disc, moonColor.copy(alpha = EARTHSHINE))
                 // the same lean all month — filling or emptying, the lit side stays top right
                 rotate(MOON_TILT, moonAt) { drawPath(shape, moonColor.copy(alpha = lit)) }
             }
