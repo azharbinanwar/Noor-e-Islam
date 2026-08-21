@@ -57,11 +57,11 @@
     <string name="not_tracked">مقرر نہیں</string>
     <string name="complete">مکمل</string>
     <string name="partial">جزوی</string>
-    <string name="excused">عذر</string>
+    <string name="exempt">معذور</string>
     <string name="streak">تسلسل</string>
     <string name="prayer_streak">نماز کا تسلسل</string>
     <string name="show_streaks_best_run_and_on_time_percentage">تسلسل، بہترین سلسلہ اور وقت پر نماز کا تناسب دکھائیں</string>
-    <string name="excused_days">عذر کے دن</string>
+    <string name="prayer_exemption">نماز سے استثنا</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">جن دنوں نماز معاف ہے ان دنوں تسلسل روک دیں</string>
     <string name="coming_soon">جلد آ رہا ہے</string>
     <string name="best_days_streak_and_on_time_percentage">بہترین %1$d دن · %2$d% وقت پر</string>

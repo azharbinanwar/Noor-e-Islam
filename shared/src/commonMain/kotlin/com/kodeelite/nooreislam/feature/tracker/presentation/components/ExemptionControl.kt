@@ -12,29 +12,29 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.resources.Res
-import com.kodeelite.nooreislam.resources.excused_days
+import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.pause_streak_on_days_you_are_exempt_from_prayer
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 /** Same switch as Settings, on Home as a quick action. */
 @Composable
-fun ExcusedControl() {
+fun ExemptionControl() {
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
     if (!streakEnabled) return
 
     val tracker = koinInject<TrackerStore>()
-    val on by SettingsStore.trackExcusedDays.collectAsState()
+    val on by SettingsStore.trackExemption.collectAsState()
 
     AppTileGroup(
         items = listOf(
             AppTileItem(
                 leadingIcon = Lucide.Pause,
                 leadingColor = AppTheme.colors.primary,
-                title = stringResource(Res.string.excused_days),
+                title = stringResource(Res.string.prayer_exemption),
                 subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
-                trailing = { AppSwitch(on, tracker::setExcused) },
-                onClick = { tracker.setExcused(!on) },
+                trailing = { AppSwitch(on, tracker::setExemption) },
+                onClick = { tracker.setExemption(!on) },
             )
         )
     )

@@ -19,5 +19,5 @@ object SettingsDefaults {
     const val HIJRI_OFFSET = 0
     val sehriReference = Miqat.Imsak         // cautious default; user can switch to Fajr in Ramadan
     const val STREAK_ENABLED = true           // on by default; opt out if the habit framing isn't wanted
-    const val TRACK_EXCUSED_DAYS = false      // opt-in; most users never need it
+    const val TRACK_EXEMPTION = false      // opt-in; most users never need it
 }

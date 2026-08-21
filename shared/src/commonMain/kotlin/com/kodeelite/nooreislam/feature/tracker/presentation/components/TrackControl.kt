@@ -21,12 +21,12 @@ import com.kodeelite.nooreislam.core.enums.label
 
 /** The round status pill on a prayer row. Shared by Home and the tracker. */
 @Composable
-fun TrackControl(status: PrayerTrackerStatus?, excused: Boolean = false) {
+fun TrackControl(status: PrayerTrackerStatus?, exempt: Boolean = false) {
     when {
-        excused -> {
-            val c = DayProgress.Excused.color
+        exempt -> {
+            val c = DayProgress.Exempt.color
             Box(Modifier.size(32.dp).clip(CircleShape).background(c.copy(alpha = 0.25f)), contentAlignment = Alignment.Center) {
-                Icon(DayProgress.Excused.icon, DayProgress.Excused.label, tint = c, modifier = Modifier.size(18.dp))
+                Icon(DayProgress.Exempt.icon, DayProgress.Exempt.label, tint = c, modifier = Modifier.size(18.dp))
             }
         }
 

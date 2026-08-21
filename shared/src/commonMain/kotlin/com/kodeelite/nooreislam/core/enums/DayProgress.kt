@@ -12,7 +12,7 @@ import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.complete
-import com.kodeelite.nooreislam.resources.excused
+import com.kodeelite.nooreislam.resources.exempt
 import com.kodeelite.nooreislam.resources.partial
 import com.kodeelite.nooreislam.resources.not_tracked
 import org.jetbrains.compose.resources.StringResource
@@ -26,7 +26,7 @@ enum class DayProgress(val labelRes: StringResource, val icon: ImageVector) {
     None(Res.string.not_tracked, Lucide.CircleDot),
 
     /** Hayd or nifas — skipped, not scored. */
-    Excused(Res.string.excused, Lucide.Pause),
+    Exempt(Res.string.exempt, Lucide.Pause),
 }
 
 val DayProgress.label: String
@@ -37,7 +37,7 @@ fun DayProgress.colorOf(c: AppColors): Color = when (this) {
     DayProgress.Complete -> c.success
     DayProgress.Partial -> c.warning
     DayProgress.None -> c.neutralMuted
-    DayProgress.Excused -> c.info
+    DayProgress.Exempt -> c.info
 }
 
 val DayProgress.color: Color

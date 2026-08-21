@@ -5,9 +5,10 @@ import androidx.room.PrimaryKey
 import kotlinx.datetime.LocalDate
 
 // a range, not a row per day, so an ongoing period needs nothing writing a row each night.
-// *Date suffix because END is a reserved SQLite keyword.
+// *Date suffix because END is a reserved SQLite keyword. The table keeps its old name: renaming it
+// would quarantine every install that already has one.
 @Entity(tableName = "excused_period")
-data class ExcusedPeriod(
+data class ExemptionPeriod(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val startDate: LocalDate,
     val endDate: LocalDate? = null, // null = still ongoing

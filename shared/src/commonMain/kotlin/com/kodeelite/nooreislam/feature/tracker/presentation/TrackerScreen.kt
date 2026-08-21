@@ -49,7 +49,7 @@ import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
-import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExcusedControl
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
@@ -88,7 +88,7 @@ fun TrackerScreen() {
     val clock by Now.now.collectAsState()
     val today = clock.date
     val history by tracker.history.collectAsState()
-    val excused by tracker.excused.collectAsState()
+    val exempt by tracker.exempt.collectAsState()
     val stats by tracker.stats.collectAsState()
 
     var visible by remember { mutableStateOf(today) }
@@ -98,11 +98,11 @@ fun TrackerScreen() {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
     val statusColors = PrayerTrackerStatus.entries.associateWith { it.color }
-    val excusedColor = DayProgress.Excused.color
+    val exemptColor = DayProgress.Exempt.color
     val emptyDot = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.22f)
 
     val selectedStatuses = history[selected].orEmpty()
-    val selectedExcused = dayProgress(selectedStatuses, selected, excused, today) == DayProgress.Excused
+    val selectedExempt = dayProgress(selectedStatuses, selected, exempt, today) == DayProgress.Exempt
     val todayTimes by MiqatTimesStore.today.collectAsState()
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
@@ -141,8 +141,8 @@ fun TrackerScreen() {
                 lastSelectable = today,
                 dayDots = { date ->
                     val statuses = history[date]
-                    if (dayProgress(statuses, date, excused, today) == DayProgress.Excused) {
-                        List(trackablePrayers.size) { excusedColor }
+                    if (dayProgress(statuses, date, exempt, today) == DayProgress.Exempt) {
+                        List(trackablePrayers.size) { exemptColor }
                     } else {
                         trackablePrayers.map { p ->
                             statuses?.get(p)?.let { statusColors.getValue(it) } ?: emptyDot
@@ -160,7 +160,7 @@ fun TrackerScreen() {
             AppTileGroup(
                 items = trackablePrayers.map { p ->
                     val status = selectedStatuses[p]
-                    val markable = !selectedExcused && started(p)
+                    val markable = !selectedExempt && started(p)
                     AppTileItem(
                         title = p.label(selected),
                         subtitle = if (isToday) prayerWindow(todayTimes, p, timeFormat.pattern) else null,
@@ -170,15 +170,15 @@ fun TrackerScreen() {
                         badge = if (isToday && p == currentPrayer) {
                             { PulseDot(color = AppTheme.colors.primary) }
                         } else null,
-                        trailing = if (markable || selectedExcused) {
-                            { TrackControl(status, excused = selectedExcused) }
+                        trailing = if (markable || selectedExempt) {
+                            { TrackControl(status, exempt = selectedExempt) }
                         } else null,
                         onClick = if (markable) ({ sheetPrayer = p }) else null,
                     )
                 }
             )
 
-            ExcusedControl()
+            ExemptionControl()
         }
     }
 

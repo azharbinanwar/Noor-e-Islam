@@ -30,7 +30,7 @@ val databaseModule = module {
     single { CollectionRepository(get(), get()) }
     single { get<AppDatabase>().surahReminderDao() }
     single { get<AppDatabase>().trackedPrayerDao() }
-    single { get<AppDatabase>().excusedPeriodDao() }
+    single { get<AppDatabase>().exemptionPeriodDao() }
     single { TrackerRepository(get(), get()) }
 }
 

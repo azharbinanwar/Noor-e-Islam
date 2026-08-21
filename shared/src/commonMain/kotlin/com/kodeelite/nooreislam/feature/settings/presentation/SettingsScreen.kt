@@ -89,7 +89,7 @@ import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
-import com.kodeelite.nooreislam.resources.excused_days
+import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
 import com.kodeelite.nooreislam.resources.hijri_date_format
@@ -278,7 +278,7 @@ fun SettingsScreen(open: String? = null) {
             val notificationSettings by NotificationStore.settings.collectAsState()
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
-            val trackExcused by SettingsStore.trackExcusedDays.collectAsState()
+            val trackExemption by SettingsStore.trackExemption.collectAsState()
             val streakEnabled by SettingsStore.streakEnabled.collectAsState()
             val tracker = koinInject<TrackerStore>()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
@@ -333,15 +333,15 @@ fun SettingsScreen(open: String? = null) {
                             onClick = { tracker.setStreakEnabled(!streakEnabled) },
                         )
                     )
-                    // excused only pauses a streak, so it has no meaning without one
+                    // exempt only pauses a streak, so it has no meaning without one
                     if (streakEnabled) add(
                         AppTileItem(
                             leadingIcon = Lucide.Pause,
-                            title = stringResource(Res.string.excused_days),
-                            selected = highlight == Anchor.EXCUSED,
+                            title = stringResource(Res.string.prayer_exemption),
+                            selected = highlight == Anchor.EXEMPTION,
                             subtitle = stringResource(Res.string.pause_streak_on_days_you_are_exempt_from_prayer),
-                            trailing = { AppSwitch(trackExcused, tracker::setExcused) },
-                            onClick = { tracker.setExcused(!trackExcused) },
+                            trailing = { AppSwitch(trackExemption, tracker::setExemption) },
+                            onClick = { tracker.setExemption(!trackExemption) },
                         )
                     )
                 },

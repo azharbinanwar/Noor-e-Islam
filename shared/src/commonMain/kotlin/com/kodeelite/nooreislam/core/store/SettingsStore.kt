@@ -75,11 +75,11 @@ object SettingsStore {
     )
     val streakEnabled: StateFlow<Boolean> = _streakEnabled.asStateFlow()
 
-    /** Shows the excused-days control in the tracker; hidden entirely while off. */
-    private val _trackExcusedDays = MutableStateFlow(
-        PrefsService.getBoolean(PrefConst.TRACK_EXCUSED_DAYS, SettingsDefaults.TRACK_EXCUSED_DAYS),
+    /** Shows the exempt-days control in the tracker; hidden entirely while off. */
+    private val _trackExemption = MutableStateFlow(
+        PrefsService.getBoolean(PrefConst.TRACK_EXEMPTION, SettingsDefaults.TRACK_EXEMPTION),
     )
-    val trackExcusedDays: StateFlow<Boolean> = _trackExcusedDays.asStateFlow()
+    val trackExemption: StateFlow<Boolean> = _trackExemption.asStateFlow()
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -135,8 +135,8 @@ object SettingsStore {
         _streakEnabled.value = value
     }
 
-    fun setTrackExcusedDays(value: Boolean) {
-        PrefsService.putBoolean(PrefConst.TRACK_EXCUSED_DAYS, value)
-        _trackExcusedDays.value = value
+    fun setTrackExemption(value: Boolean) {
+        PrefsService.putBoolean(PrefConst.TRACK_EXEMPTION, value)
+        _trackExemption.value = value
     }
 }

@@ -27,15 +27,15 @@ class TrackerStore(
     val history: StateFlow<PrayerHistory> =
         repo.history.stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
-    val excused: StateFlow<List<ExcusedPeriod>> =
-        repo.excusedPeriods.stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val exempt: StateFlow<List<ExemptionPeriod>> =
+        repo.exemptionPeriods.stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val tracked: StateFlow<Map<Miqat, PrayerTrackerStatus>> =
         combine(repo.history, today) { h, d -> h[d].orEmpty() }
             .stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     val stats: StateFlow<StreakStats> =
-        combine(repo.history, repo.excusedPeriods, today) { h, e, d -> streakStats(h, e, d) }
+        combine(repo.history, repo.exemptionPeriods, today) { h, e, d -> streakStats(h, e, d) }
             .stateIn(scope, SharingStarted.WhileSubscribed(5000), StreakStats(0, 0, 0))
 
     fun setStatus(date: LocalDate, prayer: Miqat, status: PrayerTrackerStatus?) {
@@ -45,14 +45,14 @@ class TrackerStore(
     fun setStatus(prayer: Miqat, status: PrayerTrackerStatus?) = setStatus(Now.date(), prayer, status)
 
     /** The setting is the period: turning it on opens the range, off closes it. */
-    fun setExcused(on: Boolean) {
-        SettingsStore.setTrackExcusedDays(on)
-        scope.launch { if (on) repo.startExcused(Now.date()) else repo.endExcused(Now.date()) }
+    fun setExemption(on: Boolean) {
+        SettingsStore.setTrackExemption(on)
+        scope.launch { if (on) repo.startExemption(Now.date()) else repo.endExemption(Now.date()) }
     }
 
-    /** Excused only exists to pause a streak, so it can't outlive one. */
+    /** Exempt only exists to pause a streak, so it can't outlive one. */
     fun setStreakEnabled(on: Boolean) {
         SettingsStore.setStreakEnabled(on)
-        if (!on) setExcused(false)
+        if (!on) setExemption(false)
     }
 }

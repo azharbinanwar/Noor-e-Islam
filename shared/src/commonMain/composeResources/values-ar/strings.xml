@@ -49,11 +49,11 @@
     <string name="not_tracked">غير محدد</string>
     <string name="complete">مكتمل</string>
     <string name="partial">جزئي</string>
-    <string name="excused">عذر</string>
+    <string name="exempt">معذورة</string>
     <string name="streak">المواظبة</string>
     <string name="prayer_streak">مواظبة الصلاة</string>
     <string name="show_streaks_best_run_and_on_time_percentage">عرض المواظبة وأفضل تتابع ونسبة الصلاة في وقتها</string>
-    <string name="excused_days">أيام العذر</string>
+    <string name="prayer_exemption">إعفاء من الصلاة</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">إيقاف المواظبة في الأيام التي تُعذرين فيها عن الصلاة</string>
     <string name="coming_soon">قريباً</string>
     <string name="best_days_streak_and_on_time_percentage">الأفضل %1$d يوماً · %2$d% في الوقت</string>

@@ -48,7 +48,7 @@ import com.kodeelite.nooreislam.feature.home.presentation.components.StreakCard
 import com.kodeelite.nooreislam.feature.home.presentation.components.TodayPrayers
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
-import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExcusedControl
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionControl
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -105,7 +105,7 @@ fun HomeScreen() {
                 TodayPrayers()
                 MulkReminderCard()
                 DailyVerseCard()
-                ExcusedControl()
+                ExemptionControl()
                 Spacer(Modifier.height(8.dp))
             }
         }

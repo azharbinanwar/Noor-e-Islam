@@ -54,7 +54,7 @@ fun StreakCard() {
     val tracked by tracker.tracked.collectAsState()
     val stats by tracker.stats.collectAsState()
     val history by tracker.history.collectAsState()
-    val excused by tracker.excused.collectAsState()
+    val exempt by tracker.exempt.collectAsState()
     val clock by Now.now.collectAsState()
     val today = clock.date
     val total = Miqat.PRAYERS.size
@@ -62,21 +62,21 @@ fun StreakCard() {
     val streak = stats.current
     val best = stats.best
     val onTimePct = stats.onTimePercent
-    val todayExcused = dayProgress(tracked, today, excused, today) == DayProgress.Excused
+    val todayExempt = dayProgress(tracked, today, exempt, today) == DayProgress.Exempt
 
     AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    progress = { if (todayExcused) 1f else done / total.toFloat() },
+                    progress = { if (todayExempt) 1f else done / total.toFloat() },
                     modifier = Modifier.size(72.dp),
                     strokeWidth = 7.dp,
-                    color = if (todayExcused) DayProgress.Excused.color else AppTheme.colors.surfaceTint,
+                    color = if (todayExempt) DayProgress.Exempt.color else AppTheme.colors.surfaceTint,
                     trackColor = AppTheme.colors.neutralMutedContainer,
                 )
-                // nothing is expected on an excused day, so don't show it as 0 of 5
-                if (todayExcused) {
-                    Icon(DayProgress.Excused.icon, DayProgress.Excused.label, tint = DayProgress.Excused.color, modifier = Modifier.size(24.dp))
+                // nothing is expected on an exempt day, so don't show it as 0 of 5
+                if (todayExempt) {
+                    Icon(DayProgress.Exempt.icon, DayProgress.Exempt.label, tint = DayProgress.Exempt.color, modifier = Modifier.size(24.dp))
                 } else {
                     Text("$done/$total", color = AppTheme.colors.onSurface, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                 }
@@ -108,7 +108,7 @@ fun StreakCard() {
                     val date = weekStart.plus(i, DateTimeUnit.DAY)
                     val isToday = date == today
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        DayDot(dayProgress(history[date], date, excused, today))
+                        DayDot(dayProgress(history[date], date, exempt, today))
                         Text(
                             d,
                             color = if (isToday) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,

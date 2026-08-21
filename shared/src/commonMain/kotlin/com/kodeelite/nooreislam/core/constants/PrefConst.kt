@@ -91,7 +91,8 @@ object PrefConst {
 
     // ── Tracker ──────────────────────────────────────────────
     const val STREAK_ENABLED = "streak_enabled"
-    const val TRACK_EXCUSED_DAYS = "track_excused_days"
+    // the stored key keeps its old wording; changing it would lose the setting on upgrade
+    const val TRACK_EXEMPTION = "track_excused_days"
 
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus

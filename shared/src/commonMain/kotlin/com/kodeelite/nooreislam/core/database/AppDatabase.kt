@@ -21,8 +21,8 @@ import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
 import com.kodeelite.nooreislam.feature.notifications.data.SurahReminderDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationDao
 import com.kodeelite.nooreislam.feature.studio.data.StudioCreationEntity
-import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriod
-import com.kodeelite.nooreislam.feature.tracker.data.ExcusedPeriodDao
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionPeriod
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionPeriodDao
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayer
 import com.kodeelite.nooreislam.feature.tracker.data.TrackedPrayerDao
 
@@ -38,7 +38,7 @@ val DATABASE_TABLES = listOf(
 
 // schemas land in shared/schemas and are committed — Room validates every migration against them.
 @Database(
-    entities = [TrackedPrayer::class, ExcusedPeriod::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
+    entities = [TrackedPrayer::class, ExemptionPeriod::class, ScheduledNotificationEntity::class, StudioCreationEntity::class, Bookmark::class, Highlight::class, Note::class, Collection::class, CollectionAyah::class, SurahReminder::class],
     version = AppConst.DB_VERSION,
     exportSchema = true
 )
@@ -46,7 +46,7 @@ val DATABASE_TABLES = listOf(
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun trackedPrayerDao(): TrackedPrayerDao
-    abstract fun excusedPeriodDao(): ExcusedPeriodDao
+    abstract fun exemptionPeriodDao(): ExemptionPeriodDao
     abstract fun scheduledNotificationDao(): ScheduledNotificationDao
     abstract fun studioCreationDao(): StudioCreationDao
     abstract fun bookmarksDao(): BookmarksDao

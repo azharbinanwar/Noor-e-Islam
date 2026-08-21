@@ -47,10 +47,10 @@ fun TodayPrayers() {
     val todayTimes by MiqatTimesStore.today.collectAsState()
     val tracker = koinInject<TrackerStore>()
     val tracked by tracker.tracked.collectAsState()
-    val excusedPeriods by tracker.excused.collectAsState()
-    val todayExcused = dayProgress(tracked, clock.date, excusedPeriods, clock.date) == DayProgress.Excused
+    val exemptionPeriods by tracker.exempt.collectAsState()
+    val todayExempt = dayProgress(tracked, clock.date, exemptionPeriods, clock.date) == DayProgress.Exempt
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
-    val markable: (MiqatTime) -> Boolean = { streakEnabled && !todayExcused && it.at.time <= now }
+    val markable: (MiqatTime) -> Boolean = { streakEnabled && !todayExempt && it.at.time <= now }
 
     val dailyTimes = remember(todayTimes) { todayTimes.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
@@ -84,7 +84,7 @@ fun TodayPrayers() {
                             if (status == MiqatTimeStatus.Soon) {
                                 Text(MiqatTimeStatus.Soon.label, color = MiqatTimeStatus.Soon.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
-                            // hidden while excused (the card says so) and while the streak is off
+                            // hidden while exempt (the card says so) and while the streak is off
                             if (markable(mt)) TrackControl(tracked[mt.miqat])
                         }
                     }

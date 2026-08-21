@@ -11,14 +11,14 @@ import kotlinx.datetime.minus
 // one repo over both tables — streak math always needs them together
 class TrackerRepository(
     private val prayers: TrackedPrayerDao,
-    private val excused: ExcusedPeriodDao,
+    private val exempt: ExemptionPeriodDao,
 ) {
     val history: Flow<Map<LocalDate, Map<Miqat, PrayerTrackerStatus>>> =
         prayers.observeAll().map { rows ->
             rows.groupBy { it.date }.mapValues { (_, day) -> day.associate { it.prayer to it.status } }
         }
 
-    val excusedPeriods: Flow<List<ExcusedPeriod>> = excused.observeAll()
+    val exemptionPeriods: Flow<List<ExemptionPeriod>> = exempt.observeAll()
 
     /** Null clears it, so untracked stays distinct from missed. */
     suspend fun setStatus(date: LocalDate, prayer: Miqat, status: PrayerTrackerStatus?) {
@@ -27,14 +27,14 @@ class TrackerRepository(
     }
 
     /** No-op if one is already open, so a double tap can't create two. */
-    suspend fun startExcused(from: LocalDate) {
-        if (excused.open() == null) excused.upsert(ExcusedPeriod(startDate = from))
+    suspend fun startExemption(from: LocalDate) {
+        if (exempt.open() == null) exempt.upsert(ExemptionPeriod(startDate = from))
     }
 
     /** Ending on [to] means [to] itself is back to normal, so the range closes the day before. */
-    suspend fun endExcused(to: LocalDate) {
-        val open = excused.open() ?: return
+    suspend fun endExemption(to: LocalDate) {
+        val open = exempt.open() ?: return
         val last = to.minus(1, DateTimeUnit.DAY)
-        if (last < open.startDate) excused.delete(open.id) else excused.upsert(open.copy(endDate = last))
+        if (last < open.startDate) exempt.delete(open.id) else exempt.upsert(open.copy(endDate = last))
     }
 }

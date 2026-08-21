@@ -50,11 +50,11 @@
     <string name="not_tracked">Non défini</string>
     <string name="complete">Complet</string>
     <string name="partial">Partiel</string>
-    <string name="excused">Dispensée</string>
+    <string name="exempt">Dispensée</string>
     <string name="streak">Série</string>
     <string name="prayer_streak">Série de prières</string>
     <string name="show_streaks_best_run_and_on_time_percentage">Afficher la série, le record et le pourcentage à l\'heure</string>
-    <string name="excused_days">Jours dispensés</string>
+    <string name="prayer_exemption">Dispense de prière</string>
     <string name="pause_streak_on_days_you_are_exempt_from_prayer">Mettre la série en pause les jours où vous êtes dispensée de prière</string>
     <string name="coming_soon">Bientôt disponible</string>
     <string name="best_days_streak_and_on_time_percentage">Meilleur %1$d jours · %2$d% à l'heure</string>

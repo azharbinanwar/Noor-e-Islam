@@ -29,7 +29,7 @@ import com.kodeelite.nooreislam.resources.appearance
 import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.developer_sandbox
 import com.kodeelite.nooreislam.resources.duas_and_adhkar
-import com.kodeelite.nooreislam.resources.excused_days
+import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.hijri_calendar
 import com.kodeelite.nooreislam.resources.hijri_date_format
 import com.kodeelite.nooreislam.resources.home
@@ -63,7 +63,7 @@ object Anchor {
     const val DATE_FORMAT = "date_format"
     const val HIJRI_DATE_FORMAT = "hijri_date_format"
     const val STREAK = "streak"
-    const val EXCUSED = "excused"
+    const val EXEMPTION = "exempt"
     const val ABOUT = "about"
     const val TEXT_SOURCE = "text_source"
 
@@ -76,7 +76,7 @@ object Anchor {
     fun groupOf(anchor: String?): String? = when (anchor) {
         APPEARANCE, TIME_FORMAT, LANGUAGE, HIJRI_CALENDAR -> GENERAL
         DATE_FORMAT, HIJRI_DATE_FORMAT -> DATE_FORMATS
-        STREAK, EXCUSED -> STREAK_GROUP
+        STREAK, EXEMPTION -> STREAK_GROUP
         ABOUT, TEXT_SOURCE -> ABOUT_GROUP
         else -> null
     }
@@ -159,9 +159,9 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         keywords = listOf("habit", "progress", "on time", "best run", "streak", "العادة", "التقدم", "في الوقت", "أفضل سلسلة", "عادت", "پیش رفت", "وقت پر", "سلسلہ", "habitude", "progression", "à l'heure", "meilleure série"),
     ),
     AppFeature(
-        Res.string.excused_days, Lucide.Pause, AppRoute.Settings(), Anchor.EXCUSED,
+        Res.string.prayer_exemption, Lucide.Pause, AppRoute.Settings(), Anchor.EXEMPTION,
         editions = MAIN, surfaces = SETTINGS,
-        keywords = listOf("period", "menstruation", "hayd", "nifas", "exempt", "pause", "الحيض", "النفاس", "الدورة الشهرية", "معذورة", "ماہواری", "حیض", "نفاس", "معذور", "règles", "menstruation", "dispensée"),
+        keywords = listOf("period", "menstruation", "hayd", "nifas", "exempt", "exemption", "exempt", "pause", "الحيض", "النفاس", "الدورة الشهرية", "معذورة", "ماہواری", "حیض", "نفاس", "معذور", "règles", "menstruation", "dispensée"),
         available = { SettingsStore.streakEnabled.value },
     ),
     AppFeature(
