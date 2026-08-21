@@ -91,9 +91,6 @@ fun moonFullness(day: Int): Float {
     return ((1.0 - cos(t)) / 2.0).toFloat().coerceIn(MIN_FULLNESS, 1f)
 }
 
-/** Filling or emptying — after the 16th the lit rim is on the other side, as it is in the sky. */
-fun moonWaxing(day: Int): Boolean = day <= 16
-
 /** Screen position of a loop [point] on the ellipse the frame squashes the loop into. */
 fun loopOffset(point: Float, cx: Float, cy: Float, rx: Float, ry: Float): Offset {
     val t = point / LOOP_POINTS * 2.0 * PI

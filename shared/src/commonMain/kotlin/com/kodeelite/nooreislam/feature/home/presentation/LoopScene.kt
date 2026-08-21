@@ -32,8 +32,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
-import kotlinx.datetime.LocalTime
 import kotlin.math.abs
+import kotlinx.datetime.LocalTime
 
 /** Sky colours and night depth as before, with both bodies given as places on the loop. */
 data class LoopSky(
@@ -42,17 +42,16 @@ data class LoopSky(
     val sunPoint: Float,
     val moonPoint: Float,
     val moonFull: Float,
-    val moonWaxing: Boolean,
 )
 
 fun loopSky(now: LocalTime, times: List<MiqatTime>, hijriDay: Int): LoopSky {
     val palette = skyPalette(now, times)
     val sun = sunPointAt(now, times)
-    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay), moonWaxing(hijriDay))
+    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay))
 }
 
-/** Which way the terminator leans. The shape is the real one; the lean is ours. */
-private const val MOON_TILT = 135f
+/** Which corner the lit side sits in. The shape is the real one; the lean is ours. */
+private const val MOON_TILT = -45f
 
 private val stars = listOf(
     0.10f to 0.22f, 0.20f to 0.46f, 0.34f to 0.16f, 0.48f to 0.36f, 0.60f to 0.24f,
@@ -120,9 +119,8 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
                 val shape = Path().apply {
                     op(half, terminator, if (state.moonFull < 0.5f) PathOperation.Difference else PathOperation.Union)
                 }
-                rotate(if (state.moonWaxing) MOON_TILT else MOON_TILT + 180f, moonAt) {
-                    drawPath(shape, moonColor.copy(alpha = lit))
-                }
+                // the same lean all month — filling or emptying, the lit side stays top right
+                rotate(MOON_TILT, moonAt) { drawPath(shape, moonColor.copy(alpha = lit)) }
             }
 
             val sunAt = at(state.sunPoint)
