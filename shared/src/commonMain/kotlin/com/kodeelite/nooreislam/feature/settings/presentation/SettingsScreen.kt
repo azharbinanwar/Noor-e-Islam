@@ -78,7 +78,10 @@ import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchResults
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionStartSheet
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.exemptionSubtitle
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
 import com.kodeelite.nooreislam.resources.all_alerts_off
@@ -89,7 +92,6 @@ import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.date_format
 import com.kodeelite.nooreislam.resources.date_formats
 import com.kodeelite.nooreislam.resources.days
-import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.general
 import com.kodeelite.nooreislam.resources.hijri_calendar
 import com.kodeelite.nooreislam.resources.hijri_date_format
@@ -98,9 +100,9 @@ import com.kodeelite.nooreislam.resources.language
 import com.kodeelite.nooreislam.resources.location
 import com.kodeelite.nooreislam.resources.menu
 import com.kodeelite.nooreislam.resources.notifications
-import com.kodeelite.nooreislam.resources.skip_the_days_prayer_is_not_owed
 import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
+import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_streak
 import com.kodeelite.nooreislam.resources.quran_text_source
@@ -137,6 +139,10 @@ fun SettingsScreen(open: String? = null) {
     var sheet by remember { mutableStateOf(open) }
     fun close() { sheet = null }
     var query by remember { mutableStateOf("") }
+    var askingExemption by remember { mutableStateOf(false) }
+    val tracker = koinInject<TrackerStore>()
+    val exemption = koinInject<ExemptionStore>()
+    val exemptionOn by exemption.on.collectAsState()
     val focus = LocalFocusManager.current
     var highlight by remember { mutableStateOf(open) }
     val scroll = rememberScrollState()
@@ -278,9 +284,9 @@ fun SettingsScreen(open: String? = null) {
             val notificationSettings by NotificationStore.settings.collectAsState()
             val activeCity by LocationStore.activePlace.collectAsState()
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
-            val trackExemption by SettingsStore.trackExemption.collectAsState()
             val streakEnabled by SettingsStore.streakEnabled.collectAsState()
-            val tracker = koinInject<TrackerStore>()
+            // turning it on is a decision with settings behind it; turning it off is just off
+            fun askExemption(next: Boolean) = if (next) askingExemption = true else exemption.end()
             val calcMethod by MiqatCalculationStore.method.collectAsState()
             val highLat by MiqatCalculationStore.highLatRule.collectAsState()
             AppTileGroup(
@@ -338,9 +344,9 @@ fun SettingsScreen(open: String? = null) {
                             leadingIcon = Lucide.Pause,
                             title = stringResource(Res.string.prayer_exemption),
                             selected = highlight == Anchor.EXEMPTION,
-                            subtitle = stringResource(Res.string.skip_the_days_prayer_is_not_owed),
-                            trailing = { AppSwitch(trackExemption, tracker::setExemption) },
-                            onClick = { tracker.setExemption(!trackExemption) },
+                            subtitle = exemptionSubtitle(),
+                            trailing = { AppSwitch(exemptionOn, ::askExemption) },
+                            onClick = { askExemption(!exemptionOn) },
                         )
                     )
                 },
@@ -380,6 +386,11 @@ fun SettingsScreen(open: String? = null) {
         onSelect = { SettingsStore.setHijriDateFormat(it); close() },
         onDismiss = ::close,
     )
+    if (askingExemption) ExemptionStartSheet(
+        onStart = exemption::start,
+        onDismiss = { askingExemption = false },
+    )
+
     if (sheet == Anchor.LANGUAGE) AppBottomSheet(onDismiss = ::close, title = stringResource(Res.string.language)) {
         AppTileGroup(
             items = Language.entries.map { lang ->

@@ -8,6 +8,7 @@ import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.notifications.store.SurahReminderStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,7 @@ val appModule = module {
     single { CollectionStore(get(), get()) }
     single { SurahReminderStore(get(), get(), get()) }
     single { TrackerStore(get(), get()) }
+    single { ExemptionStore(get(), get()) }
 }
 
 val appModules = listOf(appModule, databaseModule, platformDatabaseModule())

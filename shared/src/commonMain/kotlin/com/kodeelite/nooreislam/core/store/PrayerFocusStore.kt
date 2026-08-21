@@ -16,6 +16,9 @@ data class FocusConfig(val enabled: Boolean, val startAfter: Int, val duration: 
 
 /** Persists Prayer-Focus settings (per-field prefs), seeded from [FocusDefaults]. Screens read [configs]. */
 object PrayerFocusStore {
+    private val _allFocus = MutableStateFlow(PrefsService.getBoolean(PrefConst.FOCUS_ALL, FocusDefaults.ALL_FOCUS))
+    val allFocus: StateFlow<Boolean> = _allFocus.asStateFlow()
+
     private val _configs = MutableStateFlow(FocusDefaults.rows.associate { it.key to load(it) })
     val configs: StateFlow<Map<String, FocusConfig>> = _configs.asStateFlow()
 
@@ -31,6 +34,23 @@ object PrayerFocusStore {
         val default = if (row.miqat == Miqat.Fajr) SilenceMode.Vibrate else SilenceMode.Silent
         val saved = PrefsService.getString(PrefConst.focus(row.key, PrefConst.Field.SILENCE_MODE), default.name)
         return runCatching { SilenceMode.valueOf(saved) }.getOrDefault(default)
+    }
+
+    /**
+     * Every prayer ships off, so switching the master on with nothing under it would be a switch that
+     * does nothing. When no prayer is on yet, the five daily ones start silencing at their window. A
+     * setup that already has something on is left exactly as it is.
+     */
+    fun setAllFocus(value: Boolean) {
+        PrefsService.putBoolean(PrefConst.FOCUS_ALL, value)
+        val seed = value && _configs.value.values.none { it.enabled }
+        if (seed) FocusDefaults.rows.filterNot { it.friday }.forEach {
+            PrefsService.putBoolean(PrefConst.focus(it.key, PrefConst.Field.ENABLED), true)
+        }
+        if (seed) _configs.value = _configs.value.mapValues { (k, cfg) ->
+            if (FocusDefaults.rows.first { it.key == k }.friday) cfg else cfg.copy(enabled = true)
+        }
+        _allFocus.value = value
     }
 
     fun setEnabled(key: String, value: Boolean) {

@@ -63,8 +63,9 @@ object Now {
     /** Wall-clock epoch millis — for stored timestamps (e.g. "saved at"). */
     fun epochMillis(): Long = currentEpochMillis()
 
-    /** Today, in the user's chosen Gregorian date format (Settings ▸ Date formats). One call, no pattern to carry around. */
-    fun formattedDate(): String = date().formatted(SettingsStore.gregorianDateFormat.value)
+    /** Today (± [offsetDays]), in the user's chosen Gregorian date format (Settings ▸ Date formats). */
+    fun formattedDate(offsetDays: Int = 0): String =
+        date().plus(offsetDays, DateTimeUnit.DAY).formatted(SettingsStore.gregorianDateFormat.value)
 
     /** Today's Hijri date (± [offsetDays]), in the user's chosen Hijri date format. */
     @Composable

@@ -72,18 +72,23 @@ suspend fun notificationCopy(e: NotificationEvent): NotificationCopy {
     val jumuah = e.target == Miqat.jumuahKey
     val name = getString(labelRes(e.target))
     return when (e.kind) {
-        NotificationType.AT_TIME ->
+        NotificationType.PRAYER_AT_TIME ->
             NotificationCopy(getString(Res.string.notif_prayer_at_title, name), getString(Res.string.notif_prayer_at_body, timeStr(e.fireAtMillis)))
 
-        NotificationType.REMIND_BEFORE ->
+        NotificationType.PRAYER_REMIND_BEFORE ->
             if (jumuah) NotificationCopy(getString(Res.string.notif_jumuah_before_title), getString(Res.string.notif_jumuah_before_body))
             else NotificationCopy(getString(Res.string.notif_prayer_before_title, name), getString(Res.string.notif_prayer_before_body))
 
-        NotificationType.JAMAAT ->
+        NotificationType.PRAYER_JAMAAT ->
             if (jumuah) NotificationCopy(getString(Res.string.notif_jumuah_jamaat_title), getString(Res.string.notif_jumuah_jamaat_body))
             else NotificationCopy(getString(Res.string.notif_prayer_jamaat_title, name), getString(Res.string.notif_prayer_jamaat_body))
 
-        NotificationType.REMINDER -> NotificationCopy(name, getString(bodyRes(e.target)))
+        // every reminder resolves its one-line body from its target instead of its timing
+        NotificationType.PRAYER_NAFIL,
+        NotificationType.SURAH_REMINDER,
+        NotificationType.DAILY_READING_REMINDER,
+        NotificationType.DHIKR_REMINDER,
+        NotificationType.TEST -> NotificationCopy(name, getString(bodyRes(e.target)))
     }
 }
 

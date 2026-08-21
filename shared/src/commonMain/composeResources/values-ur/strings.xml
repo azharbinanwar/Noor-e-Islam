@@ -790,6 +790,12 @@
     <string name="these_marks_are_not_printed_in_this_qurans_text">اس قرآن میں نہیں چھپی، دوسری جگہ پہچاننے کے لیے دکھائی گئی ہیں۔</string>
     <string name="tap_any_example_to_open_that_ayah">کسی بھی مثال پر ٹیپ کریں تاکہ وہ آیت کھل جائے۔</string>
     <string name="pick_a_shortcut">شارٹ کٹ منتخب کریں</string>
+    <string name="all_focus">تمام فوکس</string>
+    <string name="master_switch_for_every_prayer_window">ہر نماز کے وقفے کا مرکزی سوئچ</string>
+    <string name="alerts_paused_until">الرٹس %1$s تک روکے گئے ہیں</string>
+    <string name="alerts_paused_until_you_turn_this_off">الرٹس اس وقت تک رکے ہیں جب تک آپ اسے بند نہ کریں</string>
+    <string name="phone_not_silenced_until">آپ کا فون %1$s تک خاموش نہیں ہوگا</string>
+    <string name="phone_not_silenced_until_you_turn_this_off">آپ کا فون اس وقت تک خاموش نہیں ہوگا جب تک آپ اسے بند نہ کریں</string>
     <string name="no_methods_found">کوئی طریقہ نہیں ملا</string>
     <string name="placeholder">جگہ دار</string>
     <string name="display">ڈسپلے</string>

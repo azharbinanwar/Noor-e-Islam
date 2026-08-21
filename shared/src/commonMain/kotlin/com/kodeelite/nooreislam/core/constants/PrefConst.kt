@@ -66,6 +66,14 @@ object PrefConst {
     // ── Prayer Focus (auto-silence) ──────────────────────────
     /** Per-prayer focus field, e.g. focus_maghrib_enabled / _start_after / _duration. */
     fun focus(prayer: String, field: String) = "focus_${prayer.lowercase()}_$field"
+    // cache of the running exemption, so a cold receiver can answer before Room has emitted.
+    // The table stays the truth; these are rewritten from it on every change.
+    const val EXEMPTION_FROM = "exemption_from"
+    const val EXEMPTION_TO = "exemption_to"             // absent = open-ended
+    const val EXEMPTION_PAUSE_ALERTS = "exemption_pause_alerts"
+    const val EXEMPTION_PAUSE_FOCUS = "exemption_pause_focus"
+    const val EXEMPTION_DAYS = "exemption_days"           // last length she picked, offered again next time
+    const val FOCUS_ALL = "focus_all"                     // master switch, mirrors ALL_ALERTS
     const val FOCUS_SAVED_RINGER = "focus_saved_ringer"   // ringer mode saved before muting, to put back after
     const val FOCUS_SILENCE_END = "focus_silence_end"     // epoch millis (string) of the active mute window's end
     const val FOCUS_SILENCE_MODE = "focus_silence_mode"   // active window's mode (Silent | Vibrate), for catch-up
@@ -91,8 +99,6 @@ object PrefConst {
 
     // ── Tracker ──────────────────────────────────────────────
     const val STREAK_ENABLED = "streak_enabled"
-    // the stored key keeps its old wording; changing it would lose the setting on upgrade
-    const val TRACK_EXEMPTION = "track_excused_days"
 
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus

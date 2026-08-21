@@ -90,6 +90,8 @@ fun HomeScreen() {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // a running exemption leads, since nothing else will remind her it is on
+                ExemptionControl(atTop = true)
                 if (streakEnabled) StreakCard()
                 if (shortcuts.isNotEmpty()) AppActionGroup(
                     items = shortcuts.mapIndexed { i, feature ->

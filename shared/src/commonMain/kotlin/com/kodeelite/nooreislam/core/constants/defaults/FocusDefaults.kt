@@ -13,6 +13,9 @@ data class FocusRow(val key: String, val miqat: Miqat, val friday: Boolean, val 
  * Only the numbers live here; labels and icons come from Miqat.
  */
 object FocusDefaults {
+    /** The master starts off, like every prayer under it. */
+    const val ALL_FOCUS = false
+
     val rows: List<FocusRow> = Miqat.PRAYERS.map { FocusRow(it.key, it, friday = false, slotFor(it)) } +
             FocusRow(Miqat.jumuahKey, Miqat.Dhuhr, friday = true, FocusSlot(after = 45, duration = 60, max = 180))
 

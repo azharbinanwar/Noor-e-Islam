@@ -783,6 +783,12 @@
     <string name="these_marks_are_not_printed_in_this_qurans_text">Absents de ce Coran, montrés pour que vous les reconnaissiez ailleurs.</string>
     <string name="tap_any_example_to_open_that_ayah">Touchez un exemple pour ouvrir ce verset dans le lecteur.</string>
     <string name="pick_a_shortcut">Choisir un raccourci</string>
+    <string name="all_focus">Toute la concentration</string>
+    <string name="master_switch_for_every_prayer_window">Interrupteur principal pour chaque prière</string>
+    <string name="alerts_paused_until">Alertes en pause jusqu’au %1$s</string>
+    <string name="alerts_paused_until_you_turn_this_off">Alertes en pause jusqu’à ce que vous désactiviez ceci</string>
+    <string name="phone_not_silenced_until">Votre téléphone ne sera pas mis en silence avant le %1$s</string>
+    <string name="phone_not_silenced_until_you_turn_this_off">Votre téléphone ne sera pas mis en silence tant que vous ne désactivez pas ceci</string>
     <string name="no_methods_found">Aucune méthode trouvée</string>
     <string name="placeholder">espace réservé</string>
     <string name="display">Affichage</string>

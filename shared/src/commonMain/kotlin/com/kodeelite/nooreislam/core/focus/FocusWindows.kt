@@ -6,6 +6,8 @@ import com.kodeelite.nooreislam.core.datetime.currentTime
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.store.PrayerFocusStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -13,14 +15,18 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
-import kotlin.time.Duration.Companion.minutes
+import org.koin.mp.KoinPlatform
 
 // Saved focus settings -> concrete silent windows. Uses the real clock, not Now, so the debug/fast
 // clock can't leak into real timing.
 object FocusWindows {
+    private val exemption: ExemptionStore by lazy { KoinPlatform.getKoin().get<ExemptionStore>() }
+
 
     /** Enabled windows whose end is still ahead of now (today), plus all of tomorrow. */
     fun upcoming(): List<FocusWindow> {
+        // the master gates the whole feature: with nothing to arm, rescheduling cancels what was armed
+        if (!PrayerFocusStore.allFocus.value) return emptyList()
         val tz = TimeZone.currentSystemDefault()
         val today = currentDate()
         val nowMillis = LocalDateTime(today, currentTime()).toInstant(tz).toEpochMilliseconds()
@@ -29,6 +35,8 @@ object FocusWindows {
     }
 
     private fun windowsFor(date: LocalDate, tz: TimeZone): List<FocusWindow> {
+        // nothing to silence for on a day no prayer is owed
+        if (exemption.blocksFocus(date)) return emptyList()
         val friday = date.dayOfWeek == DayOfWeek.FRIDAY
         val times = MiqatTimesStore.timesFor(date)
         val configs = PrayerFocusStore.configs.value

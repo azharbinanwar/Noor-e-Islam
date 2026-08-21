@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,13 +28,19 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppSwitch
+import com.kodeelite.nooreislam.core.components.AppTileGroup
+import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.store.PrayerFocusStore
 import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusNeedsAttention
 import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusPrayers
 import com.kodeelite.nooreislam.feature.focus.presentation.components.FocusTestTiles
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.all_focus
 import com.kodeelite.nooreislam.resources.back
+import com.kodeelite.nooreislam.resources.master_switch_for_every_prayer_window
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.silence_phone_around_each_prayer_set_separately
 import org.jetbrains.compose.resources.stringResource
@@ -45,6 +52,7 @@ fun FocusScreen() {
     val nav = LocalAppNavigator.current
     val c = AppTheme.colors
     var taps by remember { mutableStateOf(0) } // 7 taps on the blurb reveals the test tiles; resets on re-entry
+    val allFocus by PrayerFocusStore.allFocus.collectAsState()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -70,8 +78,20 @@ fun FocusScreen() {
             )
             Spacer(Modifier.height(12.dp))
             FocusNeedsAttention()
-            if (taps >= 7) FocusTestTiles()
-            FocusPrayers()
+            AppTileGroup(
+                items = listOf(
+                    AppTileItem(
+                        title = stringResource(Res.string.all_focus),
+                        subtitle = stringResource(Res.string.master_switch_for_every_prayer_window),
+                        trailing = { AppSwitch(allFocus, PrayerFocusStore::setAllFocus) },
+                        onClick = { PrayerFocusStore.setAllFocus(!allFocus) },
+                    )
+                )
+            )
+            if (allFocus) {
+                if (taps >= 7) FocusTestTiles()
+                FocusPrayers()
+            }
             Spacer(Modifier.height(8.dp))
         }
     }

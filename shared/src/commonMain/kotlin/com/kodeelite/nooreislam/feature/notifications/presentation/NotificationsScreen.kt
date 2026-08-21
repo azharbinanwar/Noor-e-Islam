@@ -57,20 +57,22 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.components.MiniStepper
+import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
-import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.BatteryPermissionTile
 import com.kodeelite.nooreislam.core.permissions.NotificationPermissionTile
+import com.kodeelite.nooreislam.core.permissions.PermissionStatus
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.notifications.presentation.components.NotificationTestScreen
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionPausedTile
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.after_asr
 import com.kodeelite.nooreislam.resources.after_fajr
@@ -94,10 +96,10 @@ import com.kodeelite.nooreislam.resources.minutes_short
 import com.kodeelite.nooreislam.resources.morning_adhkar
 import com.kodeelite.nooreislam.resources.notif_at_before
 import com.kodeelite.nooreislam.resources.notif_at_jamaah
+import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.notif_verse_sub
 import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.notifications_nafil
-import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.notifications_prayers
 import com.kodeelite.nooreislam.resources.notifications_quran
 import com.kodeelite.nooreislam.resources.prayer_jumuah
@@ -108,12 +110,11 @@ import com.kodeelite.nooreislam.resources.surah_al_kahf
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.tahajjud
 import com.kodeelite.nooreislam.resources.verse_of_the_day
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import kotlin.time.Duration.Companion.milliseconds
-import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 
 // the options button grows in from the switch rather than popping the row wider
 private val optionsEnter = fadeIn() + expandHorizontally()
@@ -178,6 +179,7 @@ fun NotificationsScreen() {
                 title = stringResource(Res.string.notif_needs_attention),
                 variant = AppTileVariant.Warning,
                 items = listOf(
+                    ExemptionPausedTile(forFocus = false),
                     NotificationPermissionTile(AppTileVariant.Error),
                     BatteryPermissionTile(AppTileVariant.Warning, strict = true),
                 ),

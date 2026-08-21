@@ -67,6 +67,7 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
+        .addMigrations(*DATABASE_MIGRATIONS)
         // no destructive fallback: quarantineIfUnusable already moves aside anything Room could not
         // open, keeping the file. A schema bump without a Migration must still fail loudly here,
         // rather than silently wiping someone's bookmarks, notes and prayer history.

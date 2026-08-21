@@ -44,12 +44,6 @@ class TrackerStore(
 
     fun setStatus(prayer: Miqat, status: PrayerTrackerStatus?) = setStatus(Now.date(), prayer, status)
 
-    /** The setting is the period: turning it on opens the range, off closes it. */
-    fun setExemption(on: Boolean) {
-        SettingsStore.setTrackExemption(on)
-        scope.launch { if (on) repo.startExemption(Now.date()) else repo.endExemption(Now.date()) }
-    }
-
     /** The streak is a score. It reads the exemption, it never ends one. */
     fun setStreakEnabled(on: Boolean) = SettingsStore.setStreakEnabled(on)
 }

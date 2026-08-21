@@ -1,10 +1,13 @@
 package com.kodeelite.nooreislam.core.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,8 +63,8 @@ import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 /** What a tile is saying — drives the section title, the leading icon and the row's fill. */
 enum class AppTileVariant {
@@ -122,6 +125,7 @@ class AppTileItem(
     val actions: List<AppIconAction> = emptyList(),
     val selected: Boolean = false,
     val enabled: Boolean = true,
+    val visible: Boolean = true,
     val onClick: (() -> Unit)? = null,
     val onLongClick: (() -> Unit)? = null,
 )
@@ -148,12 +152,20 @@ fun AppTile(
     actions: List<AppIconAction> = emptyList(),
     selected: Boolean = false,
     enabled: Boolean = true,
+    // false collapses it rather than removing it — an `if` around the call would unmount it and
+    // there would be nothing left to animate
+    visible: Boolean = true,
     position: TilePosition = TilePosition.Single,
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
 ) {
+    val everShown = remember { mutableStateOf(false) }
+    if (visible) everShown.value = true
+    if (!everShown.value) return
+
     val c = AppTheme.colors
     val bg = if (selected) c.primary.copy(alpha = 0.10f) else variant.containerOf(c)
+    AnimatedVisibility(visible = visible, enter = expandVertically(), exit = shrinkVertically()) {
     Column(modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.45f).clip(shapeFor(position)).background(bg)) {
         TileRow(
             title,
@@ -174,6 +186,7 @@ fun AppTile(
             onLongClick.takeIf { enabled }
         )
     }
+    }
 }
 
 /**
@@ -189,12 +202,34 @@ fun AppTileGroup(
     actions: List<AppIconAction> = emptyList(),
 ) {
     // nulls are rows that opted out (a granted permission, a hidden dev entry) — with none left there
-    // is nothing to head, so the title and its padding go too
+    // is nothing to head, so the title and its padding go too. It collapses rather than vanishing:
+    // the shell stays mounted through the exit, which is what the last row leaving needs.
     val rows = items.filterNotNull()
-    if (rows.isEmpty()) return
-    TileGroupShell(modifier, title, variant, actions) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            rows.forEachIndexed { i, item -> Tile(item, positionFor(i, rows.size), variant) }
+    val everFilled = remember { mutableStateOf(false) }
+    if (rows.isNotEmpty()) everFilled.value = true
+    if (!everFilled.value) return
+    AnimatedVisibility(visible = rows.isNotEmpty(), enter = expandVertically(), exit = shrinkVertically()) {
+        TileGroupShell(modifier, title, variant, actions) {
+            // no spacedBy here: a hidden row is still a child, and the arrangement would leave its
+            // gap behind. The 4dp rides inside each row instead, so it collapses with it.
+            Column(Modifier.fillMaxWidth()) {
+                items.forEachIndexed { slot, item ->
+                    // a row that turns null keeps its last look while it collapses, so it shrinks
+                    // out instead of vanishing and leaving the ones below to jump
+                    val last = remember { mutableStateOf(item) }
+                    if (item != null) last.value = item
+                    val shown = items.take(slot).count { it != null }
+                    AnimatedVisibility(
+                        visible = item != null,
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
+                    ) {
+                        Column(Modifier.padding(top = if (shown == 0) 0.dp else 4.dp)) {
+                            last.value?.let { Tile(it, positionFor(shown, rows.size.coerceAtLeast(1)), variant) }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -282,6 +317,7 @@ private fun Tile(item: AppTileItem, position: TilePosition, group: AppTileVarian
         actions = item.actions,
         selected = item.selected,
         enabled = item.enabled,
+        visible = item.visible,
         position = position,
         onClick = item.onClick,
         onLongClick = item.onLongClick,

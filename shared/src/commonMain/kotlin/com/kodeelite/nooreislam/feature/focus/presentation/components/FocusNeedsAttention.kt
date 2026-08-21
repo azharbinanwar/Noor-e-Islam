@@ -13,6 +13,7 @@ import com.kodeelite.nooreislam.core.permissions.DndPermissionTile
 import com.kodeelite.nooreislam.core.permissions.NotificationPermissionTile
 import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.store.PrayerFocusStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionPausedTile
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.focus_allow_background
 import com.kodeelite.nooreislam.resources.focus_allow_background_sub
@@ -33,6 +34,7 @@ fun FocusNeedsAttention() {
         title = stringResource(Res.string.focus_needs_attention),
         variant = AppTileVariant.Warning,
         items = listOf(
+            ExemptionPausedTile(forFocus = true),
             NotificationPermissionTile(AppTileVariant.Error),
             DndPermissionTile(if (anySilent) AppTileVariant.Error else AppTileVariant.Warning),
             BatteryPermissionTile(

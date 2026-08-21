@@ -26,15 +26,16 @@ class TrackerRepository(
         else prayers.upsert(TrackedPrayer(date, prayer, status))
     }
 
-    /** No-op if one is already open, so a double tap can't create two. */
-    suspend fun startExemption(from: LocalDate) {
-        if (exempt.open() == null) exempt.upsert(ExemptionPeriod(startDate = from))
+    /** No-op if one is already running, so a double tap can't create two. [last] null means open-ended. */
+    suspend fun startExemption(from: LocalDate, last: LocalDate?, pauseAlerts: Boolean, pauseFocus: Boolean) {
+        if (exempt.active(from) != null) return
+        exempt.upsert(ExemptionPeriod(startDate = from, endDate = last, pauseAlerts = pauseAlerts, pauseFocus = pauseFocus))
     }
 
     /** Ending on [to] means [to] itself is back to normal, so the range closes the day before. */
     suspend fun endExemption(to: LocalDate) {
-        val open = exempt.open() ?: return
+        val running = exempt.active(to) ?: return
         val last = to.minus(1, DateTimeUnit.DAY)
-        if (last < open.startDate) exempt.delete(open.id) else exempt.upsert(open.copy(endDate = last))
+        if (last < running.startDate) exempt.delete(running.id) else exempt.upsert(running.copy(endDate = last))
     }
 }

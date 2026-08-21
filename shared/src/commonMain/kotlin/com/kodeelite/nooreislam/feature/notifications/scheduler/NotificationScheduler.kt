@@ -12,10 +12,12 @@ import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.notifications.data.NotificationScheduleRepository
 import com.kodeelite.nooreislam.feature.notifications.data.SurahReminder
 import com.kodeelite.nooreislam.feature.notifications.data.firesOn
-import com.kodeelite.nooreislam.feature.notifications.store.SurahReminderStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationSettings
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationTestStore
+import com.kodeelite.nooreislam.feature.notifications.store.SurahReminderStore
+import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -34,12 +36,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import org.koin.mp.KoinPlatform
-import kotlin.time.Duration.Companion.minutes
 
 // The brain: settings + prayer times -> the nearest 63 alerts. Rebuilds on any change; writes the OS + the mirror.
 object NotificationScheduler {
     private val repo: NotificationScheduleRepository by lazy { KoinPlatform.getKoin().get<NotificationScheduleRepository>() }
     private val reminderStore: SurahReminderStore by lazy { KoinPlatform.getKoin().get<SurahReminderStore>() }
+    private val exemption: ExemptionStore by lazy { KoinPlatform.getKoin().get<ExemptionStore>() }
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val mutex = Mutex()
     private var started = false
@@ -51,9 +53,10 @@ object NotificationScheduler {
         rebuildAsync()
         scope.launch {
             // language included: copy is resolved here, not at fire time, so a switch must reschedule
-            combine(MiqatTimesStore.today, NotificationStore.settings, reminderStore.reminders, SettingsStore.language) { t, s, r, l ->
-                listOf(t, s, r, l)
-            }
+            combine(
+                MiqatTimesStore.today, NotificationStore.settings, reminderStore.reminders,
+                SettingsStore.language, exemption.running,
+            ) { t, s, r, l, e -> listOf(t, s, r, l, e) }
                 .distinctUntilChanged()
                 .drop(1)
                 .collect { rebuild() }
@@ -94,11 +97,15 @@ object NotificationScheduler {
         // Master gate: when All alerts is off, no real alerts are scheduled (test slots still fire — dev tool).
         val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
             val date = today.plus(d, DateTimeUnit.DAY)
-            eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz) +
-                    reminderEventsFor(date, reminders, tz)
+            // an exempt day drops what an exemption lifts and keeps the rest, so dhikr and
+            // recitation carry on. The days past it are already booked with the OS and resume
+            // on their own — nothing has to run when it ends.
+            val exempt = exemption.blocksAlerts(date)
+            (eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz) + reminderEventsFor(date, reminders, tz))
+                .filterNot { exempt && it.kind.pausedByExemption }
         }
         val test = NotificationTestStore.items.value.map {
-            NotificationEvent("test:${it.id}", "test", NotificationType.REMINDER, it.fireAtMillis)
+            NotificationEvent("test:${it.id}", "test", NotificationType.TEST, it.fireAtMillis)
         }
         return (real + test).filter { it.fireAtMillis > now }.sortedBy { it.fireAtMillis }.take(NotificationDefaults.Scheduler.budget)
     }
@@ -114,34 +121,34 @@ object NotificationScheduler {
             val cfg = s.prayers[p.key] ?: return@forEach
             if (!cfg.enabled) return@forEach
             val base = at(p) ?: return@forEach
-            if (cfg.remindBeforeOn && cfg.remindBefore > 0) add(ev(p.key, NotificationType.REMIND_BEFORE, base - cfg.remindBefore.mins(), ds))
-            if (cfg.atTime) add(ev(p.key, NotificationType.AT_TIME, base, ds))
-            if (cfg.jamaat) add(ev(p.key, NotificationType.JAMAAT, base + cfg.jamaatAfter.mins(), ds))
+            if (cfg.remindBeforeOn && cfg.remindBefore > 0) add(ev(p.key, NotificationType.PRAYER_REMIND_BEFORE, base - cfg.remindBefore.mins(), ds))
+            if (cfg.atTime) add(ev(p.key, NotificationType.PRAYER_AT_TIME, base, ds))
+            if (cfg.jamaat) add(ev(p.key, NotificationType.PRAYER_JAMAAT, base + cfg.jamaatAfter.mins(), ds))
         }
         // Jumu'ah (Friday Dhuhr)
         if (friday && s.jumuah.enabled) at(Miqat.Dhuhr)?.let { d ->
             val j = s.jumuah
-            if (j.remindBeforeOn && j.remindBefore > 0) add(ev(Miqat.jumuahKey, NotificationType.REMIND_BEFORE, d - j.remindBefore.mins(), ds))
-            if (j.jamaat) add(ev(Miqat.jumuahKey, NotificationType.JAMAAT, d + j.jamaatAfter.mins(), ds))
+            if (j.remindBeforeOn && j.remindBefore > 0) add(ev(Miqat.jumuahKey, NotificationType.PRAYER_REMIND_BEFORE, d - j.remindBefore.mins(), ds))
+            if (j.jamaat) add(ev(Miqat.jumuahKey, NotificationType.PRAYER_JAMAAT, d + j.jamaatAfter.mins(), ds))
         }
         // Surahs
         if (s.mulk.enabled) at(Miqat.Isha)?.let {
-            add(ev(NotificationTarget.MULK, NotificationType.REMINDER, it + s.mulk.afterIsha.mins(), ds, AppRoute.QuranReader(67, 1)))
+            add(ev(NotificationTarget.MULK, NotificationType.SURAH_REMINDER, it + s.mulk.afterIsha.mins(), ds, AppRoute.QuranReader(67, 1)))
         }
         if (friday && s.kahf.enabled) {
             val k = LocalDateTime(date, LocalTime(s.kahf.hour, s.kahf.minute)).toInstant(tz).toEpochMilliseconds()
-            add(ev(NotificationTarget.KAHF, NotificationType.REMINDER, k, ds, AppRoute.QuranReader(18, 1)))
+            add(ev(NotificationTarget.KAHF, NotificationType.SURAH_REMINDER, k, ds, AppRoute.QuranReader(18, 1)))
         }
         if (s.dailyReading.enabled) {
             val r = LocalDateTime(date, LocalTime(s.dailyReading.hour, s.dailyReading.minute)).toInstant(tz).toEpochMilliseconds()
-            add(ev(NotificationTarget.DAILY_READING, NotificationType.REMINDER, r, ds, AppRoute.Quran))
+            add(ev(NotificationTarget.DAILY_READING, NotificationType.DAILY_READING_REMINDER, r, ds, AppRoute.Quran))
         }
         // Dhikr
         if (s.dhikr.morningEnabled) at(Miqat.Fajr)?.let {
             add(
                 ev(
                     NotificationTarget.MORNING,
-                    NotificationType.REMINDER,
+                    NotificationType.DHIKR_REMINDER,
                     it + s.dhikr.afterFajr.mins(),
                     ds,
                     AppRoute.Azkar,
@@ -152,7 +159,7 @@ object NotificationScheduler {
             add(
                 ev(
                     NotificationTarget.EVENING,
-                    NotificationType.REMINDER,
+                    NotificationType.DHIKR_REMINDER,
                     it + s.dhikr.afterAsr.mins(),
                     ds,
                     AppRoute.Azkar,
@@ -160,8 +167,8 @@ object NotificationScheduler {
             )
         }
         // Nafil
-        if (s.nafil.tahajjud) at(Miqat.LastThird)?.let { add(ev(NotificationTarget.TAHAJJUD, NotificationType.REMINDER, it, ds)) }
-        if (s.nafil.ishraq) at(Miqat.Ishraq)?.let { add(ev(NotificationTarget.ISHRAQ, NotificationType.REMINDER, it, ds)) }
+        if (s.nafil.tahajjud) at(Miqat.LastThird)?.let { add(ev(NotificationTarget.TAHAJJUD, NotificationType.PRAYER_NAFIL, it, ds)) }
+        if (s.nafil.ishraq) at(Miqat.Ishraq)?.let { add(ev(NotificationTarget.ISHRAQ, NotificationType.PRAYER_NAFIL, it, ds)) }
     }
 
     // User-defined reminders: one event per enabled reminder whose day mask covers this date.
@@ -170,7 +177,7 @@ object NotificationScheduler {
             NotificationEvent(
                 eventKey = "${NotificationTarget.SURAH_REMINDER}:${r.id}:$date",
                 target = NotificationTarget.SURAH_REMINDER,
-                kind = NotificationType.REMINDER,
+                kind = NotificationType.SURAH_REMINDER,
                 fireAtMillis = LocalDateTime(date, LocalTime(r.hour, r.minute)).toInstant(tz).toEpochMilliseconds(),
                 title = r.title.ifBlank { null }, // blank = never named; copy resolves the seed name
                 route = AppRoute.QuranReader(r.surah, r.ayah ?: 1),

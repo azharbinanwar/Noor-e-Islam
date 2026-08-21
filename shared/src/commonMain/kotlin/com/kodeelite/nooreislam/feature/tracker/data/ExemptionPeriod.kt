@@ -11,9 +11,17 @@ import kotlinx.datetime.LocalDate
 data class ExemptionPeriod(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val startDate: LocalDate,
-    val endDate: LocalDate? = null, // null = still ongoing
+    val endDate: LocalDate? = null,   // null = open-ended, ends only when she says so
+    val pauseAlerts: Boolean = true,  // what she chose to pause, so ending puts back exactly that
+    val pauseFocus: Boolean = true,
 ) {
-    /** Caller passes the clock so this stays pure. */
+    /** Looking back: an open-ended period reaches no further than today. Caller passes the clock so this stays pure. */
     fun covers(date: LocalDate, today: LocalDate): Boolean =
         date >= startDate && date <= (endDate ?: today)
+
+    /** Looking forward: an open-ended period has no far edge, so it blocks every day from its start. */
+    fun blocks(date: LocalDate): Boolean =
+        date >= startDate && (endDate == null || date <= endDate)
+
+    fun activeOn(today: LocalDate): Boolean = blocks(today)
 }
