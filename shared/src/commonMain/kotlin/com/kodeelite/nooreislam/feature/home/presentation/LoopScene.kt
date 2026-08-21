@@ -17,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
 import kotlinx.datetime.LocalTime
+import kotlin.math.abs
 
 /** Sky colours and night depth as before, with both bodies given as places on the loop. */
 data class LoopSky(
@@ -37,13 +41,18 @@ data class LoopSky(
     val night: Float,
     val sunPoint: Float,
     val moonPoint: Float,
+    val moonFull: Float,
+    val moonWaxing: Boolean,
 )
 
-fun loopSky(now: LocalTime, times: List<MiqatTime>): LoopSky {
+fun loopSky(now: LocalTime, times: List<MiqatTime>, hijriDay: Int): LoopSky {
     val palette = skyPalette(now, times)
     val sun = sunPointAt(now, times)
-    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD)
+    return LoopSky(palette.sky, palette.night, sun, sun + MOON_LEAD, moonFullness(hijriDay), moonWaxing(hijriDay))
 }
+
+/** Which way the terminator leans. The shape is the real one; the lean is ours. */
+private const val MOON_TILT = 135f
 
 private val stars = listOf(
     0.10f to 0.22f, 0.20f to 0.46f, 0.34f to 0.16f, 0.48f to 0.36f, 0.60f to 0.24f,
@@ -92,14 +101,28 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
 
             val moonAt = at(state.moonPoint)
             val moonSplash = splashAt(state.moonPoint)
+            // a sliver barely lights the sky, a full moon washes it — brightness rides the month
+            val lit = 0.55f + 0.45f * state.moonFull
             if (moonSplash > 0f) {
-                drawCircle(moonColor.copy(alpha = 0.18f * moonSplash), 34.dp.toPx(), moonAt)
+                drawCircle(moonColor.copy(alpha = 0.18f * moonSplash * lit), (30 + 8 * state.moonFull).dp.toPx(), moonAt)
             }
             if (discShows(state.moonPoint)) {
-                val frac = (moonAt.y / h).coerceIn(0f, 1f)
-                val skyHere = if (frac < 0.5f) lerp(c0, c1, frac * 2f) else lerp(c1, c2, (frac - 0.5f) * 2f)
-                drawCircle(moonColor, 22.dp.toPx(), moonAt)
-                drawCircle(skyHere, 19.dp.toPx(), Offset(moonAt.x + 9.dp.toPx(), moonAt.y - 6.dp.toPx()))
+                val r = 22.dp.toPx()
+                // the terminator: an ellipse that flattens to a line at the quarters, subtracted
+                // from a crescent and added to a gibbous. Nothing is painted over, so the splash
+                // carries on through the dark side
+                val ex = r * abs(1f - 2f * state.moonFull)
+                val terminator = Path().apply { addOval(Rect(moonAt.x - ex, moonAt.y - r, moonAt.x + ex, moonAt.y + r)) }
+                val half = Path().apply {
+                    arcTo(Rect(moonAt.x - r, moonAt.y - r, moonAt.x + r, moonAt.y + r), -90f, 180f, true)
+                    close()
+                }
+                val shape = Path().apply {
+                    op(half, terminator, if (state.moonFull < 0.5f) PathOperation.Difference else PathOperation.Union)
+                }
+                rotate(if (state.moonWaxing) MOON_TILT else MOON_TILT + 180f, moonAt) {
+                    drawPath(shape, moonColor.copy(alpha = lit))
+                }
             }
 
             val sunAt = at(state.sunPoint)

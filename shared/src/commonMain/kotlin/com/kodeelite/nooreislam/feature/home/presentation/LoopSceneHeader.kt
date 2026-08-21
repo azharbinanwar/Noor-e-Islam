@@ -52,7 +52,6 @@ import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.datetime.toHijri
 import com.kodeelite.nooreislam.core.enums.Miqat
-import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.domain.MiqatTime
@@ -105,9 +104,9 @@ fun LoopSceneHeader(
         else stringResource(Res.string.countdown_ms, m, s)
     } ?: ""
 
-    val sky = remember(now, times) { loopSky(now, times) }
-    val period = remember(now, times) { loopPeriod(now, times) }
     val hijri = remember(date) { toHijri(date) }
+    val sky = remember(now, times, hijri.day) { loopSky(now, times, hijri.day) }
+    val period = remember(now, times) { loopPeriod(now, times) }
     val dateLabel = "${stringResource(date.dayOfWeek.labelRes)}, ${hijri.day} ${
         HijriMonth.of(hijri.month).label()
     } ${hijri.year} ${stringResource(Res.string.hijri_era)}"

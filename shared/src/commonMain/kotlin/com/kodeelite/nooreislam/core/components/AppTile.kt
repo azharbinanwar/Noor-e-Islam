@@ -60,8 +60,8 @@ import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.locale.tr
-import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /** What a tile is saying — drives the section title, the leading icon and the row's fill. */
 enum class AppTileVariant {

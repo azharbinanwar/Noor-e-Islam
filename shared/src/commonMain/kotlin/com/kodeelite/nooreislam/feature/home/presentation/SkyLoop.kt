@@ -73,6 +73,27 @@ fun splashAt(point: Float): Float {
     return (1f - under / SPLASH_SPAN).coerceIn(0f, 1f)
 }
 
+/**
+ * The thinnest the moon ever gets here. A real new moon vanishes; ours holds at the width of a
+ * proper crescent, a little under a quarter of the disc, so there is always a moon to look at.
+ */
+private const val MIN_FULLNESS = 0.22f
+
+/** Days in a lunar month. */
+private const val LUNAR_MONTH = 29.53
+
+/**
+ * How full the moon is on a Hijri [day] — thinnest on the 1st and the 29th, full on the 15th and
+ * 16th. Cosine, not a straight ramp, so it thickens the way the month actually feels.
+ */
+fun moonFullness(day: Int): Float {
+    val t = 2.0 * PI * ((day - 1) / LUNAR_MONTH)
+    return ((1.0 - cos(t)) / 2.0).toFloat().coerceIn(MIN_FULLNESS, 1f)
+}
+
+/** Filling or emptying — after the 16th the lit rim is on the other side, as it is in the sky. */
+fun moonWaxing(day: Int): Boolean = day <= 16
+
 /** Screen position of a loop [point] on the ellipse the frame squashes the loop into. */
 fun loopOffset(point: Float, cx: Float, cy: Float, rx: Float, ry: Float): Offset {
     val t = point / LOOP_POINTS * 2.0 * PI
