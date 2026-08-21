@@ -98,7 +98,9 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         available = { SettingsStore.streakEnabled.value },
     ),
     AppFeature(Res.string.settings, Lucide.Settings, AppRoute.Settings(), surfaces = DRAWER_HOME),
-    AppFeature(Res.string.reading_marks, Lucide.BookOpen, AppRoute.ReadingMarks, surfaces = setOf(Surface.Home)),
+    // reached from the reader, where the marks are. Nothing lists it: a home shortcut to a legend
+    // is not somewhere anyone sets out to go
+    AppFeature(Res.string.reading_marks, Lucide.BookOpen, AppRoute.ReadingMarks),
 
     AppFeature(
         Res.string.notifications, Lucide.Bell, AppRoute.Notifications, surfaces = SETTINGS,

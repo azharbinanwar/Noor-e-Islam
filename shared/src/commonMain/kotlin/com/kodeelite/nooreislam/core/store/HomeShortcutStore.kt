@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
  */
 object HomeShortcutStore {
 
-    private val defaults: List<AppRoute> = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.Focus)
+    private val defaults: List<AppRoute> = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.PrayerTimes)
     private val serializer = ListSerializer(AppRoute.serializer())
 
     private val _pinned = MutableStateFlow(
