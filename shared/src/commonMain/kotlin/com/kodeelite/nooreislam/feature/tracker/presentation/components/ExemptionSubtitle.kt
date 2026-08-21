@@ -7,6 +7,8 @@ import com.kodeelite.nooreislam.core.datetime.formatted
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.no_prayer_owed_until
+import com.kodeelite.nooreislam.resources.no_prayer_owed_until_you_turn_this_off
 import com.kodeelite.nooreislam.resources.skip_the_days_prayer_is_not_owed
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
@@ -22,5 +24,6 @@ fun exemptionSubtitle(): String {
     val period = running ?: return stringResource(Res.string.skip_the_days_prayer_is_not_owed)
     // the last exempt day is stored, so prayer is owed again the morning after
     val resumes = period.endDate?.plus(1, DateTimeUnit.DAY)?.formatted(dateFormat)
-    return if (resumes != null) "No prayer owed until $resumes" else "No prayer owed until you turn this off"
+    return if (resumes != null) stringResource(Res.string.no_prayer_owed_until, resumes)
+    else stringResource(Res.string.no_prayer_owed_until_you_turn_this_off)
 }

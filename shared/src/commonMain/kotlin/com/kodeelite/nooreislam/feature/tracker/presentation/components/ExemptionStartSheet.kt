@@ -33,6 +33,23 @@ import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.store.PrayerFocusStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.azkar_duas_and_tasbih_keep_running
+import com.kodeelite.nooreislam.resources.cancel
+import com.kodeelite.nooreislam.resources.days
+import com.kodeelite.nooreislam.resources.how_long
+import com.kodeelite.nooreislam.resources.no_end_date_nothing_comes_back_on_its_own
+import com.kodeelite.nooreislam.resources.no_prayer_alerts_until_it_ends
+import com.kodeelite.nooreislam.resources.no_prayer_alerts_until_you_turn_this_off
+import com.kodeelite.nooreislam.resources.pause_notifications
+import com.kodeelite.nooreislam.resources.pause_prayer_focus
+import com.kodeelite.nooreislam.resources.phone_wont_be_silenced_for_prayers
+import com.kodeelite.nooreislam.resources.prayer_exemption
+import com.kodeelite.nooreislam.resources.resume_after
+import com.kodeelite.nooreislam.resources.start
+import com.kodeelite.nooreislam.resources.until_i_turn_it_off
+import com.kodeelite.nooreislam.resources.what_pauses
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
 /**
@@ -58,10 +75,10 @@ fun ExemptionStartSheet(
 
     AppBottomSheet(
         onDismiss = onDismiss,
-        title = "Prayer exemption",
+        title = stringResource(Res.string.prayer_exemption),
         footer = {
             AppButton(
-                "Start",
+                stringResource(Res.string.start),
                 // a row the sheet never showed was never running, so it was never paused —
                 // otherwise ending the exemption would look like it switched something on
                 onClick = {
@@ -71,53 +88,69 @@ fun ExemptionStartSheet(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            AppButton("Cancel", onClick = onDismiss, variant = AppButtonVariant.Text, modifier = Modifier.fillMaxWidth())
+            AppButton(
+                stringResource(Res.string.cancel),
+                onClick = onDismiss,
+                variant = AppButtonVariant.Text,
+                modifier = Modifier.fillMaxWidth(),
+            )
         },
     ) {
         AppTileGroup(
-            title = "How long",
+            title = stringResource(Res.string.how_long),
             items = listOf(
                 AppTileItem(
                     leadingIcon = Lucide.Infinity,
                     leadingColor = c.primary,
-                    title = "Until I turn it off",
-                    subtitle = "No end date, so nothing comes back on its own",
+                    title = stringResource(Res.string.until_i_turn_it_off),
+                    subtitle = stringResource(Res.string.no_end_date_nothing_comes_back_on_its_own),
                     trailing = { AppSwitch(openEnded, { openEnded = it }) },
                     onClick = { openEnded = !openEnded },
                 ),
                 if (openEnded) null else AppTileItem(
                     leadingIcon = Lucide.CalendarDays,
                     leadingColor = c.primary,
-                    title = "Resume after",
+                    title = stringResource(Res.string.resume_after),
                     subtitle = Now.formattedDate(days),
-                    trailing = { MiniStepper(days, "days", { days = it }, min = 1, max = ExemptionDefaults.MAX_DAYS) },
+                    trailing = {
+                        MiniStepper(
+                            days,
+                            stringResource(Res.string.days),
+                            { days = it },
+                            min = 1,
+                            max = ExemptionDefaults.MAX_DAYS,
+                        )
+                    },
                 ),
             ),
         )
 
         AppTileGroup(
-            title = "What pauses",
+            title = stringResource(Res.string.what_pauses),
             items = listOf(
                 if (!showAlerts) null else AppTileItem(
                     leadingIcon = Lucide.Bell,
                     leadingColor = c.primary,
-                    title = "Pause Notifications",
-                    subtitle = if (openEnded) "No prayer alerts until you turn this off" else "No prayer alerts until it ends",
+                    title = stringResource(Res.string.pause_notifications),
+                    subtitle = stringResource(
+                        if (openEnded) Res.string.no_prayer_alerts_until_you_turn_this_off
+                        else Res.string.no_prayer_alerts_until_it_ends
+                    ),
                     trailing = { AppSwitch(pauseAlerts, { pauseAlerts = it }) },
                     onClick = { pauseAlerts = !pauseAlerts },
                 ),
                 if (!showFocus) null else AppTileItem(
                     leadingIcon = Lucide.BellOff,
                     leadingColor = c.primary,
-                    title = "Pause Prayer Focus",
-                    subtitle = "Your phone won't be silenced for prayers",
+                    title = stringResource(Res.string.pause_prayer_focus),
+                    subtitle = stringResource(Res.string.phone_wont_be_silenced_for_prayers),
                     trailing = { AppSwitch(pauseFocus, { pauseFocus = it }) },
                     onClick = { pauseFocus = !pauseFocus },
                 ),
             ),
         )
         Text(
-            "Azkar, Duas and Tasbih keep running as normal.",
+            stringResource(Res.string.azkar_duas_and_tasbih_keep_running),
             fontSize = 12.sp,
             color = c.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp, start = 4.dp, end = 4.dp),
