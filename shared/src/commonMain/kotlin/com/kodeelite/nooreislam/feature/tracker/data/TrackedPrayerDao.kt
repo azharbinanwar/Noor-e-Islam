@@ -16,6 +16,9 @@ interface TrackedPrayerDao {
     @Query("DELETE FROM tracked_prayer WHERE date = :date AND prayer = :prayer")
     suspend fun clear(date: LocalDate, prayer: Miqat)
 
+    @Query("DELETE FROM tracked_prayer")
+    suspend fun clearAll()
+
     // ponytail: whole history in one Flow — 5 rows a day stays trivial for years.
     // Switch to a date-bounded query if a stats screen ever needs more than the calendar shows.
     @Query("SELECT * FROM tracked_prayer")

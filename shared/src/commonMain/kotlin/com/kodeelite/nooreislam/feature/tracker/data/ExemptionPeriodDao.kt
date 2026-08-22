@@ -14,8 +14,14 @@ interface ExemptionPeriodDao {
     @Query("DELETE FROM excused_period WHERE id = :id")
     suspend fun delete(id: Long)
 
-    /** At most one running at a time — open-ended, or planned to end on [today] or later. */
-    @Query("SELECT * FROM excused_period WHERE endDate IS NULL OR endDate >= :today ORDER BY startDate DESC LIMIT 1")
+    @Query("DELETE FROM excused_period")
+    suspend fun clearAll()
+
+    /** At most one running at a time. A day closed with an endPrayer is done, so it does not count. */
+    @Query(
+        "SELECT * FROM excused_period WHERE endDate IS NULL OR endDate > :today " +
+            "OR (endDate = :today AND endPrayer IS NULL) ORDER BY startDate DESC LIMIT 1"
+    )
     suspend fun active(today: LocalDate): ExemptionPeriod?
 
     @Query("SELECT * FROM excused_period ORDER BY startDate DESC")

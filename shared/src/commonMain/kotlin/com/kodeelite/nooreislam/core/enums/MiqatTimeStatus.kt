@@ -15,11 +15,22 @@ import com.kodeelite.nooreislam.resources.status_upcoming
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-/** A prayer's timing state relative to now. Icon/label here; colors in AppColors. */
-enum class MiqatTimeStatus(val labelRes: StringResource, val icon: ImageVector) {
-    Current(Res.string.status_now, Lucide.CircleDot),
-    Soon(Res.string.status_soon, Lucide.Clock),
-    Upcoming(Res.string.status_upcoming, Lucide.CalendarClock),
+/**
+ * A prayer's timing state relative to now. Icon/label here; colors in AppColors.
+ *
+ * [withinMinutes] is how close the prayer must be for the state to be true of it — minutes, because
+ * prayer times carry no finer resolution and the clock only ticks that often. Change the window here.
+ */
+enum class MiqatTimeStatus(val labelRes: StringResource, val icon: ImageVector, val withinMinutes: Int) {
+    Current(Res.string.status_now, Lucide.CircleDot, 0),
+    Soon(Res.string.status_soon, Lucide.Clock, 60),
+    Upcoming(Res.string.status_upcoming, Lucide.CalendarClock, Int.MAX_VALUE);
+
+    companion object {
+        /** What the next prayer is, [minutesAway] from now. Current is decided by the window, not by this. */
+        fun nextIn(minutesAway: Int): MiqatTimeStatus =
+            if (minutesAway <= Soon.withinMinutes) Soon else Upcoming
+    }
 }
 
 val MiqatTimeStatus.label: String

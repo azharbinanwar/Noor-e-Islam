@@ -3,6 +3,7 @@ package com.kodeelite.nooreislam.feature.tracker.data
 import com.kodeelite.nooreislam.core.constants.PrefConst
 import com.kodeelite.nooreislam.core.constants.defaults.ExemptionDefaults
 import com.kodeelite.nooreislam.core.datetime.Now
+import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.prefs.PrefsService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,20 +48,26 @@ class ExemptionStore(
     /** What the sheet opens on: her last length, or the default until she picks one. */
     val lastDays: StateFlow<Int> = _lastDays.asStateFlow()
 
-    /** [days] null starts an open-ended one. A [days] of 1 means today only. */
-    fun start(days: Int?, pauseAlerts: Boolean, pauseFocus: Boolean) {
+    /** [days] null starts an open-ended one. A [days] of 1 means [from] only. */
+    fun start(
+        days: Int?,
+        pauseAlerts: Boolean,
+        pauseFocus: Boolean,
+        from: LocalDate = Now.date(),
+        fromPrayer: Miqat? = null,
+    ) {
         // only a real length is worth remembering; open-ended says nothing about how long she needs
         days?.let {
             PrefsService.putInt(PrefConst.EXEMPTION_DAYS, it)
             _lastDays.value = it
         }
-        val from = Now.date()
         val last = days?.let { from.plus(it - 1, DateTimeUnit.DAY) }
-        scope.launch { repo.startExemption(from, last, pauseAlerts, pauseFocus) }
+        scope.launch { repo.startExemption(from, last, pauseAlerts, pauseFocus, fromPrayer) }
     }
 
-    fun end() {
-        scope.launch { repo.endExemption(Now.date()) }
+    /** [resumeFrom] is the first prayer owed again today; null means the whole day is owed. */
+    fun end(resumeFrom: Miqat? = null) {
+        scope.launch { repo.endExemption(Now.date(), resumeFrom) }
     }
 
     /**

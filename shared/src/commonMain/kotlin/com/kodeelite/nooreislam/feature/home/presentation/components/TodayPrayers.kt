@@ -35,6 +35,7 @@ import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackCon
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.today
+import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -63,7 +64,9 @@ fun TodayPrayers() {
     for (mt in dailyTimes) {
         val status = when (mt.miqat) {
             currentPrayer -> MiqatTimeStatus.Current
-            nextMt?.miqat -> MiqatTimeStatus.Soon
+            // "Soon" has to be earned by the clock: on the next prayer alone it was still saying
+            // soon four hours out, which is only another way of saying next
+            nextMt?.miqat -> MiqatTimeStatus.nextIn(mt.at.time.minutesFromNow(now))
             else -> null
         }
         val localizedTitle = mt.miqat.label(clock.date)
@@ -81,8 +84,8 @@ fun TodayPrayers() {
                 trailing = if (mt.miqat.isPrayer) {
                     {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (status == MiqatTimeStatus.Soon) {
-                                Text(MiqatTimeStatus.Soon.label, color = MiqatTimeStatus.Soon.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                            if (status == MiqatTimeStatus.Soon || status == MiqatTimeStatus.Upcoming) {
+                                Text(status.label, color = status.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
                             // hidden while exempt (the card says so) and while the streak is off
                             if (markable(mt)) TrackControl(tracked[mt.miqat])
@@ -112,4 +115,7 @@ fun TodayPrayers() {
     }
 }
 
-
+// minutes from [now] to this time today; a time already past reads as a whole day out, which
+// only happens for the wrap-around to tomorrow's first prayer
+private fun LocalTime.minutesFromNow(now: LocalTime): Int =
+    ((toSecondOfDay() - now.toSecondOfDay() + 24 * 3600) % (24 * 3600)) / 60

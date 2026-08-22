@@ -64,6 +64,7 @@ import com.kodeelite.nooreislam.feature.quran.presentation.QuranReaderScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranThemeHost
 import com.kodeelite.nooreislam.feature.quran.presentation.ReadingMarksScreen
 import com.kodeelite.nooreislam.feature.sandbox.presentation.SandboxScreen
+import com.kodeelite.nooreislam.feature.sandbox.presentation.TrackerLabScreen
 import com.kodeelite.nooreislam.feature.settings.presentation.LocationScreen
 import com.kodeelite.nooreislam.feature.settings.presentation.MiqatCalculationScreen
 import com.kodeelite.nooreislam.feature.settings.presentation.SettingsScreen
@@ -159,6 +160,7 @@ fun AppNavHost(
                     }
                     composable<AppRoute.Focus> { FocusScreen() }
                     composable<AppRoute.Sandbox> { SandboxScreen() }
+                    composable<AppRoute.TrackerLab> { if (build.isDebug) TrackerLabScreen() else HomeScreen() }
                     composable<AppRoute.SkyLab> { if (build.isDebug) SkyLabScreen() else HomeScreen() }
                 }
             }

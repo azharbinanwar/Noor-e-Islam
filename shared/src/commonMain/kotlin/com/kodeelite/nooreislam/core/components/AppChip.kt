@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -21,13 +22,23 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 
 // rounded selectable chip; optional leading icon
 @Composable
-fun AppChip(label: String, selected: Boolean, onClick: () -> Unit, icon: ImageVector? = null) {
+fun AppChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: ImageVector? = null,
+    // shown but not offered — dimmed and inert, so the reason stays visible
+    enabled: Boolean = true,
+) {
     val colors = AppTheme.colors
     val tint = if (selected) colors.primary else colors.onSurfaceVariant
+    val shape = RoundedCornerShape(50)
     Row(
-        Modifier.clip(RoundedCornerShape(50))
-            .background(if (selected) colors.primary.copy(alpha = 0.14f) else colors.surfaceContainerHigh)
-            .clickable(onClick = onClick)
+        Modifier.alpha(if (enabled) 1f else 0.45f).clip(shape)
+            // both states tint what is behind rather than naming a colour: a fixed fill matched
+            // the bottom sheet's own surface and disappeared there, while reading fine on a screen
+            .background(if (selected) colors.primary.copy(alpha = 0.14f) else colors.onSurface.copy(alpha = 0.06f))
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),

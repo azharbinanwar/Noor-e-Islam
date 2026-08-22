@@ -57,7 +57,6 @@ import org.jetbrains.compose.resources.stringResource
 fun MiqatTimesScreen() {
     val today =
         remember { Now.date() }
-    var visible by remember { mutableStateOf(today) } // any day of the visible month
     var selected by remember { mutableStateOf(today) }
     var showSehriInfo by remember { mutableStateOf(false) }
 
@@ -86,11 +85,9 @@ fun MiqatTimesScreen() {
             Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()),
         ) {
             AppCalendar(
-                visible = visible,
                 selected = selected,
                 today = today,
                 onSelect = { selected = it },
-                onVisibleChange = { visible = it },
                 modifier = Modifier.padding(horizontal = 12.dp),
             )
 

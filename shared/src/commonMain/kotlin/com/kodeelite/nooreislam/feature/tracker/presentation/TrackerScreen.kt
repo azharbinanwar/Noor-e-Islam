@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppCalendar
 import com.kodeelite.nooreislam.core.components.AppCard
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
@@ -43,13 +44,11 @@ import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.domain.currentPrayer
-import com.kodeelite.nooreislam.core.components.AppCalendar
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.prayerWindow
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
-import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
@@ -88,7 +87,6 @@ fun TrackerScreen() {
     val exempt by tracker.exempt.collectAsState()
     val stats by tracker.stats.collectAsState()
 
-    var visible by remember { mutableStateOf(today) }
     var selected by remember { mutableStateOf(today) }
     var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
 
@@ -128,11 +126,9 @@ fun TrackerScreen() {
             if (streakEnabled) StatsHeader(stats)
 
             AppCalendar(
-                visible = visible,
                 selected = selected,
                 today = today,
                 onSelect = { selected = it },
-                onVisibleChange = { visible = it },
                 lastSelectable = today,
                 dayDots = { date ->
                     val statuses = history[date]
@@ -172,8 +168,6 @@ fun TrackerScreen() {
                     )
                 }
             )
-
-            ExemptionControl()
         }
     }
 

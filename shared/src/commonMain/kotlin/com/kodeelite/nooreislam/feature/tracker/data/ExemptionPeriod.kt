@@ -39,5 +39,7 @@ data class ExemptionPeriod(
     fun blocks(date: LocalDate): Boolean =
         date >= startDate && (endDate == null || date <= endDate)
 
-    fun activeOn(today: LocalDate): Boolean = blocks(today)
+    /** Closing it early stamps [endPrayer] on its last day, so that day is already back to praying. */
+    fun activeOn(today: LocalDate): Boolean =
+        blocks(today) && !(endDate == today && endPrayer != null)
 }

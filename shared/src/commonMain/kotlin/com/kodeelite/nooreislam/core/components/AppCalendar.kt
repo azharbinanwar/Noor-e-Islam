@@ -28,6 +28,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,12 +40,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composables.icons.lucide.CalendarDays
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.Maximize2
+import com.composables.icons.lucide.Minimize2
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
-import com.kodeelite.nooreislam.core.icons.WeekIcon
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.month_names
@@ -56,29 +61,44 @@ import org.jetbrains.compose.resources.stringArrayResource
 enum class CalendarSpan { Month, Week }
 
 /**
- * Day picker. Tap a day to select it; the arrows step by whichever [span] is shown.
+ * Day picker. Tap a day to select it; the arrows step by whichever span is shown.
  * Monday-first, matching `week_days`.
  *
- * [visible] is any date inside the month or week being shown — the arrows hand back a new one.
+ * Which month is on screen and whether it shows a week or a month are the calendar's own business,
+ * so it keeps them. [selected] is the caller's, because that is the answer it wanted.
+ *
+ * [span] null lets the calendar decide and offers the toggle; giving one fixes it and hides the
+ * toggle. The two callbacks only report what happened — they are never how it changes.
  */
 @Composable
 fun AppCalendar(
-    visible: LocalDate,
     selected: LocalDate,
     today: LocalDate,
     onSelect: (LocalDate) -> Unit,
-    onVisibleChange: (LocalDate) -> Unit,
     modifier: Modifier = Modifier,
-    span: CalendarSpan = CalendarSpan.Month,
-    // given, the header offers a chevron to swap week for month; omitted, the span is fixed
+    span: CalendarSpan? = null,
     onSpanChange: ((CalendarSpan) -> Unit)? = null,
+    onVisibleChange: ((LocalDate) -> Unit)? = null,
     dayDots: (LocalDate) -> List<Color> = { emptyList() }, // optional per-prayer dots under each day
     lastSelectable: LocalDate? = null, // days after this are dimmed and unselectable; null = any day
+    firstSelectable: LocalDate? = null, // and days before this; null = as far back as she likes
 ) {
     val c = AppTheme.colors
+    var ownSpan by remember { mutableStateOf(CalendarSpan.Month) }
+    var visible by remember { mutableStateOf(selected) }
+    val shown = span ?: ownSpan
+
+    // a selection made outside the calendar still has to be on screen
+    LaunchedEffect(selected) { visible = selected }
+
+    fun show(date: LocalDate) {
+        visible = date
+        onVisibleChange?.invoke(date)
+    }
+
     val weekStart = visible.minus(visible.dayOfWeek.isoDayNumber - 1, DateTimeUnit.DAY)
 
-    val cells: List<LocalDate?> = when (span) {
+    val cells: List<LocalDate?> = when (shown) {
         CalendarSpan.Week -> List(7) { weekStart.plus(it, DateTimeUnit.DAY) }
         CalendarSpan.Month -> {
             val first = LocalDate(visible.year, visible.monthNumber, 1)
@@ -89,17 +109,17 @@ fun AppCalendar(
     }
 
     val months = stringArrayResource(Res.array.month_names)
-    val step = if (span == CalendarSpan.Week) 7 else 1
-    val unit = if (span == CalendarSpan.Week) DateTimeUnit.DAY else DateTimeUnit.MONTH
+    val step = if (shown == CalendarSpan.Week) 7 else 1
+    val unit = if (shown == CalendarSpan.Week) DateTimeUnit.DAY else DateTimeUnit.MONTH
 
     Column(modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { onVisibleChange(visible.minus(step, unit)) }) {
+            IconButton(onClick = { show(visible.minus(step, unit)) }) {
                 Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), null, tint = c.onSurface)
             }
             // the label lands in place rather than sliding: the direction is the grid's job
             AnimatedContent(
-                targetState = when (span) {
+                targetState = when (shown) {
                     CalendarSpan.Month -> "${months[visible.monthNumber - 1]} ${visible.year}"
                     CalendarSpan.Week -> weekLabel(weekStart, months)
                 },
@@ -119,19 +139,21 @@ fun AppCalendar(
                     color = c.onSurface,
                 )
             }
-            if (onSpanChange != null) {
+            // a caller that fixed the span has said which one it wants; the rest get the choice
+            if (span == null) {
                 IconButton(onClick = {
-                    onSpanChange(if (span == CalendarSpan.Week) CalendarSpan.Month else CalendarSpan.Week)
+                    ownSpan = if (shown == CalendarSpan.Week) CalendarSpan.Month else CalendarSpan.Week
+                    onSpanChange?.invoke(ownSpan)
                 }) {
                     Icon(
-                        if (span == CalendarSpan.Week) Lucide.CalendarDays else WeekIcon,
+                        if (shown == CalendarSpan.Week) Lucide.Maximize2 else Lucide.Minimize2,
                         null,
                         tint = c.onSurfaceVariant,
                         modifier = Modifier.size(18.dp),
                     )
                 }
             }
-            IconButton(onClick = { onVisibleChange(visible.plus(step, unit)) }) {
+            IconButton(onClick = { show(visible.plus(step, unit)) }) {
                 Icon(tr(Lucide.ChevronRight, Lucide.ChevronLeft), null, tint = c.onSurface)
             }
         }
@@ -172,7 +194,8 @@ fun AppCalendar(
                                     selected = date == selected,
                                     today = date == today,
                                     dots = dayDots(date),
-                                    enabled = lastSelectable == null || date <= lastSelectable,
+                                    enabled = (lastSelectable == null || date <= lastSelectable) &&
+                                    (firstSelectable == null || date >= firstSelectable),
                                     onSelect = onSelect,
                                 )
                             }
@@ -196,12 +219,15 @@ private fun DayCell(
 ) {
     val c = AppTheme.colors
     Column(
-        Modifier.fillMaxWidth().let { if (enabled) it.clickable { onSelect(date) } else it },
+        Modifier.fillMaxWidth().padding(bottom = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        var circle = Modifier.size(32.dp).clip(CircleShape)
+        // the tap belongs to the circle, not the cell: on the whole cell the ripple came out
+        // rectangular, which is the one shape the day marker never is
+        var circle = Modifier.size(36.dp).clip(CircleShape)
         if (selected) circle = circle.background(c.primary)
         if (today && !selected) circle = circle.border(1.5.dp, c.primary, CircleShape)
+        if (enabled) circle = circle.clickable { onSelect(date) }
         Box(circle, contentAlignment = Alignment.Center) {
             Text(
                 date.dayOfMonth.toString(),

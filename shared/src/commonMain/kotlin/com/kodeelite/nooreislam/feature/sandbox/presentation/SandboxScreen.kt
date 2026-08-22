@@ -96,6 +96,12 @@ fun SandboxScreen() {
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 variant = AppButtonVariant.Outline,
             )
+            AppButton(
+                text = "Tracker lab",
+                onClick = { nav.navigate(AppRoute.TrackerLab) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                variant = AppButtonVariant.Outline,
+            )
             NoticeShowcase()
             TileVariantShowcase()
             FormatShowcase()

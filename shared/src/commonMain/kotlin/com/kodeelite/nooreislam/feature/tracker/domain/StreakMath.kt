@@ -14,6 +14,22 @@ typealias PrayerHistory = Map<LocalDate, Map<Miqat, PrayerTrackerStatus>>
 
 data class StreakStats(val current: Int, val best: Int, val onTimePercent: Int)
 
+/**
+ * The prayer right after the last one she logged — the earliest an exemption could have begun,
+ * because a prayer she prayed was never exempt. Null when nothing is logged at all.
+ *
+ * Gaps behind that prayer stay missed rather than becoming exempt: prayed Asr but not Fajr means
+ * the exemption starts at Maghrib, not at Fajr. Read whatever the streak switch says — someone who
+ * turned it off thinking that was how to pause is exactly who this has to be right for.
+ */
+fun resumePoint(history: PrayerHistory): Pair<LocalDate, Miqat>? {
+    val lastDay = history.entries.filter { it.value.isNotEmpty() }.maxByOrNull { it.key } ?: return null
+    val lastPrayer = Miqat.PRAYERS.filter { it in lastDay.value }.maxByOrNull { it.ordinal } ?: return null
+    val next = Miqat.PRAYERS.firstOrNull { it.ordinal > lastPrayer.ordinal }
+    // past Isha the day is spent, so the floor is the next morning
+    return if (next != null) lastDay.key to next else lastDay.key.plus(1, DateTimeUnit.DAY) to Miqat.PRAYERS.first()
+}
+
 /** Exempt wins: a day off stays a day off even if something got logged on it. */
 fun dayProgress(
     statuses: Map<Miqat, PrayerTrackerStatus>?,

@@ -80,7 +80,9 @@ import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
 import com.kodeelite.nooreislam.feature.settings.presentation.components.SettingsSearchResults
 import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionEndSheet
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionStartSheet
+import com.kodeelite.nooreislam.feature.tracker.presentation.components.StreakOffSheet
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.exemptionSubtitle
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
@@ -140,9 +142,14 @@ fun SettingsScreen(open: String? = null) {
     fun close() { sheet = null }
     var query by remember { mutableStateOf("") }
     var askingExemption by remember { mutableStateOf(false) }
+    var endingExemption by remember { mutableStateOf(false) }
+    var askingStreakOff by remember { mutableStateOf(false) }
     val tracker = koinInject<TrackerStore>()
     val exemption = koinInject<ExemptionStore>()
     val exemptionOn by exemption.on.collectAsState()
+    val runningExemption by exemption.running.collectAsState()
+    val streakOn by SettingsStore.streakEnabled.collectAsState()
+    val prayerHistory by tracker.history.collectAsState()
     val focus = LocalFocusManager.current
     var highlight by remember { mutableStateOf(open) }
     val scroll = rememberScrollState()
@@ -286,7 +293,8 @@ fun SettingsScreen(open: String? = null) {
             val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
             val streakEnabled by SettingsStore.streakEnabled.collectAsState()
             // turning it on is a decision with settings behind it; turning it off is just off
-            fun askExemption(next: Boolean) = if (next) askingExemption = true else exemption.end()
+            fun askExemption(next: Boolean) = if (next) askingExemption = true else endingExemption = true
+            fun askStreak(next: Boolean) = if (next) tracker.setStreakEnabled(true) else askingStreakOff = true
             val calcMethod by MiqatCalculationStore.method.collectAsState()
             val highLat by MiqatCalculationStore.highLatRule.collectAsState()
             AppTileGroup(
@@ -335,8 +343,10 @@ fun SettingsScreen(open: String? = null) {
                             title = stringResource(Res.string.prayer_streak),
                             selected = highlight == Anchor.STREAK,
                             subtitle = stringResource(Res.string.show_streaks_best_run_and_on_time_percentage),
-                            trailing = { AppSwitch(streakEnabled, tracker::setStreakEnabled) },
-                            onClick = { tracker.setStreakEnabled(!streakEnabled) },
+                            // reaching for this switch during her period is the common mistake,
+                            // so switching it off asks first and offers the exemption
+                            trailing = { AppSwitch(streakEnabled, ::askStreak) },
+                            onClick = { askStreak(!streakEnabled) },
                         )
                     )
                     add(
@@ -390,6 +400,22 @@ fun SettingsScreen(open: String? = null) {
         onStart = exemption::start,
         onDismiss = { askingExemption = false },
     )
+
+    if (askingStreakOff) StreakOffSheet(
+        exempt = exemptionOn,
+        onExemption = { askingExemption = true },
+        onTurnOff = { tracker.setStreakEnabled(false) },
+        onDismiss = { askingStreakOff = false },
+    )
+
+    runningExemption?.takeIf { endingExemption }?.let { period ->
+        ExemptionEndSheet(
+            period = period,
+            askPrayer = streakOn || prayerHistory.isNotEmpty(),
+            onEnd = { exemption.end(it) },
+            onDismiss = { endingExemption = false },
+        )
+    }
 
     if (sheet == Anchor.LANGUAGE) AppBottomSheet(onDismiss = ::close, title = stringResource(Res.string.language)) {
         AppTileGroup(

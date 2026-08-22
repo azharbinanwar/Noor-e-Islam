@@ -21,21 +21,45 @@ class TrackerRepository(
     val exemptionPeriods: Flow<List<ExemptionPeriod>> = exempt.observeAll()
 
     /** Null clears it, so untracked stays distinct from missed. */
+    /** Dev only: empties both tables so a case can be set up from scratch. */
+    suspend fun wipe() {
+        prayers.clearAll()
+        exempt.clearAll()
+    }
+
     suspend fun setStatus(date: LocalDate, prayer: Miqat, status: PrayerTrackerStatus?) {
         if (status == null) prayers.clear(date, prayer)
         else prayers.upsert(TrackedPrayer(date, prayer, status))
     }
 
     /** No-op if one is already running, so a double tap can't create two. [last] null means open-ended. */
-    suspend fun startExemption(from: LocalDate, last: LocalDate?, pauseAlerts: Boolean, pauseFocus: Boolean) {
+    suspend fun startExemption(
+        from: LocalDate,
+        last: LocalDate?,
+        pauseAlerts: Boolean,
+        pauseFocus: Boolean,
+        fromPrayer: Miqat? = null,
+    ) {
         if (exempt.active(from) != null) return
-        exempt.upsert(ExemptionPeriod(startDate = from, endDate = last, pauseAlerts = pauseAlerts, pauseFocus = pauseFocus))
+        exempt.upsert(
+            ExemptionPeriod(
+                startDate = from,
+                endDate = last,
+                startPrayer = fromPrayer,
+                pauseAlerts = pauseAlerts,
+                pauseFocus = pauseFocus,
+            )
+        )
     }
 
-    /** Ending on [to] means [to] itself is back to normal, so the range closes the day before. */
-    suspend fun endExemption(to: LocalDate) {
+    /**
+     * Ending on [to]. Without a [resumeFrom] the whole of [to] is owed again, so the range closes
+     * the day before; with one, [to] is its last exempt day and prayer resumes at that prayer.
+     */
+    suspend fun endExemption(to: LocalDate, resumeFrom: Miqat? = null) {
         val running = exempt.active(to) ?: return
-        val last = to.minus(1, DateTimeUnit.DAY)
-        if (last < running.startDate) exempt.delete(running.id) else exempt.upsert(running.copy(endDate = last))
+        val last = if (resumeFrom != null) to else to.minus(1, DateTimeUnit.DAY)
+        if (last < running.startDate) exempt.delete(running.id)
+        else exempt.upsert(running.copy(endDate = last, endPrayer = resumeFrom))
     }
 }
