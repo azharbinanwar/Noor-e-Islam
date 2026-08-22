@@ -4,12 +4,15 @@ import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 
-/** An exemption records what it paused, so ending one puts back exactly that. */
+/** An exemption records what it paused, and which prayer it began and ended on. */
 private val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(connection: SQLiteConnection) {
         // rows written before this defaulted to pausing both, which is what they did
         connection.execSQL("ALTER TABLE excused_period ADD COLUMN pauseAlerts INTEGER NOT NULL DEFAULT 1")
         connection.execSQL("ALTER TABLE excused_period ADD COLUMN pauseFocus INTEGER NOT NULL DEFAULT 1")
+        // null at either edge means that whole day, which is all an older row could have meant
+        connection.execSQL("ALTER TABLE excused_period ADD COLUMN startPrayer TEXT")
+        connection.execSQL("ALTER TABLE excused_period ADD COLUMN endPrayer TEXT")
     }
 }
 

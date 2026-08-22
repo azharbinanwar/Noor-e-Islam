@@ -8,9 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pause
-import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppSwitch
 import com.kodeelite.nooreislam.core.components.AppTile
+import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.feature.tracker.data.ExemptionStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.prayer_exemption
@@ -19,22 +19,21 @@ import org.koin.compose.koinInject
 
 /** Same switch as Settings, on Home as a quick action. */
 @Composable
-fun ExemptionControl(atTop: Boolean = false) {
+fun ExemptionControl() {
     val exemption = koinInject<ExemptionStore>()
     val on by exemption.on.collectAsState()
     var asking by remember { mutableStateOf(false) }
     // turning it on is a decision with settings behind it; turning it off is just off
     fun toggle(next: Boolean) = if (next) asking = true else exemption.end()
 
-    // one row, so no group shell — its bottom space would double the column's own gap
+    // one row, so no group shell — its bottom space would double the column's own gap.
+    // A running exemption colours the row rather than moving it: she already knows it is on,
+    // and a tile that changes place is harder to find than one that changes colour.
     AppTile(
         leadingIcon = Lucide.Pause,
-        leadingColor = AppTheme.colors.primary,
+        variant = if (on) AppTileVariant.Warning else AppTileVariant.Normal,
         title = stringResource(Res.string.prayer_exemption),
         subtitle = exemptionSubtitle(),
-        // home shows it twice: leading while one runs, trailing when none does. Each place
-        // hides rather than opts out, so the tile collapses instead of being unmounted.
-        visible = atTop == on,
         trailing = { AppSwitch(on, ::toggle) },
         onClick = { toggle(!on) },
     )

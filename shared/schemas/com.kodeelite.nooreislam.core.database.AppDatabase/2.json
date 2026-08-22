@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "684dd0e3e29b02dcd3e664c5cc521895",
+    "identityHash": "263a0c36241607fdecae9fcd148685cf",
     "entities": [
       {
         "tableName": "tracked_prayer",
@@ -37,7 +37,7 @@
       },
       {
         "tableName": "excused_period",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `startDate` TEXT NOT NULL, `endDate` TEXT, `pauseAlerts` INTEGER NOT NULL, `pauseFocus` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `startDate` TEXT NOT NULL, `endDate` TEXT, `startPrayer` TEXT, `endPrayer` TEXT, `pauseAlerts` INTEGER NOT NULL, `pauseFocus` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -54,6 +54,16 @@
           {
             "fieldPath": "endDate",
             "columnName": "endDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startPrayer",
+            "columnName": "startPrayer",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "endPrayer",
+            "columnName": "endPrayer",
             "affinity": "TEXT"
           },
           {
@@ -597,7 +607,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '684dd0e3e29b02dcd3e664c5cc521895')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '263a0c36241607fdecae9fcd148685cf')"
     ]
   }
 }

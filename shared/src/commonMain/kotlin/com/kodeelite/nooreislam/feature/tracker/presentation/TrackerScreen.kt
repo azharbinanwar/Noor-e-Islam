@@ -43,7 +43,7 @@ import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.domain.currentPrayer
-import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
+import com.kodeelite.nooreislam.core.components.AppCalendar
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.prayerWindow
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
@@ -71,10 +71,7 @@ import com.kodeelite.nooreislam.resources.on_time
 import com.kodeelite.nooreislam.resources.prayer_tracker
 import com.kodeelite.nooreislam.resources.selected_full_date
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.minus
-import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -130,14 +127,12 @@ fun TrackerScreen() {
         ) {
             if (streakEnabled) StatsHeader(stats)
 
-            MonthCalendar(
-                year = visible.year,
-                month = visible.monthNumber,
+            AppCalendar(
+                visible = visible,
                 selected = selected,
                 today = today,
                 onSelect = { selected = it },
-                onPrevMonth = { visible = visible.minus(1, DateTimeUnit.MONTH) },
-                onNextMonth = { visible = visible.plus(1, DateTimeUnit.MONTH) },
+                onVisibleChange = { visible = it },
                 lastSelectable = today,
                 dayDots = { date ->
                     val statuses = history[date]

@@ -373,6 +373,21 @@
     <string name="evening_adhkar">شام کے اذکار</string>
     <string name="after_asr">عصر کے بعد</string>
 
+    <string-array name="month_names">
+        <item>جنوری</item>
+        <item>فروری</item>
+        <item>مارچ</item>
+        <item>اپریل</item>
+        <item>مئی</item>
+        <item>جون</item>
+        <item>جولائی</item>
+        <item>اگست</item>
+        <item>ستمبر</item>
+        <item>اکتوبر</item>
+        <item>نومبر</item>
+        <item>دسمبر</item>
+    </string-array>
+
     <string-array name="week_days">
         <item>پ</item>
         <item>م</item>
@@ -810,6 +825,10 @@
     <string name="azkar_duas_and_tasbih_keep_running">اذکار، دعائیں اور تسبیح معمول کے مطابق چلتی رہیں گی۔</string>
     <string name="no_prayer_owed_until">%1$s تک نماز واجب نہیں</string>
     <string name="no_prayer_owed_until_you_turn_this_off">جب تک آپ اسے بند نہ کریں، نماز واجب نہیں</string>
+    <string name="starts_from">شروع</string>
+    <string name="all_day">پورا دن</string>
+    <string name="from_prayer">%1$s سے</string>
+    <string name="from_which_prayer">کس نماز سے</string>
     <string name="no_methods_found">کوئی طریقہ نہیں ملا</string>
     <string name="placeholder">جگہ دار</string>
     <string name="display">ڈسپلے</string>

@@ -366,6 +366,21 @@
     <string name="evening_adhkar">Adhkar du soir</string>
     <string name="after_asr">Après Asr</string>
 
+    <string-array name="month_names">
+        <item>janvier</item>
+        <item>février</item>
+        <item>mars</item>
+        <item>avril</item>
+        <item>mai</item>
+        <item>juin</item>
+        <item>juillet</item>
+        <item>août</item>
+        <item>septembre</item>
+        <item>octobre</item>
+        <item>novembre</item>
+        <item>décembre</item>
+    </string-array>
+
     <string-array name="week_days">
         <item>L</item>
         <item>M</item>
@@ -803,6 +818,10 @@
     <string name="azkar_duas_and_tasbih_keep_running">Les azkar, douas et tasbih continuent normalement.</string>
     <string name="no_prayer_owed_until">Aucune prière due jusqu’au %1$s</string>
     <string name="no_prayer_owed_until_you_turn_this_off">Aucune prière due jusqu’à ce que vous désactiviez ceci</string>
+    <string name="starts_from">À partir du</string>
+    <string name="all_day">Toute la journée</string>
+    <string name="from_prayer">à partir de %1$s</string>
+    <string name="from_which_prayer">À partir de quelle prière</string>
     <string name="no_methods_found">Aucune méthode trouvée</string>
     <string name="placeholder">espace réservé</string>
     <string name="display">Affichage</string>

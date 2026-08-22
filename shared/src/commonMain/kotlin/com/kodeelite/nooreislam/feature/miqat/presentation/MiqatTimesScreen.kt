@@ -41,17 +41,14 @@ import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.store.LocationStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
-import com.kodeelite.nooreislam.feature.miqat.presentation.components.MonthCalendar
+import com.kodeelite.nooreislam.core.components.AppCalendar
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.prayer_times
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.minus
-import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 
 /** Calendar-first prayer times — today is on Home; here you pick any date. */
@@ -88,14 +85,12 @@ fun MiqatTimesScreen() {
         Column(
             Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()),
         ) {
-            MonthCalendar(
-                year = visible.year,
-                month = visible.monthNumber,
+            AppCalendar(
+                visible = visible,
                 selected = selected,
                 today = today,
                 onSelect = { selected = it },
-                onPrevMonth = { visible = visible.minus(1, DateTimeUnit.MONTH) },
-                onNextMonth = { visible = visible.plus(1, DateTimeUnit.MONTH) },
+                onVisibleChange = { visible = it },
                 modifier = Modifier.padding(horizontal = 12.dp),
             )
 

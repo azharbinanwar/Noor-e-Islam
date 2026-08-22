@@ -367,6 +367,21 @@
     <string name="after_asr">بعد العصر</string>
 
     <!-- Monday-first, matching the default array and DayOfWeek.ordinal — the code indexes by position -->
+    <string-array name="month_names">
+        <item>يناير</item>
+        <item>فبراير</item>
+        <item>مارس</item>
+        <item>أبريل</item>
+        <item>مايو</item>
+        <item>يونيو</item>
+        <item>يوليو</item>
+        <item>أغسطس</item>
+        <item>سبتمبر</item>
+        <item>أكتوبر</item>
+        <item>نوفمبر</item>
+        <item>ديسمبر</item>
+    </string-array>
+
     <string-array name="week_days">
         <item>ن</item>
         <item>ث</item>
@@ -803,6 +818,10 @@
     <string name="azkar_duas_and_tasbih_keep_running">تستمر الأذكار والأدعية والتسبيح كالمعتاد.</string>
     <string name="no_prayer_owed_until">لا صلاة مطلوبة حتى %1$s</string>
     <string name="no_prayer_owed_until_you_turn_this_off">لا صلاة مطلوبة حتى توقفي هذا</string>
+    <string name="starts_from">يبدأ من</string>
+    <string name="all_day">طوال اليوم</string>
+    <string name="from_prayer">من %1$s</string>
+    <string name="from_which_prayer">من أي صلاة</string>
     <string name="no_methods_found">لم يتم العثور على طرق</string>
     <string name="placeholder">مكان محجوز</string>
     <string name="display">العرض</string>
