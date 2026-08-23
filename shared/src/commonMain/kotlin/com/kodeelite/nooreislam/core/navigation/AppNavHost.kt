@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
@@ -166,7 +168,11 @@ fun AppNavHost(
             }
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
             // stays out of the tree entirely rather than being present-but-empty
-            Box(Modifier.fillMaxSize()) {
+            // dev-only shortcut into the sandbox: long-press any empty area
+            val devJump = if (!build.isDebug) Modifier else Modifier.pointerInput(Unit) {
+                detectTapGestures(onLongPress = { navController.navigate(AppRoute.Sandbox) })
+            }
+            Box(Modifier.fillMaxSize().then(devJump)) {
                 if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
                 AppNotice(notice)
             }

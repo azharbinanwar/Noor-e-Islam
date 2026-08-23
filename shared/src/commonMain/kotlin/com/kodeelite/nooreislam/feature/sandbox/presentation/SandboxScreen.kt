@@ -4,20 +4,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,7 @@ import com.composables.icons.lucide.Share2
 import com.composables.icons.lucide.Star
 import com.kodeelite.nooreislam.config.theme.AppColors
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.config.theme.ThemeChoice
 import com.kodeelite.nooreislam.config.theme.ThemeMode
 import com.kodeelite.nooreislam.config.theme.darkAppColors
 import com.kodeelite.nooreislam.config.theme.lightAppColors
@@ -55,6 +59,7 @@ import com.kodeelite.nooreislam.core.components.AppActionItem
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonSize
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
+import com.kodeelite.nooreislam.core.components.AppChip
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
@@ -64,6 +69,7 @@ import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.AdhanRoundingStyle
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
@@ -82,75 +88,121 @@ import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
-/** Scratch page to eyeball every button and color in light + dark. */
+private enum class Section { Geo, Notices, Tiles, Formats, Light, Dark }
+
+/**
+ * Scratch page to eyeball every button and color in light + dark. One section at a time, opened by
+ * its chip: drawing the lot on open was slow enough on device to read as a hang.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SandboxScreen() {
+    var open by remember { mutableStateOf<Section?>(null) }
     Scaffold { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
-        ) {
-            val nav = LocalAppNavigator.current
-            AppButton(
-                text = "Sky lab",
-                onClick = { nav.navigate(AppRoute.SkyLab) },
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                variant = AppButtonVariant.Outline,
-            )
-            AppButton(
-                text = "Tracker lab",
-                onClick = { nav.navigate(AppRoute.TrackerLab) },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                variant = AppButtonVariant.Outline,
-            )
-            NoticeShowcase()
-            TileVariantShowcase()
-            FormatShowcase()
-            Panel("LIGHT", ThemeMode.LIGHT)
-            Panel("DARK", ThemeMode.DARK)
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(padding)) {
+            item {
+                val nav = LocalAppNavigator.current
+                Column {
+                    AppButton(
+                        text = "Sky lab",
+                        onClick = { nav.navigate(AppRoute.SkyLab) },
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        variant = AppButtonVariant.Outline,
+                    )
+                    AppButton(
+                        text = "Tracker lab",
+                        onClick = { nav.navigate(AppRoute.TrackerLab) },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        variant = AppButtonVariant.Outline,
+                    )
+                }
+            }
+            item { ThemeSwitcher() }
+            item {
+                FlowRow(
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Section.entries.forEach { s ->
+                        AppChip(
+                            label = s.name,
+                            selected = open == s,
+                            onClick = { open = if (open == s) null else s },
+                        )
+                    }
+                }
+            }
+            when (open) {
+                Section.Geo -> item { GeoShowcase() }
+                Section.Notices -> item { NoticeShowcase() }
+                Section.Tiles -> item { TileVariantShowcase() }
+                Section.Formats -> item { FormatShowcase() }
+                Section.Light -> panel("LIGHT", ThemeMode.LIGHT)
+                Section.Dark -> panel("DARK", ThemeMode.DARK)
+                null -> Unit
+            }
         }
     }
 }
 
-/** Renders the full showcase under a forced theme mode. */
-@Composable
-private fun Panel(title: String, mode: ThemeMode) {
+/** The showcase under a forced theme mode, one section per item so only what shows gets built. */
+private fun LazyListScope.panel(title: String, mode: ThemeMode) {
+    section(mode, title) {}
+    section(mode, "Miqat — All (chronological)") { MiqatAllShowcase() }
+    section(mode, "Miqat — Groups") { MiqatGroupsShowcase() }
+    section(mode, "Tracker Status") { TrackerStatusShowcase() }
+    section(mode, "Time Status") { TimeStatusShowcase() }
+    section(mode, "Calc Methods") { CalcMethodShowcase() }
+    section(mode, "Config Enums") { ConfigEnumsShowcase() }
+    section(mode, "Tiles") { TileShowcase() }
+    section(mode, "Quick Actions (horizontal)") { ActionShowcase() }
+    section(mode, "Highlight colors") { HighlightShowcase() }
+    section(mode, "Buttons") { ButtonShowcase() }
+    section(mode, "StateView") {
+        StateView(
+            title = "No prayers logged",
+            message = "Start tracking your prayers today.",
+            action = { AppButton("Track now", {}, size = AppButtonSize.Small) },
+        )
+    }
+    section(mode, "Colors") {
+        ColorPalette(if (mode == ThemeMode.DARK) darkAppColors() else lightAppColors())
+    }
+}
+
+private fun LazyListScope.section(mode: ThemeMode, title: String, content: @Composable () -> Unit) = item {
     AppTheme(themeMode = mode) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SectionTitle(title)
-            SectionTitle("Miqat — All (chronological)")
-            MiqatAllShowcase()
-            SectionTitle("Miqat — Groups")
-            MiqatGroupsShowcase()
-            SectionTitle("Tracker Status")
-            TrackerStatusShowcase()
-            SectionTitle("Time Status")
-            TimeStatusShowcase()
-            SectionTitle("Calc Methods")
-            CalcMethodShowcase()
-            SectionTitle("Config Enums")
-            ConfigEnumsShowcase()
-            SectionTitle("Tiles")
-            TileShowcase()
-            SectionTitle("Quick Actions (horizontal)")
-            ActionShowcase()
-            SectionTitle("Highlight colors")
-            HighlightShowcase()
-            SectionTitle("Buttons")
-            ButtonShowcase()
-            SectionTitle("StateView")
-            StateView(
-                title = "No prayers logged",
-                message = "Start tracking your prayers today.",
-                action = { AppButton("Track now", {}, size = AppButtonSize.Small) },
-            )
-            SectionTitle("Colors")
-            ColorPalette(if (mode == ThemeMode.DARK) darkAppColors() else lightAppColors())
+            content()
         }
     }
 }
+
+/** The theme switch that used to be a long-press anywhere. Writes the real setting, so it sticks. */
+@Composable
+private fun ThemeSwitcher() {
+    val current by SettingsStore.theme.collectAsState()
+    Row(
+        Modifier.fillMaxWidth().padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ThemeChoice.entries.forEach { choice ->
+            AppButton(
+                text = choice.name,
+                onClick = { SettingsStore.setTheme(choice) },
+                modifier = Modifier.weight(1f),
+                size = AppButtonSize.Small,
+                variant = if (choice == current) AppButtonVariant.Primary else AppButtonVariant.Outline,
+            )
+        }
+    }
+}
+
 
 /** Generic format(pattern) — one method, the pattern decides the output. */
 @Composable
