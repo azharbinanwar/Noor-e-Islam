@@ -19,7 +19,6 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.PulseDot
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
-import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.MiqatTimeStatus
 import com.kodeelite.nooreislam.core.enums.color
@@ -30,7 +29,7 @@ import com.kodeelite.nooreislam.feature.miqat.domain.currentPrayer
 import com.kodeelite.nooreislam.feature.miqat.presentation.components.prayerWindow
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
-import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
+import com.kodeelite.nooreislam.feature.tracker.domain.owedPrayers
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackControl
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.TrackingSheet
 import com.kodeelite.nooreislam.resources.Res
@@ -49,9 +48,12 @@ fun TodayPrayers() {
     val tracker = koinInject<TrackerStore>()
     val tracked by tracker.tracked.collectAsState()
     val exemptionPeriods by tracker.exempt.collectAsState()
-    val todayExempt = dayProgress(tracked, clock.date, exemptionPeriods, clock.date) == DayProgress.Exempt
+    val owed = owedPrayers(clock.date, exemptionPeriods, clock.date)
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
-    val markable: (MiqatTime) -> Boolean = { streakEnabled && !todayExempt && it.at.time <= now }
+    // paused shows from the moment it starts, not once the prayer's time comes: the row has to say
+    // why it cannot be logged, and an empty row says nothing
+    val paused: (MiqatTime) -> Boolean = { streakEnabled && it.miqat.isPrayer && it.miqat !in owed }
+    val markable: (MiqatTime) -> Boolean = { streakEnabled && it.miqat in owed && it.at.time <= now }
 
     val dailyTimes = remember(todayTimes) { todayTimes.filter { it.miqat in Miqat.DAILY && it.miqat != Miqat.Sunrise } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
@@ -84,11 +86,13 @@ fun TodayPrayers() {
                 trailing = if (mt.miqat.isPrayer) {
                     {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            if (status == MiqatTimeStatus.Soon || status == MiqatTimeStatus.Upcoming) {
+                            // no "soon" beside a paused pill — nothing is coming for that prayer
+                            if (!paused(mt) && (status == MiqatTimeStatus.Soon || status == MiqatTimeStatus.Upcoming)) {
                                 Text(status.label, color = status.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                             }
-                            // hidden while exempt (the card says so) and while the streak is off
-                            if (markable(mt)) TrackControl(tracked[mt.miqat])
+                            // hidden only while the streak is off; an exempt prayer says paused
+                            if (paused(mt)) TrackControl(null, exempt = true)
+                            else if (markable(mt)) TrackControl(tracked[mt.miqat])
                         }
                     }
                 } else null,

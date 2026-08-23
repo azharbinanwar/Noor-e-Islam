@@ -62,7 +62,8 @@ class ExemptionStore(
             _lastDays.value = it
         }
         val last = days?.let { from.plus(it - 1, DateTimeUnit.DAY) }
-        scope.launch { repo.startExemption(from, last, pauseAlerts, pauseFocus, fromPrayer) }
+        val today = Now.date()
+        scope.launch { repo.startExemption(from, last, pauseAlerts, pauseFocus, fromPrayer, today) }
     }
 
     /** [resumeFrom] is the first prayer owed again today; null means the whole day is owed. */

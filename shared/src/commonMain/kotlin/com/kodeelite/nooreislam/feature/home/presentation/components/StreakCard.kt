@@ -30,11 +30,11 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.DayProgress
-import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
+import com.kodeelite.nooreislam.feature.tracker.domain.owedPrayers
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -57,12 +57,14 @@ fun StreakCard() {
     val exempt by tracker.exempt.collectAsState()
     val clock by Now.now.collectAsState()
     val today = clock.date
-    val total = Miqat.PRAYERS.size
-    val done = tracked.count { it.value.isPrayed }
+    // an exemption's edge day counts what it owed: two prayers before it began reads 2/2, not 2/5
+    val owed = owedPrayers(today, exempt, today)
+    val total = owed.size
+    val done = owed.count { tracked[it]?.isPrayed == true }
     val streak = stats.current
     val best = stats.best
     val onTimePct = stats.onTimePercent
-    val todayExempt = dayProgress(tracked, today, exempt, today) == DayProgress.Exempt
+    val todayExempt = owed.isEmpty()
 
     AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
