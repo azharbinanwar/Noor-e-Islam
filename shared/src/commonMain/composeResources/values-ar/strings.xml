@@ -974,4 +974,12 @@
     <string name="location_is_off">خدمة الموقع مغلقة</string>
     <string name="location_is_off_sub">شغّلها لتتبع مواقيت الصلاة مكانك.</string>
 
+    <string name="no_location_title">لا يوجد موقع بعد</string>
+    <string name="no_location_message">لم يعطِ جهازك موقعًا. حاول مجددًا في مكان مفتوح.</string>
+    <string name="could_not_name_place_title">تعذّر العثور على مدينتك</string>
+    <string name="error_offline">لا يوجد اتصال بالإنترنت</string>
+    <string name="error_service_unavailable">البحث عن الموقع غير متاح حاليًا</string>
+    <string name="error_try_again">حدث خطأ ما. حاول مجددًا.</string>
+    <string name="no_place_found">لا يوجد شيء في هذا الموضع</string>
+    <string name="retry">إعادة المحاولة</string>
 </resources>

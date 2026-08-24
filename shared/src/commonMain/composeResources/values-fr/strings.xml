@@ -969,4 +969,12 @@
     <string name="location_is_off">La localisation est désactivée</string>
     <string name="location_is_off_sub">Activez-la pour que les horaires de prière suivent votre position.</string>
 
+    <string name="no_location_title">Pas encore de position</string>
+    <string name="no_location_message">Votre appareil n’a pas donné de position. Réessayez à l’extérieur.</string>
+    <string name="could_not_name_place_title">Impossible de trouver votre ville</string>
+    <string name="error_offline">Vous êtes hors ligne</string>
+    <string name="error_service_unavailable">La recherche de lieu est indisponible pour le moment</string>
+    <string name="error_try_again">Un problème est survenu. Réessayez.</string>
+    <string name="no_place_found">Rien trouvé à cet endroit</string>
+    <string name="retry">Réessayer</string>
 </resources>

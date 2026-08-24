@@ -976,4 +976,12 @@
     <string name="location_is_off">مقام کی سہولت بند ہے</string>
     <string name="location_is_off_sub">اسے آن کریں تاکہ نماز کے اوقات آپ کے مقام کے مطابق ہوں۔</string>
 
+    <string name="no_location_title">ابھی کوئی مقام نہیں</string>
+    <string name="no_location_message">آپ کے آلے نے مقام نہیں بتایا۔ کھلی جگہ پر دوبارہ آزمائیں۔</string>
+    <string name="could_not_name_place_title">آپ کا شہر نہیں مل سکا</string>
+    <string name="error_offline">انٹرنیٹ دستیاب نہیں</string>
+    <string name="error_service_unavailable">مقام کی تلاش فی الحال دستیاب نہیں</string>
+    <string name="error_try_again">کچھ غلط ہو گیا۔ دوبارہ آزمائیں۔</string>
+    <string name="no_place_found">اس جگہ کچھ نہیں ملا</string>
+    <string name="retry">دوبارہ کوشش کریں</string>
 </resources>
