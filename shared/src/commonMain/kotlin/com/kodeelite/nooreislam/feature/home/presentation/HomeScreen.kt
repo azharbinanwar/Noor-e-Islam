@@ -57,7 +57,9 @@ import com.kodeelite.nooreislam.feature.tracker.presentation.components.Exemptio
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.core.components.AppTileGroup
+import com.kodeelite.nooreislam.core.location.LocationServiceTile
+import com.kodeelite.nooreislam.core.permissions.LocationPermissionTile
 
 private val ExpandedHeader = 380.dp
 private val CollapsedHeader = 116.dp
@@ -116,6 +118,12 @@ fun HomeScreen() {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // only while the app is guessing: a chosen city needs neither.
+                // the service switch outranks permission — with it off, permission is moot
+                if (!placeChosen) {
+                    val needed = LocationServiceTile() ?: LocationPermissionTile()
+                    needed?.let { AppTileGroup(items = listOf(it)) }
+                }
                 if (streakEnabled) StreakCard()
                 if (shortcuts.isNotEmpty()) AppActionGroup(
                     items = shortcuts.mapIndexed { i, feature ->
@@ -129,8 +137,9 @@ fun HomeScreen() {
                     width = ActionWidth.Fill,
                 )
                 TodayPrayers()
-                MulkReminderCard()
-                DailyVerseCard()
+                // parked, not deleted — back on Home once their content is ready
+                // MulkReminderCard()
+                // DailyVerseCard()
                 ExemptionControl()
                 Spacer(Modifier.height(8.dp))
             }
