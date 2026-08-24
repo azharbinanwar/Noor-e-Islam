@@ -23,6 +23,8 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Added
 
+- `[islam]` The app asks where you are on first launch and sets your real city, instead of quietly sitting on Makkah until you found the location screen yourself. If the answer is no, home shows one warning tile saying what it is missing — the device's location switch first, then the app's permission — and it disappears the moment either is fixed or a city is picked by hand.
+- `[islam]` The home header's map pin becomes a small spinner while your location is being checked, so the city on screen is visibly being verified rather than silently assumed.
 - `[both]` Reading text can be centred instead of justified, from a two-icon Alignment row in the reader's appearance sheet. Justify stays the default and matches a printed mushaf, but with no kashida it stretches word gaps wide at large text sizes, so centred is there for anyone who reads that way.
 - `[islam]` **Android.** The notifications screen warns when the phone is set to restrict this app in the background, the state that stops reminders arriving. The Quran app already had this; the app whose alerts are time-critical did not.
 - `[islam]` Prayer Focus explains what Do Not Disturb access is before handing you to system settings, and Silent is only applied once that access exists — picking it no longer leaves the setting saying Silent while the phone quietly vibrates instead.
@@ -32,6 +34,9 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Changed
 
+- `[islam]` A place is named by the app's own geocoding service instead of a bundled list of 49,000 cities, which was 2.7 MB and returned misleading names. City search now needs a connection; the phone's own geocoder steps in when the service cannot answer. Names can be corrected server-side without an app update.
+- `[islam]` Search results rank your own country's cities first — searching "Hyderabad" from Pakistan puts Hyderabad, Sindh above Hyderabad, India — while everywhere else stays in the list. On a fresh install the phone's region decides, so this works before any city is saved.
+- `[islam]` Prayer times' clock timezone comes from the device rather than a city table. The prayer calculation itself never used it — it works from coordinates — so times are unchanged; only the label source moved.
 - `[both]` Every permission warning now appears together in one "Needs attention" card, coloured by how much it matters: red for what the feature cannot work without, amber for what keeps it reliable. Previously each warning was its own card with its own heading, and each was discovered only after fixing the last one.
 - `[islam]` Prayer Focus lists its prayers the way the notification screen does — one row each, with the window behind an options sheet, rather than six separate cards with their settings inline.
 - `[both]` The reader's alignment picker and the focus silence picker are the same control, so they look and behave alike.
@@ -39,6 +44,8 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Fixed
 
+- `[islam]` **iOS.** "Use my location" never asked for permission, so on a fresh install it waited forever on an answer iOS was never going to send. It now asks, and gives up after twelve seconds instead of hanging.
+- `[islam]` **Android.** A location fix from days ago is no longer trusted as where you are: anything older than five minutes triggers a live request, and the stale fix is only a last resort. Travellers stopped seeing yesterday's city.
 - `[both]` A database written by a newer build no longer crashes the app on every launch. It is moved aside, the app starts fresh and says so — the same recovery a damaged file already had. A missing migration between known versions is still a hard failure, so a bad release cannot quietly wipe anyone's notes.
 - `[islam]` The prayer times screen no longer offers a settings button that did nothing.
 - `[both]` The location permission message names the app you are actually running rather than always saying Noor e Islam.
