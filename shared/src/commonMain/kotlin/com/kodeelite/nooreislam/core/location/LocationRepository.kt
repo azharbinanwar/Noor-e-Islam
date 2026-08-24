@@ -1,8 +1,10 @@
 package com.kodeelite.nooreislam.core.location
 
 import com.kodeelite.nooreislam.core.constants.Place
+import com.kodeelite.nooreislam.core.constants.defaults.LocationDefaults
 import com.kodeelite.nooreislam.core.network.ApiReason
 import com.kodeelite.nooreislam.core.network.ApiResult
+import com.kodeelite.nooreislam.core.network.dataOrNull
 import com.kodeelite.nooreislam.core.network.map
 import com.kodeelite.nooreislam.core.platform.deviceCountryCode
 import kotlinx.datetime.TimeZone
@@ -46,6 +48,13 @@ class LocationRepository(
         val found = runCatching { fallback?.search(query) }.getOrNull().orEmpty()
         if (found.isEmpty()) return result
         return ApiResult.Ok(found.map { it.toPlace(null, zone) })
+    }
+
+    /** A candidate [Place] when [fix] is a real move from [current], else null. */
+    suspend fun detectMove(current: Place, fix: Coordinates, fallback: GeoCoder? = null): Place? {
+        if (distanceKm(fix, current) < LocationDefaults.MOVE_THRESHOLD_KM) return null
+        val candidate = resolve(fix, fallback).dataOrNull() ?: return null
+        return candidate.takeIf { it.name != current.name || it.countryCode != current.countryCode }
     }
 
     private fun shouldFallBack(reason: ApiReason?) =

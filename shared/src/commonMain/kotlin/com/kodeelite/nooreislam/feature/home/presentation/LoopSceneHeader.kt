@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -85,6 +86,7 @@ fun LoopSceneHeader(
     expandedHeight: Dp = 380.dp,
     collapsedHeight: Dp = 116.dp,
     showPoints: Boolean = false,
+    locating: Boolean = false,
     onMenuClick: () -> Unit = {},
 ) {
     val place by LocationStore.activePlace.collectAsState()
@@ -138,7 +140,16 @@ fun LoopSceneHeader(
             IconButton(onClick = onMenuClick) { Icon(Lucide.Menu, stringResource(Res.string.menu), tint = Color.White) }
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.alpha(1f - slimAlpha)) {
-                    Icon(Lucide.MapPin, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                    // the pin becomes a spinner while the place is being checked
+                    if (locating) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 1.5.dp,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    } else {
+                        Icon(Lucide.MapPin, null, tint = Color.White, modifier = Modifier.size(16.dp))
+                    }
                     Spacer(Modifier.width(6.dp))
                     Text(place.name, color = Color.White, fontWeight = FontWeight.SemiBold)
                 }

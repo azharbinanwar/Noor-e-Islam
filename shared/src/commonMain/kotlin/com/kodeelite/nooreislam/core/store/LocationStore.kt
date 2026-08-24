@@ -25,6 +25,11 @@ object LocationStore {
     private val _savedPlaces = MutableStateFlow(readSaved())
     val savedPlaces: StateFlow<List<Place>> = _savedPlaces.asStateFlow()
 
+    private val _chosen = MutableStateFlow(readActive() != null)
+
+    /** False until the user has a place of their own — the default is Makkah, not a choice. */
+    val isPlaceChosen: StateFlow<Boolean> = _chosen.asStateFlow()
+
     /** Pick a place: add to saved (deduped, newest first) and make it active. */
     fun setActive(place: Place) {
         if (_savedPlaces.value.none { it.sameAs(place) }) {
@@ -34,6 +39,7 @@ object LocationStore {
         }
         writeActive(place)
         _activePlace.value = place
+        _chosen.value = true
     }
 
     /** Remove a saved place; if it was active, fall back to the first remaining, else the default. */
@@ -45,6 +51,7 @@ object LocationStore {
             val next = updated.firstOrNull()
             writeActive(next)                                     // null → next read resolves to the fallback
             _activePlace.value = next ?: MiqatDefaults.fallbackPlace
+            _chosen.value = next != null
         }
     }
 

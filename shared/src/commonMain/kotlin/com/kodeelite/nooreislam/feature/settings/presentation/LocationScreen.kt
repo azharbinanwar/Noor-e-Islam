@@ -51,6 +51,7 @@ import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.components.TilePosition
 import com.kodeelite.nooreislam.core.constants.Place
 import com.kodeelite.nooreislam.core.constants.countryLabel
+import com.kodeelite.nooreislam.core.constants.defaults.LocationDefaults
 import com.kodeelite.nooreislam.core.constants.defaults.MiqatDefaults
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
 import com.kodeelite.nooreislam.core.locale.tr
@@ -288,8 +289,6 @@ fun LocationScreen() {
     }
 }
 
-private const val SEARCH_DEBOUNCE_MS = 350L   // one request per pause, not per keystroke
-
 /** Full-screen city search. State is local — gone when the screen closes. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -306,9 +305,9 @@ private fun CitySearchScreen(near: Place?, onPick: (Place) -> Unit, onClose: () 
     LaunchedEffect(query, attempt) {
         val q = query.trim()
         failure = null
-        if (q.length < 2) { results = emptyList(); searching = false; return@LaunchedEffect }
+        if (q.length < LocationDefaults.SEARCH_MIN_QUERY) { results = emptyList(); searching = false; return@LaunchedEffect }
 
-        delay(SEARCH_DEBOUNCE_MS)
+        delay(LocationDefaults.SEARCH_DEBOUNCE_MS)
         searching = true
         val at = near?.let { Coordinates(it.latitude, it.longitude) }
         when (val result = locations.search(q, at, near?.countryCode, geoCoder)) {

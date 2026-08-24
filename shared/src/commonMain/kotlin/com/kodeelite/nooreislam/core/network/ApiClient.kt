@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.core.network
 
 import com.kodeelite.nooreislam.core.BuildType
+import com.kodeelite.nooreislam.core.constants.defaults.NetworkDefaults
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
@@ -37,14 +38,14 @@ class ApiClient(
         }
 
         install(HttpTimeout) {
-            requestTimeoutMillis = REQUEST_TIMEOUT_MS
-            connectTimeoutMillis = CONNECT_TIMEOUT_MS
+            requestTimeoutMillis = NetworkDefaults.REQUEST_TIMEOUT_MS
+            connectTimeoutMillis = NetworkDefaults.CONNECT_TIMEOUT_MS
         }
 
         // a 5xx or a dropped connection only — a 4xx is our own mistake
         install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = MAX_RETRIES)
-            retryOnException(maxRetries = MAX_RETRIES, retryOnTimeout = true)
+            retryOnServerErrors(maxRetries = NetworkDefaults.MAX_RETRIES)
+            retryOnException(maxRetries = NetworkDefaults.MAX_RETRIES, retryOnTimeout = true)
             exponentialDelay()
         }
 
@@ -52,16 +53,9 @@ class ApiClient(
 
         defaultRequest {
             contentType(ContentType.Application.Json)
-            token()?.let { header(APP_TOKEN_HEADER, it) }
+            token()?.let { header(NetworkDefaults.APP_TOKEN_HEADER, it) }
         }
     }
 
     fun close() = http.close()
-
-    companion object {
-        const val APP_TOKEN_HEADER = "X-App-Token"
-        const val REQUEST_TIMEOUT_MS = 8_000L
-        const val CONNECT_TIMEOUT_MS = 5_000L
-        const val MAX_RETRIES = 2
-    }
 }

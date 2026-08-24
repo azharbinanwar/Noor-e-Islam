@@ -15,6 +15,7 @@ import com.google.android.gms.location.Priority
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.kodeelite.nooreislam.core.constants.defaults.LocationDefaults
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
@@ -28,17 +29,19 @@ actual fun rememberGeoLocator(): GeoLocator {
     return remember(context, activity) { AndroidGeoLocator(context, activity) }
 }
 
-private const val FIX_TIMEOUT_MS = 12_000L
-private const val MAX_FIX_AGE_MS = 5 * 60 * 1000L   // a five-minute-old fix is still the same city
-
 private class AndroidGeoLocator(private val context: Context, private val activity: Activity?) : GeoLocator {
-    override suspend fun current(): Coordinates? = lastKnown() ?: freshFix()
+    // recent cache -> live fix -> stale cache. An old fix beats no fix, and the
+    // 32 km move gate decides whether it matters.
+    override suspend fun current(): Coordinates? =
+        lastKnown(maxAgeMs = LocationDefaults.MAX_FIX_AGE_MS) ?: freshFix() ?: lastKnown(maxAgeMs = null)
 
-    // instant, and fine for city-level prayer times
-    private fun lastKnown(): Coordinates? = try {
+    private fun lastKnown(maxAgeMs: Long?): Coordinates? = try {
         val lm = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
-        val loc = lm?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            ?: lm?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val loc = listOfNotNull(
+            lm?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER),
+            lm?.getLastKnownLocation(LocationManager.GPS_PROVIDER),
+        ).filter { maxAgeMs == null || System.currentTimeMillis() - it.time < maxAgeMs }
+            .maxByOrNull { it.time }
         loc?.let { Coordinates(it.latitude, it.longitude) }
     } catch (e: SecurityException) {
         null // permission not granted
@@ -46,11 +49,14 @@ private class AndroidGeoLocator(private val context: Context, private val activi
 
     // nothing cached: a fresh device, a new emulator, or a reboot
     private suspend fun freshFix(): Coordinates? = try {
-        withTimeout(FIX_TIMEOUT_MS) {
+        withTimeout(LocationDefaults.FIX_TIMEOUT_MS) {
             suspendCancellableCoroutine { cont ->
+                // high accuracy so this reaches GPS: balanced waits on network positioning,
+                // which an emulator never supplies and a phone indoors often cannot either
                 val request = CurrentLocationRequest.Builder()
-                    .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-                    .setMaxUpdateAgeMillis(MAX_FIX_AGE_MS)
+                    .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                    .setMaxUpdateAgeMillis(LocationDefaults.MAX_FIX_AGE_MS)
+                    .setDurationMillis(LocationDefaults.FIX_TIMEOUT_MS)
                     .build()
 
                 LocationServices.getFusedLocationProviderClient(context)

@@ -2,9 +2,11 @@ package com.kodeelite.nooreislam.core.location
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.kodeelite.nooreislam.core.constants.defaults.LocationDefaults
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import platform.CoreLocation.CLAuthorizationStatus
 import platform.CoreLocation.CLLocation
@@ -21,19 +23,17 @@ import platform.darwin.NSObject
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 actual fun rememberGeoLocator(): GeoLocator = remember { IosGeoLocator() }
-
-/** Nothing arrives while the status is undetermined, so authorization is asked for first. */
-private const val FIX_TIMEOUT_MS = 12_000L
 
 private class IosGeoLocator : GeoLocator {
     private val manager = CLLocationManager()
     private var delegate: LocationDelegate? = null // strong ref so it survives until the callback fires
 
     override suspend fun current(): Coordinates? = try {
-        withTimeout(FIX_TIMEOUT_MS) {
+        withTimeout(LocationDefaults.FIX_TIMEOUT_MS.milliseconds) {
             if (!authorize()) null else requestFix()
         }
     } catch (timedOut: TimeoutCancellationException) {
@@ -45,7 +45,7 @@ private class IosGeoLocator : GeoLocator {
         val status = manager.authorizationStatus
         if (status != kCLAuthorizationStatusNotDetermined) return status.isGranted()
 
-        return suspendCoroutine { cont ->
+        return suspendCancellableCoroutine { cont ->
             val d = LocationDelegate(onAuthorization = { cont.resume(it.isGranted()) })
             delegate = d
             manager.delegate = d
@@ -53,7 +53,7 @@ private class IosGeoLocator : GeoLocator {
         }
     }
 
-    private suspend fun requestFix(): Coordinates? = suspendCoroutine { cont ->
+    private suspend fun requestFix(): Coordinates? = suspendCancellableCoroutine { cont ->
         val d = LocationDelegate(onFix = { cont.resume(it) })
         delegate = d
         manager.delegate = d

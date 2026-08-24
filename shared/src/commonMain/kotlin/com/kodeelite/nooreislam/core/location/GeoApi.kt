@@ -1,5 +1,6 @@
 package com.kodeelite.nooreislam.core.location
 
+import com.kodeelite.nooreislam.core.constants.defaults.LocationDefaults
 import com.kodeelite.nooreislam.core.network.ApiClient
 import com.kodeelite.nooreislam.core.network.ApiResult
 import com.kodeelite.nooreislam.core.network.getResult
@@ -18,7 +19,7 @@ class GeoApi(private val client: ApiClient) {
         query: String,
         near: Coordinates? = null,
         country: String? = null,
-        limit: Int = DEFAULT_LIMIT,
+        limit: Int = LocationDefaults.SEARCH_LIMIT,
     ): ApiResult<List<GeoPlace>> = client.getResult(
         "geocode/search",
         buildMap {
@@ -28,8 +29,4 @@ class GeoApi(private val client: ApiClient) {
             country?.takeIf { it.isNotBlank() }?.let { put("country", it) }
         },
     )
-
-    companion object {
-        const val DEFAULT_LIMIT = 10   // the server clamps anything higher
-    }
 }

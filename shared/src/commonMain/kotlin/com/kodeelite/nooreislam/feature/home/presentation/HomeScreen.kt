@@ -34,7 +34,11 @@ import com.kodeelite.nooreislam.core.constants.Place
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
 import com.kodeelite.nooreislam.core.location.LocationMoveSheet
-import com.kodeelite.nooreislam.core.location.LocationResolver
+import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.core.network.dataOrNull
+import com.kodeelite.nooreislam.core.permissions.AppPermission
+import com.kodeelite.nooreislam.core.permissions.PermissionStatus
+import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
 import com.kodeelite.nooreislam.core.location.rememberGeoCoder
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
@@ -53,6 +57,7 @@ import com.kodeelite.nooreislam.feature.tracker.presentation.components.Exemptio
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import com.kodeelite.nooreislam.resources.Res
 
 private val ExpandedHeader = 380.dp
 private val CollapsedHeader = 116.dp
@@ -62,14 +67,32 @@ fun HomeScreen() {
     val place by LocationStore.activePlace.collectAsState()
     val calc by MiqatCalculationStore.calculation.collectAsState()
 
-    // silent GPS check — never prompts, only offers a move when you've actually travelled
     val geo = rememberGeoLocator()
     val geoCoder = rememberGeoCoder()
-    val resolver = koinInject<LocationResolver>()
+    val perms = rememberPermissionService()
+    val locations = koinInject<LocationRepository>()
+    val placeChosen by LocationStore.isPlaceChosen.collectAsState()
     var moveCandidate by remember { mutableStateOf<Place?>(null) }
-    LaunchedEffect(Unit) {
-        val fix = geo.current() ?: return@LaunchedEffect
-        moveCandidate = resolver.detectMove(LocationStore.activePlace.value, fix, geoCoder)
+    var locating by remember { mutableStateOf(false) }
+
+    LaunchedEffect(placeChosen) {
+        locating = true
+        try {
+            // first run: the default is Makkah, not the user's city, so ask once and set it.
+            // afterwards: a silent check that never prompts and only offers a real move.
+            if (!placeChosen) {
+                if (perms.request(AppPermission.Location) != PermissionStatus.Granted) return@LaunchedEffect
+                if (!geo.servicesEnabled()) return@LaunchedEffect
+                val fix = geo.current() ?: return@LaunchedEffect
+                locations.resolve(fix, geoCoder).dataOrNull()?.let { LocationStore.setActive(it) }
+                return@LaunchedEffect
+            }
+
+            val fix = geo.current() ?: return@LaunchedEffect
+            moveCandidate = locations.detectMove(LocationStore.activePlace.value, fix, geoCoder)
+        } finally {
+            locating = false
+        }
     }
 
     val scroll = rememberScrollState()
@@ -120,6 +143,7 @@ fun HomeScreen() {
             fraction = fraction,
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,
+            locating = locating,
             onMenuClick = { scope.launch { drawerState.open() } },
         )
 
