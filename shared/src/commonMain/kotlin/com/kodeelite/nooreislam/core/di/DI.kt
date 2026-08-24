@@ -2,6 +2,11 @@ package com.kodeelite.nooreislam.core.di
 
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
+import com.kodeelite.nooreislam.core.constants.AppConst
+import com.kodeelite.nooreislam.core.location.GeoApi
+import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.core.location.LocationResolver
+import com.kodeelite.nooreislam.core.network.ApiClient
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
@@ -23,6 +28,13 @@ import org.koin.dsl.module
 val appModule = module {
     // feature registrations go here as they need DI — the pure engine and the stores don't
     single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
+
+    // one client for the whole app, so a header or a timeout is set in one place
+    single { ApiClient(baseUrl = AppConst.API_BASE_URL, buildType = get()) }
+    single { GeoApi(get()) }
+    single { LocationRepository(get()) }
+    single { LocationResolver(get()) }
+
     single { QuranStore(get()) }
     single { BookmarksStore(get(), get()) }
     single { HighlightsStore(get(), get()) }

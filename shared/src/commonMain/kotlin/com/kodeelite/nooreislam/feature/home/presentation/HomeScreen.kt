@@ -35,6 +35,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
 import com.kodeelite.nooreislam.core.location.LocationMoveSheet
 import com.kodeelite.nooreislam.core.location.LocationResolver
+import com.kodeelite.nooreislam.core.location.rememberGeoCoder
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
 import com.kodeelite.nooreislam.core.navigation.LocalNavController
 import com.kodeelite.nooreislam.core.store.HomeShortcutStore
@@ -63,10 +64,12 @@ fun HomeScreen() {
 
     // silent GPS check — never prompts, only offers a move when you've actually travelled
     val geo = rememberGeoLocator()
+    val geoCoder = rememberGeoCoder()
+    val resolver = koinInject<LocationResolver>()
     var moveCandidate by remember { mutableStateOf<Place?>(null) }
     LaunchedEffect(Unit) {
         val fix = geo.current() ?: return@LaunchedEffect
-        moveCandidate = LocationResolver.detectMove(LocationStore.activePlace.value, fix)
+        moveCandidate = resolver.detectMove(LocationStore.activePlace.value, fix, geoCoder)
     }
 
     val scroll = rememberScrollState()

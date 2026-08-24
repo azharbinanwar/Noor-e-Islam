@@ -4,9 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+import platform.CoreLocation.CLAuthorizationStatus
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
+import platform.CoreLocation.kCLAuthorizationStatusAuthorizedAlways
+import platform.CoreLocation.kCLAuthorizationStatusAuthorizedWhenInUse
+import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.Foundation.NSError
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
@@ -19,15 +25,39 @@ import kotlin.coroutines.suspendCoroutine
 @Composable
 actual fun rememberGeoLocator(): GeoLocator = remember { IosGeoLocator() }
 
+/** Nothing arrives while the status is undetermined, so authorization is asked for first. */
+private const val FIX_TIMEOUT_MS = 12_000L
+
 private class IosGeoLocator : GeoLocator {
     private val manager = CLLocationManager()
     private var delegate: LocationDelegate? = null // strong ref so it survives until the callback fires
 
-    override suspend fun current(): Coordinates? = suspendCoroutine { cont ->
-        val d = LocationDelegate(cont)
+    override suspend fun current(): Coordinates? = try {
+        withTimeout(FIX_TIMEOUT_MS) {
+            if (!authorize()) null else requestFix()
+        }
+    } catch (timedOut: TimeoutCancellationException) {
+        null   // iOS can simply never call back, and a screen must not wait forever
+    }
+
+    /** True once the user has decided and said yes. Asks only when they have not been asked. */
+    private suspend fun authorize(): Boolean {
+        val status = manager.authorizationStatus
+        if (status != kCLAuthorizationStatusNotDetermined) return status.isGranted()
+
+        return suspendCoroutine { cont ->
+            val d = LocationDelegate(onAuthorization = { cont.resume(it.isGranted()) })
+            delegate = d
+            manager.delegate = d
+            manager.requestWhenInUseAuthorization()
+        }
+    }
+
+    private suspend fun requestFix(): Coordinates? = suspendCoroutine { cont ->
+        val d = LocationDelegate(onFix = { cont.resume(it) })
         delegate = d
         manager.delegate = d
-        manager.requestLocation() // one-shot; delivered via the delegate below
+        manager.requestLocation() // one-shot
     }
 
     override fun servicesEnabled(): Boolean = CLLocationManager.locationServicesEnabled()
@@ -38,22 +68,36 @@ private class IosGeoLocator : GeoLocator {
     }
 }
 
+private fun CLAuthorizationStatus.isGranted() =
+    this == kCLAuthorizationStatusAuthorizedWhenInUse || this == kCLAuthorizationStatusAuthorizedAlways
+
+/** Serves one question at a time: either the authorization answer or the fix. */
 private class LocationDelegate(
-    private val cont: Continuation<Coordinates?>,
+    private val onAuthorization: ((CLAuthorizationStatus) -> Unit)? = null,
+    private val onFix: ((Coordinates?) -> Unit)? = null,
 ) : NSObject(), CLLocationManagerDelegateProtocol {
-    private var resumed = false
+    private var answered = false
+
+    private fun once(block: () -> Unit) {
+        if (answered) return
+        answered = true
+        block()
+    }
+
+    override fun locationManagerDidChangeAuthorization(manager: CLLocationManager) {
+        val status = manager.authorizationStatus
+        // fires once with the current status before the user has chosen; wait for their answer
+        if (status == kCLAuthorizationStatusNotDetermined) return
+        once { onAuthorization?.invoke(status) }
+    }
 
     @OptIn(ExperimentalForeignApi::class)
     override fun locationManager(manager: CLLocationManager, didUpdateLocations: List<*>) {
-        if (resumed) return
-        resumed = true
         val loc = didUpdateLocations.lastOrNull() as? CLLocation
-        cont.resume(loc?.coordinate?.useContents { Coordinates(latitude, longitude) })
+        once { onFix?.invoke(loc?.coordinate?.useContents { Coordinates(latitude, longitude) }) }
     }
 
     override fun locationManager(manager: CLLocationManager, didFailWithError: NSError) {
-        if (resumed) return
-        resumed = true
-        cont.resume(null)
+        once { onFix?.invoke(null) }
     }
 }

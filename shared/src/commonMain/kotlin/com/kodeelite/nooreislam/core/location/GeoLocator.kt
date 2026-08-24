@@ -31,13 +31,6 @@ interface GeoLocator {
 @Composable
 expect fun rememberGeoLocator(): GeoLocator
 
-/**
- * Nearest catalog city to a GPS fix — turns raw coords into a full [Place] (name + country + timezone)
- * fully offline, reusing the bundled catalog. City-level accuracy is exactly right for prayer times.
- */
-fun List<Place>.nearestTo(latitude: Double, longitude: Double): Place? =
-    minByOrNull { haversineKm(latitude, longitude, it.latitude, it.longitude) }
-
 /** Straight-line distance (km) from a GPS fix to a place — used to tell a real move from GPS drift. */
 fun distanceKm(from: Coordinates, to: Place): Double =
     haversineKm(from.latitude, from.longitude, to.latitude, to.longitude)

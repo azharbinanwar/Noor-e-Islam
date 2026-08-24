@@ -1,42 +1,22 @@
 package com.kodeelite.nooreislam.core.location
 
 import com.kodeelite.nooreislam.core.constants.Place
-import com.kodeelite.nooreislam.core.location.LocationResolver.resolve
-import com.kodeelite.nooreislam.resources.Res
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
+import com.kodeelite.nooreislam.core.network.dataOrNull
 
 /**
- * The location move-check: was a fresh GPS fix a real move, and if so, which city? Resolves coords to the
- * nearest bundled city, fully offline. To go online later, swap the body of [resolve] for a network geocoder.
+ * Was a fresh fix a real move, and if so, which city? The distance gate runs first,
+ * so a fix that has not moved costs nothing.
  */
-object LocationResolver {
-    const val MOVE_THRESHOLD_KM = 32.0   // ~20 miles — "you changed city", not GPS drift or moving around town
+class LocationResolver(private val repository: LocationRepository) {
 
-    /**
-     * A candidate [Place] when [fix] is a meaningful move from [current] and resolves to a different city,
-     * else null. The distance gate is a two-point calc; the catalog only loads once the gate passes.
-     */
-    suspend fun detectMove(current: Place, fix: Coordinates): Place? {
+    /** A candidate [Place] when [fix] is a real move from [current], else null. */
+    suspend fun detectMove(current: Place, fix: Coordinates, fallback: GeoCoder? = null): Place? {
         if (distanceKm(fix, current) < MOVE_THRESHOLD_KM) return null
-        val candidate = resolve(fix) ?: return null
+        val candidate = repository.resolve(fix, fallback).dataOrNull() ?: return null
         return candidate.takeIf { it.name != current.name || it.countryCode != current.countryCode }
     }
 
-    /** Coords → nearest catalog city (offline). Swap this body for a network reverse-geocoder to go online. */
-    private suspend fun resolve(coords: Coordinates): Place? =
-        catalog().nearestTo(coords.latitude, coords.longitude)
-
-    // the 49k-row catalog, loaded once off the main thread, then cached
-    private var catalog: List<Place>? = null
-    private val loadLock = Mutex()
-    private suspend fun catalog(): List<Place> {
-        catalog?.let { return it }
-        return loadLock.withLock {
-            catalog ?: withContext(Dispatchers.Default) { Place.fromCatalog(Res.readBytes("files/cities.txt")) }
-                .also { catalog = it }
-        }
+    companion object {
+        const val MOVE_THRESHOLD_KM = 32.0   // ~20 miles — a change of city, not drift
     }
 }

@@ -8,12 +8,17 @@ import android.location.LocationManager
 import android.provider.Settings
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.resume
 
 @Composable
 actual fun rememberGeoLocator(): GeoLocator {
@@ -23,18 +28,45 @@ actual fun rememberGeoLocator(): GeoLocator {
     return remember(context, activity) { AndroidGeoLocator(context, activity) }
 }
 
+private const val FIX_TIMEOUT_MS = 12_000L
+private const val MAX_FIX_AGE_MS = 5 * 60 * 1000L   // a five-minute-old fix is still the same city
+
 private class AndroidGeoLocator(private val context: Context, private val activity: Activity?) : GeoLocator {
-    override suspend fun current(): Coordinates? {
-        val lm = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return null
-        return try {
-            // ponytail: last-known is instant and fine for city-level prayer times. Add a live single-update
-            // fallback (requestLocationUpdates / getCurrentLocation) if last-known comes back null on a device.
-            val loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                ?: lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            loc?.let { Coordinates(it.latitude, it.longitude) }
-        } catch (e: SecurityException) {
-            null // permission not granted
+    override suspend fun current(): Coordinates? = lastKnown() ?: freshFix()
+
+    // instant, and fine for city-level prayer times
+    private fun lastKnown(): Coordinates? = try {
+        val lm = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        val loc = lm?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            ?: lm?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        loc?.let { Coordinates(it.latitude, it.longitude) }
+    } catch (e: SecurityException) {
+        null // permission not granted
+    }
+
+    // nothing cached: a fresh device, a new emulator, or a reboot
+    private suspend fun freshFix(): Coordinates? = try {
+        withTimeout(FIX_TIMEOUT_MS) {
+            suspendCancellableCoroutine { cont ->
+                val request = CurrentLocationRequest.Builder()
+                    .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+                    .setMaxUpdateAgeMillis(MAX_FIX_AGE_MS)
+                    .build()
+
+                LocationServices.getFusedLocationProviderClient(context)
+                    .getCurrentLocation(request, null)
+                    .addOnSuccessListener { loc ->
+                        if (cont.isActive) cont.resume(loc?.let { Coordinates(it.latitude, it.longitude) })
+                    }
+                    .addOnFailureListener { if (cont.isActive) cont.resume(null) }
+            }
         }
+    } catch (timedOut: TimeoutCancellationException) {
+        null
+    } catch (e: SecurityException) {
+        null
+    } catch (e: Throwable) {
+        null   // a device without Play Services
     }
 
     override fun servicesEnabled(): Boolean {

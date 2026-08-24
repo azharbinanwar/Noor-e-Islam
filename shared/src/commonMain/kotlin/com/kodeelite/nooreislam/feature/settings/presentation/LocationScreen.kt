@@ -42,6 +42,7 @@ import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppTextField
 import com.kodeelite.nooreislam.core.components.AppTile
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -53,8 +54,15 @@ import com.kodeelite.nooreislam.core.constants.countryLabel
 import com.kodeelite.nooreislam.core.constants.defaults.MiqatDefaults
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
 import com.kodeelite.nooreislam.core.locale.tr
-import com.kodeelite.nooreislam.core.location.nearestTo
+import com.kodeelite.nooreislam.core.location.Coordinates
+import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.core.location.rememberGeoCoder
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
+import com.kodeelite.nooreislam.core.network.ApiReason
+import com.kodeelite.nooreislam.core.network.ApiResult
+import com.kodeelite.nooreislam.core.network.messageRes
+import kotlinx.coroutines.delay
+import org.koin.compose.koinInject
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.components.AppTileVariant
@@ -76,10 +84,14 @@ import com.composables.icons.lucide.LocateOff
 import com.kodeelite.nooreislam.resources.notif_needs_attention
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.clear_search
+import com.kodeelite.nooreislam.resources.could_not_name_place_title
 import com.kodeelite.nooreislam.resources.location
 import com.kodeelite.nooreislam.resources.location_permission_needed
 import com.kodeelite.nooreislam.resources.location_permission_rationale
 import com.kodeelite.nooreislam.resources.no_cities_found
+import com.kodeelite.nooreislam.resources.no_location_message
+import com.kodeelite.nooreislam.resources.no_location_title
+import com.kodeelite.nooreislam.resources.retry
 import com.kodeelite.nooreislam.resources.saved
 import com.kodeelite.nooreislam.resources.search_city
 import com.kodeelite.nooreislam.resources.search_city_hint_message
@@ -87,9 +99,7 @@ import com.kodeelite.nooreislam.resources.search_city_hint_title
 import com.kodeelite.nooreislam.resources.suggested
 import com.kodeelite.nooreislam.resources.try_a_different_search
 import com.kodeelite.nooreislam.resources.use_current_location
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 
 /** Same place regardless of coord precision — dedupe key for the saved list. */
@@ -118,13 +128,11 @@ fun LocationScreen() {
         methodPrompt = if (suggested != MiqatCalculationStore.method.value) place to suggested else null
     }
 
-    // load the 49k-row catalog once, off the main thread — so opening search is instant
-    var all by remember { mutableStateOf<List<Place>>(emptyList()) }
-    LaunchedEffect(Unit) { all = withContext(Dispatchers.Default) { Place.fromCatalog(Res.readBytes("files/cities.txt")) } }
-
-    // GPS: request permission → get a fix → snap to the nearest catalog city (offline) → save it.
+    // GPS: permission → fix → our API names it, the OS only if the API cannot.
     val perms = rememberPermissionService()
     val geo = rememberGeoLocator()
+    val geoCoder = rememberGeoCoder()
+    val locations = koinInject<LocationRepository>()
     val notice = LocalNotice.current
     val scope = rememberCoroutineScope()
     var showDeniedSheet by remember { mutableStateOf(false) }
@@ -149,8 +157,24 @@ fun LocationScreen() {
                             return@launch
                         }
                         val fix = geo.current()
-                        val place = fix?.let { all.nearestTo(it.latitude, it.longitude) }
-                        if (place != null) selectPlace(place) // else: no fix / catalog still loading — keep current
+                        if (fix == null) {
+                            notice.show(
+                                title = getString(Res.string.no_location_title),
+                                message = getString(Res.string.no_location_message),
+                                icon = Lucide.LocateOff,
+                                variant = AppTileVariant.Warning,
+                            )
+                            return@launch
+                        }
+                        when (val result = locations.resolve(fix, geoCoder)) {
+                            is ApiResult.Ok -> selectPlace(result.data)
+                            is ApiResult.Fail -> notice.show(
+                                title = getString(Res.string.could_not_name_place_title),
+                                message = getString(result.reason.messageRes()),
+                                icon = Lucide.MapPinOff,
+                                variant = AppTileVariant.Warning,
+                            )
+                        }
                     }
 
                     else -> showDeniedSheet = true // denied/dismissed → explain + offer Settings
@@ -163,7 +187,11 @@ fun LocationScreen() {
 
     // full-screen search takes over when open (LazyColumn handles hundreds of rows efficiently)
     if (showSearch) {
-        CitySearchScreen(all = all, onPick = { selectPlace(it); showSearch = false }, onClose = { showSearch = false })
+        CitySearchScreen(
+            near = active.takeIf { savedRaw.isNotEmpty() },
+            onPick = { selectPlace(it); showSearch = false },
+            onClose = { showSearch = false },
+        )
         return
     }
 
@@ -260,24 +288,34 @@ fun LocationScreen() {
     }
 }
 
-/**
- * Full-screen city search over the whole offline catalog. Pinned search bar on top, a lazy list of up to 200
- * matches below (prefix matches ranked first). All state is local — it's gone when the screen closes.
- */
+private const val SEARCH_DEBOUNCE_MS = 350L   // one request per pause, not per keystroke
+
+/** Full-screen city search. State is local — gone when the screen closes. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose: () -> Unit) {
+private fun CitySearchScreen(near: Place?, onPick: (Place) -> Unit, onClose: () -> Unit) {
     val c = AppTheme.colors
+    val locations = koinInject<LocationRepository>()
+    val geoCoder = rememberGeoCoder()
     var query by remember { mutableStateOf("") }
     var results by remember { mutableStateOf<List<Place>>(emptyList()) }
-    LaunchedEffect(query, all) {
+    var searching by remember { mutableStateOf(false) }
+    var failure by remember { mutableStateOf<ApiReason?>(null) }
+    var attempt by remember { mutableStateOf(0) }
+
+    LaunchedEffect(query, attempt) {
         val q = query.trim()
-        results = if (q.isBlank()) emptyList() else withContext(Dispatchers.Default) {
-            all.asSequence()
-                .filter { it.ascii.contains(q, ignoreCase = true) || it.name.contains(q, ignoreCase = true) }
-                .sortedWith(compareByDescending<Place> { it.ascii.startsWith(q, ignoreCase = true) }.thenBy { it.ascii })
-                .take(200).toList()
+        failure = null
+        if (q.length < 2) { results = emptyList(); searching = false; return@LaunchedEffect }
+
+        delay(SEARCH_DEBOUNCE_MS)
+        searching = true
+        val at = near?.let { Coordinates(it.latitude, it.longitude) }
+        when (val result = locations.search(q, at, near?.countryCode, geoCoder)) {
+            is ApiResult.Ok -> { results = result.data; failure = null }
+            is ApiResult.Fail -> { results = emptyList(); failure = result.reason }
         }
+        searching = false
     }
 
     Scaffold(
@@ -316,7 +354,14 @@ private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose:
             Spacer(Modifier.height(12.dp))
             Box(Modifier.fillMaxWidth().weight(1f)) {
                 when {
-                    all.isEmpty() -> CircularProgressIndicator(color = c.primary, modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp))
+                    searching -> CircularProgressIndicator(color = c.primary, modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp))
+                    failure != null -> StateView(
+                        title = stringResource(Res.string.could_not_name_place_title),
+                        message = stringResource(failure!!.messageRes()),
+                        icon = { Icon(Lucide.MapPinOff, null, tint = c.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
+                        action = { AppButton(stringResource(Res.string.retry), onClick = { attempt++ }) },
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp),
+                    )
                     query.isBlank() -> StateView(
                         title = stringResource(Res.string.search_city_hint_title),
                         message = stringResource(Res.string.search_city_hint_message),

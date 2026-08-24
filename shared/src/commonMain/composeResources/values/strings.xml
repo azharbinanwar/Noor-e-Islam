@@ -971,4 +971,12 @@
         <item>Mankind</item>
     </string-array>
 
+    <string name="no_location_title">No location yet</string>
+    <string name="no_location_message">Your device has not given a position. Try again outdoors.</string>
+    <string name="could_not_name_place_title">Could not find your city</string>
+    <string name="error_offline">You are offline</string>
+    <string name="error_service_unavailable">Location search is unavailable right now</string>
+    <string name="error_try_again">Something went wrong. Try again.</string>
+    <string name="no_place_found">Nothing found at that spot</string>
+    <string name="retry">Retry</string>
 </resources>
