@@ -723,6 +723,7 @@
     <string name="mode_templates">Templates</string>
     <string name="mode_layout">Layout</string>
     <string name="mode_background">Background</string>
+    <string name="studio_images_offline">Connect to the internet to load backgrounds</string>
     <string name="mode_gradient">Gradient</string>
     <string name="mode_fonts">Fonts</string>
     <string name="mode_size">Size</string>

@@ -40,14 +40,13 @@ data class StudioTemplate(
 }
 
 // hand-picked looks (varied on purpose: blurred + sharp, black + colored + no card).
-// Photo looks reuse ImageStore catalog images so they carry palette metadata (no off-catalog URLs).
+// Photo looks are built from downloaded catalog images in curatedTemplates, never named here.
 private val CURATED = listOf(
     StudioTemplate(
         "Green Dome",
         listOf(Color(0xFF0A1A12)),
         Color.White,
         Color(0xFFF2C14E),
-        imageUrl = ImageStore.resolve("green_dome"),
         card = Color.Black.copy(alpha = 0.38f),
         blur = 12f,
         overlay = 0.35f
@@ -57,7 +56,6 @@ private val CURATED = listOf(
         listOf(Color(0xFF0B0E14)),
         Color.White,
         Color(0xFFC9B8FF),
-        imageUrl = ImageStore.resolve("blue_night"),
         card = Color(0xFF1A1636).copy(alpha = 0.6f),
         blur = 20f,
         overlay = 0.45f,
@@ -68,7 +66,6 @@ private val CURATED = listOf(
         listOf(Color(0xFF2A1A0E)),
         Color.White,
         Color(0xFFFFD98A),
-        imageUrl = ImageStore.resolve("amber"),
         card = Color.Transparent,
         overlay = 0.45f
     ), // sharp, no card, strong scrim
@@ -77,7 +74,6 @@ private val CURATED = listOf(
         listOf(Color(0xFF10161C)),
         Color.White,
         Color(0xFFA9E5D6),
-        imageUrl = ImageStore.resolve("sage"),
         card = Color.Black.copy(alpha = 0.40f),
         blur = 16f,
         overlay = 0.40f
@@ -87,7 +83,6 @@ private val CURATED = listOf(
         listOf(Color(0xFF14110A)),
         Color.White,
         Color(0xFFF2C14E),
-        imageUrl = ImageStore.resolve("gold_light"),
         card = Color(0xFF241A10).copy(alpha = 0.62f),
         overlay = 0.42f
     ), // sharp, brown plate
@@ -117,7 +112,7 @@ fun generatedTemplates(count: Int = 10, seed: Int = 7, nameStart: Int = 0): List
     val gradients = GradientStore.generate(count = count, seed = seed + 101)   // fresh tasteful gradients
     return List(count) { i ->
         val name = NAMES[(nameStart + i) % NAMES.size]
-        val img = if (rng.nextBoolean()) ImageStore.catalog.randomOrNull(rng) else null
+        val img = if (rng.nextBoolean()) ImageStore.catalog.filter(ImageStore::isDownloaded).randomOrNull(rng) else null
         if (img != null) {
             // photo look — accent from the image's vivid tones, varied card + optional blur
             val darkTone = img.colors.getOrNull(3) ?: Color.Black
@@ -189,6 +184,6 @@ private fun gradientTemplate(name: String, g: StudioGradient): StudioTemplate {
 }
 
 val STUDIO_TEMPLATES: List<StudioTemplate> =
-    ImageStore.catalog.mapIndexed { i, img -> imageTemplate(NAMES[i % NAMES.size], img, i) } +
+    ImageStore.catalog.filter(ImageStore::isDownloaded).mapIndexed { i, img -> imageTemplate(NAMES[i % NAMES.size], img, i) } +
             GradientStore.presets.mapIndexed { i, g -> gradientTemplate(NAMES[(i + ImageStore.catalog.size) % NAMES.size], g) } +
             CURATED   // hand-tuned blurred/sharp variants kept for variety

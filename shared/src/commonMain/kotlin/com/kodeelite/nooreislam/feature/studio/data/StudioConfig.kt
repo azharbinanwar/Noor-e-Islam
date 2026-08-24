@@ -57,11 +57,13 @@ data class StudioConfig(
 
     // Background
     @Contextual val bgColor: Color = StudioDefaults.BG_COLOR,
+    // opening look: the first background already on disk; a fresh install gets a preset
+    // gradient instead — never a black canvas, never a network fetch the user didn't ask for
     val bgImageUrl: String? = ImageStore.default?.url,
     val bgImageScale: Float = StudioDefaults.IMAGE_SCALE,   // pinch-zoom the photo (manual crop)
     val bgImageOffsetX: Float = StudioDefaults.OFFSET,      // pan the photo within the frame
     val bgImageOffsetY: Float = StudioDefaults.OFFSET,
-    val bgGradient: StudioGradient? = null,
+    val bgGradient: StudioGradient? = if (ImageStore.default == null) GradientStore.presets.first() else null,
     val isDuotone: Boolean = StudioDefaults.IS_DUOTONE,
     val pattern: CanvasPattern = CanvasPattern.DEFAULT,
     val blurRadius: Float = StudioDefaults.BLUR,

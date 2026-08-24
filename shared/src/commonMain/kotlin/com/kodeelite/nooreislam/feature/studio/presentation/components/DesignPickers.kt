@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,12 +48,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.kodeelite.nooreislam.core.assets.DownloadService
+import com.kodeelite.nooreislam.feature.studio.data.StudioCatalogRepository
 import com.kodeelite.nooreislam.core.constants.AssetDirs
 import com.composables.icons.lucide.AlignCenter
 import com.composables.icons.lucide.AlignLeft
 import com.composables.icons.lucide.AlignRight
 import com.composables.icons.lucide.Ban
 import com.composables.icons.lucide.CircleDot
+import com.composables.icons.lucide.CloudOff
 import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Lucide
@@ -76,10 +79,12 @@ import com.kodeelite.nooreislam.resources.generate_again
 import com.kodeelite.nooreislam.resources.mode_background
 import com.kodeelite.nooreislam.resources.mode_gradient
 import com.kodeelite.nooreislam.resources.show_less
+import com.kodeelite.nooreislam.resources.studio_images_offline
 import com.kodeelite.nooreislam.resources.tap_generate_for_fresh_gradients
 import com.kodeelite.nooreislam.resources.view_all
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 /** Compact Professional Slider */
@@ -133,6 +138,29 @@ fun FontPicker(current: QuranFont, onChange: (QuranFont) -> Unit) {
 fun ImageGridPicker(images: List<StudioImage>, selected: String?, onSelect: (String?) -> Unit) {
     val downloads = koinInject<DownloadService>()
     val progress by downloads.progress.collectAsState()
+
+    // never synced (fresh install, offline): say why the strip is bare; a tap retries the sync
+    if (images.isEmpty()) {
+        val catalogRepo = koinInject<StudioCatalogRepository>()
+        val scope = rememberCoroutineScope()
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(AppTheme.colors.onSurface.copy(alpha = 0.05f))
+                .clickable { scope.launch { catalogRepo.refresh() } }
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Lucide.CloudOff, null, Modifier.size(18.dp), tint = AppTheme.colors.onSurface.copy(alpha = 0.55f))
+            Text(
+                stringResource(Res.string.studio_images_offline),
+                color = AppTheme.colors.onSurface.copy(alpha = 0.7f),
+                fontSize = 12.sp,
+            )
+        }
+        return
+    }
 
     // cells show the tiny thumb; the original moves only when its download button is tapped,
     // and an image can be picked only once its file is local

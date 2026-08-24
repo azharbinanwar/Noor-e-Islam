@@ -29,7 +29,7 @@ class StudioCatalogRepository(private val client: ApiClient) {
     suspend fun refresh(): ApiResult<List<CatalogImage>> =
         client.getResult<List<CatalogImage>>("studio/images").also { result ->
             result.dataOrNull()?.let { fresh ->
-                PrefsService.putString(PrefConst.STUDIO_CATALOG, json.encodeToString(fresh))
+                PrefsService.putString(PrefConst.STUDIO_IMAGES, json.encodeToString(fresh))
                 push(fresh)
                 AssetStore.cleanUp(AssetDirs.STUDIO_IMAGES, ImageStore.catalog.map { it.fileName }.toSet())
                 warmThumbs()
@@ -46,7 +46,7 @@ class StudioCatalogRepository(private val client: ApiClient) {
     }
 
     private fun cached(): List<CatalogImage>? =
-        PrefsService.getStringOrNull(PrefConst.STUDIO_CATALOG)?.let {
+        PrefsService.getStringOrNull(PrefConst.STUDIO_IMAGES)?.let {
             runCatching { json.decodeFromString<List<CatalogImage>>(it) }.getOrNull()
         }
 

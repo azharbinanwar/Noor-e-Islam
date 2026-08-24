@@ -111,7 +111,7 @@ object PrefConst {
 
     const val HOME_SHORTCUTS = "home_shortcuts"
 
-    const val STUDIO_CATALOG = "studio_catalog"
+    const val STUDIO_IMAGES = "studio.images"
 
     // common field names for the per-prayer helpers
     object Field {

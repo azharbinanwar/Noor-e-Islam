@@ -37,8 +37,8 @@ object ImageStore {
 
     val catalog: List<StudioImage> get() = _catalog.value
 
-    /** The manifest's order is the picker's order — first is what the studio opens with. */
-    val default: StudioImage? get() = catalog.firstOrNull()
+    /** The opening background: the first image, in manifest order, that is already on disk. */
+    val default: StudioImage? get() = catalog.firstOrNull(::isDownloaded)
 
     fun update(images: List<StudioImage>) {
         _catalog.value = images
