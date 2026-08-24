@@ -55,6 +55,7 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
+import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.SurahPlacement
 import com.kodeelite.nooreislam.resources.Res
@@ -144,7 +145,8 @@ fun DesignCanvas(
                     with(density) { Modifier.requiredSize(coverW.toDp(), coverH.toDp()) }
                 } else Modifier.fillMaxSize()
                 AsyncImage(
-                    model = config.bgImageUrl,
+                    // the picked image is always downloaded — render the local file
+                    model = ImageStore.byUrl(config.bgImageUrl)?.let(ImageStore::source) ?: config.bgImageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     onSuccess = {

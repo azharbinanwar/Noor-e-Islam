@@ -117,9 +117,9 @@ fun generatedTemplates(count: Int = 10, seed: Int = 7, nameStart: Int = 0): List
     val gradients = GradientStore.generate(count = count, seed = seed + 101)   // fresh tasteful gradients
     return List(count) { i ->
         val name = NAMES[(nameStart + i) % NAMES.size]
-        if (rng.nextBoolean()) {
+        val img = if (rng.nextBoolean()) ImageStore.catalog.randomOrNull(rng) else null
+        if (img != null) {
             // photo look — accent from the image's vivid tones, varied card + optional blur
-            val img = ImageStore.catalog.random(rng)
             val darkTone = img.colors.getOrNull(3) ?: Color.Black
             val card = listOf(Color.Transparent, Color.Black.copy(alpha = 0.35f), darkTone.copy(alpha = 0.6f)).random(rng)
             val blurred = rng.nextFloat() < 0.4f

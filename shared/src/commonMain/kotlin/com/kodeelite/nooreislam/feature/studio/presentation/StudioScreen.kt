@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,7 @@ import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.SystemBackHandler
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
+import com.kodeelite.nooreislam.feature.studio.data.StudioCatalogRepository
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.components.AppTileVariant
@@ -138,6 +140,8 @@ fun StudioScreen(
     // all editing state + history now lives in the holder; the screen delegates to it (read + write)
     val edition = koinInject<AppEdition>()
     val repo = koinInject<StudioCreationRepository>()
+    val catalogRepo = koinInject<StudioCatalogRepository>()
+    LaunchedEffect(Unit) { catalogRepo.refresh() }   // silent; the cached catalog covers a failed refresh
     val scope = rememberCoroutineScope()
     val store = remember { StudioStore(initialConfig, repo, scope) }
     var config by store.configState
@@ -150,6 +154,7 @@ fun StudioScreen(
     var toolsVisible by remember { mutableStateOf(true) }   // tap canvas to hide the tools panel (top bar stays)
     var imageRatio by remember { mutableStateOf<Float?>(null) }   // loaded photo w/h, drives the "Original" layout
     // suggested colors from the current background — image or gradient palette (empty on solid)
+    val catalog by ImageStore.catalogFlow.collectAsState()
     val bgImage = ImageStore.byUrl(config.bgImageUrl)
     val palColors = bgImage?.colors ?: config.bgGradient?.colors ?: emptyList()
     val palOnColors = bgImage?.onColors ?: config.bgGradient?.onColors ?: emptyList()
@@ -257,7 +262,7 @@ fun StudioScreen(
                 StudioPanel(studioMode, onSelectMode = { studioMode = it }) {
                     when (studioMode) {
                         StudioMode.Layout -> AspectRatioStrip(config.aspectRatio) { updateConfig(config.copy(aspectRatio = it)) }
-                        StudioMode.BgImage -> ImageGridPicker(ImageStore.urls, config.bgImageUrl) {
+                        StudioMode.BgImage -> ImageGridPicker(catalog, config.bgImageUrl) {
                             // new photo → clear any prior zoom/pan so it doesn't inherit the old crop
                             updateConfig(config.copy(bgImageUrl = it, bgGradient = null, bgImageScale = 1f, bgImageOffsetX = 0f, bgImageOffsetY = 0f))
                         }

@@ -57,7 +57,7 @@ data class StudioConfig(
 
     // Background
     @Contextual val bgColor: Color = StudioDefaults.BG_COLOR,
-    val bgImageUrl: String? = ImageStore.default.url,
+    val bgImageUrl: String? = ImageStore.default?.url,
     val bgImageScale: Float = StudioDefaults.IMAGE_SCALE,   // pinch-zoom the photo (manual crop)
     val bgImageOffsetX: Float = StudioDefaults.OFFSET,      // pan the photo within the frame
     val bgImageOffsetY: Float = StudioDefaults.OFFSET,

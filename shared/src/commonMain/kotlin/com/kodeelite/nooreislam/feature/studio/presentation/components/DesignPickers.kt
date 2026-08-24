@@ -22,11 +22,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,11 +46,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.kodeelite.nooreislam.core.assets.DownloadService
+import com.kodeelite.nooreislam.core.constants.AssetDirs
 import com.composables.icons.lucide.AlignCenter
 import com.composables.icons.lucide.AlignLeft
 import com.composables.icons.lucide.AlignRight
 import com.composables.icons.lucide.Ban
 import com.composables.icons.lucide.CircleDot
+import com.composables.icons.lucide.Download
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Moon
@@ -75,6 +80,7 @@ import com.kodeelite.nooreislam.resources.tap_generate_for_fresh_gradients
 import com.kodeelite.nooreislam.resources.view_all
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 /** Compact Professional Slider */
 @Composable
@@ -124,15 +130,41 @@ fun FontPicker(current: QuranFont, onChange: (QuranFont) -> Unit) {
 }
 
 @Composable
-fun ImageGridPicker(imageUrls: List<String>, selected: String?, onSelect: (String?) -> Unit) {
+fun ImageGridPicker(images: List<StudioImage>, selected: String?, onSelect: (String?) -> Unit) {
+    val downloads = koinInject<DownloadService>()
+    val progress by downloads.progress.collectAsState()
+
+    // cells show the tiny thumb; the original moves only when its download button is tapped,
+    // and an image can be picked only once its file is local
     ExpandableStrip(
-        title = stringResource(Res.string.mode_background), all = imageUrls,
-        isSelected = { it == selected }, noneSelected = selected == null,
-        onNone = { onSelect(null) }, onPick = { onSelect(it) },
-    ) { url ->
+        title = stringResource(Res.string.mode_background), all = images,
+        isSelected = { it.url == selected }, noneSelected = selected == null,
+        onNone = { onSelect(null) },
+        onPick = { image ->
+            if (ImageStore.isDownloaded(image)) onSelect(image.url)
+            else downloads.download(image.url, AssetDirs.STUDIO_IMAGES, image.fileName)
+        },
+    ) { image ->
         Box(Modifier.fillMaxSize()) {
-            AsyncImage(url, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            ImageStore.byUrl(url)?.let { ComboSwatches(it, Modifier.align(Alignment.BottomStart).padding(6.dp)) }
+            AsyncImage(image.thumbUrl, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+            ComboSwatches(image, Modifier.align(Alignment.BottomStart).padding(6.dp))
+
+            val part = progress["${AssetDirs.STUDIO_IMAGES}/${image.fileName}"]
+            if (part != null || !ImageStore.isDownloaded(image)) {
+                Box(
+                    Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.35f)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (part != null) CircularProgressIndicator(
+                        progress = { part },
+                        modifier = Modifier.size(22.dp),
+                        color = Color.White,
+                        trackColor = Color.White.copy(alpha = 0.25f),
+                        strokeWidth = 2.dp,
+                    )
+                    else Icon(Lucide.Download, null, Modifier.size(18.dp), tint = Color.White)
+                }
+            }
         }
     }
 }

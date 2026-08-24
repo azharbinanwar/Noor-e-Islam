@@ -4,7 +4,9 @@ import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.constants.AppConst
 import com.kodeelite.nooreislam.core.location.GeoApi
+import com.kodeelite.nooreislam.core.assets.DownloadService
 import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.feature.studio.data.StudioCatalogRepository
 import com.kodeelite.nooreislam.core.network.ApiClient
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.CollectionStore
@@ -32,6 +34,8 @@ val appModule = module {
     single { ApiClient(baseUrl = AppConst.API_BASE_URL, buildType = get()) }
     single { GeoApi(get()) }
     single { LocationRepository(get()) }
+    single { DownloadService(get(), get()) }
+    single { StudioCatalogRepository(get()) }
 
     single { QuranStore(get()) }
     single { BookmarksStore(get(), get()) }
