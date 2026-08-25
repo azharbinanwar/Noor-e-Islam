@@ -976,4 +976,8 @@
     <string name="error_try_again">Un problème est survenu. Réessayez.</string>
     <string name="no_place_found">Rien trouvé à cet endroit</string>
     <string name="retry">Réessayer</string>
+    <string name="add">Ajouter</string>
+    <string name="home_shortcuts">Raccourcis de l’accueil</string>
+    <string name="home_shortcuts_hint">Gardez %1$d à %2$d sur l’accueil. Touchez-en un dans la barre pour le retirer, un dans la liste pour l’ajouter.</string>
+    <string name="studio_images_offline">Connectez-vous à Internet pour charger les fonds</string>
 </resources>

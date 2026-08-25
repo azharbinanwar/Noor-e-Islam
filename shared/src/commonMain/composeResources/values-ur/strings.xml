@@ -983,4 +983,8 @@
     <string name="error_try_again">کچھ غلط ہو گیا۔ دوبارہ آزمائیں۔</string>
     <string name="no_place_found">اس جگہ کچھ نہیں ملا</string>
     <string name="retry">دوبارہ کوشش کریں</string>
+    <string name="add">شامل کریں</string>
+    <string name="home_shortcuts">ہوم شارٹ کٹس</string>
+    <string name="home_shortcuts_hint">ہوم پر %1$d سے %2$d رکھیں۔ ہٹانے کے لیے بار میں ایک پر ٹیپ کریں، شامل کرنے کے لیے فہرست میں ایک پر۔</string>
+    <string name="studio_images_offline">پس منظر لوڈ کرنے کے لیے انٹرنیٹ سے جڑیں</string>
 </resources>

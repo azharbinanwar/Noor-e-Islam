@@ -981,4 +981,8 @@
     <string name="error_try_again">حدث خطأ ما. حاول مجددًا.</string>
     <string name="no_place_found">لا يوجد شيء في هذا الموضع</string>
     <string name="retry">إعادة المحاولة</string>
+    <string name="add">إضافة</string>
+    <string name="home_shortcuts">اختصارات الرئيسية</string>
+    <string name="home_shortcuts_hint">احتفظ بـ %1$d إلى %2$d في الرئيسية. اضغط على واحد في الشريط لإزالته، وعلى واحد في القائمة لإضافته.</string>
+    <string name="studio_images_offline">اتصل بالإنترنت لتحميل الخلفيات</string>
 </resources>
