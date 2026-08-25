@@ -105,8 +105,9 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
 
             val moonAt = at(state.moonPoint)
             val moonSplash = splashAt(state.moonPoint)
-            // a sliver barely lights the sky, a full moon washes it — brightness rides the month
-            val lit = 0.55f + 0.45f * state.moonFull
+            // brightness rides the month: a sliver is a touch duller, a full moon goes pure white
+            val lit = 0.8f + 0.2f * state.moonFull
+            val litColor = lerp(moonColor, Color.White, state.moonFull)
             if (moonSplash > 0f) {
                 drawCircle(moonColor.copy(alpha = 0.18f * moonSplash * lit), (30 + 8 * state.moonFull).dp.toPx(), moonAt)
             }
@@ -131,7 +132,7 @@ fun LoopScene(state: LoopSky, modifier: Modifier = Modifier, showPoints: Boolean
                 // reads as a moon rather than a curved sliver of nothing
                 drawPath(disc, moonColor.copy(alpha = EARTHSHINE))
                 // the same lean all month — filling or emptying, the lit side stays top right
-                rotate(MOON_TILT, moonAt) { drawPath(shape, moonColor.copy(alpha = lit)) }
+                rotate(MOON_TILT, moonAt) { drawPath(shape, litColor.copy(alpha = lit)) }
             }
 
             val sunAt = at(state.sunPoint)

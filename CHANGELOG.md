@@ -45,6 +45,7 @@ Newest first. Dates are the release date, not the merge date.
 - `[both]` Every permission warning now appears together in one "Needs attention" card, coloured by how much it matters: red for what the feature cannot work without, amber for what keeps it reliable. Previously each warning was its own card with its own heading, and each was discovered only after fixing the last one.
 - `[islam]` Prayer Focus lists its prayers the way the notification screen does — one row each, with the window behind an options sheet, rather than six separate cards with their settings inline.
 - `[both]` The reader's alignment picker and the focus silence picker are the same control, so they look and behave alike.
+- `[islam]` The moon brightens as it fills: pure white when full, only a touch softer as a crescent, instead of a thin moon looking half switched off.
 - `[islam]` The sun and moon on the home header follow the prayer times instead of a sunrise-to-sunset curve. Each prayer pins its body to a fixed point on one closed loop, and the clock only decides how fast the gap between two points is crossed, so Maghrib looks the same in a nine-hour December day as in a sixteen-hour June one, anywhere in the world. The loop closes, so nothing snaps at the ends of the day.
 
 ### Fixed
