@@ -92,5 +92,12 @@ tasks.register<Exec>("runRelease") {
         .orElse(providers.environmentVariable("ANDROID_SDK_ROOT"))
         .map { "$it/platform-tools/adb" }
         .getOrElse("adb")
-    commandLine(adb, "shell", "am", "start", "-n", "com.kodeelite.nooreislam/.MainActivity")
+    // wireless adb often lists one phone twice; target the first serial so `am start` never sees two
+    doFirst {
+        val serial = System.getenv("ANDROID_SERIAL")
+            ?: ProcessBuilder(adb, "devices").start().inputStream.bufferedReader().readText()
+                .lines().drop(1).firstOrNull { it.endsWith("device") }?.substringBefore('\t')
+            ?: error("No device attached")
+        commandLine(adb, "-s", serial, "shell", "am", "start", "-n", "com.kodeelite.nooreislam/.MainActivity")
+    }
 }

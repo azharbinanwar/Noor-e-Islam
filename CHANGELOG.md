@@ -49,6 +49,7 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Fixed
 
+- `[both]` Background previews were blank on the live server: the host's bot check turned away the image library's own connection. Images now travel on the app's usual connection, and the catalog names each file by its full address.
 - `[islam]` **iOS.** "Use my location" never asked for permission, so on a fresh install it waited forever on an answer iOS was never going to send. It now asks, and gives up after twelve seconds instead of hanging.
 - `[islam]` **Android.** A location fix from days ago is no longer trusted as where you are: anything older than five minutes triggers a live request, and the stale fix is only a last resort. Travellers stopped seeing yesterday's city.
 - `[both]` A database written by a newer build no longer crashes the app on every launch. It is moved aside, the app starts fresh and says so — the same recovery a damaged file already had. A missing migration between known versions is still a hard failure, so a bad release cannot quietly wipe anyone's notes.

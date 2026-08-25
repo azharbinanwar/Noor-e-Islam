@@ -3,6 +3,7 @@ package com.kodeelite.nooreislam.core.di
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.constants.AppConst
+import com.kodeelite.nooreislam.core.platform.installImageLoader
 import com.kodeelite.nooreislam.core.location.GeoApi
 import com.kodeelite.nooreislam.core.assets.DownloadService
 import com.kodeelite.nooreislam.core.location.LocationRepository
@@ -51,9 +52,10 @@ val appModules = listOf(appModule, databaseModule, platformDatabaseModule())
 
 /** Start Koin once per platform entry point. [edition] and [build] are injectable wherever UI needs to branch on them. */
 fun initKoin(edition: AppEdition = AppEdition.MAIN, build: BuildType = BuildType.RELEASE) {
-    startKoin {
+    val koin = startKoin {
         modules(appModules + module { single { edition }; single { build } })
-    }
+    }.koin
+    installImageLoader(koin.get())
 }
 
 /** Swift-friendly entry point — call from iOSApp.init(). */
