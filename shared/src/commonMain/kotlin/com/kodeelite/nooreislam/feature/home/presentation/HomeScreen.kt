@@ -112,7 +112,7 @@ fun HomeScreen() {
     val offered = featuresOn(Surface.Home, edition, debug)
     val pinned by HomeShortcutStore.pinned.collectAsState()
     val shortcuts = pinned.mapNotNull { route -> offered.firstOrNull { it.target == route } }
-    var editing by remember { mutableStateOf<Int?>(null) }
+    var editing by remember { mutableStateOf(false) }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
@@ -126,11 +126,11 @@ fun HomeScreen() {
                 }
                 if (streakEnabled) StreakCard()
                 if (shortcuts.isNotEmpty()) AppActionGroup(
-                    items = shortcuts.mapIndexed { i, feature ->
+                    items = shortcuts.map { feature ->
                         AppActionItem(
                             label = stringResource(feature.name),
                             icon = feature.icon,
-                            onLongClick = { editing = i },
+                            onLongClick = { editing = true },
                             onClick = { nav.navigate(feature.target) },
                         )
                     },
@@ -172,14 +172,7 @@ fun HomeScreen() {
             )
         }
 
-        editing?.let { slot ->
-            ShortcutPickerSheet(
-                current = pinned[slot],
-                pinned = pinned,
-                onPick = { HomeShortcutStore.replace(slot, it) },
-                onDismiss = { editing = null },
-            )
-        }
+        if (editing) ShortcutPickerSheet(onDismiss = { editing = false })
 
         SceneDebugOverlay(Modifier.align(Alignment.BottomCenter).padding(bottom = 14.dp))
     }

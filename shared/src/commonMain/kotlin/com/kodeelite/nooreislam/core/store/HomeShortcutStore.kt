@@ -10,10 +10,13 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 /**
- * The four routes pinned to the home action row. Stored as serialized routes, so a route
- * that no longer exists simply fails to decode and the defaults come back.
+ * The routes pinned to the home action row, between [MIN] and [MAX] of them. Stored as serialized
+ * routes, so a route that no longer exists simply fails to decode and the defaults come back.
  */
 object HomeShortcutStore {
+
+    const val MIN = 2
+    const val MAX = 4
 
     private val defaults: List<AppRoute> = listOf(AppRoute.Qibla, AppRoute.Tracker, AppRoute.Quran, AppRoute.PrayerTimes)
     private val serializer = ListSerializer(AppRoute.serializer())
@@ -26,10 +29,10 @@ object HomeShortcutStore {
     )
     val pinned: StateFlow<List<AppRoute>> = _pinned.asStateFlow()
 
-    fun replace(index: Int, route: AppRoute) {
-        val next = _pinned.value.toMutableList()
-        if (index !in next.indices) return
-        next[index] = route
+    /** Replaces the row wholesale; anything outside [MIN]..[MAX] is refused, so the row can never go blank. */
+    fun set(routes: List<AppRoute>) {
+        val next = routes.distinct()
+        if (next.size !in MIN..MAX) return
         PrefsService.putString(PrefConst.HOME_SHORTCUTS, Json.encodeToString(serializer, next))
         _pinned.value = next
     }

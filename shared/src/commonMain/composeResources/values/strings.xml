@@ -808,7 +808,9 @@
     <string name="direction">Direction</string>
     <string name="distance_to_makkah">Distance to Makkah</string>
     <string name="glory_is_to_allah_and_praise_is_to_him">Glory is to Allah and praise is to Him.</string>
-    <string name="pick_a_shortcut">Pick a shortcut</string>
+    <string name="add">Add</string>
+    <string name="home_shortcuts">Home shortcuts</string>
+    <string name="home_shortcuts_hint">Keep %1$d to %2$d on your home. Tap one in the bar to remove it, tap one in the list to add it.</string>
     <string name="all_focus">All focus</string>
     <string name="master_switch_for_every_prayer_window">Master switch for every prayer window</string>
     <string name="alerts_paused_until">Alerts paused until %1$s</string>

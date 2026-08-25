@@ -797,7 +797,6 @@
     <string name="the_marks_printed_above_the_arabic_text">العلامات الصغيرة المطبوعة فوق النص العربي، وما يطلبه كلٌّ منها.</string>
     <string name="these_marks_are_not_printed_in_this_qurans_text">غير مطبوعة في هذا المصحف، وعُرضت لتعرفها في غيره.</string>
     <string name="tap_any_example_to_open_that_ayah">انقر أي مثال لفتح تلك الآية في القارئ.</string>
-    <string name="pick_a_shortcut">اختر اختصارًا</string>
     <string name="all_focus">كل التركيز</string>
     <string name="master_switch_for_every_prayer_window">مفتاح رئيسي لكل وقت صلاة</string>
     <string name="alerts_paused_until">تم إيقاف التنبيهات حتى %1$s</string>
