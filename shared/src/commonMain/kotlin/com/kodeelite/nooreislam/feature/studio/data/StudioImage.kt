@@ -18,8 +18,14 @@ data class StudioImage(
     val colors: List<Color>,    // base tones, accent-first
     val onColors: List<Color>,  // readable colors for text over the image / card
     val thumbUrl: String = url, // tiny webp for pickers; the full file only moves on download
+    val sizeKb: Int = 0,        // full file weight, shown beside the download gate
 ) {
     val accent: Color get() = colors.first()
+
+    /** "840 KB" or "2.4 MB", for the picker's download label. */
+    val sizeLabel: String
+        get() = if (sizeKb < 1000) "$sizeKb KB"
+        else "${(sizeKb / 100).let { "${it / 10}.${it % 10}" }} MB"
 
     /** On-disk name: the stable id plus the server file's own extension. */
     val fileName: String get() = "$id.${url.substringAfterLast('.', "png").substringBefore('?')}"

@@ -23,6 +23,8 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Added
 
+- `[both]` Studio backgrounds now come from our own server instead of shipping inside the app. The picker shows instant tiny previews with each photo's matched colors; tap the download icon and a progress ring fetches the full image once, into the app's own storage where gallery cleanups cannot touch it. Everything picked or defaulted works fully offline afterwards.
+- `[both]` When the studio has no backgrounds to show — a fresh install with no connection — the Background row says so and a tap retries, instead of sitting there empty.
 - `[islam]` The app asks where you are on first launch and sets your real city, instead of quietly sitting on Makkah until you found the location screen yourself. If the answer is no, home shows one warning tile saying what it is missing — the device's location switch first, then the app's permission — and it disappears the moment either is fixed or a city is picked by hand.
 - `[islam]` The home header's map pin becomes a small spinner while your location is being checked, so the city on screen is visibly being verified rather than silently assumed.
 - `[both]` Reading text can be centred instead of justified, from a two-icon Alignment row in the reader's appearance sheet. Justify stays the default and matches a printed mushaf, but with no kashida it stretches word gaps wide at large text sizes, so centred is there for anyone who reads that way.
@@ -34,6 +36,8 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Changed
 
+- `[both]` The studio opens on a photo you have downloaded, or a curated gradient when there is none — never a black canvas, and never a silent full-size fetch over your data. Templates likewise only dress themselves in photos that are already on the device.
+- `[both]` Hiding or deleting a background on the server removes its file from devices on their next sync, so retired art does not keep occupying storage.
 - `[islam]` A place is named by the app's own geocoding service instead of a bundled list of 49,000 cities, which was 2.7 MB and returned misleading names. City search now needs a connection; the phone's own geocoder steps in when the service cannot answer. Names can be corrected server-side without an app update.
 - `[islam]` Search results rank your own country's cities first — searching "Hyderabad" from Pakistan puts Hyderabad, Sindh above Hyderabad, India — while everywhere else stays in the list. On a fresh install the phone's region decides, so this works before any city is saved.
 - `[islam]` Prayer times' clock timezone comes from the device rather than a city table. The prayer calculation itself never used it — it works from coordinates — so times are unchanged; only the label source moved.

@@ -27,6 +27,7 @@ data class CatalogImage(
         colors = colors.mapNotNull(::parseHex).ifEmpty { listOf(Color.Black) },
         onColors = onColors.mapNotNull(::parseHex).ifEmpty { listOf(Color.White) },
         thumbUrl = absolute(thumbUrl),
+        sizeKb = sizeKb,
     )
 
     companion object {

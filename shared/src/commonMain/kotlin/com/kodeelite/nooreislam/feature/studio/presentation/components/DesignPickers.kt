@@ -44,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -172,6 +173,7 @@ fun ImageGridPicker(images: List<StudioImage>, selected: String?, onSelect: (Str
             if (ImageStore.isDownloaded(image)) onSelect(image.url)
             else downloads.download(image.url, AssetDirs.STUDIO_IMAGES, image.fileName)
         },
+        gridCols = 2, cellHeight = 160.dp,   // browse-and-download: room to actually see the photo
     ) { image ->
         Box(Modifier.fillMaxSize()) {
             AsyncImage(image.thumbUrl, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
@@ -179,18 +181,30 @@ fun ImageGridPicker(images: List<StudioImage>, selected: String?, onSelect: (Str
 
             val part = progress["${AssetDirs.STUDIO_IMAGES}/${image.fileName}"]
             if (part != null || !ImageStore.isDownloaded(image)) {
-                Box(
-                    Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.35f)),
-                    contentAlignment = Alignment.Center,
+                // frosted pill: reads on pale photos without dimming the whole thumb
+                Row(
+                    Modifier
+                        .align(Alignment.Center)
+                        .clip(RoundedCornerShape(50))
+                        .background(Color.Black.copy(alpha = 0.55f))
+                        .padding(start = 6.dp, end = 8.dp, top = 2.dp, bottom = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                 ) {
                     if (part != null) CircularProgressIndicator(
                         progress = { part },
-                        modifier = Modifier.size(22.dp),
+                        modifier = Modifier.size(12.dp),
                         color = Color.White,
                         trackColor = Color.White.copy(alpha = 0.25f),
-                        strokeWidth = 2.dp,
+                        strokeWidth = 1.5.dp,
                     )
-                    else Icon(Lucide.Download, null, Modifier.size(18.dp), tint = Color.White)
+                    else Icon(Lucide.Download, null, Modifier.size(12.dp), tint = Color.White)
+                    if (image.sizeKb > 0) Text(
+                        image.sizeLabel,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                    )
                 }
             }
         }
@@ -434,11 +448,13 @@ private fun <T> ExpandableStrip(
     noneSelected: Boolean,
     onNone: () -> Unit,
     onPick: (T) -> Unit,
+    gridCols: Int = STRIP_GRID_COLS,
+    cellHeight: Dp = 112.dp,
     content: @Composable (T) -> Unit,   // fills the cell (AsyncImage / gradient box / …)
 ) {
     var expanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth()) {
-        val canExpand = all.size > STRIP_GRID_COLS
+        val canExpand = all.size > gridCols
         SectionHeader(
             title,
             actionLabel = if (canExpand) (if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all)) else null,
@@ -462,13 +478,13 @@ private fun <T> ExpandableStrip(
                 }
             }
             Column(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(max = 240.dp).verticalScroll(rememberScrollState()),
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(max = cellHeight * 3 + 20.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                slots.chunked(STRIP_GRID_COLS).forEach { rowSlots ->
+                slots.chunked(gridCols).forEach { rowSlots ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        rowSlots.forEach { s -> Box(Modifier.weight(1f).height(112.dp)) { s() } }   // weighted → fills width, no right gap
-                        repeat(STRIP_GRID_COLS - rowSlots.size) { Spacer(Modifier.weight(1f)) }
+                        rowSlots.forEach { s -> Box(Modifier.weight(1f).height(cellHeight)) { s() } }   // weighted → fills width, no right gap
+                        repeat(gridCols - rowSlots.size) { Spacer(Modifier.weight(1f)) }
                     }
                 }
             }
