@@ -24,6 +24,7 @@ Newest first. Dates are the release date, not the merge date.
 ### Added
 
 - `[both]` Studio backgrounds now come from our own server instead of shipping inside the app. The picker shows instant tiny previews with each photo's matched colors; tap the download icon and a progress ring fetches the full image once, into the app's own storage where gallery cleanups cannot touch it. Everything picked or defaulted works fully offline afterwards.
+- `[both]` Each background that is not yet on the device shows its size on the download pill, so a 3 MB photo is a choice, not a surprise. View all opens a two-wide grid of larger tiles, big enough to actually judge a photo before fetching it.
 - `[both]` When the studio has no backgrounds to show — a fresh install with no connection — the Background row says so and a tap retries, instead of sitting there empty.
 - `[islam]` The app asks where you are on first launch and sets your real city, instead of quietly sitting on Makkah until you found the location screen yourself. If the answer is no, home shows one warning tile saying what it is missing — the device's location switch first, then the app's permission — and it disappears the moment either is fixed or a city is picked by hand.
 - `[islam]` The home header's map pin becomes a small spinner while your location is being checked, so the city on screen is visibly being verified rather than silently assumed.
