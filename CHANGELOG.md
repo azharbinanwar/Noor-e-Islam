@@ -21,6 +21,8 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
+## [1.0.0+8] - 2026-08-26
+
 ### Added
 
 - `[both]` Google Drive backup can be found from Settings search and pinned as a home shortcut. A shortcut that only exists in development builds no longer holds a slot in the release app.
