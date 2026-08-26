@@ -1061,4 +1061,14 @@
     <string name="backup_includes">Keeps a copy of your prayer tracker, bookmarks, notes and settings on your Google Drive, so a new phone starts where this one left off.</string>
     <string name="backup_includes_quran">Keeps a copy of your bookmarks, notes and settings on your Google Drive, so a new phone starts where this one left off.</string>
     <string name="backup_restore_body_quran">This puts the backup from %1$s onto this phone.</string>
+    <string name="battery_steps_title">Let the app work in the background</string>
+    <string name="battery_steps_why">Otherwise the phone pauses it, and a reminder or a silent window can arrive late.</string>
+    <string name="continue_label">Continue</string>
+    <string name="battery_step_continue">Tap Continue below</string>
+    <string name="battery_step_turn_on_background">Turn on “Allow background usage”</string>
+    <string name="battery_step_pick_unrestricted">Choose “Unrestricted”</string>
+    <string name="battery_step_turn_on_battery_saver">Open “Battery saver”</string>
+    <string name="battery_step_pick_no_restrictions">Choose “No restrictions”</string>
+    <string name="battery_step_turn_on_autostart">Turn on “Autostart” if it is offered</string>
+    <string name="battery_step_sleeping_apps">Remove it from “Sleeping apps” if listed</string>
 </resources>

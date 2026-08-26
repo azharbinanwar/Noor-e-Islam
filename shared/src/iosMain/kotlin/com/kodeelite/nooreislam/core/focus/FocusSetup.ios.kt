@@ -9,6 +9,7 @@ private object NoopFocusSetup : FocusSetup {
     override fun backgroundRestricted() = false
     override fun hasSilenceAccess() = false
     override fun requestSilenceAccess() {}
+    override fun phoneMaker(): String = "apple"
 }
 
 @Composable

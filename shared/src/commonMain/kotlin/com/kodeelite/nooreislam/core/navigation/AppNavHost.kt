@@ -42,6 +42,7 @@ import androidx.navigation.toRoute
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.backup.BackupScheduler
+import com.kodeelite.nooreislam.core.permissions.BatteryStepsHost
 import com.kodeelite.nooreislam.core.store.BackupStore
 import com.kodeelite.nooreislam.core.components.AppDrawer
 import com.kodeelite.nooreislam.core.components.AppNotice
@@ -179,8 +180,10 @@ fun AppNavHost(
                 detectTapGestures(onLongPress = { navController.navigate(AppRoute.Sandbox) })
             }
             Box(Modifier.fillMaxSize().then(devJump)) {
+              BatteryStepsHost {
                 if (edition == AppEdition.QURAN) AppContentHost { navHost() } else AppDrawer(drawerState) { navHost() }
                 AppNotice(notice)
+              }
             }
 
             // shown once, on the launch after a damaged database was moved aside

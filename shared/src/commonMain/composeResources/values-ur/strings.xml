@@ -1066,4 +1066,14 @@
     <string name="backup_restored_title">بحال ہو گیا</string>
     <string name="backup_restored_body">آپ کا ڈیٹا اس فون پر واپس آ گیا ہے۔ اسے لوڈ کرنے کے لیے ایپ دوبارہ شروع ہوتی ہے۔</string>
     <string name="restart_now">ابھی دوبارہ شروع کریں</string>
+    <string name="battery_steps_title">ایپ کو پس منظر میں کام کرنے دیں</string>
+    <string name="battery_steps_why">ورنہ فون اسے روک دیتا ہے، اور یاد دہانی یا خاموشی کا وقت دیر سے آ سکتا ہے۔</string>
+    <string name="continue_label">جاری رکھیں</string>
+    <string name="battery_step_continue">نیچے “جاری رکھیں” پر ٹیپ کریں</string>
+    <string name="battery_step_turn_on_background">“پس منظر میں استعمال کی اجازت” آن کریں</string>
+    <string name="battery_step_pick_unrestricted">“بلا پابندی” چنیں</string>
+    <string name="battery_step_turn_on_battery_saver">“بیٹری سیور” کھولیں، “کوئی پابندی نہیں” چنیں</string>
+    <string name="battery_step_pick_no_restrictions">“کوئی پابندی نہیں” چنیں</string>
+    <string name="battery_step_turn_on_autostart">“آٹو اسٹارٹ” آن کریں اگر دستیاب ہو</string>
+    <string name="battery_step_sleeping_apps">اگر “سوئی ہوئی ایپس” میں ہے تو وہاں سے ہٹا دیں</string>
 </resources>

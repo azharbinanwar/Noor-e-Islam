@@ -22,6 +22,8 @@ class AndroidFocusSetup(context: Context) : FocusSetup {
     // Without it startActivity can "succeed" while Settings silently drops the request (Vivo does),
     // so declaration is checked up front instead of trusting the launch. The fallback lands on this
     // app's own settings page, one tap from the battery entry, rather than the every-app list.
+    override fun phoneMaker(): String = android.os.Build.MANUFACTURER.lowercase()
+
     override fun requestBatteryUnrestricted() {
         val declared = app.checkSelfPermission(android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) ==
                 android.content.pm.PackageManager.PERMISSION_GRANTED

@@ -1064,4 +1064,14 @@
     <string name="backup_restored_title">تمت الاستعادة</string>
     <string name="backup_restored_body">عادت بياناتك إلى هذا الهاتف. يُعاد تشغيل التطبيق لتحميلها.</string>
     <string name="restart_now">أعد التشغيل الآن</string>
+    <string name="battery_steps_title">اسمح للتطبيق بالعمل في الخلفية</string>
+    <string name="battery_steps_why">وإلا يوقفه الهاتف، وقد يصل التنبيه أو يبدأ وضع الصمت متأخرًا.</string>
+    <string name="continue_label">متابعة</string>
+    <string name="battery_step_continue">اضغط “متابعة” بالأسفل</string>
+    <string name="battery_step_turn_on_background">فعّل “السماح بالاستخدام في الخلفية”</string>
+    <string name="battery_step_pick_unrestricted">اختر “بدون قيود”</string>
+    <string name="battery_step_turn_on_battery_saver">افتح “موفّر البطارية”، واختر “بدون قيود”</string>
+    <string name="battery_step_pick_no_restrictions">اختر “بدون قيود”</string>
+    <string name="battery_step_turn_on_autostart">فعّل “التشغيل التلقائي” إن وُجد</string>
+    <string name="battery_step_sleeping_apps">أزله من “التطبيقات النائمة” إن كان مدرجًا</string>
 </resources>

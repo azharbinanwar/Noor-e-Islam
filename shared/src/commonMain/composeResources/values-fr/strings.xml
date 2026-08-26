@@ -1059,4 +1059,14 @@
     <string name="backup_restored_title">Restauré</string>
     <string name="backup_restored_body">Vos données sont de retour sur ce téléphone. L’appli redémarre pour les charger.</string>
     <string name="restart_now">Redémarrer maintenant</string>
+    <string name="battery_steps_title">Laissez l’appli fonctionner en arrière-plan</string>
+    <string name="battery_steps_why">Sinon le téléphone la met en pause, et un rappel ou une mise en silence peut arriver en retard.</string>
+    <string name="continue_label">Continuer</string>
+    <string name="battery_step_continue">Touchez « Continuer » ci-dessous</string>
+    <string name="battery_step_turn_on_background">Activez « Autoriser l’activité en arrière-plan »</string>
+    <string name="battery_step_pick_unrestricted">Choisissez « Sans restriction »</string>
+    <string name="battery_step_turn_on_battery_saver">Ouvrez « Économiseur de batterie », choisissez « Aucune restriction »</string>
+    <string name="battery_step_pick_no_restrictions">Choisissez « Aucune restriction »</string>
+    <string name="battery_step_turn_on_autostart">Activez « Démarrage automatique » s’il est proposé</string>
+    <string name="battery_step_sleeping_apps">Retirez-la des « Applications en veille » si elle y figure</string>
 </resources>

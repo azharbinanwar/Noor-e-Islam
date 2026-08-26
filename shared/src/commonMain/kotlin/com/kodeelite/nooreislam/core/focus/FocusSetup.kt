@@ -11,6 +11,9 @@ interface FocusSetup {
     fun requestBatteryUnrestricted()
     fun hasSilenceAccess(): Boolean // Do Not Disturb access, needed for Silent (Vibrate needs nothing)
     fun requestSilenceAccess()
+
+    /** Lower-case manufacturer ("vivo", "xiaomi", "samsung"…), so the steps can name the screen she will see. */
+    fun phoneMaker(): String
 }
 
 @Composable
