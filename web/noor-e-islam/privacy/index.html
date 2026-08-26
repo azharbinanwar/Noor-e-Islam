@@ -36,7 +36,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .wrap { max-width: 680px; margin: 0 auto; padding: 40px 16px 72px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 110px 20px 72px; }
 
   /* plain header, background from theme — same as the app's app bars */
   header { margin-bottom: 28px; }
@@ -85,8 +85,18 @@
     font-size: 13px; color: var(--ink-muted); opacity: 0.85;
   }
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="/site.css">
 </head>
 <body>
+<nav id="nav" class="solid inner">
+  <a class="brand" href="/"><img src="/assets/icon-islam.webp" alt="">Noor</a>
+  <ul>
+    <li><a href="/noor-e-islam/">Noor e Islam</a></li>
+    <li><a href="/noor-e-quran/">Noor e Quran</a></li>
+    <li><a href="/support/">Support</a></li>
+  </ul>
+</nav>
 <div class="wrap">
 
   <header>
@@ -188,8 +198,37 @@
     <p style="margin:0">Questions about this policy or the app are welcome at <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>.</p>
   </div>
 
-  <footer>Noor e Islam is developed by KodeElite.</footer>
+  <footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div class="col brandcol">
+        <a class="brand" href="/"><img src="/assets/icon-islam.webp" alt="">Noor</a>
+        <p>Calm, private apps for the day of a Muslim. No account, no ads, nothing that follows you.</p>
+      </div>
+      <div class="col">
+        <h4>Apps</h4>
+        <a href="/noor-e-islam/">Noor e Islam</a>
+        <a href="/noor-e-quran/">Noor e Quran</a>
+      </div>
+      <div class="col">
+        <h4>Privacy</h4>
+        <a href="/noor-e-islam/privacy/">Noor e Islam</a>
+        <a href="/quran/privacy/">Noor e Quran</a>
+      </div>
+      <div class="col">
+        <h4>Help</h4>
+        <a href="/support/">Support</a>
+        <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© <span id="year"></span> KodeElite</span>
+      <span>Quran text by the <a href="https://tanzil.net">Tanzil Project</a>, used unmodified</span>
+    </div>
+  </div>
+</footer>
 
 </div>
+<script src="/site.js"></script>
 </body>
 </html>

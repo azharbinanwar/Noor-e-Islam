@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://noor.kodeelite.com/sitemap.xml

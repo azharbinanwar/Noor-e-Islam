@@ -3,149 +3,260 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Noor e Quran</title>
-<meta name="description" content="A calm, private Quran reader — beautiful reading themes, bookmarks, notes and gentle reminders. Nothing leaves your device.">
-<style>
-  /* Palette lifted from AppColors.kt so the site matches the app exactly. */
-  :root {
-    --bg: #F8F9FA;
-    --card: #F3F4F5;
-    --ink: #191C1D;
-    --ink-muted: #404944;
-    --outline: #707974;
-    --primary: #1E7D55;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #111415;
-      --card: #191C1D;
-      --ink: #E1E3E4;
-      --ink-muted: #BFC9C3;
-      --outline: #89938D;
-      --primary: #95D3BA;
-    }
-  }
-
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { max-width: 680px; margin: 0 auto; padding: 56px 16px 64px; }
-
-  /* ── hero ── */
-  .hero { text-align: center; margin-bottom: 40px; }
-  .mark {
-    width: 84px; height: 84px; border-radius: 22px;
-    background: #1E7D55;
-    display: inline-flex; align-items: center; justify-content: center;
-    margin-bottom: 18px;
-  }
-  .mark svg { width: 46px; height: auto; display: block; }
-  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 8px; }
-  .tagline { font-size: 16px; color: var(--ink-muted); margin: 0 auto; max-width: 38ch; }
-
-  /* ── section titles: AppTileGroup header treatment ── */
-  h2 {
-    font-size: 14px; font-weight: 700; color: var(--primary);
-    margin: 32px 0 8px; padding-left: 4px;
-  }
-
-  /* ── borderless filled cards: the AppTile look ── */
-  .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 8px; }
-
-  .feature { padding: 13px 0; border-bottom: 1px solid color-mix(in srgb, var(--outline) 22%, transparent); }
-  .feature:first-child { padding-top: 0; }
-  .feature:last-child { border-bottom: none; padding-bottom: 0; }
-  .feature-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-  .feature-desc { font-size: 14px; color: var(--ink-muted); margin: 0; }
-
-  .card p { margin: 0; font-size: 15px; color: var(--ink-muted); }
-  .card p strong { color: var(--ink); font-weight: 600; }
-
-  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .links a {
-    flex: 1 1 auto; text-align: center;
-    background: var(--card); border-radius: 16px;
-    padding: 15px 16px; text-decoration: none;
-    color: var(--primary); font-size: 15px; font-weight: 600;
-  }
-
-  footer {
-    margin-top: 36px; padding-top: 20px;
-    border-top: 1px solid color-mix(in srgb, var(--outline) 22%, transparent);
-    font-size: 13px; color: var(--ink-muted); opacity: 0.85; text-align: center;
-  }
-</style>
+<title>Noor — Noor e Islam and Noor e Quran</title>
+<meta name="description" content="Two calm, private Islamic apps by KodeElite: Noor e Islam for prayer times, qibla, tracker and reminders, and Noor e Quran for reading. No account, no ads, no tracking.">
+<meta property="og:title" content="Noor — apps for the day of a Muslim">
+<meta property="og:description" content="Prayer times, qibla, tracker, reminders and a calm Quran reader. No account, no ads, no tracking.">
+<link rel="icon" href="/assets/icon-islam.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="/site.css">
 </head>
 <body>
-<div class="wrap">
 
-  <div class="hero">
-    <div class="mark">
-      <svg viewBox="0 0 1845 2104" xmlns="http://www.w3.org/2000/svg" aria-label="Noor e Quran">
-        <path fill="#fff" d="M910.462 0C842.772 23.2908 794.13 87.5201 794.13 163.114C794.134 258.363 871.344 335.572 966.588 335.572C1042.19 335.572 1106.42 286.93 1129.7 219.236C1124.42 323.508 1042.63 407.573 939.355 416.467V482.929C963.64 489.983 979.193 502.868 990.776 519.163C1003.95 537.689 1012.09 560.932 1022.34 583.518C1032.73 606.398 1045.6 629.57 1068.51 649.847C1079.34 659.426 1092.49 668.42 1108.79 676.43C1444.24 747.901 1692.73 1006.64 1692.73 1314.9C1692.73 1332.82 1691.88 1350.58 1690.23 1368.14C1315.57 1370.51 1027.63 1613.45 921.928 1749.83C815.991 1613.14 527.877 1369.4 152.166 1368.12C150.517 1350.57 149.671 1332.81 149.671 1314.9C149.673 1002.04 405.65 740.168 748.711 673.342C762.271 666.134 773.507 658.219 782.969 649.847C805.888 629.569 818.762 606.398 829.143 583.518C839.393 560.932 847.529 537.688 860.7 519.163C872.287 502.868 887.841 489.983 912.126 482.929V417.051C801.042 412.3 712.439 320.757 712.438 208.505C712.438 96.8062 800.159 5.59095 910.462 0Z"/>
-        <path fill="#fff" d="M1837.83 1379.71C1392.09 1306.7 1041.12 1596.03 921.927 1749.83C802.732 1596.03 452.908 1306.7 7.17276 1379.71C0.242784 1388.16 -7.79597 1407.09 15.4887 1415.2C44.5945 1425.34 572.657 1354.36 921.927 1775.18C1271.2 1354.36 1800.41 1425.34 1829.51 1415.2C1852.8 1407.09 1844.76 1388.16 1837.83 1379.71Z"/>
-        <path fill="#fff" d="M1827.88 1503.81C1342.23 1430.8 1040.64 1726.9 950.55 1884.07C933.918 1916.52 954.708 1907.73 967.182 1899.28C1253.25 1643.75 1640.77 1603.52 1798.78 1615.35C1858.65 1582.91 1843.13 1527.47 1827.88 1503.81Z"/>
-        <path fill="#fff" d="M22.1722 1503.81C507.824 1430.8 809.416 1726.9 899.505 1884.07C916.137 1916.52 895.347 1907.73 882.873 1899.28C596.804 1643.75 209.281 1603.52 51.2781 1615.35C-8.59674 1582.91 6.92633 1527.47 22.1722 1503.81Z"/>
-        <path fill="#fff" d="M1827.88 1700.14C1342.23 1627.13 1040.64 1923.22 950.55 2080.39C933.918 2112.84 954.708 2104.05 967.182 2095.6C1253.25 1840.07 1640.77 1799.85 1798.78 1811.68C1858.65 1779.23 1843.13 1723.8 1827.88 1700.14Z"/>
-        <path fill="#fff" d="M22.1722 1700.14C507.824 1627.13 809.416 1923.22 899.505 2080.39C916.137 2112.84 895.347 2104.05 882.873 2095.6C596.804 1840.07 209.281 1799.85 51.2781 1811.68C-8.59674 1779.23 6.92633 1723.8 22.1722 1700.14Z"/>
-      </svg>
-    </div>
-    <h1>Noor e Quran</h1>
-    <p class="tagline">A calm place to read the Quran — with the tools to return to it, and nothing that follows you.</p>
-  </div>
+<nav id="nav">
+  <a class="brand" href="#"><img src="/assets/icon-islam.webp" alt="">Noor</a>
+  <ul>
+    <li><a href="/noor-e-islam/">Noor e Islam</a></li>
+    <li><a href="/noor-e-quran/">Noor e Quran</a></li>
+    <li><a href="/support/">Support</a></li>
+  </ul>
+</nav>
 
-  <h2>What it does</h2>
-  <div class="card">
-    <div class="feature">
-      <div class="feature-name">Read comfortably</div>
-      <p class="feature-desc">Fourteen reading themes tuned for long sessions, with adjustable text size, line spacing and script.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-name">Auto-scroll</div>
-      <p class="feature-desc">Set the pace and read hands-free. Hold the page to pause, lift to carry on.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-name">Keep your place</div>
-      <p class="feature-desc">Bookmarks, notes, highlights and collections — and it resumes exactly where you left off.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-name">Find any ayah</div>
-      <p class="feature-desc">Full-text search, jump to a surah or verse, and search by reference or surah name.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-name">Share a verse</div>
-      <p class="feature-desc">Turn any ayah into an image worth sending, composed in Studio.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-name">Gentle reminders</div>
-      <p class="feature-desc">Surah Al-Mulk, Surah Al-Kahf on Friday, and a daily reading reminder — all optional, all off until you ask.</p>
+<header class="hero">
+  <canvas id="sky"></canvas>
+  <div class="inner">
+    <div class="now"><span id="period">Now</span> <b id="clock"></b></div>
+    <h1>The day of a Muslim,<br>kept gently in order</h1>
+    <p>Two calm apps: one for prayer, one for the Quran. No account, no ads, nothing that follows you.</p>
+    <div class="cta">
+      <a class="btn light" href="#noor-e-islam">Noor e Islam</a>
+      <a class="btn ghost" href="#noor-e-quran">Noor e Quran</a>
     </div>
   </div>
+  <div class="scroll-hint">Scroll</div>
+</header>
 
-  <h2>Private by design</h2>
-  <div class="card">
-    <p><strong>Nothing leaves your device.</strong> There is no account, no tracking, no advertising and no analytics. Your bookmarks, notes and reading position stay on your phone, because there is nowhere else for them to go.</p>
+<main>
+  <section class="chapter" id="noor-e-islam">
+    <div class="wrap">
+      <div class="head">
+        <img src="/assets/icon-islam.webp" alt="">
+        <div><h2>Noor e Islam</h2><p>Prayer times, qibla, tracker and reminders, with the Quran built in</p></div>
+      </div>
+      <p class="lede">It finds your city, works out today's prayers on the device, and shows what is happening now with a countdown to the next. Everything else is one tap from the home screen.</p>
+      <div class="split">
+        <div class="stage">
+          <div class="phone" data-tilt><img id="islam-shot" src="/assets/islam-home.webp" alt="Noor e Islam home screen"></div>
+          <div class="strip" role="tablist" aria-label="Noor e Islam screens" data-for="islam-shot">
+            <button role="tab" aria-selected="true" data-src="/assets/islam-home.webp"><img src="/assets/islam-home.webp" alt="Home"></button>
+            <button role="tab" data-src="/assets/islam-prayer-times.webp"><img src="/assets/islam-prayer-times.webp" alt="Prayer times"></button>
+            <button role="tab" data-src="/assets/islam-qibla.webp"><img src="/assets/islam-qibla.webp" alt="Qibla"></button>
+            <button role="tab" data-src="/assets/islam-tracker.webp"><img src="/assets/islam-tracker.webp" alt="Tracker"></button>
+            <button role="tab" data-src="/assets/islam-notifications.webp"><img src="/assets/islam-notifications.webp" alt="Reminders"></button>
+            <button role="tab" data-src="/assets/islam-focus.webp"><img src="/assets/islam-focus.webp" alt="Prayer Focus"></button>
+          </div>
+        </div>
+        <div>
+          <div class="features">
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h3>Prayer times, anywhere</h3><p>Any city, your method, Hanafi or Shafi‘i. Fajr to Isha with sunrise, Ishraq and Zawal.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.2 6.2-6.2 2.2 2.2-6.2z"/></svg></div><h3>Qibla</h3><p>A compass that points to the Kaaba, with the distance to Makkah.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg></div><h3>Prayer tracker</h3><p>Mark each prayer, keep a streak, and see the whole month at a glance.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div><h3>Reminders on time</h3><p>A notification at each prayer, Jumu‘ah on Friday, dhikr and Quran when you want them.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg></div><h3>Prayer Focus</h3><p>Your phone goes quiet around each prayer and comes back by itself.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h3>The full Quran</h3><p>The same reader as Noor e Quran, with Studio to share an ayah as an image.</p></div>
+          </div>
+          <div class="actions">
+            <a class="btn primary soon" href="#" data-store="islam">Google Play · coming soon</a>
+            <a class="btn soft" href="/noor-e-islam/privacy/">Privacy policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" id="noor-e-quran">
+    <div class="wrap">
+      <div class="head">
+        <img src="/assets/icon-quran.webp" alt="">
+        <div><h2>Noor e Quran</h2><p>A calm place to read</p></div>
+      </div>
+      <p class="lede">Built for people who want to read more and be interrupted less. Fourteen reading themes, a page that remembers where you stopped, and nothing that leaves your device.</p>
+      <div class="split">
+        <div>
+          <div class="features">
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 0 0 0 20"/></svg></div><h3>Read comfortably</h3><p>Fourteen themes tuned for long sessions, with adjustable text, spacing and script.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><h3>Auto-scroll</h3><p>Set the pace and read hands-free. Hold the page to pause, lift to carry on.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><h3>Keep your place</h3><p>Bookmarks, notes, highlights and collections, and it resumes exactly where you left off.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><h3>Find any ayah</h3><p>Full-text search, jump to a surah or verse, search by reference or name.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg></div><h3>Share a verse</h3><p>Studio turns any ayah into an image worth sending.</p></div>
+            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg></div><h3>Gentle reminders</h3><p>Surah Al-Mulk, Al-Kahf on Friday, and a daily reading reminder, all off until you ask.</p></div>
+          </div>
+          <div class="actions">
+            <a class="btn primary soon" href="#" data-store="quran">Google Play · coming soon</a>
+            <a class="btn soft" href="/quran/privacy/">Privacy policy</a>
+          </div>
+        </div>
+        <div class="stage">
+          <div class="phone" data-tilt><img id="quran-shot" src="/assets/quran-reading.webp" alt="Noor e Quran reader"></div>
+          <div class="strip" role="tablist" aria-label="Noor e Quran screens" data-for="quran-shot">
+            <button role="tab" aria-selected="true" data-src="/assets/quran-reading.webp"><img src="/assets/quran-reading.webp" alt="Reading"></button>
+            <button role="tab" data-src="/assets/quran-home.webp"><img src="/assets/quran-home.webp" alt="Home"></button>
+            <button role="tab" data-src="/assets/quran-themes.webp"><img src="/assets/quran-themes.webp" alt="Themes"></button>
+            <button role="tab" data-src="/assets/quran-notes.webp"><img src="/assets/quran-notes.webp" alt="Notes"></button>
+            <button role="tab" data-src="/assets/quran-studio.webp"><img src="/assets/quran-studio.webp" alt="Studio"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="privacy">
+    <div class="wrap">
+      <div>
+        <h2>Private by design</h2>
+        <p>Nothing about you is stored anywhere. There is no account to make, no analytics, no advertising, and no third-party service inside either app.</p>
+        <p>Noor e Islam uses your location on the device for prayer times and asks our own server only for your city's name. Noor e Quran never goes online at all.</p>
+      </div>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Bookmarks, notes, highlights and your tracker stay on your phone</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Every reminder is off until you turn it on</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Quran text from the <a href="https://tanzil.net">Tanzil Project</a>, used unmodified</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>English, Arabic, Urdu and French, with proper right-to-left layout</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div class="col brandcol">
+        <a class="brand" href="/"><img src="/assets/icon-islam.webp" alt="">Noor</a>
+        <p>Calm, private apps for the day of a Muslim. No account, no ads, nothing that follows you.</p>
+      </div>
+      <div class="col">
+        <h4>Apps</h4>
+        <a href="/noor-e-islam/">Noor e Islam</a>
+        <a href="/noor-e-quran/">Noor e Quran</a>
+      </div>
+      <div class="col">
+        <h4>Privacy</h4>
+        <a href="/noor-e-islam/privacy/">Noor e Islam</a>
+        <a href="/quran/privacy/">Noor e Quran</a>
+      </div>
+      <div class="col">
+        <h4>Help</h4>
+        <a href="/support/">Support</a>
+        <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© <span id="year"></span> KodeElite</span>
+      <span>Quran text by the <a href="https://tanzil.net">Tanzil Project</a>, used unmodified</span>
+    </div>
   </div>
+</footer>
 
-  <h2>The Quran text</h2>
-  <div class="card">
-    <p>The Arabic text comes from the <a href="https://tanzil.net" style="color:var(--primary)">Tanzil Project</a>, verified and used unmodified.</p>
-  </div>
+<script src="/site.js"></script>
+<script>
+(() => {
+  // Sky: the same idea as the app's header. The colour follows the visitor's clock; the sun and moon ride one loop.
+  const cv = document.getElementById("sky"), ctx = cv.getContext("2d");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stars = Array.from({ length: 90 }, () => [Math.random(), Math.random() * .7, .4 + Math.random() * 1.3, Math.random() * 6.28]);
+  const stops = [ // hour -> [top, bottom]
+    [0,  ["#0B1024", "#1A1F3A"]], [5,  ["#1D2547", "#7C5E7B"]], [6.5, ["#4C6BA8", "#F0A87A"]],
+    [9,  ["#5D93D6", "#BFD9F2"]], [15, ["#5A8FD0", "#C8DDF0"]], [18, ["#3E4E8C", "#E2856E"]],
+    [19.5, ["#1A2148", "#6B3F5C"]], [21, ["#0E1430", "#25294A"]], [24, ["#0B1024", "#1A1F3A"]],
+  ];
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  const rgb = c => `rgb(${c.join(",")})`;
+  function skyAt(h) {
+    let i = 0; while (stops[i + 1][0] <= h) i++;
+    const [h0, c0] = stops[i], [h1, c1] = stops[i + 1], t = (h - h0) / (h1 - h0);
+    return [rgb(mix(hex(c0[0]), hex(c1[0]), t)), rgb(mix(hex(c0[1]), hex(c1[1]), t)), mix(hex(c0[1]), hex(c1[1]), t)];
+  }
+  function draw(now) {
+    const w = cv.width = cv.clientWidth * devicePixelRatio, hgt = cv.height = cv.clientHeight * devicePixelRatio;
+    const d = new Date(), h = d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+    const [top, bot, botRgb] = skyAt(h);
+    const g = ctx.createLinearGradient(0, 0, 0, hgt); g.addColorStop(0, top); g.addColorStop(1, bot);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, hgt);
+    // stars fade in after dusk
+    const night = h < 5.5 ? 1 : h < 7 ? (7 - h) / 1.5 : h > 19 ? Math.min(1, (h - 19) / 1.5) : 0;
+    if (night > 0) {
+      ctx.fillStyle = "#fff";
+      for (const [x, y, r, p] of stars) {
+        ctx.globalAlpha = night * (0.35 + 0.35 * Math.sin(now / 900 + p));
+        ctx.beginPath(); ctx.arc(x * w, y * hgt, r * devicePixelRatio, 0, 6.28); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    // one loop, sun and moon half a turn apart; the sun is highest at 13:00.
+    // Same picture as the app: horizon at 66%, disc = solid 24 + soft 36 + breathing 56 halo, three mountain layers.
+    const dp = devicePixelRatio, horizon = hgt * 0.66, cx = w / 2, rx = Math.min(w, 1400 * dp) * 0.38, ry = horizon - 90 * dp;
+    const a = ((h - 13) / 24) * 6.28, glow = 0.2 + 0.15 * (1 + Math.sin(now / 700));
+    const pos = ang => [cx + Math.sin(ang) * rx, horizon - Math.cos(ang) * ry];
+    const disc = (x, y, r, col) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.28); ctx.fill(); };
+    const [sx, sy] = pos(a), [mx, my] = pos(a + 3.14);
+    if (sy < horizon + 40 * dp) {
+      disc(sx, sy, 56 * dp, `rgba(255,213,79,${(glow * 0.5).toFixed(3)})`);
+      disc(sx, sy, 36 * dp, `rgba(255,213,79,${glow.toFixed(3)})`);
+      disc(sx, sy, 24 * dp, "#FFD54F");
+    }
+    if (my < horizon + 40 * dp) {
+      disc(mx, my, 30 * dp, `rgba(232,234,246,${(0.18 * Math.max(night, .3)).toFixed(3)})`);
+      disc(mx, my, 22 * dp, "#EEF0F6");
+    }
+    // mountains: base tone darkens with night, back layer lifted toward the sky, front pushed toward black
+    const mixc = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
+    const base = mixc([26, 42, 58], [7, 11, 22], night);
+    const layers = [
+      [mixc(base, botRgb, 0.45), [[0, .03], [.18, -.04], [.38, .04], [.60, -.05], [.82, .02], [1, -.02]]],
+      [base, [[0, .09], [.25, .02], [.50, .10], [.72, .01], [1, .07]]],
+      [mixc(base, [0, 0, 0], 0.35), [[0, .16], [.30, .08], [.55, .17], [.80, .09], [1, .15]]],
+    ];
+    for (const [col, pts] of layers) {
+      ctx.fillStyle = rgb(col); ctx.beginPath(); ctx.moveTo(0, hgt);
+      for (const [fx, fy] of pts) ctx.lineTo(fx * w, horizon + fy * hgt);
+      ctx.lineTo(w, hgt); ctx.closePath(); ctx.fill();
+    }
+  }
+  let raf; const loop = t => { draw(t); if (!reduce) raf = requestAnimationFrame(loop); };
+  loop(0); addEventListener("resize", () => draw(0));
 
-  <div class="links">
-    <a href="/quran/privacy/">Privacy policy</a>
-    <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>
-  </div>
+  // "Now" line: local time and a rough period name, so the hero reads as alive
+  const periodOf = h => h < 5 ? "Night" : h < 6.5 ? "Fajr" : h < 12 ? "Morning" : h < 15.5 ? "Dhuhr" : h < 18 ? "Asr" : h < 19.5 ? "Maghrib" : "Isha";
+  const tick = () => { const d = new Date(); document.getElementById("clock").textContent = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); document.getElementById("period").textContent = periodOf(d.getHours() + d.getMinutes() / 60); };
+  tick(); setInterval(tick, 15000);
 
-  <footer>Noor e Quran is built by KodeElite.</footer>
+  // nav goes solid once the sky scrolls away
+  const nav = document.getElementById("nav"), hero = document.querySelector(".hero");
+  new IntersectionObserver(([e]) => nav.classList.toggle("solid", !e.isIntersecting), { rootMargin: "-60px 0px 0px 0px" }).observe(hero);
 
-</div>
+  // features rise in as they arrive
+  const io = new IntersectionObserver(es => es.forEach((e, i) => { if (e.isIntersecting) { e.target.style.transitionDelay = `${(e.target.dataset.i || 0) * 60}ms`; e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .2 });
+  document.querySelectorAll(".features").forEach(g => [...g.children].forEach((f, i) => { f.dataset.i = i; io.observe(f); }));
+
+  // screenshot strips swap the phone's screen
+  document.querySelectorAll(".strip").forEach(strip => {
+    const shot = document.getElementById(strip.dataset.for);
+    strip.addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      strip.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", x === b));
+      shot.style.opacity = 0; setTimeout(() => { shot.src = b.dataset.src; shot.style.opacity = 1; }, 120);
+    });
+    shot.style.transition = "opacity .12s";
+  });
+
+  // the phone leans toward the pointer
+  if (!reduce) document.querySelectorAll("[data-tilt]").forEach(el => {
+    el.addEventListener("pointermove", e => { const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; el.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`; });
+    el.addEventListener("pointerleave", () => el.style.transform = "");
+  });
+})();
+</script>
 </body>
 </html>
