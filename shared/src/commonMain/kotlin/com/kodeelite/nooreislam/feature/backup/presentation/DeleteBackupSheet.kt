@@ -20,54 +20,54 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Dot
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.CloudDownload
+import com.composables.icons.lucide.Trash2
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.resources.Res
-import com.kodeelite.nooreislam.resources.backup_restore_body
-import com.kodeelite.nooreislam.resources.backup_restore_bullet_replaces
-import com.kodeelite.nooreislam.resources.backup_restore_bullet_replaces_quran
-import com.kodeelite.nooreislam.resources.backup_restore_bullet_restart
-import com.kodeelite.nooreislam.resources.backup_restore_bullet_undo
-import com.kodeelite.nooreislam.resources.backup_restore_body_quran
-import com.kodeelite.nooreislam.resources.backup_restore_from_drive
+import com.kodeelite.nooreislam.resources.backup_delete_body
+import com.kodeelite.nooreislam.resources.backup_delete_bullet_next
+import com.kodeelite.nooreislam.resources.backup_delete_bullet_phone
+import com.kodeelite.nooreislam.resources.backup_delete_bullet_removed
+import com.kodeelite.nooreislam.resources.backup_delete_bullet_undo
+import com.kodeelite.nooreislam.resources.backup_delete_title
 import com.kodeelite.nooreislam.resources.cancel
-import com.kodeelite.nooreislam.resources.restore
+import com.kodeelite.nooreislam.resources.delete
 import org.jetbrains.compose.resources.stringResource
 
-/** Restore replaces this phone's data; say so once, plainly, before doing it. */
+/** Removing the Drive copy is final; say what goes and what stays before the red button. */
 @Composable
-fun RestoreConfirmSheet(quran: Boolean, backupDate: String, onRestore: () -> Unit, onDismiss: () -> Unit) {
+fun DeleteBackupSheet(account: String, onDelete: () -> Unit, onDismiss: () -> Unit) {
     val c = AppTheme.colors
     AppBottomSheet(
         onDismiss = onDismiss,
         footer = {
-            AppButton(stringResource(Res.string.restore), onRestore, Modifier.fillMaxWidth(), variant = AppButtonVariant.Error)
+            AppButton(stringResource(Res.string.delete), onDelete, Modifier.fillMaxWidth(), variant = AppButtonVariant.Error)
             Spacer(Modifier.height(8.dp))
             AppButton(stringResource(Res.string.cancel), onDismiss, Modifier.fillMaxWidth(), variant = AppButtonVariant.Text)
         },
     ) {
         StateView(
-            title = stringResource(Res.string.backup_restore_from_drive),
+            title = stringResource(Res.string.backup_delete_title),
             padding = 0.dp,
-            message = stringResource(if (quran) Res.string.backup_restore_body_quran else Res.string.backup_restore_body, backupDate),
+            message = stringResource(Res.string.backup_delete_body, account),
             icon = {
                 Box(
                     Modifier.size(72.dp).clip(CircleShape).background(c.error.copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(Lucide.CloudDownload, null, tint = c.error, modifier = Modifier.size(34.dp))
+                    Icon(Lucide.Trash2, null, tint = c.error, modifier = Modifier.size(34.dp))
                 }
             },
         )
         Column(Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 4.dp)) {
             listOf(
-                if (quran) Res.string.backup_restore_bullet_replaces_quran else Res.string.backup_restore_bullet_replaces,
-                Res.string.backup_restore_bullet_undo,
-                Res.string.backup_restore_bullet_restart,
+                Res.string.backup_delete_bullet_removed,
+                Res.string.backup_delete_bullet_undo,
+                Res.string.backup_delete_bullet_phone,
+                Res.string.backup_delete_bullet_next,
             ).forEach { line ->
                 Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.Top) {
                     Icon(Lucide.Dot, null, tint = c.error, modifier = Modifier.padding(top = 2.dp).size(16.dp))

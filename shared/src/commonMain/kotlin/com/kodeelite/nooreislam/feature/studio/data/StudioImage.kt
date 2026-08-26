@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.feature.studio.data
 
 import androidx.compose.ui.graphics.Color
+import com.kodeelite.nooreislam.core.util.asFileSize
 import com.kodeelite.nooreislam.core.assets.AssetStore
 import com.kodeelite.nooreislam.core.constants.AssetDirs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,9 +24,7 @@ data class StudioImage(
     val accent: Color get() = colors.first()
 
     /** "840 KB" or "2.4 MB", for the picker's download label. */
-    val sizeLabel: String
-        get() = if (sizeKb < 1000) "$sizeKb KB"
-        else "${(sizeKb / 100).let { "${it / 10}.${it % 10}" }} MB"
+    val sizeLabel: String get() = sizeKb.asFileSize()
 
     /** On-disk name: the stable id plus the server file's own extension. */
     val fileName: String get() = "$id.${url.substringAfterLast('.', "png").substringBefore('?')}"

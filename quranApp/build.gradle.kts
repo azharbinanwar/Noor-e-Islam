@@ -5,6 +5,11 @@ import java.util.Properties
 // one number for both apps and iOS; bump version.properties, nothing else
 val appVersion = Properties().apply { rootProject.file("version.properties").inputStream().use(::load) }
 
+// Google sign-in for the Drive backup; lives in local.properties (gitignored), empty until set
+val googleWebClientId = Properties().apply {
+    val f = rootProject.file("local.properties"); if (f.exists()) f.inputStream().use(::load)
+}.getProperty("GOOGLE_WEB_CLIENT_ID").orEmpty()
+
 val keystoreProperties = Properties().apply {
     val f = rootProject.file("keystore.properties")
     if (f.exists()) f.inputStream().use { load(it) }
@@ -44,6 +49,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = appVersion.getProperty("versionCode").toInt()
         versionName = appVersion.getProperty("versionName")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
     buildFeatures {
         buildConfig = true // BuildConfig.DEBUG drives the debug ribbon in MainActivity

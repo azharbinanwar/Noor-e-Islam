@@ -17,7 +17,7 @@ class QuranApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCtx.context = this // the Quran DB (QuranDb.android.kt) and other shared Android code read this
-        initKoin(AppEdition.QURAN, if (BuildConfig.DEBUG) BuildType.DEBUG else BuildType.RELEASE) // cheap: Koin definitions are lazy, nothing is built here
+        initKoin(AppEdition.QURAN, if (BuildConfig.DEBUG) BuildType.DEBUG else BuildType.RELEASE, BuildConfig.GOOGLE_WEB_CLIENT_ID) // cheap: Koin definitions are lazy, nothing is built here
 
         // Touching a store loads the prefs file off disk, which would block the main thread for the
         // whole splash — the splash icon animation is drawn on that thread, so it drops frames.

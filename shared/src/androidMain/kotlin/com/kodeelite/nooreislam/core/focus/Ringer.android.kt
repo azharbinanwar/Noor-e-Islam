@@ -24,7 +24,7 @@ object Ringer {
         }
         val silent = mode == SilenceMode.Silent.name && hasDndAccess()
         val target = if (silent) AudioManager.RINGER_MODE_SILENT else AudioManager.RINGER_MODE_VIBRATE
-        if (am.ringerMode != target) am.ringerMode = target // already there (extend/heal restart) -> no blip
+        if (am.ringerMode != target) setMode(target) // already there (extend/heal restart) -> no blip
         return silent
     }
 
@@ -32,8 +32,17 @@ object Ringer {
     fun restore(forceNormal: Boolean = false): Boolean {
         val saved = PrefsService.getInt(PrefConst.FOCUS_SAVED_RINGER, NONE)
         if (saved == NONE && !forceNormal) return false
-        am.ringerMode = if (saved != NONE) saved else AudioManager.RINGER_MODE_NORMAL
+        setMode(if (saved != NONE) saved else AudioManager.RINGER_MODE_NORMAL)
         PrefsService.putInt(PrefConst.FOCUS_SAVED_RINGER, NONE)
         return true
+    }
+
+    // leaving or entering Silent needs DND access; without it Android throws, and a refused mode must never take the app down
+    private fun setMode(mode: Int) {
+        try {
+            am.ringerMode = mode
+        } catch (e: SecurityException) {
+            if (mode == AudioManager.RINGER_MODE_SILENT) runCatching { am.ringerMode = AudioManager.RINGER_MODE_VIBRATE }
+        }
     }
 }

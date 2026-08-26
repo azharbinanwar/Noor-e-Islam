@@ -20,6 +20,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import org.koin.compose.koinInject
+import kotlinx.datetime.minus
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.coroutines.launch
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerRepository
+import com.kodeelite.nooreislam.feature.quran.data.NotesStore
+import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
+import com.kodeelite.nooreislam.core.enums.TimeFormat
+import com.kodeelite.nooreislam.core.datetime.Now
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -115,6 +125,7 @@ fun SandboxScreen() {
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         variant = AppButtonVariant.Outline,
                     )
+                    BackupLab()
                 }
             }
             item { ThemeSwitcher() }
@@ -536,3 +547,53 @@ private fun colorRows(c: AppColors): List<Pair<String, Color>> = listOf(
     "neutral" to c.neutral, "neutralContainer" to c.neutralContainer,
     "neutralVariant" to c.neutralVariant, "neutralMuted" to c.neutralMuted,
 )
+
+// Backup lab: fill the phone with recognisable data, wipe it again, and jump to the backup screen,
+// so an upload and a restore can be checked end to end without living with the app for months.
+@Composable
+private fun BackupLab() {
+    val nav = LocalAppNavigator.current
+    val scope = rememberCoroutineScope()
+    val tracker = koinInject<TrackerRepository>()
+    val bookmarks = koinInject<BookmarksStore>()
+    val notes = koinInject<NotesStore>()
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Backup lab", fontWeight = FontWeight.SemiBold)
+        AppButton(
+            text = "Seed test data",
+            onClick = {
+                scope.launch {
+                    val today = Now.date()
+                    for (back in 1..110) {
+                        val d = today.minus(back, DateTimeUnit.DAY)
+                        Miqat.PRAYERS.forEachIndexed { i, p ->
+                            tracker.setStatus(d, p, if ((back + i) % 6 == 0) PrayerTrackerStatus.PrayedWithJamaat else PrayerTrackerStatus.PrayedOnTime)
+                        }
+                    }
+                    listOf(2 to 255, 36 to 1, 55 to 13, 112 to 1).forEach { (s, a) -> bookmarks.toggle(s, a) }
+                    notes.set(2, 255, "Ayat al-Kursi: memorise by Friday")
+                    notes.set(94, 5, "with hardship comes ease")
+                    SettingsStore.setTimeFormat(TimeFormat.TwentyFour)
+                    SettingsStore.setStreakEnabled(true)
+                }
+            },
+            variant = AppButtonVariant.Outline,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        AppButton(
+            text = "Wipe local data (fresh phone)",
+            onClick = {
+                scope.launch {
+                    tracker.wipe()
+                    val saved = bookmarks.keys.value
+                    listOf(2 to 255, 36 to 1, 55 to 13, 112 to 1).forEach { (s, a) -> if ("$s:$a" in saved) bookmarks.toggle(s, a) }
+                    notes.set(2, 255, ""); notes.set(94, 5, "")
+                    SettingsStore.setTimeFormat(TimeFormat.Twelve)
+                }
+            },
+            variant = AppButtonVariant.ErrorOutline,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        AppButton(text = "Open backup", onClick = { nav.navigate(AppRoute.Backup) }, modifier = Modifier.fillMaxWidth())
+    }
+}

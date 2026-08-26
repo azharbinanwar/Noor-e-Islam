@@ -16,7 +16,7 @@ class NoorApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCtx.context = this // background code (the silence service) reads this
-        initKoin(AppEdition.MAIN, if (BuildConfig.DEBUG) BuildType.DEBUG else BuildType.RELEASE)
+        initKoin(AppEdition.MAIN, if (BuildConfig.DEBUG) BuildType.DEBUG else BuildType.RELEASE, BuildConfig.GOOGLE_WEB_CLIENT_ID)
         Locale.setDefault(Locale(SettingsStore.language.value.code)) // background alerts build strings off the UI; mirror the app language so they aren't in the system language
         PhoneSilencer.rescheduleAll() // arm today's remaining prayer windows on cold start
         FocusScheduling.start() // re-arm whenever times or focus settings change

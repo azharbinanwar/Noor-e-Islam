@@ -23,3 +23,6 @@ fun String.fromArabicIndicDigits(): String = map {
 // localized surah-name meaning by number (1-based), from the per-locale surah_meanings array
 @Composable
 fun Int.toSurahMeaning(): String = stringArrayResource(Res.array.surah_meanings)[this - 1]
+
+/** "840 KB" or "2.4 MB" from a size in kilobytes. */
+fun Int.asFileSize(): String = if (this < 1000) "$this KB" else "${(this / 100).let { "${it / 10}.${it % 10}" }} MB"

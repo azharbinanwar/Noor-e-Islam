@@ -41,6 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
+import com.kodeelite.nooreislam.core.backup.BackupScheduler
+import com.kodeelite.nooreislam.core.store.BackupStore
 import com.kodeelite.nooreislam.core.components.AppDrawer
 import com.kodeelite.nooreislam.core.components.AppNotice
 import com.kodeelite.nooreislam.core.components.LocalNotice
@@ -171,6 +173,8 @@ fun AppNavHost(
             // the Quran app has nothing else to navigate to, so the drawer shell (and its menu icon)
             // stays out of the tree entirely rather than being present-but-empty
             // dev-only shortcut into the sandbox: long-press any empty area
+            // an overdue scheduled backup runs now, while the app is awake and no battery manager can hold it
+            LaunchedEffect(Unit) { if (BackupStore.isOverdue()) BackupScheduler.runNow() }
             val devJump = if (!build.isDebug) Modifier else Modifier.pointerInput(Unit) {
                 detectTapGestures(onLongPress = { navController.navigate(AppRoute.Sandbox) })
             }

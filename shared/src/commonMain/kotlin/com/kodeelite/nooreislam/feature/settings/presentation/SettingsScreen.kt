@@ -111,6 +111,7 @@ import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.backup
 import com.kodeelite.nooreislam.resources.google_drive_backup
 import com.kodeelite.nooreislam.resources.backup_last_never
+import com.kodeelite.nooreislam.resources.backup_not_set_up
 import com.kodeelite.nooreislam.resources.prayer_streak
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.search_settings
@@ -152,6 +153,7 @@ fun SettingsScreen(open: String? = null) {
     val tracker = koinInject<TrackerStore>()
     val exemption = koinInject<ExemptionStore>()
     val backupLastAt by BackupStore.lastAt.collectAsState()
+    val backupAccount by BackupStore.account.collectAsState()
     val exemptionOn by exemption.on.collectAsState()
     val runningExemption by exemption.running.collectAsState()
     val streakOn by SettingsStore.streakEnabled.collectAsState()
@@ -367,13 +369,14 @@ fun SettingsScreen(open: String? = null) {
                     )
                 },
             )
-            AppTileGroup(
+            if (Platform.hasBackupSupport) AppTileGroup(
                 title = stringResource(Res.string.backup),
                 items = listOf(
                     AppTileItem(
                         leadingIcon = Lucide.CloudUpload,
                         title = stringResource(Res.string.google_drive_backup),
-                        subtitle = backupLastAt?.let { Now.formattedDateTime(it) } ?: stringResource(Res.string.backup_last_never),
+                        subtitle = if (backupAccount == null) stringResource(Res.string.backup_not_set_up)
+                        else backupLastAt?.let { Now.formattedDateTime(it) } ?: stringResource(Res.string.backup_last_never),
                         onClick = { nav.navigate(AppRoute.Backup) },
                     )
                 ),

@@ -10,7 +10,11 @@ object Platform {
 
     /** iOS's widget is still a stub, so the gallery would offer something that can't be pinned. */
     val hasHomeScreenWidgets: Boolean get() = platformHasHomeScreenWidgets
+
+    /** Cloud backup is wired on Android (Google Drive) only; iOS gets its own route later. */
+    val hasBackupSupport: Boolean get() = platformHasBackupSupport
 }
 
 internal expect val platformCanControlDnd: Boolean
 internal expect val platformHasHomeScreenWidgets: Boolean
+internal expect val platformHasBackupSupport: Boolean

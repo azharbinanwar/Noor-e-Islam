@@ -45,6 +45,12 @@ kotlin {
             implementation(libs.ktorOkHttp)
             implementation(libs.androidx.palette)
             implementation(libs.play.app.update)
+            implementation(libs.play.services.auth)
+            implementation(libs.androidx.work)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.play)
+            implementation(libs.googleid)
+            implementation(libs.kotlinx.coroutines.play.services)
             implementation(libs.play.services.location)
         }
         commonMain.dependencies {

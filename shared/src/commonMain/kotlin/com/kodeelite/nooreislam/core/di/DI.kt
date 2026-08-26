@@ -2,11 +2,14 @@ package com.kodeelite.nooreislam.core.di
 
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
+import com.kodeelite.nooreislam.core.backup.GoogleSignInConfig
 import com.kodeelite.nooreislam.core.constants.AppConst
 import com.kodeelite.nooreislam.core.platform.installImageLoader
 import com.kodeelite.nooreislam.core.location.GeoApi
 import com.kodeelite.nooreislam.core.assets.DownloadService
 import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.feature.backup.data.BackupRepository
+import com.kodeelite.nooreislam.feature.backup.data.DriveClient
 import com.kodeelite.nooreislam.feature.studio.data.StudioCatalogRepository
 import com.kodeelite.nooreislam.core.network.ApiClient
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
@@ -37,6 +40,8 @@ val appModule = module {
     single { LocationRepository(get()) }
     single { DownloadService(get(), get()) }
     single { StudioCatalogRepository(get()) }
+    single { DriveClient(get()) }
+    single { BackupRepository(get()) }
 
     single { QuranStore(get()) }
     single { BookmarksStore(get(), get()) }
@@ -51,9 +56,9 @@ val appModule = module {
 val appModules = listOf(appModule, databaseModule, platformDatabaseModule())
 
 /** Start Koin once per platform entry point. [edition] and [build] are injectable wherever UI needs to branch on them. */
-fun initKoin(edition: AppEdition = AppEdition.MAIN, build: BuildType = BuildType.RELEASE) {
+fun initKoin(edition: AppEdition = AppEdition.MAIN, build: BuildType = BuildType.RELEASE, googleWebClientId: String = "") {
     val koin = startKoin {
-        modules(appModules + module { single { edition }; single { build } })
+        modules(appModules + module { single { edition }; single { build }; single { GoogleSignInConfig(googleWebClientId) } })
     }.koin
     installImageLoader(koin.get())
 }

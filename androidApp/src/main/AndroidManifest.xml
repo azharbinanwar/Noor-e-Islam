@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Notifications: prayer reminders + the pinned Prayer Focus notification. Runtime-requested on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Drive backup runs as a WorkManager foreground job (a quiet progress notification) so the upload is not cut short. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <!-- Prayer Focus: needed to set the ringer to Silent (the Vibrate mode needs nothing). Granted in Settings. -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <!-- Prayer Focus: let the user exempt the app from battery optimization so it keeps working when closed. -->
