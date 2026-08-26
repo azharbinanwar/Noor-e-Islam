@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.core.catalog
 
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellOff
+import com.composables.icons.lucide.CloudUpload
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.CalendarDays
@@ -37,6 +38,7 @@ import com.kodeelite.nooreislam.resources.language
 import com.kodeelite.nooreislam.resources.location
 import com.kodeelite.nooreislam.resources.notifications
 import com.kodeelite.nooreislam.resources.prayer_calculation
+import com.kodeelite.nooreislam.resources.google_drive_backup
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_streak
 import com.kodeelite.nooreislam.resources.prayer_times
@@ -111,6 +113,12 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         editions = MAIN, surfaces = SETTINGS,
         keywords = listOf("silent", "dnd", "do not disturb", "mute", "vibrate", "ringer", "focus", "صامت", "عدم الإزعاج", "كتم", "اهتزاز", "الرنين", "خاموش", "ڈسٹرب نہ کریں", "میوٹ", "ارتعاش", "گھنٹی", "silencieux", "ne pas déranger", "muet", "vibreur", "sonnerie"),
         available = { Platform.canControlDnd },
+    ),
+    AppFeature(
+        Res.string.google_drive_backup, Lucide.CloudUpload, AppRoute.Backup,
+        surfaces = SETTINGS + Surface.Home,
+        keywords = listOf("backup", "restore", "drive", "google", "cloud", "sync", "transfer", "new phone", "نسخ احتياطي", "استعادة", "سحابة", "هاتف جديد", "بیک اپ", "بحال", "کلاؤڈ", "نیا فون", "sauvegarde", "restaurer", "nuage", "nouveau téléphone"),
+        available = { Platform.hasBackupSupport },
     ),
     AppFeature(
         Res.string.widgets, Lucide.LayoutGrid, AppRoute.Widgets,

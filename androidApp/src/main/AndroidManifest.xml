@@ -175,6 +175,12 @@
             android:exported="false" />
 
 
+        <!-- WorkManager's foreground service must carry the type the backup job uses, or Android refuses to start it. -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -39,10 +39,12 @@ object Ringer {
 
     // leaving or entering Silent needs DND access; without it Android throws, and a refused mode must never take the app down
     private fun setMode(mode: Int) {
+        val before = am.ringerMode
         try {
             am.ringerMode = mode
         } catch (e: SecurityException) {
             if (mode == AudioManager.RINGER_MODE_SILENT) runCatching { am.ringerMode = AudioManager.RINGER_MODE_VIBRATE }
         }
+        android.util.Log.i("MiqatFocus", "ringer $before -> wanted $mode, now ${am.ringerMode}")
     }
 }

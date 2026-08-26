@@ -1062,4 +1062,5 @@
     <string name="backing_up">بیک اپ ہو رہا ہے…</string>
     <string name="backup_behind">بیک اپ پیچھے رہ گیا ہے</string>
     <string name="backup_behind_notice">کچھ دنوں سے کوئی بیک اپ مکمل نہیں ہوا۔ ابھی بیک اپ لینے کے لیے ایپ کھولیں۔</string>
+    <string name="notif_focus_body_fallback">%1$s تک وائبریشن۔ خاموش موڈ کے لیے ڈسٹرب نہ کریں کی اجازت چاہیے، اجازت دینے کے لیے ٹیپ کریں۔</string>
 </resources>

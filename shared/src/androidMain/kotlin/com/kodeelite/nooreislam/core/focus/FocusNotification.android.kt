@@ -19,6 +19,7 @@ import com.kodeelite.nooreislam.resources.focus_extend
 import com.kodeelite.nooreislam.resources.focus_prayed
 import com.kodeelite.nooreislam.resources.focus_unmute
 import com.kodeelite.nooreislam.resources.notif_focus_body
+import com.kodeelite.nooreislam.resources.notif_focus_body_fallback
 import com.kodeelite.nooreislam.resources.notif_focus_title
 import com.kodeelite.nooreislam.resources.prayer_focus
 import com.kodeelite.nooreislam.resources.prayer_jumuah
@@ -39,7 +40,7 @@ object FocusNotification {
     private const val CHANNEL = "prayer_focus"
     private const val NOTIF_ID = 4711
 
-    fun show(end: Long, label: String) {
+    fun show(end: Long, label: String, fallback: Boolean = false) {
         val ctx = AppCtx.context
         val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -58,7 +59,7 @@ object FocusNotification {
         val (title, body, unmute, extend, prayed) = runBlocking {
             listOf(
                 getString(Res.string.notif_focus_title, prayerName(label)),
-                getString(Res.string.notif_focus_body, fmt(end, pattern)),
+                getString(if (fallback) Res.string.notif_focus_body_fallback else Res.string.notif_focus_body, fmt(end, pattern)),
                 getString(Res.string.focus_unmute),
                 getString(Res.string.focus_extend),
                 getString(Res.string.focus_prayed),
@@ -66,7 +67,12 @@ object FocusNotification {
         }
         val iconId = ctx.resources.getIdentifier("ic_notification", "drawable", ctx.packageName)
         // button order = add order: +5 min | Prayed | Unmute, so Unmute sits rightmost under the thumb
+        // tapping the body opens the app; the buttons stay broadcasts
+        val open = ctx.packageManager.getLaunchIntentForPackage(ctx.packageName)?.let {
+            PendingIntent.getActivity(ctx, 0, it, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
         val notif = NotificationCompat.Builder(ctx, CHANNEL)
+            .setContentIntent(open)
             .setContentTitle(title)
             .setContentText(body)
             .setSmallIcon(if (iconId != 0) iconId else android.R.drawable.ic_lock_silent_mode)

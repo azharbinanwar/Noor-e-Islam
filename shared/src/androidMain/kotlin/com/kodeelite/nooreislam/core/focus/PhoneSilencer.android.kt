@@ -110,8 +110,10 @@ actual object PhoneSilencer {
         PrefsService.putString(PrefConst.FOCUS_SILENCE_MODE, mode)
         PrefsService.putString(PrefConst.FOCUS_SILENCE_LABEL, label)
         armEndAlarm(endMillis)
-        log("mute -> ${if (Ringer.mute(mode)) "SILENT" else "VIBRATE"} until ${(endMillis - System.currentTimeMillis()) / 1000}s")
-        FocusNotification.show(endMillis, label)
+        val silent = Ringer.mute(mode)
+        log("mute -> ${if (silent) "SILENT" else "VIBRATE"} until ${(endMillis - System.currentTimeMillis()) / 1000}s")
+        // she asked for Silent and got Vibrate: say so on the notification instead of pretending
+        FocusNotification.show(endMillis, label, fallback = mode == SilenceMode.Silent.name && !silent)
     }
 
     actual fun silenceFor(durationMillis: Long) {

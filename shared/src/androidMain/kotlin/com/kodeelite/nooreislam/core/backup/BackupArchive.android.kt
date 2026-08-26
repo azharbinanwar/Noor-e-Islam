@@ -79,6 +79,7 @@ actual object BackupArchive {
         val manifest = entries[MANIFEST]?.let { runCatching { json.decodeFromString<Manifest>(it.decodeToString()) }.getOrNull() }
             ?: throw BackupFormatException("not a Noor backup")
         if (manifest.dbVersion > AppConst.DB_VERSION) throw BackupFormatException("made by a newer version of the app")
+        if (manifest.app.removeSuffix(".dev") != ctx.packageName.removeSuffix(".dev")) throw BackupFormatException("made by a different app")
 
         // close Room before swapping the files under it; the restart reopens it
         runCatching { GlobalContext.getOrNull()?.get<AppDatabase>()?.close() }

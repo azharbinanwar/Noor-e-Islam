@@ -256,6 +256,7 @@
     <string name="silence_mode">Silence mode</string>
     <string name="notif_focus_title">Time for %1$s</string>
     <string name="notif_focus_body">Silent until %1$s, be present in your prayer</string>
+    <string name="notif_focus_body_fallback">Vibrating until %1$s. Silent needs Do Not Disturb access, tap to allow it.</string>
     <string name="focus_unmute">Unmute now</string>
     <string name="focus_extend">+5 min</string>
     <string name="focus_prayed">Prayed</string>

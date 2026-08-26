@@ -41,7 +41,7 @@ val appModule = module {
     single { DownloadService(get(), get()) }
     single { StudioCatalogRepository(get()) }
     single { DriveClient(get()) }
-    single { BackupRepository(get()) }
+    single { BackupRepository(get(), get(), get()) }
 
     single { QuranStore(get()) }
     single { BookmarksStore(get(), get()) }

@@ -1,7 +1,9 @@
 package com.kodeelite.nooreislam.feature.backup.data
 
 import com.kodeelite.nooreislam.core.backup.BackupArchive
-import com.kodeelite.nooreislam.core.constants.AppConst
+import com.kodeelite.nooreislam.core.AppEdition
+import com.kodeelite.nooreislam.core.BuildType
+import com.kodeelite.nooreislam.core.backup.backupFileName
 import com.kodeelite.nooreislam.core.backup.BackupFormatException
 import com.kodeelite.nooreislam.core.backup.GoogleSignIn
 import com.kodeelite.nooreislam.core.backup.GoogleSignInException
@@ -17,7 +19,9 @@ import kotlinx.datetime.Instant
  * the screen because it needs the Activity; everything else here is plain. Progress and results go to
  * [BackupStore], which the screen watches.
  */
-class BackupRepository(private val drive: DriveClient) {
+class BackupRepository(private val drive: DriveClient, edition: AppEdition, build: BuildType) {
+
+    private val fileName = backupFileName(edition, build)
 
     sealed interface Connect {
         data object Connected : Connect
@@ -65,7 +69,7 @@ class BackupRepository(private val drive: DriveClient) {
     suspend fun checkRemote(signIn: GoogleSignIn): BackupStore.RemoteBackup? {
         val token = signIn.driveToken() ?: return BackupStore.remote.value
         val file = try {
-            drive.find(token, AppConst.BACKUP_FILE_NAME)
+            drive.find(token, fileName)
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -90,7 +94,7 @@ class BackupRepository(private val drive: DriveClient) {
         return try {
             val token = signIn.driveToken() ?: return Outcome.NoToken
             val file = BackupArchive.create()
-            drive.upload(token, AppConst.BACKUP_FILE_NAME, file.bytes) { BackupStore.setBusy(Busy.BackingUp(it)) }
+            drive.upload(token, fileName, file.bytes) { BackupStore.setBusy(Busy.BackingUp(it)) }
             BackupStore.recordBackup(Now.epochMillis(), file.sizeKb)
             BackupStore.setRemote(BackupStore.RemoteBackup(Now.epochMillis(), file.sizeKb))
             Outcome.Done
@@ -107,7 +111,7 @@ class BackupRepository(private val drive: DriveClient) {
         BackupStore.setBusy(Busy.Deleting)
         return try {
             val token = signIn.driveToken() ?: return Outcome.NoToken
-            val file = drive.find(token, AppConst.BACKUP_FILE_NAME) ?: return Outcome.NothingToRestore
+            val file = drive.find(token, fileName) ?: return Outcome.NothingToRestore
             drive.delete(token, file.id)
             BackupStore.clearLast()
             Outcome.Done
@@ -124,7 +128,7 @@ class BackupRepository(private val drive: DriveClient) {
         BackupStore.setBusy(Busy.Restoring(0f))
         return try {
             val token = signIn.driveToken() ?: return Outcome.NoToken
-            val file = drive.find(token, AppConst.BACKUP_FILE_NAME) ?: return Outcome.NothingToRestore
+            val file = drive.find(token, fileName) ?: return Outcome.NothingToRestore
             val bytes = drive.download(token, file.id) { BackupStore.setBusy(Busy.Restoring(it)) }
             BackupArchive.restore(bytes)
             restartApp()
