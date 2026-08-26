@@ -32,7 +32,7 @@ object HomeShortcutStore {
     /** Replaces the row wholesale; anything outside [MIN]..[MAX] is refused, so the row can never go blank. */
     fun set(routes: List<AppRoute>) {
         val next = routes.distinct()
-        if (next.size !in MIN..MAX) return
+        if (next.size > MAX || next.isEmpty()) return // fewer than MIN is allowed when a build hid some; the picker enforces MIN on its own list
         PrefsService.putString(PrefConst.HOME_SHORTCUTS, Json.encodeToString(serializer, next))
         _pinned.value = next
     }

@@ -56,9 +56,11 @@ import org.koin.compose.koinInject
 @Composable
 fun ShortcutPickerSheet(onDismiss: () -> Unit) {
     val c = AppTheme.colors
-    var pinned by remember { mutableStateOf(HomeShortcutStore.pinned.value) }
     val edition = koinInject<AppEdition>()
     val debug = koinInject<BuildType>().isDebug
+    // a shortcut this build cannot offer (a dev-only screen pinned in debug) must not hold a slot here
+    val offered = remember(edition, debug) { featuresOn(Surface.Home, edition, debug).map { it.target }.toSet() }
+    var pinned by remember { mutableStateOf(HomeShortcutStore.pinned.value.filter { it in offered }) }
     var query by remember { mutableStateOf("") }
 
     val shown by produceState(emptyList<Pair<AppFeature, String>>(), query, edition, debug) {

@@ -23,6 +23,7 @@ Newest first. Dates are the release date, not the merge date.
 
 ### Added
 
+- `[both]` Google Drive backup can be found from Settings search and pinned as a home shortcut. A shortcut that only exists in development builds no longer holds a slot in the release app.
 - `[both]` **Android.** Google Drive backup. Link a Google account from Settings and the app keeps one copy of your prayer tracker, bookmarks, notes, highlights, collections and settings in a private Drive folder only the app can see. Back up now, or let it run daily or weekly at a time you pick, over Wi‑Fi only if you prefer. On a new phone, linking the same account finds the backup and offers to restore it; restore replaces what is on the phone and restarts the app. The account sheet can switch accounts or delete the Drive copy. Runs as a quiet background job that shows a silent progress notification and tells you only when something needs a hand.
 - `[both]` Studio backgrounds now come from our own server instead of shipping inside the app. The picker shows instant tiny previews with each photo's matched colors; tap the download icon and a progress ring fetches the full image once, into the app's own storage where gallery cleanups cannot touch it. Everything picked or defaulted works fully offline afterwards.
 - `[both]` Each background that is not yet on the device shows its size on the download pill, so a 3 MB photo is a choice, not a surprise. View all opens a two-wide grid of larger tiles, big enough to actually judge a photo before fetching it.
