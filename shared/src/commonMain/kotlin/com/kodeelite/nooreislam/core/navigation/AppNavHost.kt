@@ -49,6 +49,7 @@ import com.kodeelite.nooreislam.core.components.LocalDrawerState
 import com.kodeelite.nooreislam.core.components.LocalOverlay
 import com.kodeelite.nooreislam.core.components.OverlayState
 import com.kodeelite.nooreislam.feature.azkar.presentation.AzkarScreen
+import com.kodeelite.nooreislam.feature.backup.presentation.BackupScreen
 import com.kodeelite.nooreislam.feature.focus.presentation.FocusScreen
 import com.kodeelite.nooreislam.feature.home.presentation.HomeScreen
 import com.kodeelite.nooreislam.feature.home.presentation.SkyLabScreen
@@ -161,6 +162,7 @@ fun AppNavHost(
                         if (edition == AppEdition.QURAN) QuranNotificationsScreen() else NotificationsScreen()
                     }
                     composable<AppRoute.Focus> { FocusScreen() }
+                    composable<AppRoute.Backup> { BackupScreen() }
                     composable<AppRoute.Sandbox> { SandboxScreen() }
                     composable<AppRoute.TrackerLab> { if (build.isDebug) TrackerLabScreen() else HomeScreen() }
                     composable<AppRoute.SkyLab> { if (build.isDebug) SkyLabScreen() else HomeScreen() }

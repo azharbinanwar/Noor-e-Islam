@@ -114,6 +114,15 @@ object PrefConst {
     const val STUDIO_IMAGES = "studio.images"
 
     // common field names for the per-prayer helpers
+    const val BACKUP_ACCOUNT = "backup_account"         // Google account email the Drive backup belongs to
+    const val BACKUP_LAST_AT = "backup_last_at"         // epoch millis (string) of the last successful backup
+    const val BACKUP_LAST_SIZE_KB = "backup_last_size_kb"
+    const val BACKUP_FREQUENCY = "backup_frequency"     // BackupFrequency name
+    const val BACKUP_NETWORK = "backup_network"         // BackupNetwork name
+    const val BACKUP_HOUR = "backup_hour"               // auto backup time of day
+    const val BACKUP_MINUTE = "backup_minute"
+    const val BACKUP_WEEKDAY = "backup_weekday"         // DayOfWeek name, weekly only
+
     object Field {
         const val ENABLED = "enabled"
         const val REMIND_BEFORE_ON = "remind_before_on"

@@ -89,6 +89,10 @@ sealed interface AppRoute {
     data object Focus : AppRoute
 
     @Serializable
+    @SerialName("Backup")
+    data object Backup : AppRoute
+
+    @Serializable
     @SerialName("Sandbox")
     data object Sandbox : AppRoute
 

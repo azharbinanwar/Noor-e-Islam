@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
+import com.composables.icons.lucide.CloudUpload
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Calendar
@@ -74,6 +75,7 @@ import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.platform.appVersion
 import com.kodeelite.nooreislam.core.store.LocationStore
+import com.kodeelite.nooreislam.core.store.BackupStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore
@@ -106,6 +108,9 @@ import com.kodeelite.nooreislam.resources.prayer_and_alerts
 import com.kodeelite.nooreislam.resources.prayer_calculation
 import com.kodeelite.nooreislam.resources.prayer_exemption
 import com.kodeelite.nooreislam.resources.prayer_focus
+import com.kodeelite.nooreislam.resources.backup
+import com.kodeelite.nooreislam.resources.google_drive_backup
+import com.kodeelite.nooreislam.resources.backup_last_never
 import com.kodeelite.nooreislam.resources.prayer_streak
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.search_settings
@@ -146,6 +151,7 @@ fun SettingsScreen(open: String? = null) {
     var askingStreakOff by remember { mutableStateOf(false) }
     val tracker = koinInject<TrackerStore>()
     val exemption = koinInject<ExemptionStore>()
+    val backupLastAt by BackupStore.lastAt.collectAsState()
     val exemptionOn by exemption.on.collectAsState()
     val runningExemption by exemption.running.collectAsState()
     val streakOn by SettingsStore.streakEnabled.collectAsState()
@@ -360,6 +366,17 @@ fun SettingsScreen(open: String? = null) {
                         )
                     )
                 },
+            )
+            AppTileGroup(
+                title = stringResource(Res.string.backup),
+                items = listOf(
+                    AppTileItem(
+                        leadingIcon = Lucide.CloudUpload,
+                        title = stringResource(Res.string.google_drive_backup),
+                        subtitle = backupLastAt?.let { Now.formattedDateTime(it) } ?: stringResource(Res.string.backup_last_never),
+                        onClick = { nav.navigate(AppRoute.Backup) },
+                    )
+                ),
             )
             AppTileGroup(
                 modifier = anchored(Anchor.ABOUT_GROUP),
