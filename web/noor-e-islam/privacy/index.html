@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Noor e Islam</title>
+<meta name="description" content="Privacy policy for the Noor e Islam app. No account, no analytics; your location is used on the device for prayer times and is not stored by us.">
+<style>
+  /* Palette lifted from AppColors.kt so the page matches the app exactly. */
+  :root {
+    --bg: #F8F9FA;
+    --card: #F3F4F5;
+    --ink: #191C1D;
+    --ink-muted: #404944;
+    --outline: #707974;
+    --primary: #1E7D55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111415;
+      --card: #191C1D;
+      --ink: #E1E3E4;
+      --ink-muted: #BFC9C3;
+      --outline: #89938D;
+      --primary: #95D3BA;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 680px; margin: 0 auto; padding: 40px 16px 72px; }
+
+  /* plain header, background from theme — same as the app's app bars */
+  header { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--primary); margin-bottom: 8px;
+  }
+  h1 { font-size: 27px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .updated { font-size: 13px; color: var(--ink-muted); margin: 0; opacity: 0.85; }
+
+  /* section titles: primary, bold, small — the AppTileGroup header treatment */
+  h2 {
+    font-size: 14px; font-weight: 700; color: var(--primary);
+    margin: 30px 0 8px; padding-left: 4px;
+  }
+
+  /* borderless, theme-filled, 16px radius — the AppTile look */
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 8px;
+  }
+  .card > :last-child { margin-bottom: 0; }
+
+  p { margin: 0 0 12px; color: var(--ink-muted); font-size: 15px; }
+  p.lead { color: var(--ink); font-size: 15.5px; }
+  strong { color: var(--ink); font-weight: 600; }
+
+  ul { margin: 0 0 12px; padding-left: 20px; color: var(--ink-muted); font-size: 15px; }
+  li { margin-bottom: 6px; }
+  li:last-child { margin-bottom: 0; }
+
+  /* permission rows echo the app's tile list: divided, not boxed */
+  .perm { padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--outline) 25%, transparent); }
+  .perm:first-child { padding-top: 0; }
+  .perm:last-child { border-bottom: none; padding-bottom: 0; }
+  .perm-name { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .perm-why { font-size: 14px; color: var(--ink-muted); margin: 0; }
+
+  a { color: var(--primary); }
+
+  footer {
+    margin-top: 36px; padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--outline) 25%, transparent);
+    font-size: 13px; color: var(--ink-muted); opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Noor e Islam</div>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: 26 August 2026</p>
+  </header>
+
+  <div class="card">
+    <p class="lead" style="margin:0"><strong>Noor e Islam does not collect personal data.</strong> There is no account to create and no analytics. Your location is used on your device to work out prayer times and the qibla; the one thing sent to our server is a coordinate, to name your city, and it is not kept.</p>
+  </div>
+
+  <h2>Information we collect</h2>
+  <div class="card">
+    <p>We do not collect your name, email address, phone number, contacts, or any identifier that could be used to recognise you. The app has no sign-in, no user profile, and no analytics or crash-reporting services.</p>
+  </div>
+
+  <h2>Location</h2>
+  <div class="card">
+    <p>Prayer times and the qibla direction depend on where you are. The app uses your device's location, or a city you pick by hand, to calculate them on the device itself.</p>
+    <p>To show a city name, the app sends the coordinate to our own server, which answers with the nearest place name. When you search for a city, the text you type is sent the same way. Neither request carries anything that identifies you, and we do not store the coordinates or searches.</p>
+    <p style="margin:0">If you decline location access, you can choose a city yourself and everything works the same.</p>
+  </div>
+
+  <h2>What is stored on your device</h2>
+  <div class="card">
+    <p>The app saves your data locally so it is there when you return. It stays in the app's private storage and is never transmitted to us or anyone else:</p>
+    <ul>
+      <li>Your chosen city, calculation method and madhab</li>
+      <li>Prayer tracker history, streaks, and any exemption you record</li>
+      <li>Bookmarks, notes, highlights and collections in the Quran reader</li>
+      <li>Preferences such as theme, language, text size, reminders and Prayer Focus settings</li>
+      <li>Background images you download for Studio</li>
+    </ul>
+    <p>Uninstalling the app removes all of it. Because nothing is stored on a server, it cannot be recovered afterwards.</p>
+  </div>
+
+  <h2>Permissions</h2>
+  <div class="card">
+    <div class="perm">
+      <div class="perm-name">Location</div>
+      <p class="perm-why">To calculate prayer times and the qibla for where you are, and to name your city. Used only while you use the app.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Notifications</div>
+      <p class="perm-why">To show the prayer, dhikr and reading reminders you switch on. Reminders stay off until you enable them.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Alarms &amp; reminders</div>
+      <p class="perm-why">So a reminder arrives at the time of the prayer, rather than whenever the system next wakes the app.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Do Not Disturb access</div>
+      <p class="perm-why">Only if you turn on Prayer Focus with the Silent option, so the phone can be silenced during a prayer window and restored afterwards. Nothing is read from your notifications.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Run in the background (foreground service)</div>
+      <p class="perm-why">While Prayer Focus is active, a small ongoing notification keeps the app alive so it can restore your sound settings when the prayer window ends. It stops as soon as the window closes.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Ignore battery optimisation</div>
+      <p class="perm-why">Optional. Some phones stop background apps aggressively, which silently drops reminders; the app offers this setting only if you want reminders to be reliable, and works without it.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Run at startup</div>
+      <p class="perm-why">To restore your scheduled reminders after the device restarts, which would otherwise clear them.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Add to photos</div>
+      <p class="perm-why">Only to save an ayah image you create in Studio to your gallery. The app can add pictures; it cannot read or browse the ones already there.</p>
+    </div>
+    <div class="perm">
+      <div class="perm-name">Internet</div>
+      <p class="perm-why">To name your city, to search for one, and to fetch Studio backgrounds from our server. Nothing else goes online.</p>
+    </div>
+  </div>
+  <div class="card">
+    <p style="margin:0">Reminders and prayer times are generated entirely on your device. No reminder, and nothing about which prayers you track, is sent anywhere.</p>
+  </div>
+
+  <h2>Studio backgrounds</h2>
+  <div class="card">
+    <p style="margin:0">Studio's background photos are downloaded from our server when you choose them, like any web image. The request carries no identifier beyond what every internet connection carries. Images you create are made on your device and saved to your gallery or passed to the app you share with; we never receive a copy.</p>
+  </div>
+
+  <h2>Third parties</h2>
+  <div class="card">
+    <p style="margin:0">The app contains no advertising, no analytics, no tracking software, and no third-party accounts or services. The only server it talks to is ours. Nothing is shared or sold.</p>
+  </div>
+
+  <h2>Children</h2>
+  <div class="card">
+    <p style="margin:0">The app is suitable for all ages and collects no personal data from anyone, including children under 13.</p>
+  </div>
+
+  <h2>Changes to this policy</h2>
+  <div class="card">
+    <p style="margin:0">If the app ever gains a feature that changes how data is handled, this page will be updated and the date at the top revised before that feature is released.</p>
+  </div>
+
+  <h2>Contact</h2>
+  <div class="card">
+    <p style="margin:0">Questions about this policy or the app are welcome at <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>.</p>
+  </div>
+
+  <footer>Noor e Islam is developed by KodeElite.</footer>
+
+</div>
+</body>
+</html>

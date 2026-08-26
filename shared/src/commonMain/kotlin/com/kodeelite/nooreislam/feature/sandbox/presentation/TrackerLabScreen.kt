@@ -48,6 +48,8 @@ import com.kodeelite.nooreislam.core.enums.colorOf
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerRepository
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
 import com.kodeelite.nooreislam.feature.tracker.domain.resumePoint
@@ -135,6 +137,24 @@ fun TrackerLabScreen() {
                     modifier = Modifier.weight(1f),
                 )
             }
+
+            AppButton(
+                "Seed 110 days",
+                onClick = {
+                    scope.launch {
+                        // a long, believable streak for store shots: mostly on time, a jamaat here and there
+                        for (back in 1..110) {
+                            val d = today.minus(back, DateTimeUnit.DAY)
+                            Miqat.PRAYERS.forEachIndexed { i, p ->
+                                repo.setStatus(d, p, if ((back + i) % 6 == 0) PrayerTrackerStatus.PrayedWithJamaat else PrayerTrackerStatus.PrayedOnTime)
+                            }
+                        }
+                        repo.setStatus(today, Miqat.PRAYERS.first(), PrayerTrackerStatus.PrayedOnTime)
+                    }
+                },
+                variant = AppButtonVariant.Outline,
+                modifier = Modifier.fillMaxWidth(),
+            )
 
             AppButton(
                 "Wipe prayers and exemptions",
