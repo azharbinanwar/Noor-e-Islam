@@ -47,7 +47,7 @@ actual object LocalNotifier {
         val tz = TimeZone.currentSystemDefault()
         val at = LocalDateTime(
             currentDate().plus(1, DateTimeUnit.DAY),
-            LocalTime(NotificationDefaults.Scheduler.dailyRebuildHour, NotificationDefaults.Scheduler.dailyRebuildMinute)
+            LocalTime(NotificationDefaults.Scheduler.DAILY_REBUILD_HOUR, NotificationDefaults.Scheduler.DAILY_REBUILD_MINUTE)
         ).toInstant(tz).toEpochMilliseconds()
         setIdle(am, at, PendingIntent.getBroadcast(ctx, DAILY_CODE, Intent(ctx, NotificationRebuildReceiver::class.java), FLAGS))
     }

@@ -12,75 +12,77 @@ import kotlinx.datetime.DayOfWeek
 object NotificationDefaults {
 
     /** Master switch for every reminder. */
-    const val allAlerts = false              // off out of the box — user opts in
+    const val ALL_ALERTS = false              // off out of the box — user opts in
 
     /** Per-prayer alert. Same defaults for all five daily prayers. */
     object Prayer {
-        const val enabled = false            // prayer alert off until the user turns it on
-        const val remindBeforeOn = false     // off out of the box — user opts in
-        const val remindBefore = 20          // minutes before the prayer to nudge
-        const val remindBeforeMin = 5        // lowest the "remind before" stepper allows
-        const val remindBeforeMax = 60       // highest the "remind before" stepper allows
-        const val atTime = false             // off out of the box — user opts in
-        const val jamaat = false             // second reminder for the congregation time
-        const val jamaatAfter = 10           // minutes after the start for jamaat
-        const val jamaatAfterMin = 5         // lowest jamaat offset
-        const val jamaatAfterMax = 150        // highest jamaat offset
-        const val step = 1                   // stepper jump per tap (minutes); long-press accelerates
+        const val ENABLED = false            // prayer alert off until the user turns it on
+        const val REMIND_BEFORE_ON = false     // off out of the box — user opts in
+        const val REMIND_BEFORE = 20          // minutes before the prayer to nudge
+        const val REMIND_BEFORE_MIN = 5        // lowest the "remind before" stepper allows
+        const val REMIND_BEFORE_MAX = 60       // highest the "remind before" stepper allows
+        const val AT_TIME = false             // off out of the box — user opts in
+        const val JAMAAT = false             // second reminder for the congregation time
+        const val JAMAAT_AFTER = 10           // minutes after the start for JAMAAT
+        const val JAMAAT_AFTER_MIN = 5         // lowest JAMAAT offset
+        const val JAMAAT_AFTER_MAX = 150        // highest JAMAAT offset
+        const val STEP = 1                   // stepper jump per tap (minutes); long-press accelerates
     }
 
     /** Friday Jumu'ah. */
     object Jumuah {
-        const val enabled = false            // Jumu'ah alert off by default
-        const val remindBeforeOn = false     // off out of the box — user opts in
-        const val remindBefore = 30          // minutes before Jumu'ah to nudge
-        const val remindBeforeMin = 15       // lowest "remind before"
-        const val remindBeforeMax = 120      // highest "remind before"
-        const val jamaat = false             // off out of the box — user opts in
-        const val jamaatAfter = 45           // minutes after Dhuhr start for Jumu'ah (~45min, Hanafi ~1h after)
-        const val jamaatAfterMin = 5         // lowest jamaat offset
-        const val jamaatAfterMax = 150       // highest jamaat offset (Dhuhr start + 2.5h headroom)
-        const val step = 1                   // stepper jump per tap (minutes); long-press accelerates
+        const val ENABLED = false            // Jumu'ah alert off by default
+        const val REMIND_BEFORE_ON = false     // off out of the box — user opts in
+        const val REMIND_BEFORE = 30          // minutes before Jumu'ah to nudge
+        const val REMIND_BEFORE_MIN = 15       // lowest "remind before"
+        const val REMIND_BEFORE_MAX = 120      // highest "remind before"
+        const val JAMAAT = false             // off out of the box — user opts in
+        const val JAMAAT_AFTER = 45           // minutes after Dhuhr start for Jumu'ah (~45min, Hanafi ~1h after)
+        const val JAMAAT_AFTER_MIN = 5         // lowest JAMAAT offset
+        const val JAMAAT_AFTER_MAX = 150       // highest JAMAAT offset (Dhuhr start + 2.5h headroom)
+        const val STEP = 1                   // stepper jump per tap (minutes); long-press accelerates
     }
 
     /** Surah Al-Mulk, nightly after Isha. */
     object Mulk {
-        const val enabled = false            // off out of the box — user opts in
-        const val afterIsha = 30             // minutes after Isha to remind
-        const val afterIshaMin = 5           // lowest offset
-        const val afterIshaMax = 150         // highest offset
-        const val step = 1                   // stepper jump per tap (minutes); long-press accelerates
+        const val ENABLED = false            // off out of the box — user opts in
+        const val AFTER_ISHA = 30             // minutes after Isha to remind
+        const val AFTER_ISHA_MIN = 5           // lowest offset
+        const val AFTER_ISHA_MAX = 150         // highest offset
+        const val STEP = 1                   // stepper jump per tap (minutes); long-press accelerates
     }
 
     /** Surah Al-Kahf, Friday at a chosen clock time. */
     object Kahf {
-        const val enabled = false            // off out of the box — user opts in
-        const val hour = 10                  // default reminder hour (24h)
-        const val minute = 0                 // default reminder minute
+        const val ENABLED = false            // off out of the box — user opts in
+        const val HOUR = 10                  // default reminder HOUR (24h)
+        const val MINUTE = 0                 // default reminder MINUTE
     }
 
     /** Daily reading reminder, at a chosen clock time every day. */
     object DailyReading {
-        const val enabled = false            // off out of the box — user opts in
-        const val hour = 5                    // default reminder hour (24h) — morning, not evening
-        const val minute = 0                 // default reminder minute
+        const val ENABLED = false            // off out of the box — user opts in
+        const val HOUR = 5                    // default reminder HOUR (24h) — morning, not evening
+        const val MINUTE = 0                 // default reminder MINUTE
     }
 
     /** Morning and evening adhkar, offset after Fajr / Asr. */
     object Dhikr {
-        const val morningEnabled = false     // off out of the box — user opts in
-        const val afterFajr = 20             // minutes after Fajr for morning adhkar
-        const val eveningEnabled = false     // off out of the box — user opts in
-        const val afterAsr = 15              // minutes after Asr for evening adhkar
-        const val offsetMin = 0              // lowest offset for either
-        const val offsetMax = 60             // highest offset for either
-        const val step = 1                   // stepper jump per tap (minutes); long-press accelerates
+        const val MORNING_ENABLED = false     // off out of the box — user opts in
+        // Fajr's start, not its JAMAAT: with JAMAAT often 45 minutes in, a smaller offset lands mid-prayer
+        const val AFTER_FAJR = 40             // minutes after Fajr for morning adhkar
+        const val EVENING_ENABLED = false     // off out of the box — user opts in
+        const val AFTER_ASR = 15              // minutes after Asr for evening adhkar
+        const val OFFSET_MIN = 0              // lowest offset for either
+        const val MORNING_OFFSET_MAX = 80      // far enough past a late JAMAAT to still be morning
+        const val OFFSET_MAX = 60             // highest offset for evening
+        const val STEP = 1                   // stepper jump per tap (minutes); long-press accelerates
     }
 
     /** Nafil prayers. */
     object Nafil {
-        const val tahajjud = false           // Tahajjud reminder off by default
-        const val ishraq = false             // Ishraq reminder off by default
+        const val TAHAJJUD = false           // Tahajjud reminder off by default
+        const val ISHRAQ = false             // Ishraq reminder off by default
     }
 
     /**
@@ -118,7 +120,7 @@ object NotificationDefaults {
             seed(19, EVERY_DAY, 10, 30),
             seed(12, EVERY_DAY, 20, 30),
 
-            // test rig, kept for the next round: 24 reminders, one per hour, pre-enabled so a
+            // test rig, kept for the next round: 24 reminders, one per HOUR, pre-ENABLED so a
             // fresh install starts firing without touching the switches. Swap with the block above.
 //            seed(1, EVERY_DAY, 0, 0).copy(enabled = true),
 //            seed(67, EVERY_DAY, 1, 0).copy(enabled = true),
@@ -146,16 +148,16 @@ object NotificationDefaults {
 //            seed(95, EVERY_DAY, 23, 0).copy(enabled = true),
         )
 
-        // id and createdAt are assigned on insert; enabled and isSeed are the same for every row.
+        // id and createdAt are assigned on insert; ENABLED and isSeed are the same for every row.
         // title is set only where the surah name alone wouldn't say what the reading is
-        private fun seed(surah: Int, days: Int, hour: Int, minute: Int, ayah: Int? = null, title: String = "") =
+        private fun seed(surah: Int, days: Int, HOUR: Int, MINUTE: Int, ayah: Int? = null, title: String = "") =
             SurahReminder(
                 surah = surah,
                 ayah = ayah,
                 title = title,
                 days = days,
-                hour = hour,
-                minute = minute,
+                hour = HOUR,
+                minute = MINUTE,
                 enabled = false,
                 isSeed = true,
                 createdAt = 0,
@@ -164,9 +166,9 @@ object NotificationDefaults {
 
     /** Scheduler knobs (engine, not user settings). Change to test. */
     object Scheduler {
-        const val budget = 55           // slots to book; iOS caps at 64, leave 1 buffer
-        const val horizonDays = 30      // how far ahead to expand events
-        const val dailyRebuildHour = 0
-        const val dailyRebuildMinute = 5
+        const val BUDGET = 55           // slots to book; iOS caps at 64, leave 1 buffer
+        const val HORIZON_DAYS = 30      // how far ahead to expand events
+        const val DAILY_REBUILD_HOUR = 0
+        const val DAILY_REBUILD_MINUTE = 5
     }
 }

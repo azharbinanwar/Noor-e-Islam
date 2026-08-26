@@ -95,7 +95,7 @@ object NotificationScheduler {
         val now = LocalDateTime(today, currentTime()).toInstant(tz).toEpochMilliseconds()
         NotificationTestStore.prunePast(now)
         // Master gate: when All alerts is off, no real alerts are scheduled (test slots still fire — dev tool).
-        val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
+        val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.HORIZON_DAYS).flatMap { d ->
             val date = today.plus(d, DateTimeUnit.DAY)
             // an exempt day drops what an exemption lifts and keeps the rest, so dhikr and
             // recitation carry on. The days past it are already booked with the OS and resume
@@ -107,7 +107,7 @@ object NotificationScheduler {
         val test = NotificationTestStore.items.value.map {
             NotificationEvent("test:${it.id}", "test", NotificationType.TEST, it.fireAtMillis)
         }
-        return (real + test).filter { it.fireAtMillis > now }.sortedBy { it.fireAtMillis }.take(NotificationDefaults.Scheduler.budget)
+        return (real + test).filter { it.fireAtMillis > now }.sortedBy { it.fireAtMillis }.take(NotificationDefaults.Scheduler.BUDGET)
     }
 
     private fun eventsFor(date: LocalDate, times: List<MiqatTime>, s: NotificationSettings, tz: TimeZone): List<NotificationEvent> = buildList {

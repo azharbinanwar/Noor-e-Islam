@@ -57,7 +57,6 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.components.MiniStepper
-import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.TimeFormat
@@ -110,11 +109,12 @@ import com.kodeelite.nooreislam.resources.surah_al_kahf
 import com.kodeelite.nooreislam.resources.surah_al_mulk
 import com.kodeelite.nooreislam.resources.tahajjud
 import com.kodeelite.nooreislam.resources.verse_of_the_day
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalTime
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
+import kotlin.time.Duration.Companion.milliseconds
+import com.kodeelite.nooreislam.core.constants.defaults.NotificationDefaults as N
 
 // the options button grows in from the switch rather than popping the row wider
 private val optionsEnter = fadeIn() + expandHorizontally()
@@ -517,9 +517,9 @@ fun NotificationsScreen() {
                                         j.remindBefore,
                                         min,
                                         { NotificationStore.setJumuahRemindBefore(it) },
-                                        N.Jumuah.remindBeforeMin,
-                                        N.Jumuah.remindBeforeMax,
-                                        N.Jumuah.step
+                                        N.Jumuah.REMIND_BEFORE_MIN,
+                                        N.Jumuah.REMIND_BEFORE_MAX,
+                                        N.Jumuah.STEP
                                     )
                                 })
                         )
@@ -536,9 +536,9 @@ fun NotificationsScreen() {
                                         j.jamaatAfter,
                                         min,
                                         { NotificationStore.setJumuahJamaatAfter(it) },
-                                        N.Jumuah.jamaatAfterMin,
-                                        N.Jumuah.jamaatAfterMax,
-                                        N.Jumuah.step
+                                        N.Jumuah.JAMAAT_AFTER_MIN,
+                                        N.Jumuah.JAMAAT_AFTER_MAX,
+                                        N.Jumuah.STEP
                                     )
                                 })
                         )
@@ -563,9 +563,9 @@ fun NotificationsScreen() {
                                         mk.afterIsha,
                                         min,
                                         NotificationStore::setMulkAfter,
-                                        N.Mulk.afterIshaMin,
-                                        N.Mulk.afterIshaMax,
-                                        N.Mulk.step
+                                        N.Mulk.AFTER_ISHA_MIN,
+                                        N.Mulk.AFTER_ISHA_MAX,
+                                        N.Mulk.STEP
                                     )
                                 })
                         )
@@ -590,9 +590,9 @@ fun NotificationsScreen() {
                                         d.afterFajr,
                                         min,
                                         NotificationStore::setMorningAfter,
-                                        N.Dhikr.offsetMin,
-                                        N.Dhikr.offsetMax,
-                                        N.Dhikr.step
+                                        N.Dhikr.OFFSET_MIN,
+                                        N.Dhikr.MORNING_OFFSET_MAX,
+                                        N.Dhikr.STEP
                                     )
                                 })
                         )
@@ -617,9 +617,9 @@ fun NotificationsScreen() {
                                         d.afterAsr,
                                         min,
                                         NotificationStore::setEveningAfter,
-                                        N.Dhikr.offsetMin,
-                                        N.Dhikr.offsetMax,
-                                        N.Dhikr.step
+                                        N.Dhikr.OFFSET_MIN,
+                                        N.Dhikr.OFFSET_MAX,
+                                        N.Dhikr.STEP
                                     )
                                 })
                         )
@@ -659,9 +659,9 @@ fun NotificationsScreen() {
                                         cfg.remindBefore,
                                         min,
                                         { NotificationStore.setPrayerRemindBefore(key, it) },
-                                        N.Prayer.remindBeforeMin,
-                                        N.Prayer.remindBeforeMax,
-                                        N.Prayer.step
+                                        N.Prayer.REMIND_BEFORE_MIN,
+                                        N.Prayer.REMIND_BEFORE_MAX,
+                                        N.Prayer.STEP
                                     )
                                 })
                         )
@@ -678,9 +678,9 @@ fun NotificationsScreen() {
                                         cfg.jamaatAfter,
                                         min,
                                         { NotificationStore.setPrayerJamaatAfter(key, it) },
-                                        N.Prayer.jamaatAfterMin,
-                                        N.Prayer.jamaatAfterMax,
-                                        N.Prayer.step
+                                        N.Prayer.JAMAAT_AFTER_MIN,
+                                        N.Prayer.JAMAAT_AFTER_MAX,
+                                        N.Prayer.STEP
                                     )
                                 })
                         )

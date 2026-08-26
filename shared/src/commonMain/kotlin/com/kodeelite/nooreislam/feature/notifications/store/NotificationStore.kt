@@ -47,48 +47,48 @@ object NotificationStore {
 
     // ── load ─────────────────────────────────────────────────
     private fun load() = NotificationSettings(
-        allAlerts = PrefsService.getBoolean(PrefConst.ALL_ALERTS, N.allAlerts),
+        allAlerts = PrefsService.getBoolean(PrefConst.ALL_ALERTS, N.ALL_ALERTS),
         prayers = Miqat.PRAYERS.associate { it.key to loadPrayer(it.key) },
         jumuah = JumuahConfig(
-            enabled = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), N.Jumuah.enabled),
-            remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE_ON), N.Jumuah.remindBeforeOn),
-            remindBefore = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), N.Jumuah.remindBefore),
-            jamaat = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT), N.Jumuah.jamaat),
-            jamaatAfter = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), N.Jumuah.jamaatAfter),
+            enabled = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), N.Jumuah.ENABLED),
+            remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE_ON), N.Jumuah.REMIND_BEFORE_ON),
+            remindBefore = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), N.Jumuah.REMIND_BEFORE),
+            jamaat = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT), N.Jumuah.JAMAAT),
+            jamaatAfter = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), N.Jumuah.JAMAAT_AFTER),
         ),
         mulk = MulkConfig(
-            enabled = PrefsService.getBoolean(PrefConst.SURAH_MULK, N.Mulk.enabled),
-            afterIsha = PrefsService.getInt(PrefConst.SURAH_MULK_AFTER, N.Mulk.afterIsha),
+            enabled = PrefsService.getBoolean(PrefConst.SURAH_MULK, N.Mulk.ENABLED),
+            afterIsha = PrefsService.getInt(PrefConst.SURAH_MULK_AFTER, N.Mulk.AFTER_ISHA),
         ),
         kahf = KahfConfig(
-            enabled = PrefsService.getBoolean(PrefConst.SURAH_KAHF, N.Kahf.enabled),
-            hour = PrefsService.getInt(PrefConst.SURAH_KAHF_HOUR, N.Kahf.hour),
-            minute = PrefsService.getInt(PrefConst.SURAH_KAHF_MINUTE, N.Kahf.minute),
+            enabled = PrefsService.getBoolean(PrefConst.SURAH_KAHF, N.Kahf.ENABLED),
+            hour = PrefsService.getInt(PrefConst.SURAH_KAHF_HOUR, N.Kahf.HOUR),
+            minute = PrefsService.getInt(PrefConst.SURAH_KAHF_MINUTE, N.Kahf.MINUTE),
         ),
         dailyReading = DailyReadingConfig(
-            enabled = PrefsService.getBoolean(PrefConst.DAILY_READING, N.DailyReading.enabled),
-            hour = PrefsService.getInt(PrefConst.DAILY_READING_HOUR, N.DailyReading.hour),
-            minute = PrefsService.getInt(PrefConst.DAILY_READING_MINUTE, N.DailyReading.minute),
+            enabled = PrefsService.getBoolean(PrefConst.DAILY_READING, N.DailyReading.ENABLED),
+            hour = PrefsService.getInt(PrefConst.DAILY_READING_HOUR, N.DailyReading.HOUR),
+            minute = PrefsService.getInt(PrefConst.DAILY_READING_MINUTE, N.DailyReading.MINUTE),
         ),
         dhikr = DhikrConfig(
-            morningEnabled = PrefsService.getBoolean(PrefConst.DHIKR_MORNING, N.Dhikr.morningEnabled),
-            afterFajr = PrefsService.getInt(PrefConst.DHIKR_MORNING_AFTER, N.Dhikr.afterFajr),
-            eveningEnabled = PrefsService.getBoolean(PrefConst.DHIKR_EVENING, N.Dhikr.eveningEnabled),
-            afterAsr = PrefsService.getInt(PrefConst.DHIKR_EVENING_AFTER, N.Dhikr.afterAsr),
+            morningEnabled = PrefsService.getBoolean(PrefConst.DHIKR_MORNING, N.Dhikr.MORNING_ENABLED),
+            afterFajr = PrefsService.getInt(PrefConst.DHIKR_MORNING_AFTER, N.Dhikr.AFTER_FAJR),
+            eveningEnabled = PrefsService.getBoolean(PrefConst.DHIKR_EVENING, N.Dhikr.EVENING_ENABLED),
+            afterAsr = PrefsService.getInt(PrefConst.DHIKR_EVENING_AFTER, N.Dhikr.AFTER_ASR),
         ),
         nafil = NafilConfig(
-            tahajjud = PrefsService.getBoolean(PrefConst.NAFIL_TAHAJJUD, N.Nafil.tahajjud),
-            ishraq = PrefsService.getBoolean(PrefConst.NAFIL_ISHRAQ, N.Nafil.ishraq),
+            tahajjud = PrefsService.getBoolean(PrefConst.NAFIL_TAHAJJUD, N.Nafil.TAHAJJUD),
+            ishraq = PrefsService.getBoolean(PrefConst.NAFIL_ISHRAQ, N.Nafil.ISHRAQ),
         ),
     )
 
     private fun loadPrayer(key: String) = PrayerAlertConfig(
-        enabled = PrefsService.getBoolean(PrefConst.alert(key, Field.ENABLED), N.Prayer.enabled),
-        remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(key, Field.REMIND_BEFORE_ON), N.Prayer.remindBeforeOn),
-        remindBefore = PrefsService.getInt(PrefConst.alert(key, Field.REMIND_BEFORE), N.Prayer.remindBefore),
-        atTime = PrefsService.getBoolean(PrefConst.alert(key, Field.AT_TIME), N.Prayer.atTime),
-        jamaat = PrefsService.getBoolean(PrefConst.alert(key, Field.JAMAAT), N.Prayer.jamaat),
-        jamaatAfter = PrefsService.getInt(PrefConst.alert(key, Field.JAMAAT_AFTER), N.Prayer.jamaatAfter),
+        enabled = PrefsService.getBoolean(PrefConst.alert(key, Field.ENABLED), N.Prayer.ENABLED),
+        remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(key, Field.REMIND_BEFORE_ON), N.Prayer.REMIND_BEFORE_ON),
+        remindBefore = PrefsService.getInt(PrefConst.alert(key, Field.REMIND_BEFORE), N.Prayer.REMIND_BEFORE),
+        atTime = PrefsService.getBoolean(PrefConst.alert(key, Field.AT_TIME), N.Prayer.AT_TIME),
+        jamaat = PrefsService.getBoolean(PrefConst.alert(key, Field.JAMAAT), N.Prayer.JAMAAT),
+        jamaatAfter = PrefsService.getInt(PrefConst.alert(key, Field.JAMAAT_AFTER), N.Prayer.JAMAAT_AFTER),
     )
 
     // ── master ───────────────────────────────────────────────
