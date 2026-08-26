@@ -1007,8 +1007,8 @@
     <string name="backup_nothing_to_restore">Drive پر کوئی بیک اپ نہیں</string>
     <string name="backup_nothing_to_restore_sub">اس اکاؤنٹ کا ابھی کوئی بیک اپ نہیں۔ پہلے اس فون سے بیک اپ لیں جس میں آپ کا ڈیٹا ہے۔</string>
     <string name="backup_not_set_up">سیٹ اپ نہیں</string>
-    <string name="backup_connect_unfinished">سائن ان مکمل نہیں ہوا</string>
-    <string name="backup_connect_unfinished_sub">اکاؤنٹ چننے سے پہلے Google نے سائن ان بند کر دیا۔ دوبارہ کوشش کریں۔</string>
+    <string name="backup_connect_unfinished">اکاؤنٹ منسلک نہ ہو سکا</string>
+    <string name="backup_connect_unfinished_sub">اکاؤنٹ چننے سے پہلے Google نے چنندہ ونڈو بند کر دی۔ دوبارہ کوشش کریں۔</string>
     <string name="use_another_account">دوسرا اکاؤنٹ استعمال کریں</string>
     <string name="disconnect">الگ کریں</string>
     <string name="disconnect_hint">اس فون پر لنک بھلا دیتا ہے۔ بیک اپ Drive پر رہتا ہے۔</string>

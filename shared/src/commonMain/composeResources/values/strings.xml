@@ -1015,8 +1015,8 @@
     <string name="later">Later</string>
     <string name="backup_found">Backup found</string>
     <string name="backup_found_body">This account already has a backup from %1$s (%2$s). Restore it onto this phone, or keep what is here.</string>
-    <string name="backup_connect_unfinished">Sign-in didn’t finish</string>
-    <string name="backup_connect_unfinished_sub">Google closed the sign-in before an account was chosen. Try again.</string>
+    <string name="backup_connect_unfinished">Couldn’t link the account</string>
+    <string name="backup_connect_unfinished_sub">Google closed the picker before an account was chosen. Try again.</string>
     <string name="use_another_account">Use another account</string>
     <string name="one_account_note">One account at a time. Each keeps its own backup on Drive.</string>
     <string name="disconnect">Disconnect</string>

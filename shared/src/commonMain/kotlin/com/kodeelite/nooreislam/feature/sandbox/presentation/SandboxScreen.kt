@@ -20,6 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.components.OverlayStyle
+import androidx.compose.material3.Slider
 import com.kodeelite.nooreislam.core.store.BackupStore
 import org.koin.compose.koinInject
 import kotlinx.datetime.minus
@@ -127,6 +130,7 @@ fun SandboxScreen() {
                         variant = AppButtonVariant.Outline,
                     )
                     BackupLab()
+                    SheetLab()
                 }
             }
             item { ThemeSwitcher() }
@@ -596,5 +600,38 @@ private fun BackupLab() {
             modifier = Modifier.fillMaxWidth(),
         )
         AppButton(text = "Open backup", onClick = { nav.navigate(AppRoute.Backup) }, modifier = Modifier.fillMaxWidth())
+    }
+}
+
+// Sheet lab: drag the blur and dim for the current theme, open a sample sheet over real rows to judge it.
+// The numbers you settle on go into OverlayStyle as the shipped defaults.
+@Composable
+private fun SheetLab() {
+    val dark = AppTheme.colors.isDark
+    var open by remember { mutableStateOf(false) }
+    val blur = if (dark) OverlayStyle.blurDark else OverlayStyle.blurLight
+    val scrim = if (dark) OverlayStyle.scrimDark else OverlayStyle.scrimLight
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Sheet lab · ${if (dark) "dark" else "light"}", fontWeight = FontWeight.SemiBold)
+        Text("Blur ${blur.value.toInt()} dp", fontSize = 12.sp)
+        Slider(
+            value = blur.value, valueRange = 0f..40f,
+            onValueChange = { v -> if (dark) OverlayStyle.blurDark = v.dp else OverlayStyle.blurLight = v.dp },
+        )
+        Text("Dim ${(scrim * 100).toInt()} %", fontSize = 12.sp)
+        Slider(
+            value = scrim, valueRange = 0f..0.8f,
+            onValueChange = { v -> if (dark) OverlayStyle.scrimDark = v else OverlayStyle.scrimLight = v },
+        )
+        AppButton(text = "Open sample sheet", onClick = { open = true }, modifier = Modifier.fillMaxWidth(), variant = AppButtonVariant.Outline)
+    }
+    if (open) AppBottomSheet(onDismiss = { open = false }, title = "Sample sheet", subtitle = "Blur ${blur.value.toInt()} dp · dim ${(scrim * 100).toInt()} %") {
+        AppTileGroup(
+            modifier = Modifier.padding(top = 4.dp),
+            items = listOf(
+                AppTileItem(title = "Light: ${OverlayStyle.blurLight.value.toInt()} dp, ${(OverlayStyle.scrimLight * 100).toInt()} %"),
+                AppTileItem(title = "Dark: ${OverlayStyle.blurDark.value.toInt()} dp, ${(OverlayStyle.scrimDark * 100).toInt()} %"),
+            ),
+        )
     }
 }
