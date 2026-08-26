@@ -21,7 +21,7 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
-## [1.0.0+10] - 2026-08-26
+## [1.0.0+11] - 2026-08-26
 
 ### Added
 
