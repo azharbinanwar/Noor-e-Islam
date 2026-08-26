@@ -76,8 +76,8 @@ object PrefConst {
     const val FOCUS_ALL = "focus_all"                     // master switch, mirrors ALL_ALERTS
     const val FOCUS_SAVED_RINGER = "focus_saved_ringer"   // ringer mode saved before muting, to put back after
     const val FOCUS_SILENCE_END = "focus_silence_end"     // epoch millis (string) of the active mute window's end
-    const val FOCUS_SILENCE_MODE = "focus_silence_mode"   // active window's mode (Silent | Vibrate), for catch-up
-    const val FOCUS_SILENCE_LABEL = "focus_silence_label" // active window's prayer name, for extend/mode restart
+    const val FOCUS_SILENCE_MODE = "focus_silence_mode"   // active window's mode (Silent | Vibrate), for extend/toggle
+    const val FOCUS_SILENCE_LABEL = "focus_silence_label" // active window's prayer name, for the notification and Prayed
     const val FOCUS_TEST_SLOTS = "focus_test_slots"       // saved one-shot test slots (JSON), survive reboot
 
     // ── Widget ───────────────────────────────────────────────

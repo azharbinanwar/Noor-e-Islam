@@ -6,17 +6,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- Notifications: prayer reminders + the Prayer Focus service notification. Runtime-requested on Android 13+. -->
+    <!-- Notifications: prayer reminders + the pinned Prayer Focus notification. Runtime-requested on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Prayer Focus: needed to set the ringer to Silent (the Vibrate mode needs nothing). Granted in Settings. -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <!-- Prayer Focus: let the user exempt the app from battery optimization so it keeps working when closed. -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
         tools:ignore="BatteryLife" />
-    <!-- Prayer Focus: foreground service keeps the process alive across swipe-from-recents. -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <!-- Prayer Focus: exact alarm wakes ~1 min before each slot to start the service. -->
+    <!-- Prayer Focus: exact alarms mute at the slot and restore at its end. -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <!-- Prayer Focus: re-arm the prayer alarms after a reboot. -->
@@ -49,7 +46,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Prayer Focus: alarm wakes before a slot and starts the service. -->
+        <!-- Prayer Focus: alarm fires at the slot, mutes, and pins the notification. -->
         <receiver
             android:name="com.kodeelite.nooreislam.core.focus.FocusAlarmReceiver"
             android:exported="false" />
@@ -174,15 +171,6 @@
             android:name="com.kodeelite.nooreislam.feature.widget.WidgetAlarmReceiver"
             android:exported="false" />
 
-        <!-- Prayer Focus: mutes the phone for a window and restores it. -->
-        <service
-            android:name="com.kodeelite.nooreislam.core.focus.PhoneSilenceService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="prayer_focus_silence" />
-        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

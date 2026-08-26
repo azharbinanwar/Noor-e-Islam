@@ -10,14 +10,14 @@ import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import org.koin.core.context.GlobalContext
 
-// Fires ~20s before a slot: starts the service, which mutes at the slot and restores at the end.
+// Fires at the slot: mutes and pins the notification; the end alarm restores.
 class FocusAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         AppCtx.context = context.applicationContext
-        val start = intent.getLongExtra(PhoneSilenceService.EXTRA_START, 0L)
-        val end = intent.getLongExtra(PhoneSilenceService.EXTRA_END, 0L)
-        val label = intent.getStringExtra(PhoneSilenceService.EXTRA_LABEL) ?: "prayer"
-        val mode = intent.getStringExtra(PhoneSilenceService.EXTRA_MODE) ?: SilenceMode.Vibrate.name
+        val start = intent.getLongExtra(FocusNotification.EXTRA_START, 0L)
+        val end = intent.getLongExtra(FocusNotification.EXTRA_END, 0L)
+        val label = intent.getStringExtra(FocusNotification.EXTRA_LABEL) ?: "prayer"
+        val mode = intent.getStringExtra(FocusNotification.EXTRA_MODE) ?: SilenceMode.Vibrate.name
         android.util.Log.i("MiqatFocus", "alarm fired ($label/$mode), slot in ${(start - System.currentTimeMillis()) / 1000}s")
         PhoneSilencer.silence(start, end, label, mode)
     }
@@ -34,11 +34,10 @@ class FocusActionReceiver : BroadcastReceiver() {
             // iOS bakes its buttons in when it schedules, so the guard lives here too, not only
             // in whether the button was drawn
             ACTION_PRAYED -> {
-                logPrayed(intent.getStringExtra(PhoneSilenceService.EXTRA_LABEL))
+                logPrayed(intent.getStringExtra(FocusNotification.EXTRA_LABEL))
                 PhoneSilencer.unmuteNow()
             }
-            // End alarm ("double alarm"): fires at the window end. If the service already restored,
-            // this finds nothing saved and exits. If the OEM froze/killed the service, this restores.
+            // End alarm: fires at the window end and restores the ringer.
             ACTION_RESTORE -> PhoneSilencer.restoreIfStuck()
         }
     }

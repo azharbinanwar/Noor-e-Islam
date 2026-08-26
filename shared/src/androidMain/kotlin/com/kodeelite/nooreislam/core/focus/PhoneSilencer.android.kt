@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.content.ContextCompat
 import com.kodeelite.nooreislam.core.constants.PrefConst
 import com.kodeelite.nooreislam.core.datetime.currentDate
 import com.kodeelite.nooreislam.core.platform.AppCtx
@@ -19,7 +18,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 
 actual object PhoneSilencer {
-    private const val LEAD = 20_000L // start the service ~20s before the slot so it's up in time to mute
     private const val REAL_MAX = 32  // cancel range for the real per-prayer alarms (codes 0 until this)
     private const val DAILY_CODE = 40 // outside REAL_MAX: the once-a-day re-arm alarm
     private const val END_CODE = 41   // the "double alarm": fires at the active window's end to guarantee restore
@@ -56,7 +54,7 @@ actual object PhoneSilencer {
     }
 
     private fun arm(ctx: Context, am: AlarmManager, code: Int, start: Long, end: Long, label: String, mode: String) {
-        val at = maxOf(System.currentTimeMillis(), start - LEAD)
+        val at = maxOf(System.currentTimeMillis(), start) // the receiver mutes the moment it fires
         val pi = alarmPi(ctx, code, start, end, label, mode)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
             am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi) // no exact-alarm permission: inexact is the only legal fallback
@@ -93,10 +91,10 @@ actual object PhoneSilencer {
         PendingIntent.getBroadcast(
             ctx, code,
             Intent(ctx, FocusAlarmReceiver::class.java)
-                .putExtra(PhoneSilenceService.EXTRA_START, start)
-                .putExtra(PhoneSilenceService.EXTRA_END, end)
-                .putExtra(PhoneSilenceService.EXTRA_LABEL, label)
-                .putExtra(PhoneSilenceService.EXTRA_MODE, mode),
+                .putExtra(FocusNotification.EXTRA_START, start)
+                .putExtra(FocusNotification.EXTRA_END, end)
+                .putExtra(FocusNotification.EXTRA_LABEL, label)
+                .putExtra(FocusNotification.EXTRA_MODE, mode),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
@@ -105,14 +103,15 @@ actual object PhoneSilencer {
         return PendingIntent.getActivity(ctx, 9000, launch, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
+    // Mute now and pin the notification; the end alarm is the only thing that has to fire later.
+    // Extend / toggle come back through here with a new end or mode, and simply re-arm and re-post.
     actual fun silence(startMillis: Long, endMillis: Long, label: String, mode: String) {
-        val ctx = AppCtx.context
-        val i = Intent(ctx, PhoneSilenceService::class.java)
-            .putExtra(PhoneSilenceService.EXTRA_START, startMillis)
-            .putExtra(PhoneSilenceService.EXTRA_END, endMillis)
-            .putExtra(PhoneSilenceService.EXTRA_LABEL, label)
-            .putExtra(PhoneSilenceService.EXTRA_MODE, mode)
-        ContextCompat.startForegroundService(ctx, i)
+        PrefsService.putString(PrefConst.FOCUS_SILENCE_END, endMillis.toString())
+        PrefsService.putString(PrefConst.FOCUS_SILENCE_MODE, mode)
+        PrefsService.putString(PrefConst.FOCUS_SILENCE_LABEL, label)
+        armEndAlarm(endMillis)
+        log("mute -> ${if (Ringer.mute(mode)) "SILENT" else "VIBRATE"} until ${(endMillis - System.currentTimeMillis()) / 1000}s")
+        FocusNotification.show(endMillis, label)
     }
 
     actual fun silenceFor(durationMillis: Long) {
@@ -120,28 +119,21 @@ actual object PhoneSilencer {
         silence(now, now + durationMillis, "prayer", SilenceMode.Vibrate.name)
     }
 
+    // End alarm: put the ringer back. If the window was already ended by hand there is nothing saved, so this is a no-op.
     actual fun restoreIfStuck() {
-        if (!Ringer.hasSaved()) return // nothing muted by us (service finished cleanly) -> nothing to do
+        if (!Ringer.hasSaved()) return
         val end = PrefsService.getStringOrNull(PrefConst.FOCUS_SILENCE_END)?.toLongOrNull() ?: 0L
-        if (System.currentTimeMillis() >= end) {
-            // Window over but the service died before restoring -> put the ringer back now and clean up fully.
-            // Never (re)starts anything here, so nothing can loop after the window has passed.
-            Ringer.restore()
-            clearWindowPrefs()
-            cancelEndAlarm()
-            val ctx = AppCtx.context
-            ctx.stopService(Intent(ctx, PhoneSilenceService::class.java))
-        } else {
-            silence(System.currentTimeMillis(), end, savedLabel(), savedMode()) // still mid-window -> restart to finish
-        }
+        if (System.currentTimeMillis() >= end - 1_000) finish(forceNormal = false)
+        else silence(System.currentTimeMillis(), end, savedLabel(), savedMode()) // clock jumped back; keep the window
     }
 
-    actual fun unmuteNow() {
-        Ringer.restore(forceNormal = true)
+    actual fun unmuteNow() = finish(forceNormal = true)
+
+    private fun finish(forceNormal: Boolean) {
+        if (Ringer.restore(forceNormal)) log("restore ringer")
         clearWindowPrefs()
         cancelEndAlarm()
-        val ctx = AppCtx.context
-        ctx.stopService(Intent(ctx, PhoneSilenceService::class.java))
+        FocusNotification.hide()
     }
 
     internal fun clearWindowPrefs() {
@@ -150,7 +142,7 @@ actual object PhoneSilencer {
         PrefsService.remove(PrefConst.FOCUS_SILENCE_LABEL)
     }
 
-    // Both restart the running service with new params (silence() cancels the old job and starts a fresh one).
+    // Both re-run silence() with the new end or mode; muting twice is a no-op, so nothing blips.
     actual fun extend() {
         val end = PrefsService.getStringOrNull(PrefConst.FOCUS_SILENCE_END)?.toLongOrNull() ?: return
         silence(System.currentTimeMillis(), end + 5 * 60_000L, savedLabel(), savedMode())
@@ -161,6 +153,8 @@ actual object PhoneSilencer {
         val next = if (savedMode() == SilenceMode.Silent.name) SilenceMode.Vibrate.name else SilenceMode.Silent.name
         silence(System.currentTimeMillis(), end, savedLabel(), next)
     }
+
+    private fun log(msg: String) = android.util.Log.i("MiqatFocus", msg)
 
     private fun savedLabel() = PrefsService.getStringOrNull(PrefConst.FOCUS_SILENCE_LABEL) ?: "prayer"
     private fun savedMode() = PrefsService.getStringOrNull(PrefConst.FOCUS_SILENCE_MODE) ?: SilenceMode.Vibrate.name
