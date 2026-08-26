@@ -2,6 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
 // Same upload key as the Quran app. keystore.properties and the .jks are gitignored.
+// one number for both apps and iOS; bump version.properties, nothing else
+val appVersion = Properties().apply { rootProject.file("version.properties").inputStream().use(::load) }
+
 val keystoreProperties = Properties().apply {
     val f = rootProject.file("keystore.properties")
     if (f.exists()) f.inputStream().use { load(it) }
@@ -39,8 +42,8 @@ android {
         applicationId = "com.kodeelite.nooreislam"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 7 // kept in step with the Quran app so one number covers both
-        versionName = "1.0.0"
+        versionCode = appVersion.getProperty("versionCode").toInt()
+        versionName = appVersion.getProperty("versionName")
     }
     buildFeatures {
         buildConfig = true // BuildConfig.DEBUG drives the debug ribbon in MainActivity
