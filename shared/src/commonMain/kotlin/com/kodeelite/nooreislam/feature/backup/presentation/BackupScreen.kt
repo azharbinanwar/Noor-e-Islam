@@ -43,6 +43,7 @@ import coil3.compose.AsyncImage
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.backup.BackupScheduler
 import com.kodeelite.nooreislam.core.backup.rememberGoogleSignIn
+import com.kodeelite.nooreislam.core.platform.restartApp
 import com.kodeelite.nooreislam.feature.backup.data.BackupRepository
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.components.AppTileGroup
@@ -105,10 +106,11 @@ fun BackupScreen() {
     var foundRemote by remember { mutableStateOf<BackupStore.RemoteBackup?>(null) }
     var offerFirstBackup by remember { mutableStateOf(false) }
     var confirmingDelete by remember { mutableStateOf(false) }
+    var restored by remember { mutableStateOf(false) }
     val notice = LocalNotice.current
-    suspend fun report(outcome: BackupRepository.Outcome, deleted: Boolean = false) {
+    suspend fun report(outcome: BackupRepository.Outcome, deleted: Boolean = false, restoring: Boolean = false) {
         when (outcome) {
-            BackupRepository.Outcome.Done -> if (deleted) notice.show(
+            BackupRepository.Outcome.Done -> if (restoring) restored = true else if (deleted) notice.show(
                 title = getString(Res.string.backup_deleted),
                 icon = Lucide.Trash2, variant = AppTileVariant.Success,
             )
@@ -220,8 +222,9 @@ fun BackupScreen() {
                                 trailing = (busy as? BackupStore.Busy.BackingUp)?.let { b ->
                                 { CircularProgressIndicator(progress = { b.progress }, modifier = Modifier.size(20.dp), strokeWidth = 2.dp) }
                             },
-                            // in-app when the consent may still be needed; otherwise the worker, so leaving the screen cannot cut it short
-                            onClick = { if (idle) scope.launch { if (remote == null && lastAt == null) report(repo.backUpNow(signIn)) else BackupScheduler.runNow() } },
+                            // consent (if still needed) happens here where there is a screen; the backup itself runs as the worker,
+                            // so it shows its notification and outlives this screen
+                            onClick = { if (idle) scope.launch { if (signIn.driveToken() == null) report(BackupRepository.Outcome.NoToken) else BackupScheduler.runNow() } },
                         ),
                         AppTileItem(
                             leadingIcon = Lucide.CloudDownload,
@@ -300,8 +303,10 @@ fun BackupScreen() {
         )
     }
 
+    if (restored) RestoredSheet(onRestart = { restartApp() })
+
     if (offerFirstBackup) NoBackupSheet(
-        onBackUp = { offerFirstBackup = false; scope.launch { report(repo.backUpNow(signIn)) } },
+        onBackUp = { offerFirstBackup = false; scope.launch { if (signIn.driveToken() == null) report(BackupRepository.Outcome.NoToken) else BackupScheduler.runNow() } },
         onDismiss = { offerFirstBackup = false },
     )
 
@@ -309,7 +314,7 @@ fun BackupScreen() {
         BackupFoundSheet(
             date = Now.formattedDateTime(found.atMillis),
             size = found.sizeKb.asFileSize(),
-            onRestore = { foundRemote = null; scope.launch { report(repo.restore(signIn)) } },
+            onRestore = { foundRemote = null; scope.launch { report(repo.restore(signIn), restoring = true) } },
             onDismiss = { foundRemote = null },
         )
     }
@@ -317,7 +322,7 @@ fun BackupScreen() {
     if (confirmingRestore) RestoreConfirmSheet(
         quran = quran,
         backupDate = (lastAt ?: remote?.atMillis)?.let(Now::formattedDateTime) ?: "",
-        onRestore = { confirmingRestore = false; scope.launch { report(repo.restore(signIn)) } },
+        onRestore = { confirmingRestore = false; scope.launch { report(repo.restore(signIn), restoring = true) } },
         onDismiss = { confirmingRestore = false },
     )
 }

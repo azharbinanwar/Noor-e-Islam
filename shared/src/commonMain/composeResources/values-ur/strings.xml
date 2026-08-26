@@ -1063,4 +1063,7 @@
     <string name="backup_behind">بیک اپ پیچھے رہ گیا ہے</string>
     <string name="backup_behind_notice">کچھ دنوں سے کوئی بیک اپ مکمل نہیں ہوا۔ ابھی بیک اپ لینے کے لیے ایپ کھولیں۔</string>
     <string name="notif_focus_body_fallback">%1$s تک وائبریشن۔ خاموش موڈ کے لیے ڈسٹرب نہ کریں کی اجازت چاہیے، اجازت دینے کے لیے ٹیپ کریں۔</string>
+    <string name="backup_restored_title">بحال ہو گیا</string>
+    <string name="backup_restored_body">آپ کا ڈیٹا اس فون پر واپس آ گیا ہے۔ اسے لوڈ کرنے کے لیے ایپ دوبارہ شروع ہوتی ہے۔</string>
+    <string name="restart_now">ابھی دوبارہ شروع کریں</string>
 </resources>

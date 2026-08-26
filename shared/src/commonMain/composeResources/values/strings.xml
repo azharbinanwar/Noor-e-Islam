@@ -1048,6 +1048,9 @@
     <string name="backup_day">Day</string>
     <string name="backup_time">Time</string>
     <string name="restore">Restore</string>
+    <string name="backup_restored_title">Restored</string>
+    <string name="backup_restored_body">Your data is back on this phone. The app restarts to load it.</string>
+    <string name="restart_now">Restart now</string>
     <string name="backup_restore_from_drive">Restore from Drive</string>
     <string name="backup_restore_hint">Replaces what is on this phone with the backup</string>
     <string name="backup_restore_bullet_replaces">Your tracker, bookmarks, notes and settings here are replaced</string>

@@ -8,7 +8,6 @@ import com.kodeelite.nooreislam.core.backup.BackupFormatException
 import com.kodeelite.nooreislam.core.backup.GoogleSignIn
 import com.kodeelite.nooreislam.core.backup.GoogleSignInException
 import com.kodeelite.nooreislam.core.datetime.Now
-import com.kodeelite.nooreislam.core.platform.restartApp
 import com.kodeelite.nooreislam.core.store.BackupStore
 import com.kodeelite.nooreislam.core.store.BackupStore.Busy
 import kotlinx.coroutines.CancellationException
@@ -122,7 +121,7 @@ class BackupRepository(private val drive: DriveClient, edition: AppEdition, buil
         }
     }
 
-    /** Fetch the Drive file, put it in place of this phone's data, and start over. Returns only on failure. */
+    /** Fetch the Drive file and put it in place of this phone's data; the caller restarts the app. */
     suspend fun restore(signIn: GoogleSignIn): Outcome {
         if (BackupStore.busy.value != Busy.Idle) return Outcome.Failed("")
         BackupStore.setBusy(Busy.Restoring(0f))
@@ -131,8 +130,7 @@ class BackupRepository(private val drive: DriveClient, edition: AppEdition, buil
             val file = drive.find(token, fileName) ?: return Outcome.NothingToRestore
             val bytes = drive.download(token, file.id) { BackupStore.setBusy(Busy.Restoring(it)) }
             BackupArchive.restore(bytes)
-            restartApp()
-            Outcome.Done
+            Outcome.Done // the screen asks for the restart, so it never looks like a crash
         } catch (e: Exception) {
             e.asOutcome()
         } finally {

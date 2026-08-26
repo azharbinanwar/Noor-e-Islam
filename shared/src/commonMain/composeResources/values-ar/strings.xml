@@ -1061,4 +1061,7 @@
     <string name="backup_behind">النسخ الاحتياطي متأخر</string>
     <string name="backup_behind_notice">لم تكتمل أي نسخة احتياطية منذ بضعة أيام. افتح التطبيق للنسخ الآن.</string>
     <string name="notif_focus_body_fallback">اهتزاز حتى %1$s. يحتاج الوضع الصامت إلى إذن عدم الإزعاج، اضغط للسماح به.</string>
+    <string name="backup_restored_title">تمت الاستعادة</string>
+    <string name="backup_restored_body">عادت بياناتك إلى هذا الهاتف. يُعاد تشغيل التطبيق لتحميلها.</string>
+    <string name="restart_now">أعد التشغيل الآن</string>
 </resources>

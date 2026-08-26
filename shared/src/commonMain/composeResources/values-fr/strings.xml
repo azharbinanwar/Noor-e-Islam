@@ -1056,4 +1056,7 @@
     <string name="backup_behind">La sauvegarde a du retard</string>
     <string name="backup_behind_notice">Aucune sauvegarde n’a abouti depuis quelques jours. Ouvrez l’appli pour sauvegarder maintenant.</string>
     <string name="notif_focus_body_fallback">Vibreur jusqu’à %1$s. Le mode silencieux a besoin de l’accès Ne pas déranger, touchez pour l’autoriser.</string>
+    <string name="backup_restored_title">Restauré</string>
+    <string name="backup_restored_body">Vos données sont de retour sur ce téléphone. L’appli redémarre pour les charger.</string>
+    <string name="restart_now">Redémarrer maintenant</string>
 </resources>
