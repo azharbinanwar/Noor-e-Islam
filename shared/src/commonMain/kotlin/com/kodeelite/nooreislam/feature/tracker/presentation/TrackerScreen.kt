@@ -82,7 +82,8 @@ private val trackablePrayers = Miqat.PRAYERS
 fun TrackerScreen() {
     val tracker = koinInject<TrackerStore>()
     val clock by Now.now.collectAsState()
-    val today = clock.date
+    // the prayer day, which rolls at Fajr: until then the day still open is the calendar one before
+    val today by MiqatTimesStore.activeDate.collectAsState()
     val history by tracker.history.collectAsState()
     val exempt by tracker.exempt.collectAsState()
     val stats by tracker.stats.collectAsState()
@@ -98,13 +99,14 @@ fun TrackerScreen() {
 
     val selectedStatuses = history[selected].orEmpty()
     val selectedOwed = owedPrayers(selected, exempt, today)
-    val todayTimes by MiqatTimesStore.today.collectAsState()
+    val todayTimes by MiqatTimesStore.activeTimes.collectAsState()
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val streakEnabled by SettingsStore.streakEnabled.collectAsState()
     val isToday = selected == today
-    // a prayer can only be logged once its time has come; past days are all fair game
+    // a prayer can only be logged once its time has come; past days are all fair game. The whole
+    // timestamp, not the time of day: after midnight these are yesterday's prayers, all of them past
     val started: (Miqat) -> Boolean = { p ->
-        !isToday || todayTimes.firstOrNull { it.miqat == p }?.at?.time?.let { it <= clock.time } == true
+        !isToday || todayTimes.firstOrNull { it.miqat == p }?.at?.let { it <= clock } == true
     }
     val currentPrayer = todayTimes.currentPrayer(clock.time)
 

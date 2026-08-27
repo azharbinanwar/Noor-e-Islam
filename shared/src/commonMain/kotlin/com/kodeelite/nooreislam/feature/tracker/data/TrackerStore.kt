@@ -1,9 +1,9 @@
 package com.kodeelite.nooreislam.feature.tracker.data
 
-import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.domain.PrayerHistory
 import com.kodeelite.nooreislam.feature.tracker.domain.StreakStats
 import com.kodeelite.nooreislam.feature.tracker.domain.streakStats
@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -21,8 +19,9 @@ class TrackerStore(
     private val scope: CoroutineScope,
     private val repo: TrackerRepository,
 ) {
-    // off Now rather than a captured value, so everything rolls over at midnight on its own
-    private val today = Now.now.map { it.date }.distinctUntilChanged()
+    // the prayer day rather than the calendar one, so it rolls at Fajr and an Isha prayed after
+    // midnight still scores on the day it belongs to
+    private val today = MiqatTimesStore.activeDate
 
     val history: StateFlow<PrayerHistory> =
         repo.history.stateIn(scope, SharingStarted.WhileSubscribed(5000), emptyMap())
@@ -42,7 +41,7 @@ class TrackerStore(
         scope.launch { repo.setStatus(date, prayer, status) }
     }
 
-    fun setStatus(prayer: Miqat, status: PrayerTrackerStatus?) = setStatus(Now.date(), prayer, status)
+    fun setStatus(prayer: Miqat, status: PrayerTrackerStatus?) = setStatus(MiqatTimesStore.activeDate.value, prayer, status)
 
     /** The streak is a score. It reads the exemption, it never ends one. */
     fun setStreakEnabled(on: Boolean) = SettingsStore.setStreakEnabled(on)

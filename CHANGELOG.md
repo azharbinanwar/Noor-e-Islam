@@ -21,6 +21,14 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
+### Fixed
+
+- `[islam]` The day now turns over at Fajr rather than at midnight, which is when the prayer day actually ends. Isha prayed after 12 used to land on the wrong date, so it could not be marked, the streak reset while you were still praying the night before, and the tracker offered a new day that had not begun. Home and the tracker both show the day still open, with its own date in place of "Today", and everything logged goes to the day it belongs to.
+
+### Changed
+
+- `[islam]` Prayer rows on home no longer label the next prayer "soon" or "upcoming". The time is on the row and the prayer under way already pulses, so the word only repeated what both already said.
+
 ## [1.0.0+11] - 2026-08-26
 
 ### Added

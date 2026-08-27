@@ -28,10 +28,10 @@ import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
-import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.DayProgress
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
+import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
 import com.kodeelite.nooreislam.feature.tracker.data.TrackerStore
 import com.kodeelite.nooreislam.feature.tracker.domain.dayProgress
 import com.kodeelite.nooreislam.feature.tracker.domain.owedPrayers
@@ -55,8 +55,8 @@ fun StreakCard() {
     val stats by tracker.stats.collectAsState()
     val history by tracker.history.collectAsState()
     val exempt by tracker.exempt.collectAsState()
-    val clock by Now.now.collectAsState()
-    val today = clock.date
+    // the prayer day: until Fajr the day still open is the one before, so the card keeps counting it
+    val today by MiqatTimesStore.activeDate.collectAsState()
     // an exemption's edge day counts what it owed: two prayers before it began reads 2/2, not 2/5
     val owed = owedPrayers(today, exempt, today)
     val total = owed.size
