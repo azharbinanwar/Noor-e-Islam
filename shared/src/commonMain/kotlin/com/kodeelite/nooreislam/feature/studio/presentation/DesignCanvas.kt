@@ -53,7 +53,6 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
-import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
@@ -249,7 +248,8 @@ fun DesignCanvas(
                         Spacer(Modifier.size(12.dp))
                     }
 
-                    val combinedAyahText = config.ayahs.joinToString(" ") { it.textIn(QuranScript.saved()) }
+                    // the font carries the spelling: picking Nastaleeq shows the IndoPak text, a Tanzil face the Tanzil
+                    val combinedAyahText = config.ayahs.joinToString(" ") { it.textIn(config.fontFamily.script) }
                     val annotatedAyah = buildAnnotatedString {
                         val words = combinedAyahText.split(" ")
                         words.forEachIndexed { i, word ->

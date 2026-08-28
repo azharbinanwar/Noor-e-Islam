@@ -69,7 +69,6 @@ import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.colorpicker.ColorPickerSheet
 import com.kodeelite.nooreislam.core.components.colorpicker.RecentColors
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
-import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.studio.data.CanvasPattern
 import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
@@ -129,9 +128,9 @@ fun ArtSlider(
 
 @Composable
 fun FontPicker(current: QuranFont, onChange: (QuranFont) -> Unit) {
-    // only the fonts that can draw the script the ayah came in; the others have no glyphs for it
+    // every font: the studio has no script setting, the font carries its spelling with it
     LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(QuranScript.saved().fonts) { f ->
+        items(QuranFont.entries) { f ->
             SmallFontChip(f, f == current) { onChange(f) }
         }
     }

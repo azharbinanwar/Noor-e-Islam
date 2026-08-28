@@ -40,4 +40,7 @@ enum class QuranFont(
     Saleem(Res.string.font_saleem, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem, listOf(QuranScript.Tanzil));
 
     val label: String @Composable get() = stringResource(labelRes)
+
+    /** The spelling this font draws. For a face serving several scripts, the one it was made for. */
+    val script: QuranScript get() = scripts.first()
 }

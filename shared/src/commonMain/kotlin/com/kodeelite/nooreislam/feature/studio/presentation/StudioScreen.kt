@@ -70,7 +70,7 @@ import com.kodeelite.nooreislam.core.util.GalleryService
 import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toPngBytes
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
-import com.kodeelite.nooreislam.feature.quran.data.QuranScript
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioAspectRatio
@@ -128,14 +128,17 @@ fun StudioScreen(
     ayahs: List<Ayah>,
 ) {
 
-    val fullText = ayahs.joinToString(" ") { it.textIn(QuranScript.saved()) }
+    // a new design opens in the font the mushaf is being read in, so what the r                eader sees is what
+    // they share; their pick in the studio then belongs to the design and never writes back
+    val readingFont = koinInject<QuranStore>().font.value
+    val fullText = ayahs.joinToString(" ") { it.textIn(readingFont.script) }
     val initialConfig = remember(fullText) {
         val size = when {
             fullText.length < StudioDefaults.SHORT_LEN -> StudioDefaults.FONT_SHORT
             fullText.length < StudioDefaults.MEDIUM_LEN -> StudioDefaults.FONT_MEDIUM
             else -> StudioDefaults.FONT_LONG
         }
-        StudioConfig.default(ayahs).copy(fontSize = size)
+        StudioConfig.default(ayahs).copy(fontFamily = readingFont, fontSize = size)
     }
 
     // all editing state + history now lives in the holder; the screen delegates to it (read + write)
@@ -356,7 +359,7 @@ fun StudioScreen(
             if (shareSheetOpen) {
                 ShareSheet(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
-                    ayahText = "${config.ayahs.joinToString("\n") { it.textIn(QuranScript.saved()) }}\n\n" +
+                    ayahText = "${config.ayahs.joinToString("\n") { it.textIn(config.fontFamily.script) }}\n\n" +
                             "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
                     otherText = stringResource(Res.string.shared_with, edition.displayName()),
                     onDismiss = { shareSheetOpen = false },
