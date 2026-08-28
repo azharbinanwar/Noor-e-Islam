@@ -104,15 +104,10 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val store = koinInject<QuranStore>()
     val ayahs = remember { mutableStateListOf<Ayah>() }
     val listState = rememberLazyListState()
-    val script by store.script.collectAsState()
-
     // the whole Quran in one read; LazyColumn only renders what's on screen, so this stays cheap.
-    // Keyed on the script because a different script is a different column: without it the page keeps
-    // whatever it was first opened with and only changes on a restart.
-    LaunchedEffect(script) {
-        val loaded = QuranRepository.all()
-        ayahs.clear()
-        ayahs.addAll(loaded)
+    // Every verse carries both spellings, so a script change redraws from what is already here.
+    LaunchedEffect(Unit) {
+        if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all())
     }
 
     // stays true only after the list has loaded AND jumped to the target — the splash overlay covers until then
@@ -163,8 +158,6 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val topBarHeight = with(LocalDensity.current) { topBarHeightPx.toDp() }
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
-    // derived, not keyed on size: a script swap replaces all 6236 verses with 6236 others, so any key
-    // counting them stays put and the page keeps rendering the text it was built from
     val rukus by remember { derivedStateOf { groupByRuku(ayahs) } }
     // for each ruku: its number within its surah, and whether it's the surah's last ruku (then no "next")
     val rukuMeta = remember(rukus) {

@@ -49,16 +49,14 @@ class QuranStore(
     val font: StateFlow<QuranFont> = _font.asStateFlow()
 
     init {
-        QuranRepository.script = _script.value
         // a font saved under the other script would draw the wrong glyphs, or none at all
-        if (_script.value !in _font.value.scripts) applyFont(_script.value.fonts.first())
+        if (_script.value !in _font.value.scripts) applyFont(QuranDefaults.fontFor(_script.value))
     }
 
     fun setScript(value: QuranScript) {
         PrefsService.putString(PrefConst.QURAN_SCRIPT, value.name)
-        QuranRepository.script = value
         _script.value = value
-        if (value !in _font.value.scripts) applyFont(value.fonts.first())
+        if (value !in _font.value.scripts) applyFont(QuranDefaults.fontFor(value))
     }
 
     /** Picking a font from the other script moves the script with it, so no tap is a dead end. */

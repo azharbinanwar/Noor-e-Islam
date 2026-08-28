@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
@@ -287,7 +288,7 @@ fun AyahPassageV2(
 
 // Drops embedded basmalah on non-Fatiha surah starts
 private fun ayahTextV2(ayah: Ayah): String {
-    val words = ayah.text.split(' ').filter { it.isNotBlank() }
+    val words = ayah.textIn(QuranScript.saved()).split(' ').filter { it.isNotBlank() }
     val body = if (ayah.ayah == 1 && ayah.surah != 1 && words.size > BISMALAH_WORD_COUNT_V2 && words.first().startsWith("بِسْم"))
         words.drop(BISMALAH_WORD_COUNT_V2) else words
     return body.joinToString(" ")

@@ -62,14 +62,14 @@ enum class QuranScript(
     /** The fonts drawn for this script. Never empty. */
     val fonts: List<QuranFont> get() = QuranFont.entries.filter { this in it.scripts }
 
-    /** The font this script's own chip is set in. */
-    val ownFont: QuranFont get() = if (this == Indopak) QuranFont.Nastaleeq else QuranDefaults.FONT
+    /** The font this script's own chip is set in — its default face, not whatever is picked. */
+    val ownFont: QuranFont get() = QuranDefaults.fontFor(this)
 
     companion object {
         /**
          * The reader's pick, or the spelling their region implies when they have never made one.
          * Read from here rather than passed around, so a query that arrives before the settings
-         * store exists — a notification opening the studio, say — still gets the right column.
+         * store exists — a notification opening the studio, say — still gets the right script.
          */
         fun saved(): QuranScript =
             PrefsService.getStringOrNull(PrefConst.QURAN_SCRIPT)

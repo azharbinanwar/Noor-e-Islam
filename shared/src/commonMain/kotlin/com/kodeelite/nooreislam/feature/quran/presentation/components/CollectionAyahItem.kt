@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -38,21 +39,24 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.CollectionAyah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // one ayah inside a collection's details screen — same card family as BookmarkItem/HighlightItem/NoteItem.
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CollectionAyahItem(item: CollectionAyah, index: Int, total: Int, onClick: () -> Unit, onLongClick: () -> Unit = {}) {
+    val script by koinInject<QuranStore>().script.collectAsState()
     val colors = AppTheme.colors
     val timestamp = remember(item.createdAt) { Now.formattedDateTime(item.createdAt) }
 
-    val text by produceState("") {
-        value = QuranRepository.ayah(item.surah, item.ayah)?.text ?: ""
+    val text by produceState("", script) {
+        value = QuranRepository.ayah(item.surah, item.ayah)?.textIn(script) ?: ""
     }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {

@@ -47,7 +47,8 @@ object QuranSearchRepository {
 
     /**
      * Every ayah, every script, already normalized — read once, then just an in-memory substring filter
-     * per query. [Ayah.text] here is not one verse to show; it is every spelling of that verse, joined.
+     * per query. The text here is not one verse to show; it is every spelling of that verse, joined,
+     * placed in both fields so it reads the same whichever script asks.
      */
     suspend fun all(): List<Ayah> = cache ?: withContext(Dispatchers.Default) {
         lock.withLock { cache ?: readAyahs(db()).also { cache = it } }
@@ -64,11 +65,15 @@ object QuranSearchRepository {
                     if (scripts.isNotEmpty()) scripts.append(SCRIPT_SEP)
                     scripts.append(st.getText(i).normalizeArabic())
                 }
+                // the same joined string in both, because this Ayah is a haystack and never drawn:
+                // whichever script is active, `text` has to resolve to everything searchable
+                val haystack = scripts.toString()
                 out += Ayah(
                     id = st.getLong(0).toInt(),
                     surah = st.getLong(1).toInt(),
                     ayah = st.getLong(2).toInt(),
-                    text = scripts.toString(),
+                    textTanzil = haystack,
+                    textIndopak = haystack,
                     juz = st.getLong(3).toInt(),
                     endsRuku = st.getLong(4) != 0L,
                     sajda = null, // not needed for search; the real Ayah (with sajda) is fetched via QuranRepository on open

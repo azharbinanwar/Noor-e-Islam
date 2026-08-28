@@ -70,6 +70,7 @@ import com.kodeelite.nooreislam.core.util.GalleryService
 import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toPngBytes
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioAspectRatio
@@ -127,7 +128,7 @@ fun StudioScreen(
     ayahs: List<Ayah>,
 ) {
 
-    val fullText = ayahs.joinToString(" ") { it.text }
+    val fullText = ayahs.joinToString(" ") { it.textIn(QuranScript.saved()) }
     val initialConfig = remember(fullText) {
         val size = when {
             fullText.length < StudioDefaults.SHORT_LEN -> StudioDefaults.FONT_SHORT
@@ -355,7 +356,7 @@ fun StudioScreen(
             if (shareSheetOpen) {
                 ShareSheet(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
-                    ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
+                    ayahText = "${config.ayahs.joinToString("\n") { it.textIn(QuranScript.saved()) }}\n\n" +
                             "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
                     otherText = stringResource(Res.string.shared_with, edition.displayName()),
                     onDismiss = { shareSheetOpen = false },

@@ -18,7 +18,14 @@ object QuranDefaults {
     // spelling they learned on. Their own pick, once made, wins forever after.
     val INDOPAK_COUNTRIES = setOf("PK", "IN", "BD", "AF", "LK", "NP")
 
-    val FONT = QuranFont.Hafs
+    // the face each script opens in before the user has ever picked one — enum order stays free to
+    // be display order, never a hidden default
+    fun fontFor(script: QuranScript) = when (script) {
+        QuranScript.Indopak -> QuranFont.Nastaleeq
+        QuranScript.Tanzil -> QuranFont.Hafs
+    }
+
+    val FONT = fontFor(SCRIPT)
     val HIGHLIGHT_COLOR = HighlightColor.Green
 
     const val FONT_SP = 20        // default reading size

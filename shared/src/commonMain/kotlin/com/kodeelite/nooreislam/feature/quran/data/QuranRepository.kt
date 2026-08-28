@@ -16,20 +16,10 @@ object QuranRepository {
     private const val DB_NAME = "quran.db"
     private const val DB_ASSET = "files/quran/quran.db"
 
-    /**
-     * Which spelling every read returns. Seeded from the saved setting and written by QuranStore when
-     * the reader changes it — a parameter instead would have to be threaded through every caller of
-     * every query to say the same thing.
-     */
-    var script: QuranScript = QuranScript.saved()
-        set(value) {
-            if (value == field) return
-            field = value
-            juzCache = null // each juz caches the ayah it starts at, text and all
-        }
-
-    // read by index, so the column order here is fixed on purpose (kept explicit for stable positions)
-    private val cols get() = "id,surah,ayah,${script.column},juz,endsRuku,sajda"
+    // read by index, so the column order here is fixed on purpose (kept explicit for stable positions).
+    // Every spelling comes back in the row: switching script is then a render-time choice, and no
+    // screen has to notice, re-read or invalidate anything.
+    private const val COLS = "id,surah,ayah,text,textIndopak,juz,endsRuku,sajda"
 
     private val lock = Mutex()
     private var conn: SQLiteConnection? = null
@@ -43,17 +33,17 @@ object QuranRepository {
 
     /** The whole Quran in order — one read off the main thread; the reader scrolls freely and jumps anywhere. */
     suspend fun all(): List<Ayah> = withContext(Dispatchers.Default) {
-        lock.withLock { readAyahs(db(), "SELECT $cols FROM ayah ORDER BY id") }
+        lock.withLock { readAyahs(db(), "SELECT $COLS FROM ayah ORDER BY id") }
     }
 
     /** One full surah's verses. */
     suspend fun surah(number: Int): List<Ayah> = lock.withLock {
-        readAyahs(db(), "SELECT $cols FROM ayah WHERE surah = ? ORDER BY id", number.toLong())
+        readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? ORDER BY id", number.toLong())
     }
 
     /** A single ayah by its canonical ref (for jumps / deep links / bookmarks). */
     suspend fun ayah(surah: Int, ayah: Int): Ayah? = lock.withLock {
-        readAyahs(db(), "SELECT $cols FROM ayah WHERE surah = ? AND ayah = ?", surah.toLong(), ayah.toLong()).firstOrNull()
+        readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? AND ayah = ?", surah.toLong(), ayah.toLong()).firstOrNull()
     }
 
     /** The 114-row surah table (names, counts, revelation) — read once, for the header and picker. */
@@ -82,10 +72,11 @@ object QuranRepository {
                     id = st.getLong(0).toInt(),
                     surah = st.getLong(1).toInt(),
                     ayah = st.getLong(2).toInt(),
-                    text = st.getText(3),
-                    juz = st.getLong(4).toInt(),
-                    endsRuku = st.getLong(5) != 0L,
-                    sajda = if (st.isNull(6)) null else sajdaOf(st.getText(6)),
+                    textTanzil = st.getText(3),
+                    textIndopak = st.getText(4),
+                    juz = st.getLong(5).toInt(),
+                    endsRuku = st.getLong(6) != 0L,
+                    sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
                 )
             }
             return out
@@ -120,7 +111,7 @@ object QuranRepository {
 
     private fun readJuzs(c: SQLiteConnection, surahs: List<Surah>): List<Juz> {
         val st =
-            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.${script.column}, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
+            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.textIndopak, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
         val starts = ArrayList<Pair<Int, Ayah>>(30)
         try {
             while (st.step()) {
@@ -128,10 +119,11 @@ object QuranRepository {
                     id = st.getLong(1).toInt(),
                     surah = st.getLong(2).toInt(),
                     ayah = st.getLong(3).toInt(),
-                    text = st.getText(4),
-                    juz = st.getLong(5).toInt(),
-                    endsRuku = st.getLong(6) != 0L,
-                    sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
+                    textTanzil = st.getText(4),
+                    textIndopak = st.getText(5),
+                    juz = st.getLong(6).toInt(),
+                    endsRuku = st.getLong(7) != 0L,
+                    sajda = if (st.isNull(8)) null else sajdaOf(st.getText(8)),
                 )
             }
         } finally {
