@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -240,11 +241,15 @@ fun DesignCanvas(
                         )
                         Spacer(Modifier.size(12.dp))
                     }
+                    // the size glides between the auto-fit steps, so growing or moving the selection
+                    // reflows smoothly instead of snapping the whole card to a new layout
+                    val ayahFontSize by animateFloatAsState(config.fontSize, label = "ayahFontSize")
+
                     if (config.showBismillah) {
                         Text(
                             text = QuranSymbols.BASMALAH,
                             fontFamily = FontFamily(Font(Res.font.quran_juz)),
-                            fontSize = (config.fontSize * 1.5f).coerceAtMost(28f).sp,
+                            fontSize = (ayahFontSize * 1.5f).coerceAtMost(28f).sp,
                             color = config.textColor
                         )
                         Spacer(Modifier.size(12.dp))
@@ -283,10 +288,10 @@ fun DesignCanvas(
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                         Text(
                             text = annotatedAyah,
-                            fontSize = config.fontSize.sp,
+                            fontSize = ayahFontSize.sp,
                             textAlign = config.textAlign,
                             fontFamily = FontFamily(Font(config.fontFamily.res)),
-                            lineHeight = (config.fontSize * config.lineHeight).sp,
+                            lineHeight = (ayahFontSize * config.lineHeight).sp,
                             style = TextStyle(
                                 shadow = if (config.textShadowAlpha > 0f) Shadow(
                                     color = Color.Black.copy(alpha = config.textShadowAlpha),

@@ -250,10 +250,12 @@ private fun GenerateGradients(onSelect: (StudioGradient?) -> Unit) {
     var seed by remember { mutableStateOf(0) }
     var batch by remember { mutableStateOf<List<StudioGradient>>(emptyList()) }
     Column(Modifier.fillMaxWidth()) {
-        SectionHeader(
+        StudioSectionHeader(
             stringResource(Res.string.generate),
-            actionLabel = if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again),
-            onAction = { seed++; batch = GradientStore.generate(5, seed) })
+            actions = listOf(
+                StudioHeaderAction(if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again)) { seed++; batch = GradientStore.generate(5, seed) },
+            ),
+        )
         if (batch.isEmpty()) {
             Text(
                 stringResource(Res.string.tap_generate_for_fresh_gradients),
@@ -456,10 +458,11 @@ private fun <T> ExpandableStrip(
     var expanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth()) {
         val canExpand = all.size > gridCols
-        SectionHeader(
+        StudioSectionHeader(
             title,
-            actionLabel = if (canExpand) (if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all)) else null,
-            onAction = if (canExpand) ({ expanded = !expanded }) else null,
+            actions = listOfNotNull(
+                if (canExpand) StudioHeaderAction(if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all)) { expanded = !expanded } else null,
+            ),
         )
         if (!expanded) {
             LazyRow(contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {

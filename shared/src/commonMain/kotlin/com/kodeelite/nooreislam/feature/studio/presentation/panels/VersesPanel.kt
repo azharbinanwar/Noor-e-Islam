@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,17 +39,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.Surah
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
-import com.kodeelite.nooreislam.feature.studio.presentation.components.SectionHeader
+import com.kodeelite.nooreislam.feature.studio.presentation.components.StudioHeaderAction
+import com.kodeelite.nooreislam.feature.studio.presentation.components.StudioSectionHeader
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.ayah
 import com.kodeelite.nooreislam.resources.quran_surah_name
+import com.kodeelite.nooreislam.resources.nothing_matches
+import com.kodeelite.nooreislam.resources.reset
+import com.kodeelite.nooreislam.resources.try_a_surah_name_or_number
 import com.kodeelite.nooreislam.resources.search
 import com.kodeelite.nooreislam.resources.show_less
 import com.kodeelite.nooreislam.resources.surah
@@ -100,15 +108,15 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
         }
     }
 
-    // the first pick anchors; every tap after moves the other end — grow or shrink either way.
-    // Tapping the anchor itself collapses back to a single ayah.
+    // toggle at the edges: an unselected tap extends the range to reach it, a tapped edge drops just
+    // that one, a tapped middle is already selected and changes nothing. Shrinking is one edge at a
+    // time, so nothing ever collapses by surprise.
     fun tapAyah(n: Int) = when {
-        n == start && end > start -> select(start, start)
-        else -> {
-            val a = minOf(start, n)
-            val b = maxOf(start, n).coerceAtMost(a + StudioDefaults.MAX_AYAHS - 1)
-            select(a, b)
-        }
+        n < start -> select(n, end.coerceAtMost(n + StudioDefaults.MAX_AYAHS - 1))
+        n > end -> select(maxOf(start, n - StudioDefaults.MAX_AYAHS + 1), n)
+        n == start && start != end -> select(start + 1, end)
+        n == end && start != end -> select(start, end - 1)
+        else -> Unit
     }
 
     var surahsExpanded by remember { mutableStateOf(false) }
@@ -117,16 +125,24 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
-        SectionHeader(
+        StudioSectionHeader(
             stringResource(Res.string.surah),
-            actionLabel = stringResource(if (surahsExpanded) Res.string.show_less else Res.string.view_all),
-            // one grid at a time, so the open one gets the panel's full height
-            onAction = { surahsExpanded = !surahsExpanded; ayahsExpanded = false; query = "" },
+            actions = listOf(
+                // one grid at a time, so the open one gets the panel's full height
+                StudioHeaderAction(stringResource(if (surahsExpanded) Res.string.show_less else Res.string.view_all)) {
+                    surahsExpanded = !surahsExpanded; ayahsExpanded = false; query = ""
+                },
+            ),
         )
         if (!surahsExpanded) {
             val surahRow = rememberLazyListState()
             LaunchedEffect(surahs, currentSurah) {
-                if (surahs.isNotEmpty()) surahRow.scrollToItem((currentSurah - 1).coerceAtLeast(0))
+                if (surahs.isEmpty()) return@LaunchedEffect
+                val i = (currentSurah - 1).coerceAtLeast(0)
+                // already on screen (a tap inside the strip): leave the hand where it is.
+                // Off screen (first open, View all, a seed): glide there, never teleport
+                val visible = surahRow.layoutInfo.visibleItemsInfo.any { it.index == i }
+                if (!visible) surahRow.animateScrollToItem(i)
             }
             LazyRow(state = surahRow, contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(surahs, key = { it.number }) { s ->
@@ -143,7 +159,9 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
                 decorationBox = { field ->
                     Box(
                         Modifier.fillMaxWidth().padding(horizontal = 16.dp).clip(RoundedCornerShape(10.dp))
-                            .background(colors.onSurface.copy(alpha = 0.08f)).padding(horizontal = 12.dp, vertical = 9.dp),
+                            .background(colors.onSurface.copy(alpha = 0.08f))
+                            .height(40.dp).padding(horizontal = 12.dp),
+                        contentAlignment = Alignment.CenterStart,
                     ) {
                         if (query.isEmpty()) Text(stringResource(Res.string.search), color = colors.onSurfaceVariant, fontSize = 13.sp)
                         field()
@@ -153,10 +171,19 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
             val hits = surahs.filter {
                 query.isBlank() || it.nameTransliterated.contains(query, ignoreCase = true) || it.number.toString().startsWith(query.trim())
             }
+            // fixed height: a narrowing search must not resize the panel under the keyboard
             Column(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(360.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                if (hits.isEmpty()) {
+                    StateView(
+                        title = stringResource(Res.string.nothing_matches, query.trim()),
+                        message = stringResource(Res.string.try_a_surah_name_or_number),
+                        icon = { Icon(Lucide.Search, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(28.dp)) },
+                        modifier = Modifier.padding(top = 24.dp),
+                    )
+                }
                 hits.chunked(3).forEach { row ->
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         row.forEach { s ->
@@ -172,15 +199,20 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
         }
 
         val count = surahs.firstOrNull { it.number == currentSurah }?.ayahCount ?: 0
-        SectionHeader(
+        StudioSectionHeader(
             stringResource(Res.string.ayah),
-            actionLabel = if (count > StudioDefaults.MAX_AYAHS) stringResource(if (ayahsExpanded) Res.string.show_less else Res.string.view_all) else null,
-            onAction = if (count > StudioDefaults.MAX_AYAHS) ({ ayahsExpanded = !ayahsExpanded; surahsExpanded = false }) else null,
+            actions = listOfNotNull(
+                // back to the single ayah the range grew from — only offered while there is a range
+                if (end > start) StudioHeaderAction(stringResource(Res.string.reset)) { select(start, start) } else null,
+                if (count > StudioDefaults.MAX_AYAHS) StudioHeaderAction(stringResource(if (ayahsExpanded) Res.string.show_less else Res.string.view_all)) {
+                    ayahsExpanded = !ayahsExpanded; surahsExpanded = false
+                } else null,
+            ),
         )
         if (!ayahsExpanded) {
             val ayahRow = rememberLazyListState()
             LaunchedEffect(currentSurah, count) {
-                if (count > 0) ayahRow.scrollToItem((start - 1).coerceAtLeast(0))
+                if (count > 0) ayahRow.animateScrollToItem((start - 1).coerceAtLeast(0))
             }
             LazyRow(state = ayahRow, contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 items((1..count).toList(), key = { it }) { n -> AyahDot(n, n in start..end, Modifier.size(34.dp)) { tapAyah(n) } }
@@ -211,9 +243,11 @@ private fun SurahChip(s: Surah, active: Boolean, nameFont: FontFamily, modifier:
             .clickable(onClick = onClick)
             .padding(horizontal = 10.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        // number holds the left edge, the calligraphic name the right — never both bunched left
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text("${s.number}", color = if (active) colors.onPrimary else colors.onSurfaceVariant, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.size(8.dp))
         // the same calligraphic glyph the canvas draws, so the chip previews the design itself
         Text(s.number.toSurahKey(), fontFamily = nameFont, fontSize = 20.sp, color = if (active) colors.onPrimary else colors.onSurface, maxLines = 1)
     }
@@ -236,3 +270,4 @@ private fun AyahDot(n: Int, inRange: Boolean, modifier: Modifier, onClick: () ->
         )
     }
 }
+

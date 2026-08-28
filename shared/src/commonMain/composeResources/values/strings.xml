@@ -421,6 +421,7 @@
     <string name="collections">Collections</string>
     <string name="favorites">Favorites</string>
     <string name="surahs">Surahs</string>
+    <string name="try_a_surah_name_or_number">Try a surah name or number</string>
     <string name="surahs_label">Surahs</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Morning</string>

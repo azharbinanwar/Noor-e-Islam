@@ -34,6 +34,7 @@ import com.kodeelite.nooreislam.core.components.AppTextField
 import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.StateView
+import com.kodeelite.nooreislam.core.constants.defaults.HomeDefaults
 import com.kodeelite.nooreislam.core.store.HomeShortcutStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.add
@@ -60,7 +61,13 @@ fun ShortcutPickerSheet(onDismiss: () -> Unit) {
     val debug = koinInject<BuildType>().isDebug
     // a shortcut this build cannot offer (a dev-only screen pinned in debug) must not hold a slot here
     val offered = remember(edition, debug) { featuresOn(Surface.Home, edition, debug).map { it.target }.toSet() }
-    var pinned by remember { mutableStateOf(HomeShortcutStore.pinned.value.filter { it in offered }) }
+    // fixed slots, not a shrinking list: removing leaves its hole in place, and the next pick fills
+    // the first hole — swapping a shortcut keeps its position instead of sending it to the end
+    var slots by remember {
+        val current = HomeShortcutStore.pinned.value.filter { it in offered }
+        mutableStateOf(List(HomeDefaults.SHORTCUT_MAX) { current.getOrNull(it) })
+    }
+    val pinned = slots.filterNotNull()
     var query by remember { mutableStateOf("") }
 
     val shown by produceState(emptyList<Pair<AppFeature, String>>(), query, edition, debug) {
@@ -75,24 +82,21 @@ fun ShortcutPickerSheet(onDismiss: () -> Unit) {
     AppBottomSheet(
         onDismiss = onDismiss,
         title = stringResource(Res.string.home_shortcuts),
-        subtitle = stringResource(Res.string.home_shortcuts_hint, HomeShortcutStore.MIN, HomeShortcutStore.MAX),
+        subtitle = stringResource(Res.string.home_shortcuts_hint, HomeDefaults.SHORTCUT_MIN, HomeDefaults.SHORTCUT_MAX),
         fillHeight = true,
         header = {
             val all = featuresOn(Surface.Home, edition, debug)
-            val bar = pinned.mapNotNull { route -> all.firstOrNull { it.target == route } }.map { feature ->
-                AppActionItem(
+            val bar = slots.mapIndexed { i, route ->
+                val feature = route?.let { r -> all.firstOrNull { it.target == r } }
+                if (feature != null) AppActionItem(
                     label = stringResource(feature.name),
                     icon = feature.icon,
                     selected = true,
-                    onClick = { if (pinned.size > HomeShortcutStore.MIN) pinned = pinned - feature.target },
-                )
-            }
-            // empty slots stay visible so the bar reads as "room for more"
-            val empty = List(HomeShortcutStore.MAX - bar.size) {
-                AppActionItem(label = stringResource(Res.string.add), icon = Lucide.Plus, onClick = {})
+                    onClick = { if (pinned.size > HomeDefaults.SHORTCUT_MIN) slots = slots.toMutableList().also { it[i] = null } },
+                ) else AppActionItem(label = stringResource(Res.string.add), icon = Lucide.Plus, onClick = {})
             }
             AppActionGroup(
-                items = bar + empty,
+                items = bar,
                 width = ActionWidth.Fill,
                 modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
             )
@@ -107,7 +111,7 @@ fun ShortcutPickerSheet(onDismiss: () -> Unit) {
         footer = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 AppButton(text = stringResource(Res.string.cancel), onClick = onDismiss, variant = AppButtonVariant.Outline, modifier = Modifier.weight(1f))
-                AppButton(text = stringResource(Res.string.done), onClick = { HomeShortcutStore.set(pinned); onDismiss() }, modifier = Modifier.weight(1f))
+                AppButton(text = stringResource(Res.string.done), onClick = { HomeShortcutStore.set(slots.filterNotNull()); onDismiss() }, modifier = Modifier.weight(1f))
             }
         },
     ) {
@@ -119,7 +123,7 @@ fun ShortcutPickerSheet(onDismiss: () -> Unit) {
             )
             return@AppBottomSheet
         }
-        val full = pinned.size >= HomeShortcutStore.MAX
+        val full = slots.none { it == null }
         AppTileGroup(
             items = shown.map { (feature, name) ->
                 val taken = feature.target in pinned
@@ -127,11 +131,16 @@ fun ShortcutPickerSheet(onDismiss: () -> Unit) {
                     title = name,
                     leadingIcon = feature.icon,
                     selected = taken,
-                    enabled = if (taken) pinned.size > HomeShortcutStore.MIN else !full,
+                    enabled = if (taken) pinned.size > HomeDefaults.SHORTCUT_MIN else !full,
                     trailing = if (!taken) null else {
                         { Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(18.dp)) }
                     },
-                    onClick = { pinned = if (taken) pinned - feature.target else pinned + feature.target },
+                    onClick = {
+                        slots = slots.toMutableList().also {
+                            if (taken) it[it.indexOf(feature.target)] = null
+                            else it[it.indexOf(null)] = feature.target
+                        }
+                    },
                 )
             },
         )
