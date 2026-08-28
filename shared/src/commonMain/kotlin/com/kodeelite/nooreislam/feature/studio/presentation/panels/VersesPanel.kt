@@ -169,9 +169,8 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
                     }
                 },
             )
-            val hits = surahs.filter {
-                query.isBlank() || it.nameTransliterated.contains(query, ignoreCase = true) || it.number.toString().startsWith(query.trim())
-            }
+            // the repo does the finding: any digits, any spelling, a typo or two — ranked
+            val hits by produceState(surahs, query) { value = QuranRepository.findSurahs(query) }
             // fixed height: a narrowing search must not resize the panel under the keyboard
             Column(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(360.dp).verticalScroll(rememberScrollState()),

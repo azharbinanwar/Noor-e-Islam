@@ -2,6 +2,11 @@ package com.kodeelite.nooreislam.feature.quran.data
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.kodeelite.nooreislam.core.util.NameMatch
+import com.kodeelite.nooreislam.core.util.fromArabicIndicDigits
+import com.kodeelite.nooreislam.core.util.latinKeys
+import com.kodeelite.nooreislam.core.util.nameMatch
+import com.kodeelite.nooreislam.core.util.normalizeArabic
 import com.kodeelite.nooreislam.resources.Res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -50,6 +55,38 @@ object QuranRepository {
     /** The 114-row surah table (names, counts, revelation) — read once, for the header and picker. */
     suspend fun surahs(): List<Surah> = surahCache ?: lock.withLock {
         surahCache ?: readSurahs(db()).also { surahCache = it }
+    }
+
+    /**
+     * Surahs matching what someone typed: a number in any digits, or a name in any of the spellings
+     * people actually use — transliterated with or without its article, English, Arabic, and one or
+     * two typos off. Ranked so an exact spelling always beats a fuzzy one. Blank returns everything.
+     */
+    suspend fun findSurahs(query: String): List<Surah> {
+        val all = surahs()
+        val q = query.trim().fromArabicIndicDigits()
+        if (q.isEmpty()) return all
+        q.toIntOrNull()?.let { n -> return all.filter { it.number.toString().startsWith(n.toString()) } }
+
+        val keys = latinKeys(q)
+        // Latin letters pass through normalizeArabic untouched, so the Arabic side only exists
+        // when the query actually carries Arabic — otherwise "surah" pretends to be an Arabic name
+        val arabic = if (q.any { it in '؀'..'ۿ' }) q.normalizeArabic().removePrefix("سوره").trim() else ""
+        // "surah" alone folds away entirely — nothing left to filter by is not the same as no hits
+        if (keys.isEmpty() && arabic.isEmpty()) return all
+        val noMatch = NameMatch.entries.size
+        return all.mapNotNull { s ->
+            val latin = minOf(
+                nameMatch(keys, s.nameTransliterated)?.ordinal ?: noMatch,
+                nameMatch(keys, s.nameEnglish)?.ordinal ?: noMatch,
+            )
+            val tier = when {
+                latin < noMatch -> latin
+                arabic.isNotEmpty() && s.nameArabic.normalizeArabic().contains(arabic) -> NameMatch.PARTIAL.ordinal
+                else -> return@mapNotNull null
+            }
+            s to tier
+        }.sortedWith(compareBy({ it.second }, { it.first.number })).map { it.first }
     }
 
     /** The 30 juz, each with the ayah it starts at and the surahs it spans — for the juz list. */

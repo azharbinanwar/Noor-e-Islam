@@ -36,8 +36,23 @@ fun String.normalizeLatin(): String {
 // longest first, so Ash- strips before Al- gets a chance to half-strip it
 private val ARTICLES = listOf("ash", "adh", "ath", "aal", "al", "ar", "an", "at", "ad", "as")
 
-/** The folded string with and without a leading article — both spellings people actually type. */
+// words that name the thing being searched, not the name itself — "surah rahman" means rahman
+private val NOISE_WORDS = setOf("sura", "surat", "chapter", "the", "of")
+
+/**
+ * The folded string with and without a leading article — both spellings people actually type.
+ * "Surah"-style noise words drop out, and a multi-word query also keys each word on its own,
+ * so "surah ar rahman" reaches Ar-Rahman by any of its parts.
+ */
 fun latinKeys(raw: String): List<String> {
+    val words = raw.split(' ', '-').filter { it.isNotBlank() }
+        .filterNot { it.normalizeLatin() in NOISE_WORDS }
+    val whole = keysOf(words.joinToString(""))
+    val perWord = if (words.size > 1) words.flatMap { keysOf(it) }.filter { it.length >= 3 } else emptyList()
+    return (whole + perWord).distinct()
+}
+
+private fun keysOf(raw: String): List<String> {
     val n = raw.normalizeLatin()
     if (n.length < 2) return if (n.isEmpty()) emptyList() else listOf(n)
     for (a in ARTICLES) {
