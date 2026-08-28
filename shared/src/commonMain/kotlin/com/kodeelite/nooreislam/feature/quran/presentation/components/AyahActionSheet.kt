@@ -40,10 +40,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bookmark
+import com.composables.icons.lucide.Copy
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.FolderPlus
 import com.composables.icons.lucide.Highlighter
@@ -62,9 +65,11 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.copy_ayah
 import com.kodeelite.nooreislam.resources.action_add_note
 import com.kodeelite.nooreislam.resources.action_add_to_collection
 import com.kodeelite.nooreislam.resources.action_bookmark
@@ -138,6 +143,8 @@ fun AyahActionSheet(
     onDismiss: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    val clipboard = LocalClipboardManager.current
+    val script by koinInject<QuranStore>().script.collectAsState()
     val density = LocalDensity.current
     val winPx = LocalWindowInfo.current.containerSize.height
     val peekPx = with(density) { 172.dp.toPx() }
@@ -231,6 +238,10 @@ fun AyahActionSheet(
                                 onHighlight()
                             },
                             AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) { onNote() },
+                            AppActionItem(stringResource(Res.string.copy_ayah), Lucide.Copy, iconColor = colors.primary) {
+                                clipboard.setText(AnnotatedString("${ayah.textIn(script)}\n(${ayah.surah}:${ayah.ayah})"))
+                                onDismiss()
+                            },
                             AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
                         ),
                     )

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -212,6 +213,11 @@ fun AyahPassage(
                 )
             },
         fontSize = fontSize.sp,
+        fontFamily = bodyFont,
+        // a bare style on purpose: left to default, the theme's typography leaks into the paragraph,
+        // and on iOS that flips which lam-alif form Skia draws — the studio passes its own style and
+        // never had the problem
+        style = TextStyle(),
         lineHeight = (fontSize * lineHeightRatio).sp,
         textAlign = if (justify) TextAlign.Justify else TextAlign.Center,
         onTextLayout = { layout = it }
