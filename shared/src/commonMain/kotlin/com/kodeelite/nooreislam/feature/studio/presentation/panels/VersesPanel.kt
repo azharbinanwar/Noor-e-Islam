@@ -29,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +60,6 @@ import com.kodeelite.nooreislam.resources.search
 import com.kodeelite.nooreislam.resources.show_less
 import com.kodeelite.nooreislam.resources.surah
 import com.kodeelite.nooreislam.resources.view_all
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 
@@ -72,17 +70,20 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
     val colors = AppTheme.colors
-    val scope = rememberCoroutineScope()
     val surahs by produceState(emptyList<Surah>()) { value = QuranRepository.surahs() }
     val nameFont = FontFamily(Font(Res.font.quran_surah_name))
 
-    val currentSurah = config.ayahs.first().surah
-    val start = config.ayahs.first().ayah
-    val end = config.ayahs.last().ayah
+    // the surah being browsed outlives the selection: Reset empties the canvas but the strip stays
+    // where the reader was, waiting for the one tap that starts a fresh design
+    var browseSurah by remember { mutableStateOf(config.ayahs.firstOrNull()?.surah ?: 1) }
+    LaunchedEffect(config.ayahs) { config.ayahs.firstOrNull()?.let { browseSurah = it.surah } }
+    val currentSurah = browseSurah
+    val start = config.ayahs.firstOrNull()?.ayah ?: 0
+    val end = config.ayahs.lastOrNull()?.ayah ?: -1
 
     // the whole surah once per surah change; a tap then slices it synchronously. Fetching per tap
     // raced: a later tap's query could land first and throw the selection backwards.
-    val surahAyahs by produceState(config.ayahs, currentSurah) { value = QuranRepository.surah(currentSurah) }
+    val surahAyahs by produceState(config.ayahs, browseSurah) { value = QuranRepository.surah(browseSurah) }
 
     // a new selection re-sizes the text to fit, same thresholds the studio opens with;
     // the size slider still overrides afterwards
@@ -101,17 +102,17 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
         if (range.isNotEmpty()) onChange(sized(range))
     }
 
+    // switching surah clears the selection: the canvas says pick an ayah, and the first tap is it
     fun moveToSurah(surah: Int) {
-        scope.launch {
-            val first = QuranRepository.surah(surah).take(1)
-            if (first.isNotEmpty()) onChange(sized(first))
-        }
+        browseSurah = surah
+        if (config.ayahs.isNotEmpty()) onChange(config.copy(ayahs = emptyList()))
     }
 
     // toggle at the edges: an unselected tap extends the range to reach it, a tapped edge drops just
     // that one, a tapped middle is already selected and changes nothing. Shrinking is one edge at a
-    // time, so nothing ever collapses by surprise.
+    // time, so nothing ever collapses by surprise. From empty, the first tap is the selection.
     fun tapAyah(n: Int) = when {
+        config.ayahs.isEmpty() -> select(n, n)
         n < start -> select(n, end.coerceAtMost(n + StudioDefaults.MAX_AYAHS - 1))
         n > end -> select(maxOf(start, n - StudioDefaults.MAX_AYAHS + 1), n)
         n == start && start != end -> select(start + 1, end)
@@ -203,7 +204,7 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
             stringResource(Res.string.ayah),
             actions = listOfNotNull(
                 // back to the single ayah the range grew from — only offered while there is a range
-                if (end > start) StudioHeaderAction(stringResource(Res.string.reset)) { select(start, start) } else null,
+                if (config.ayahs.isNotEmpty()) StudioHeaderAction(stringResource(Res.string.reset)) { onChange(config.copy(ayahs = emptyList())) } else null,
                 if (count > StudioDefaults.MAX_AYAHS) StudioHeaderAction(stringResource(if (ayahsExpanded) Res.string.show_less else Res.string.view_all)) {
                     ayahsExpanded = !ayahsExpanded; surahsExpanded = false
                 } else null,
@@ -212,7 +213,7 @@ fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
         if (!ayahsExpanded) {
             val ayahRow = rememberLazyListState()
             LaunchedEffect(currentSurah, count) {
-                if (count > 0) ayahRow.animateScrollToItem((start - 1).coerceAtLeast(0))
+                if (count > 0 && start > 0) ayahRow.animateScrollToItem((start - 1).coerceAtLeast(0))
             }
             LazyRow(state = ayahRow, contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 items((1..count).toList(), key = { it }) { n -> AyahDot(n, n in start..end, Modifier.size(34.dp)) { tapAyah(n) } }

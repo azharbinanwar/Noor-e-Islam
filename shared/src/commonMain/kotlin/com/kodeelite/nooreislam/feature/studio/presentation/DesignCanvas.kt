@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -61,6 +62,7 @@ import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
 import com.kodeelite.nooreislam.feature.studio.data.SurahPlacement
+import com.kodeelite.nooreislam.resources.pick_an_ayah_to_begin
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.hijri_era
 import com.kodeelite.nooreislam.resources.noor_e_islam_logo
@@ -231,6 +233,17 @@ fun DesignCanvas(
                     .padding(config.cardPadding.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // a cleared selection is honest: no verse, no refs, and share stays off until a pick
+                    if (config.ayahs.isEmpty()) {
+                        Text(
+                            stringResource(Res.string.pick_an_ayah_to_begin),
+                            color = config.textColor.copy(alpha = 0.7f),
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp),
+                        )
+                        return@Column
+                    }
                     if (config.surahPlacement == SurahPlacement.Top) {
                         // Top: only the surah name here; the "Al Quran (2:5)" reference sits at the bottom
                         Text(

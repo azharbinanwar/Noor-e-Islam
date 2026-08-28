@@ -192,7 +192,8 @@ fun StudioScreen(
     // auto-save the in-progress design as a draft once editing settles (only after real edits)
     LaunchedEffect(config) {
         if (config != initialConfig) {
-            delay(800.milliseconds); store.saveDraft()
+            delay(800.milliseconds)
+            if (config.ayahs.isNotEmpty()) store.saveDraft()
         }
     }
 
@@ -257,9 +258,10 @@ fun StudioScreen(
                     onBack = { requestBack() },
                     onUndo = { undo() },
                     onRedo = { redo() },
-                    onSave = { saveCurrent() },
+                    // an empty canvas has nothing to save, show or share — the card says why
+                    onSave = { if (config.ayahs.isNotEmpty()) saveCurrent() },
                     onGallery = { galleryOpen = true },
-                    onDone = { isEditing = false },
+                    onDone = { if (config.ayahs.isNotEmpty()) isEditing = false },
                 )
             }
 
@@ -308,7 +310,7 @@ fun StudioScreen(
                     onEdit = { isEditing = true },
                     savingToGallery = savingToGallery,
                     onSaveToGallery = {
-                        if (!savingToGallery) {
+                        if (!savingToGallery && config.ayahs.isNotEmpty()) {
                             savingToGallery = true
                             scope.launch {
                                 try {
@@ -339,7 +341,7 @@ fun StudioScreen(
                         }
                     },
                     sharing = sharing,
-                    onShare = { if (!sharing) shareSheetOpen = true },
+                    onShare = { if (!sharing && config.ayahs.isNotEmpty()) shareSheetOpen = true },
                     onExport = { /* placeholder: export sizes + preview */ },
                 )
 
