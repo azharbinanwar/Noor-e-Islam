@@ -44,7 +44,6 @@ import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 
-private const val BISMALAH_WORD_COUNT = 4
 private const val RTL_MARKER = "‏"
 
 private const val SELECTION_ALPHA = 0.10f
@@ -144,7 +143,7 @@ fun AyahPassage(
                 }
 
                 withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)) {
-                    append(ayahText(ayah, script))
+                    append(ayah.textIn(script))
                 }
 
                 withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
@@ -219,10 +218,3 @@ fun AyahPassage(
     )
 }
 
-// Drops embedded basmalah on non-Fatiha surah starts
-private fun ayahText(ayah: Ayah, script: QuranScript): String {
-    val words = ayah.textIn(script).split(' ').filter { it.isNotBlank() }
-    val body = if (ayah.ayah == 1 && ayah.surah != 1 && words.size > BISMALAH_WORD_COUNT && words.first().startsWith("بِسْم"))
-        words.drop(BISMALAH_WORD_COUNT) else words
-    return body.joinToString(" ")
-}

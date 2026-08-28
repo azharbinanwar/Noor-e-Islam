@@ -8,7 +8,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
-// Reads quran.db and returns raw verses/surahs. Layout (headers, basmalah, grouping) is the UI's job.
+// Reads quran.db and serves verses/surahs. The db is a faithful copy of each source; AyahTextRules
+// is applied here, once, so every consumer downstream gets clean text and no one cleans their own.
 object QuranRepository {
 
     const val TOTAL_AYAHS = 6236
@@ -68,12 +69,14 @@ object QuranRepository {
             args.forEachIndexed { i, v -> st.bindLong(i + 1, v) }
             val out = ArrayList<Ayah>()
             while (st.step()) {
+                val surah = st.getLong(1).toInt()
+                val ayah = st.getLong(2).toInt()
                 out += Ayah(
                     id = st.getLong(0).toInt(),
-                    surah = st.getLong(1).toInt(),
-                    ayah = st.getLong(2).toInt(),
-                    textTanzil = st.getText(3),
-                    textIndopak = st.getText(4),
+                    surah = surah,
+                    ayah = ayah,
+                    textTanzil = AyahTextRules.cleanTanzil(st.getText(3), surah, ayah),
+                    textIndopak = AyahTextRules.cleanIndopak(st.getText(4)),
                     juz = st.getLong(5).toInt(),
                     endsRuku = st.getLong(6) != 0L,
                     sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
@@ -115,12 +118,14 @@ object QuranRepository {
         val starts = ArrayList<Pair<Int, Ayah>>(30)
         try {
             while (st.step()) {
+                val surah = st.getLong(2).toInt()
+                val ayah = st.getLong(3).toInt()
                 starts += st.getLong(0).toInt() to Ayah(
                     id = st.getLong(1).toInt(),
-                    surah = st.getLong(2).toInt(),
-                    ayah = st.getLong(3).toInt(),
-                    textTanzil = st.getText(4),
-                    textIndopak = st.getText(5),
+                    surah = surah,
+                    ayah = ayah,
+                    textTanzil = AyahTextRules.cleanTanzil(st.getText(4), surah, ayah),
+                    textIndopak = AyahTextRules.cleanIndopak(st.getText(5)),
                     juz = st.getLong(6).toInt(),
                     endsRuku = st.getLong(7) != 0L,
                     sajda = if (st.isNull(8)) null else sajdaOf(st.getText(8)),

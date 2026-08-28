@@ -69,7 +69,6 @@ import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 
-private const val BISMALAH_WORD_COUNT_V2 = 4
 
 // Text plus each ayah's character range within it, and the note glyph's own tiny
 // range (a separate tap target from the ayah's full selection range)
@@ -133,7 +132,7 @@ fun AyahPassageV2(
                 }
 
                 withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground)) {
-                    append(ayahTextV2(ayah))
+                    append(ayah.textIn(QuranScript.saved()))
                 }
                 append(" ")
 
@@ -286,10 +285,3 @@ fun AyahPassageV2(
     )
 }
 
-// Drops embedded basmalah on non-Fatiha surah starts
-private fun ayahTextV2(ayah: Ayah): String {
-    val words = ayah.textIn(QuranScript.saved()).split(' ').filter { it.isNotBlank() }
-    val body = if (ayah.ayah == 1 && ayah.surah != 1 && words.size > BISMALAH_WORD_COUNT_V2 && words.first().startsWith("بِسْم"))
-        words.drop(BISMALAH_WORD_COUNT_V2) else words
-    return body.joinToString(" ")
-}
