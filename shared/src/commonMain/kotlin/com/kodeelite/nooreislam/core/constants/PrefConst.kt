@@ -86,6 +86,7 @@ object PrefConst {
     // ── Quran ────────────────────────────────────────────────
     const val QURAN_FONT_SP = "quran_font_sp" // reading font size (sp); last-read page & bookmarks come later
     const val QURAN_LINE_SPACING = "quran_line_spacing" // % of base line height, applies on top of any font
+    const val QURAN_SCRIPT = "quran_script"   // mushaf spelling (QuranScript enum name)
     const val QURAN_FONT = "quran_font"       // mushaf body font (QuranFont enum name)
     const val QURAN_THEME = "quran_theme"     // reading theme (QuranTheme enum name)
     const val QURAN_FAVORITES = "quran_favorites" // favorite surah numbers, comma-separated

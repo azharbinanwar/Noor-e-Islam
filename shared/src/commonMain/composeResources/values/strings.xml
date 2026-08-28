@@ -720,6 +720,15 @@
     <string name="font_madani">Madani</string>
     <string name="font_scheherazade">Scheherazade</string>
     <string name="font_indopak">IndoPak</string>
+    <string name="font_saleem">Saleem</string>
+    <string name="font_nastaleeq">Nastaleeq</string>
+    <string name="font">Font</string>
+    <string name="script_uthmani">Uthmani</string>
+    <string name="script_indopak">IndoPak</string>
+    <string name="script_indopak_hint">Every vowel written out, as taught in South Asia</string>
+    <string name="script_uthmani_hint">The script read across the Arab world</string>
+    <string name="font_hint_indopak">Only one font can draw IndoPak correctly</string>
+    <string name="font_hint_uthmani">All of these can draw Uthmani correctly</string>
     <!-- Studio (share editor) -->
     <string name="mode_templates">Templates</string>
     <string name="mode_layout">Layout</string>

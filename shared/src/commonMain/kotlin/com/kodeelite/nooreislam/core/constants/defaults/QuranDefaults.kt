@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.core.constants.defaults
 
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
 
 /**
@@ -11,6 +12,12 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
  */
 object QuranDefaults {
     val THEME = QuranTheme.System            // follows the app theme
+    val SCRIPT = QuranScript.Uthmani         // what INDOPAK_COUNTRIES does not claim
+
+    // where the mushaf in people's homes is printed in IndoPak, so a fresh install opens in the
+    // spelling they learned on. Their own pick, once made, wins forever after.
+    val INDOPAK_COUNTRIES = setOf("PK", "IN", "BD", "AF", "LK", "NP")
+
     val FONT = QuranFont.Hafs
     val HIGHLIGHT_COLOR = HighlightColor.Green
 

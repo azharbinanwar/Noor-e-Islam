@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -43,10 +44,12 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.MiniStepper
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
 import com.kodeelite.nooreislam.feature.quran.data.QuranFont
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.alignment
+import com.kodeelite.nooreislam.resources.font
 import com.kodeelite.nooreislam.resources.line_spacing
 import com.kodeelite.nooreislam.resources.reading_settings
 import com.kodeelite.nooreislam.resources.script
@@ -65,6 +68,7 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
     val fontSize by store.fontSize.collectAsState()
     val lineSpacing by store.lineSpacing.collectAsState()
     val font by store.font.collectAsState()
+    val script by store.script.collectAsState()
     val theme by store.theme.collectAsState()
     val justify by store.justifyText.collectAsState()
     AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.reading_settings), scrimAlpha = 0f) {
@@ -72,6 +76,9 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
             QuranTheme.entries.forEach { t -> ThemeChip(t, selected = t == theme, onClick = { store.setTheme(t) }) }
         }
         Spacer(Modifier.size(12.dp))
+        // script sits above font because it is the parent choice: it changes the letters, the font
+        // only their shape. The fonts below dim to whichever script is not active, which is the whole
+        // explanation of why picking IndoPak leaves one choice instead of five.
         Text(
             stringResource(Res.string.script),
             color = colors.onSurfaceVariant,
@@ -79,8 +86,36 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
             modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
         )
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            QuranFont.entries.forEach { f -> FontChip(f, selected = f == font, onClick = { store.setFont(f) }) }
+            QuranScript.entries.forEach { s -> ScriptChip(s, selected = s == script, onClick = { store.setScript(s) }) }
         }
+        // one line under the row rather than inside each chip: it only has to describe the one that
+        // is selected, and it has the width to say something a reader can recognise themselves in
+        Text(
+            script.hint,
+            color = colors.onSurfaceVariant,
+            fontSize = 11.sp,
+            modifier = Modifier.padding(start = 4.dp, top = 6.dp)
+        )
+        Spacer(Modifier.size(12.dp))
+        Text(
+            stringResource(Res.string.font),
+            color = colors.onSurfaceVariant,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
+        )
+        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            QuranFont.entries.forEach { f ->
+                FontChip(f, selected = f == font, dimmed = f.script != script, onClick = { store.setFont(f) })
+            }
+        }
+        // both scripts get a line, so the sheet's height is the same either way: one that came and went
+        // re-measured the sheet on every switch and jumped under the finger that did it
+        Text(
+            script.fontHint,
+            color = colors.onSurfaceVariant,
+            fontSize = 11.sp,
+            modifier = Modifier.padding(start = 4.dp, top = 6.dp)
+        )
         Spacer(Modifier.size(12.dp))
         AppTileGroup(
             items = listOf(
@@ -173,13 +208,34 @@ private fun Bar(color: Color, widthFraction: Float, modifier: Modifier = Modifie
     Box(modifier.fillMaxWidth(widthFraction).height(5.dp).clip(RoundedCornerShape(3.dp)).background(color))
 }
 
-// live preview chip: the same Arabic sample in each font so the user picks by look, not name
+// each script drawn in its own font, showing the one phrase everyone knows in both spellings
 @Composable
-private fun FontChip(font: QuranFont, selected: Boolean, onClick: () -> Unit) {
+private fun ScriptChip(script: QuranScript, selected: Boolean, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    val fam = FontFamily(Font(script.fonts.first().res))
+    Column(
+        Modifier.width(126.dp).clip(RoundedCornerShape(12.dp))
+            .background(if (selected) colors.primary.copy(alpha = 0.12f) else Color.Transparent)
+            .border(1.dp, if (selected) colors.primary else colors.outlineVariant, RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick).padding(horizontal = 10.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(Modifier.fillMaxWidth().height(40.dp), contentAlignment = Alignment.Center) {
+            Text(script.sample, fontFamily = fam, fontSize = 20.sp, color = colors.onBackground, maxLines = 1)
+        }
+        Spacer(Modifier.size(3.dp))
+        Text(script.label, color = if (selected) colors.primary else colors.onSurfaceVariant, fontSize = 11.sp, maxLines = 1)
+    }
+}
+
+// live preview chip: the same Arabic sample in each font so the user picks by look, not name.
+// A dimmed chip belongs to the other script and stays tappable — picking it carries the script over.
+@Composable
+private fun FontChip(font: QuranFont, selected: Boolean, dimmed: Boolean, onClick: () -> Unit) {
     val colors = AppTheme.colors
     val fam = FontFamily(Font(font.res))
     Column(
-        Modifier.width(104.dp).clip(RoundedCornerShape(12.dp))
+        Modifier.width(104.dp).alpha(if (dimmed) 0.4f else 1f).clip(RoundedCornerShape(12.dp))
             .background(if (selected) colors.primary.copy(alpha = 0.12f) else Color.Transparent)
             .border(1.dp, if (selected) colors.primary else colors.outlineVariant, RoundedCornerShape(12.dp))
             .clickable(onClick = onClick).padding(horizontal = 10.dp, vertical = 8.dp),

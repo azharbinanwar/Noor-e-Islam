@@ -17,16 +17,18 @@ import kotlinx.coroutines.withContext
 // re-running is idempotent, so this is what actually guarantees the stored side and the query side
 // fold identically — they call one function. Widening the rules never needs the asset regenerated.
 //
-// One row carries every script the Quran ships in, because what a reader types is their own spelling,
-// not whichever text happens to be on screen: normalizing drops the superscript alef, so Uthmani folds
-// to صرط while Simple and Indopak keep صراط, and 5907 of 6236 ayahs would miss across that pair alone.
+// One row carries every script, because what a reader types is their own spelling and not whichever
+// text happens to be on screen. The spellings genuinely differ after normalizing — Uthmani folds to
+// صرط where Simple and Indopak keep صراط — so a single column would miss most of the Quran for
+// anyone typing the other one. Search covers scripts the reader is not currently reading in, on
+// purpose: results are looked up by id and drawn in whatever script is set.
 object QuranSearchRepository {
 
     private const val DB_NAME = "quran_search.db"
     private const val DB_ASSET = "files/quran/quran_search.db"
 
     // read by index, so the order is fixed on purpose; the script columns trail so adding one is one entry
-    private const val COLS = "id,surah,ayah,juz,endsRuku,text,textUthmani"
+    private const val COLS = "id,surah,ayah,juz,endsRuku,text,textUthmani,textIndopak"
     private const val FIRST_SCRIPT = 5
     private val COL_COUNT = COLS.count { it == ',' } + 1
 
