@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
+import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.studio.data.LogoCorner
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
@@ -248,19 +250,31 @@ fun DesignCanvas(
                         Spacer(Modifier.size(12.dp))
                     }
 
-                    // the font carries the spelling: picking Nastaleeq shows the IndoPak text, a Tanzil face the Tanzil
-                    val combinedAyahText = config.ayahs.joinToString(" ") { it.textIn(config.fontFamily.script) }
+                    // the font carries the spelling: picking Nastaleeq shows the IndoPak text, a Tanzil
+                    // face the Tanzil. Past one ayah, each ends with its ornate number as the mushaf
+                    // separates them — drawn in the reference font's own span, the way the reader does:
+                    // the body face drops the digits inside the brackets on iOS
                     val annotatedAyah = buildAnnotatedString {
-                        val words = combinedAyahText.split(" ")
-                        words.forEachIndexed { i, word ->
-                            val emphasized = config.emphasizedWords.contains(i)
-                            withStyle(
-                                SpanStyle(
-                                    color = if (emphasized) config.emphasisColor else config.textColor,
-                                    fontWeight = if (emphasized) FontWeight.Bold else FontWeight.Normal
-                                )
-                            ) { append(word) }
-                            if (i < words.size - 1) append(" ")
+                        var wordIndex = 0
+                        config.ayahs.forEachIndexed { a, ayah ->
+                            val words = ayah.textIn(config.fontFamily.script).split(" ").filter { it.isNotBlank() }
+                            words.forEachIndexed { w, word ->
+                                val emphasized = config.emphasizedWords.contains(wordIndex)
+                                withStyle(
+                                    SpanStyle(
+                                        color = if (emphasized) config.emphasisColor else config.textColor,
+                                        fontWeight = if (emphasized) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                ) { append(word) }
+                                wordIndex++
+                                if (w < words.size - 1) append(" ")
+                            }
+                            if (config.ayahs.size > 1) {
+                                withStyle(SpanStyle(fontFamily = refFont, color = config.textColor)) {
+                                    append(" " + QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
+                                }
+                            }
+                            if (a < config.ayahs.size - 1) append(" ")
                         }
                     }
 
@@ -301,11 +315,13 @@ fun DesignCanvas(
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text(
-                                    text = QuranSymbols.ltrLock("(${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})"),
+                                    text = QuranSymbols.ltrLock("(${config.ayahs.first().surah.toArabicIndic()}:${ayahRangeArabic(config.ayahs)})"),
                                     fontFamily = refFont,
                                     color = config.textColor.copy(alpha = 0.7f),
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    // declared at the engine, not with control characters iOS ignores
+                                    style = TextStyle(textDirection = TextDirection.Ltr)
                                 )
                                 Text(
                                     text = config.ayahs.first().surah.toSurahKey(),
@@ -323,11 +339,12 @@ fun DesignCanvas(
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             Text(
                                 text = QuranSymbols.ltrLock(
-                                    "(${config.ayahs.first().surah.toArabicIndic()}:${config.ayahs.joinToString("،") { it.ayah.toArabicIndic() }})"
+                                    "(${config.ayahs.first().surah.toArabicIndic()}:${ayahRangeArabic(config.ayahs)})"
                                 ) + " ${stringResource(Res.string.quran_label_arabic)}",
                                 fontFamily = refFont,
                                 color = config.textColor.copy(alpha = 0.75f),
-                                fontSize = 18.sp
+                                fontSize = 18.sp,
+                                style = TextStyle(textDirection = TextDirection.Ltr)
                             )
                         }
                     }
@@ -348,4 +365,11 @@ fun DesignCanvas(
             }
         }
     }
+}
+
+// 95:6 for one ayah, 95:4-6 for a contiguous range — a share reference, not a list
+private fun ayahRangeArabic(ayahs: List<Ayah>): String {
+    val first = ayahs.first().ayah
+    val last = ayahs.last().ayah
+    return if (first == last) first.toArabicIndic() else "${first.toArabicIndic()}-${last.toArabicIndic()}"
 }

@@ -64,6 +64,7 @@ import com.kodeelite.nooreislam.feature.onboarding.presentation.QuranIntroScreen
 import com.kodeelite.nooreislam.feature.qibla.presentation.QiblaScreen
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.presentation.CollectionDetailsScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranIndexScreen
 import com.kodeelite.nooreislam.feature.quran.presentation.QuranReaderScreen
@@ -143,8 +144,12 @@ fun AppNavHost(
                     }
                     composable<AppRoute.Studio> { entry ->
                         val r = entry.toRoute<AppRoute.Studio>()
+                        // 0:0 comes from a pinned shortcut or the drawer — seed with the last-read
+                        // ayah so the canvas opens on something theirs, or the very start
+                        val store = koinInject<QuranStore>()
                         val ayah by produceState<Ayah?>(null, r.surah, r.ayah) {
-                            value = QuranRepository.ayah(r.surah, r.ayah)
+                            val seed = if (r.surah == 0) store.lastRead.value ?: (1 to 1) else (r.surah to r.ayah)
+                            value = QuranRepository.ayah(seed.first, seed.second)
                         }
                         ayah?.let { StudioScreen(ayahs = listOf(it)) }
                     }

@@ -39,8 +39,8 @@ fun BoxScope.StudioPanel(
             .animateContentSize(alignment = Alignment.BottomCenter)   // grow upward; footer (chips) stays locked at the bottom
             .padding(bottom = 8.dp)
     ) {
-        // Templates / Background / Gradient render their own SectionHeader — skip the panel label for them
-        if (studioMode != StudioMode.Templates && studioMode != StudioMode.BgImage && studioMode != StudioMode.BgGradient) {
+        // panels that render their own SectionHeaders skip the panel label — two titles, never three
+        if (studioMode !in setOf(StudioMode.Templates, StudioMode.BgImage, StudioMode.BgGradient, StudioMode.Verses)) {
             Text(
                 studioMode.label.uppercase(),
                 color = colors.onSurfaceVariant.copy(alpha = 0.5f),

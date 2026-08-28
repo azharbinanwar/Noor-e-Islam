@@ -48,8 +48,9 @@ sealed interface AppRoute {
 
     // canonical surah:ayah keys (one ayah now, list later); the screen loads the real Ayah
     @Serializable
+    // 0:0 = seed from the last-read ayah; a pinned shortcut or drawer row has no ayah to name
     @SerialName("Studio")
-    data class Studio(val surah: Int, val ayah: Int) : AppRoute
+    data class Studio(val surah: Int = 0, val ayah: Int = 0) : AppRoute
 
     @Serializable
     @SerialName("CollectionDetails")

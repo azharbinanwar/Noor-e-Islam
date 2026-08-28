@@ -85,6 +85,7 @@ import com.kodeelite.nooreislam.feature.studio.presentation.components.TemplateP
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.BrandingPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.CardPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.ContentPanel
+import com.kodeelite.nooreislam.feature.studio.presentation.panels.VersesPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.DatesPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.EffectsPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.TextSizePanel
@@ -283,6 +284,7 @@ fun StudioScreen(
 
                         StudioMode.Align -> AlignmentToggle(config.textAlign) { updateConfig(config.copy(textAlign = it)) }
                         StudioMode.Content -> ContentPanel(config) { updateConfig(it) }
+                        StudioMode.Verses -> VersesPanel(config) { updateConfig(it) }
 
                         // TODO(studio): stickers not ready — re-enable with StudioMode.Stickers
                         // StudioMode.Stickers -> StickerPicker { type ->
@@ -360,7 +362,8 @@ fun StudioScreen(
                 ShareSheet(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
                     ayahText = "${config.ayahs.joinToString("\n") { it.textIn(config.fontFamily.script) }}\n\n" +
-                            "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
+                            "(${config.ayahs.first().surah}:" +
+                                (if (config.ayahs.size == 1) "${config.ayahs.first().ayah}" else "${config.ayahs.first().ayah}-${config.ayahs.last().ayah}") + ")",
                     otherText = stringResource(Res.string.shared_with, edition.displayName()),
                     onDismiss = { shareSheetOpen = false },
                     onShare = { caption ->
