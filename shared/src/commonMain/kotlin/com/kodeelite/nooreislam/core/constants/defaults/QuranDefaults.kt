@@ -12,7 +12,7 @@ import com.kodeelite.nooreislam.feature.quran.data.QuranTheme
  */
 object QuranDefaults {
     val THEME = QuranTheme.System            // follows the app theme
-    val SCRIPT = QuranScript.Uthmani         // what INDOPAK_COUNTRIES does not claim
+    val SCRIPT = QuranScript.Tanzil          // what INDOPAK_COUNTRIES does not claim
 
     // where the mushaf in people's homes is printed in IndoPak, so a fresh install opens in the
     // spelling they learned on. Their own pick, once made, wins forever after.

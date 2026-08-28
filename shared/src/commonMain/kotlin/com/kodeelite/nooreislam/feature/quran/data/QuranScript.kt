@@ -7,22 +7,26 @@ import com.kodeelite.nooreislam.core.platform.deviceCountryCode
 import com.kodeelite.nooreislam.core.prefs.PrefsService
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.font_hint_indopak
-import com.kodeelite.nooreislam.resources.font_hint_uthmani
+import com.kodeelite.nooreislam.resources.font_hint_tanzil
 import com.kodeelite.nooreislam.resources.script_indopak
 import com.kodeelite.nooreislam.resources.script_indopak_hint
-import com.kodeelite.nooreislam.resources.script_uthmani
-import com.kodeelite.nooreislam.resources.script_uthmani_hint
+import com.kodeelite.nooreislam.resources.script_tanzil
+import com.kodeelite.nooreislam.resources.script_tanzil_hint
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
  * The spellings the mushaf is written in. Not a font: a script is a different column of text, so
  * switching changes the letters on the page and not only their shape. IndoPak writes every vowel
- * out and uses the Farsi yeh — اللّٰهِ ، الرَّحِیْمِ where the other has اللَّهِ ، الرَّحِيمِ — which
- * is why a reader raised on one finds the other hard to follow.
+ * out and uses the Farsi yeh — اللّٰهِ ، الرَّحِیْمِ where the others have اللَّهِ ، الرَّحِيمِ —
+ * which is why a reader raised on one finds the other hard to follow.
  *
- * [column] is the `ayah` column holding it, the same name in quran.db and quran_search.db. The
- * Uthmani column is Tanzil's Simple Enhanced text; the label is what readers call the family.
+ * Tanzil's fully-marked Uthmani text is not offered: every bundled font anchors its small meems on
+ * the letter instead of above it. The column stays in quran_search.db, so someone typing that
+ * spelling still finds the verse, and the text is kept in backup/ for whenever a font that places
+ * those marks properly lands.
+ *
+ * [column] is the `ayah` column holding it, the same name in quran.db and quran_search.db.
  */
 @kotlinx.serialization.Serializable
 enum class QuranScript(
@@ -39,10 +43,10 @@ enum class QuranScript(
         "بِسْمِ اللّٰهِ",
         "textIndopak",
     ),
-    Uthmani(
-        Res.string.script_uthmani,
-        Res.string.script_uthmani_hint,
-        Res.string.font_hint_uthmani,
+    Tanzil(
+        Res.string.script_tanzil,
+        Res.string.script_tanzil_hint,
+        Res.string.font_hint_tanzil,
         "بِسْمِ اللَّهِ",
         "text",
     );
@@ -52,11 +56,14 @@ enum class QuranScript(
     /** One line saying whose mushaf this is, so nobody has to know what an alif is to choose. */
     val hint: String @Composable get() = stringResource(hintRes)
 
-    /** Why the font row looks the way it does under this script — one choice, or five. */
+    /** Why the font row looks the way it does under this script. */
     val fontHint: String @Composable get() = stringResource(fontHintRes)
 
-    /** The fonts drawn for this script. Every script has at least one; only Uthmani has a choice. */
-    val fonts: List<QuranFont> get() = QuranFont.entries.filter { it.script == this }
+    /** The fonts drawn for this script. Never empty. */
+    val fonts: List<QuranFont> get() = QuranFont.entries.filter { this in it.scripts }
+
+    /** The font this script's own chip is set in. */
+    val ownFont: QuranFont get() = if (this == Indopak) QuranFont.Nastaleeq else QuranDefaults.FONT
 
     companion object {
         /**

@@ -101,19 +101,24 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val nav = LocalAppNavigator.current
+    val store = koinInject<QuranStore>()
     val ayahs = remember { mutableStateListOf<Ayah>() }
     val listState = rememberLazyListState()
+    val script by store.script.collectAsState()
 
-    // load the whole Quran once; LazyColumn only renders what's on screen, so this stays cheap
-    LaunchedEffect(Unit) {
-        if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all())
+    // the whole Quran in one read; LazyColumn only renders what's on screen, so this stays cheap.
+    // Keyed on the script because a different script is a different column: without it the page keeps
+    // whatever it was first opened with and only changes on a restart.
+    LaunchedEffect(script) {
+        val loaded = QuranRepository.all()
+        ayahs.clear()
+        ayahs.addAll(loaded)
     }
 
     // stays true only after the list has loaded AND jumped to the target — the splash overlay covers until then
     var scrolled by remember { mutableStateOf(false) }
 
     val colors = AppTheme.colors
-    val store = koinInject<QuranStore>()
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
     val autoScrollPaused by store.autoScrollPaused.collectAsState()
     val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
@@ -158,7 +163,9 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val topBarHeight = with(LocalDensity.current) { topBarHeightPx.toDp() }
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
-    val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
+    // derived, not keyed on size: a script swap replaces all 6236 verses with 6236 others, so any key
+    // counting them stays put and the page keeps rendering the text it was built from
+    val rukus by remember { derivedStateOf { groupByRuku(ayahs) } }
     // for each ruku: its number within its surah, and whether it's the surah's last ruku (then no "next")
     val rukuMeta = remember(rukus) {
         val meta = ArrayList<Pair<Int, Boolean>>(rukus.size)

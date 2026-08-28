@@ -671,7 +671,18 @@
     <string name="font_naskh">Naskh</string>
     <string name="font_madani">Madani</string>
     <string name="font_scheherazade">Scheherazade</string>
-    <string name="font_indopak">IndoPak</string>
+    <string name="font_saleem">Saleem</string>
+    <string name="font_nastaleeq">Nastaleeq</string>
+    <string name="font">Police</string>
+    <string name="script_uthmani">Uthmani</string>
+    <string name="script_indopak">IndoPak</string>
+    <string name="script_tanzil">Tanzil</string>
+    <string name="script_indopak_hint">Chaque voyelle écrite, comme on l'enseigne en Asie du Sud</string>
+    <string name="script_tanzil_hint">L'écriture arabe, avec les seules marques nécessaires</string>
+    <string name="script_uthmani_hint">L'écriture arabe complète, comme le mushaf de Médine</string>
+    <string name="font_hint_indopak">Seules ces polices écrivent l'IndoPak correctement</string>
+    <string name="font_hint_tanzil">N'importe laquelle de ces polices convient</string>
+    <string name="font_hint_uthmani">N'importe laquelle de ces polices convient</string>
     <!-- Studio (éditeur de partage) -->
     <string name="mode_templates">Modèles</string>
     <string name="mode_layout">Disposition</string>

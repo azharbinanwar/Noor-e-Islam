@@ -676,7 +676,18 @@
     <string name="font_naskh">نسخ</string>
     <string name="font_madani">مدني</string>
     <string name="font_scheherazade">شهرزاد</string>
-    <string name="font_indopak">إندوباك</string>
+    <string name="font_saleem">سليم</string>
+    <string name="font_nastaleeq">نستعليق</string>
+    <string name="font">الخط</string>
+    <string name="script_uthmani">العثماني</string>
+    <string name="script_indopak">إندوباك</string>
+    <string name="script_tanzil">تنزيل</string>
+    <string name="script_indopak_hint">كل حركة مكتوبة، كما يُدرَّس في جنوب آسيا</string>
+    <string name="script_tanzil_hint">الرسم العربي، بالعلامات الضرورية وحدها</string>
+    <string name="script_uthmani_hint">الرسم العربي كاملًا، كما في مصحف المدينة</string>
+    <string name="font_hint_indopak">هذه الخطوط وحدها ترسم الإندوباك رسمًا صحيحًا</string>
+    <string name="font_hint_tanzil">أي خط من هذه يرسمه</string>
+    <string name="font_hint_uthmani">أي خط من هذه يرسمه</string>
 
     <!-- Studio (share editor) -->
     <string name="mode_templates">قوالب</string>

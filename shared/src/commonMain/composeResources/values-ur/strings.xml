@@ -678,7 +678,18 @@
     <string name="font_naskh">نسخ</string>
     <string name="font_madani">مدنی</string>
     <string name="font_scheherazade">شیہرازاد</string>
-    <string name="font_indopak">انڈو پاک</string>
+    <string name="font_saleem">سلیم</string>
+    <string name="font_nastaleeq">نستعلیق</string>
+    <string name="font">فونٹ</string>
+    <string name="script_uthmani">عثمانی</string>
+    <string name="script_indopak">انڈو پاک</string>
+    <string name="script_tanzil">تنزیل</string>
+    <string name="script_indopak_hint">ہر حرکت لکھی ہوئی، جیسے جنوبی ایشیا میں پڑھائی جاتی ہے</string>
+    <string name="script_tanzil_hint">عربی رسم الخط، صرف ضروری علامات کے ساتھ</string>
+    <string name="script_uthmani_hint">مکمل عربی رسم الخط، جیسے مصحف مدینہ میں</string>
+    <string name="font_hint_indopak">صرف یہی فونٹ انڈو پاک درست لکھ سکتے ہیں</string>
+    <string name="font_hint_tanzil">ان میں سے کوئی بھی فونٹ اسے لکھ سکتا ہے</string>
+    <string name="font_hint_uthmani">ان میں سے کوئی بھی فونٹ اسے لکھ سکتا ہے</string>
     <!-- Studio (share editor) -->
     <string name="mode_templates">ٹیمپلیٹس</string>
     <string name="mode_layout">لے آؤٹ</string>

@@ -105,7 +105,7 @@ fun QuranThemePickerSheet(onDismiss: () -> Unit) {
         )
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             QuranFont.entries.forEach { f ->
-                FontChip(f, selected = f == font, dimmed = f.script != script, onClick = { store.setFont(f) })
+                FontChip(f, selected = f == font, dimmed = script !in f.scripts, onClick = { store.setFont(f) })
             }
         }
         // both scripts get a line, so the sheet's height is the same either way: one that came and went
@@ -212,7 +212,7 @@ private fun Bar(color: Color, widthFraction: Float, modifier: Modifier = Modifie
 @Composable
 private fun ScriptChip(script: QuranScript, selected: Boolean, onClick: () -> Unit) {
     val colors = AppTheme.colors
-    val fam = FontFamily(Font(script.fonts.first().res))
+    val fam = FontFamily(Font(script.ownFont.res))
     Column(
         Modifier.width(126.dp).clip(RoundedCornerShape(12.dp))
             .background(if (selected) colors.primary.copy(alpha = 0.12f) else Color.Transparent)

@@ -19,26 +19,25 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Pickable mushaf fonts. A font belongs to one [QuranScript] and cannot draw the other: the Tanzil
- * set has no glyphs for IndoPak's written-out vowels, and Nastaleeq has none for Uthmani's marks.
- * Within a script it is a pure swap — same text, same db column, different shapes.
+ * Pickable mushaf fonts. [scripts] is what each one is drawn for: the Tanzil set draws the Tanzil
+ * text, Nastaleeq is the IndoPak hand. A list because a font may serve more than one, not because
+ * any does today.
  *
- * Saleem is IndoPak-styled but sits under Uthmani on purpose: it draws the Uthmani text in a
- * subcontinental hand, which is a look, not a script.
+ * Saleem is IndoPak-styled but draws the Tanzil texts: it is a subcontinental look, not a script.
  */
 @kotlinx.serialization.Serializable
 enum class QuranFont(
     val labelRes: StringResource,
     val sample: String,
     val res: FontResource,
-    val script: QuranScript,
+    val scripts: List<QuranScript>,
 ) {
-    Nastaleeq(Res.string.font_nastaleeq, "بِسْمِ اللّٰهِ", Res.font.indopak_nastaleeq, QuranScript.Indopak),
-    Hafs(Res.string.font_uthmani, "بِسْمِ اللَّهِ", Res.font.tanzil_hafs, QuranScript.Uthmani),
-    Naskh(Res.string.font_naskh, "بِسْمِ اللَّهِ", Res.font.tanzil_naskh, QuranScript.Uthmani),
-    MeQuran(Res.string.font_madani, "بِسْمِ اللَّهِ", Res.font.tanzil_me_quran, QuranScript.Uthmani),
-    Scheherazade(Res.string.font_scheherazade, "بِسْمِ اللَّهِ", Res.font.tanzil_scheherazade, QuranScript.Uthmani),
-    Saleem(Res.string.font_saleem, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem, QuranScript.Uthmani);
+    Nastaleeq(Res.string.font_nastaleeq, "بِسْمِ اللّٰهِ", Res.font.indopak_nastaleeq, listOf(QuranScript.Indopak)),
+    Hafs(Res.string.font_uthmani, "بِسْمِ اللَّهِ", Res.font.tanzil_hafs, listOf(QuranScript.Tanzil)),
+    Naskh(Res.string.font_naskh, "بِسْمِ اللَّهِ", Res.font.tanzil_naskh, listOf(QuranScript.Tanzil)),
+    MeQuran(Res.string.font_madani, "بِسْمِ اللَّهِ", Res.font.tanzil_me_quran, listOf(QuranScript.Tanzil)),
+    Scheherazade(Res.string.font_scheherazade, "بِسْمِ اللَّهِ", Res.font.tanzil_scheherazade, listOf(QuranScript.Tanzil)),
+    Saleem(Res.string.font_saleem, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem, listOf(QuranScript.Tanzil));
 
     val label: String @Composable get() = stringResource(labelRes)
 }
