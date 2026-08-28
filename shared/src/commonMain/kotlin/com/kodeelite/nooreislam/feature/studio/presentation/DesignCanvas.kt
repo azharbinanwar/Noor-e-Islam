@@ -264,20 +264,24 @@ fun DesignCanvas(
                         }
                     }
 
-                    Text(
-                        text = annotatedAyah,
-                        fontSize = config.fontSize.sp,
-                        textAlign = config.textAlign,
-                        fontFamily = FontFamily(Font(config.fontFamily.res)),
-                        lineHeight = (config.fontSize * config.lineHeight).sp,
-                        style = TextStyle(
-                            shadow = if (config.textShadowAlpha > 0f) Shadow(
-                                color = Color.Black.copy(alpha = config.textShadowAlpha),
-                                blurRadius = 8f
-                            ) else null
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    // RTL like the reader's page, so a trailing waqf mark stays at the end of the
+                    // line instead of bidi floating it to the start
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                        Text(
+                            text = annotatedAyah,
+                            fontSize = config.fontSize.sp,
+                            textAlign = config.textAlign,
+                            fontFamily = FontFamily(Font(config.fontFamily.res)),
+                            lineHeight = (config.fontSize * config.lineHeight).sp,
+                            style = TextStyle(
+                                shadow = if (config.textShadowAlpha > 0f) Shadow(
+                                    color = Color.Black.copy(alpha = config.textShadowAlpha),
+                                    blurRadius = 8f
+                                ) else null
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
 
                     if (config.showTranslation) {
                         Spacer(Modifier.size(12.dp))
