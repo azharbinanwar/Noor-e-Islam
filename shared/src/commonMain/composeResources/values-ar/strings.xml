@@ -414,6 +414,11 @@
     <string name="collections">المجموعات</string>
     <string name="favorites">المفضّلة</string>
     <string name="surahs">السور</string>
+    <string name="surah">السورة</string>
+    <string name="ayah">الآية</string>
+    <string name="studio">الاستوديو</string>
+    <string name="try_a_surah_name_or_number">جرّب اسم سورة أو رقمها</string>
+    <string name="pick_an_ayah_to_begin">اختر آية من السور للبدء</string>
     <string name="surahs_label">السور</string>
     <string name="n_duas">%1$d أدعية</string>
     <string name="morning">الصباح</string>

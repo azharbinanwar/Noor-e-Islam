@@ -419,6 +419,11 @@
     <string name="collections">مجموعے</string>
     <string name="favorites">پسندیدہ</string>
     <string name="surahs">سورتیں</string>
+    <string name="surah">سورت</string>
+    <string name="ayah">آیت</string>
+    <string name="studio">اسٹوڈیو</string>
+    <string name="try_a_surah_name_or_number">سورت کا نام یا نمبر آزمائیں</string>
+    <string name="pick_an_ayah_to_begin">شروع کرنے کے لیے سورتوں میں سے کوئی آیت چنیں</string>
     <string name="surahs_label">سورتیں</string>
     <string name="n_duas">%1$d دعائیں</string>
     <string name="morning">صبح</string>

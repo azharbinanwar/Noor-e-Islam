@@ -412,6 +412,11 @@
     <string name="collections">Collections</string>
     <string name="favorites">Favoris</string>
     <string name="surahs">Sourates</string>
+    <string name="surah">Sourate</string>
+    <string name="ayah">Verset</string>
+    <string name="studio">Studio</string>
+    <string name="try_a_surah_name_or_number">Essayez un nom ou un numéro de sourate</string>
+    <string name="pick_an_ayah_to_begin">Choisissez un verset dans Sourates pour commencer</string>
     <string name="surahs_label">Sourates</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Matin</string>
