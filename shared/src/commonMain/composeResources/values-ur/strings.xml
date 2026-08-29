@@ -101,7 +101,11 @@
     <string name="privacy_policy">رازداری کی پالیسی</string>
     <string name="credits">اعتراف</string>
     <string name="credits_hint">وہ منصوبے جن پر یہ ایپ قائم ہے</string>
+    <string name="rate_the_app_hint">اس سے مزید لوگ اسے پا سکتے ہیں</string>
+    <string name="share_the_app_hint">اپنوں اور دوستوں کو بھیجیں</string>
+    <string name="privacy_policy_hint">آپ کے ڈیٹا سے کیسے معاملہ ہوتا ہے</string>
     <string name="share_app_message">%1$s — نماز کے اوقات، قرآن اور روزانہ کی عبادت، مفت اور آف لائن۔ %2$s</string>
+    <string name="share_app_message_quran">%1$s — قرآن پڑھنے اور شیئر کرنے کے لیے، مفت اور آف لائن۔ %2$s</string>
     <string name="tap_to_count">گننے کے لیے ٹیپ کریں</string>
 
     <!-- Focus feature (Test tool) -->

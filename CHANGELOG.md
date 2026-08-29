@@ -21,8 +21,23 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
+## [1.0.0+12] - 2026-08-29
+
+### Added
+
+- `[both]` The Quran can be read in IndoPak, the script the subcontinent learned on, chosen in the reading settings beside the fonts. A fresh install in Pakistan, India, Bangladesh and nearby opens in it; everyone else keeps the Arab-world script, and one tap switches. Search understands both spellings, so a verse typed either way is found.
+- `[both]` The studio makes passages, not just single verses: a Surahs panel picks any surah — searchable by name in any spelling, number in any digits, or with a typo — and grows a range of up to ten ayat, each ending with its ornate number, the reference reading 95:1-4.
+- `[both]` The studio opens on its own, from the drawer, a home shortcut, or the Quran page's quick actions, landing on a fresh random ayah each time for a daily post. Reset clears the canvas outright and the first tap anywhere starts the next design.
+- `[both]` An ayah can be copied or shared as text: Copy puts the verse and its reference on the clipboard, Share as text opens the same review the image share gets — edit the message, then pick the app.
+- `[both]` Settings grows Support and About: rate, share the app, contact with the version pre-filled, the website, each app's privacy policy, and a Credits sheet naming the projects behind the app — Tanzil, and the QuranWBW IndoPak text and font.
+- `[islam]` Home shortcuts hold up to five, and swapping one keeps its place instead of sending the newcomer to the end.
+
 ### Fixed
 
+- `[both]` **iOS.** The reader drew a different lam-alif than the studio in the same font: the theme's typography was leaking into the mushaf paragraph. The reader now passes its own style, and both screens agree.
+- `[both]` **iOS.** An updated app kept reading the Quran database it was first installed with; the bundled file now replaces the old copy when it changes.
+- `[both]` At-Tin and Al-Qadr kept their basmalah in the reader: Tanzil doubles the ب there after a tanween-ending surah, and the removal check missed the variant. All 112 now strip; the rule lives in one place and reaches bookmarks, previews and the studio too.
+- `[both]` A waqf mark ending an ayah floated to the wrong side of the studio's canvas; the ayah now renders right-to-left like the reader's page.
 - `[islam]` The day now turns over at Fajr rather than at midnight, which is when the prayer day actually ends. Isha prayed after 12 used to land on the wrong date, so it could not be marked, the streak reset while you were still praying the night before, and the tracker offered a new day that had not begun. Home and the tracker both show the day still open, with its own date in place of "Today", and everything logged goes to the day it belongs to.
 
 ### Changed

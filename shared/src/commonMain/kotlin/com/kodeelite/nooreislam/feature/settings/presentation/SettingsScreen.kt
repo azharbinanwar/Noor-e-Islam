@@ -103,7 +103,11 @@ import com.kodeelite.nooreislam.resources.privacy_policy
 import com.kodeelite.nooreislam.resources.credits
 import com.kodeelite.nooreislam.resources.credits_hint
 import com.kodeelite.nooreislam.resources.share_app_message
+import com.kodeelite.nooreislam.resources.share_app_message_quran
 import com.kodeelite.nooreislam.feature.settings.presentation.components.CreditsSheet
+import com.kodeelite.nooreislam.resources.rate_the_app_hint
+import com.kodeelite.nooreislam.resources.share_the_app_hint
+import com.kodeelite.nooreislam.resources.privacy_policy_hint
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
 import com.kodeelite.nooreislam.resources.all_alerts_off
@@ -156,7 +160,10 @@ fun SettingsScreen(open: String? = null) {
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
     var creditsOpen by remember { mutableStateOf(false) }
-    val shareAppMessage = stringResource(Res.string.share_app_message, edition.displayName(), AppLinks.page(edition))
+    val shareAppMessage = stringResource(
+        if (edition == AppEdition.QURAN) Res.string.share_app_message_quran else Res.string.share_app_message,
+        edition.displayName(), AppLinks.page(edition),
+    )
 
     // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
     val theme by SettingsStore.theme.collectAsState()
@@ -407,11 +414,13 @@ fun SettingsScreen(open: String? = null) {
                     AppTileItem(
                         leadingIcon = Lucide.Star,
                         title = stringResource(Res.string.rate_the_app),
+                        subtitle = stringResource(Res.string.rate_the_app_hint),
                         onClick = { uriHandler.openUri(AppLinks.store(edition)) },
                     ),
                     AppTileItem(
                         leadingIcon = Lucide.Share2,
                         title = stringResource(Res.string.share_the_app),
+                        subtitle = stringResource(Res.string.share_the_app_hint),
                         onClick = { ShareService.shareText(shareAppMessage) },
                     ),
                     AppTileItem(
@@ -442,6 +451,7 @@ fun SettingsScreen(open: String? = null) {
                     AppTileItem(
                         leadingIcon = Lucide.Shield,
                         title = stringResource(Res.string.privacy_policy),
+                        subtitle = stringResource(Res.string.privacy_policy_hint),
                         onClick = { uriHandler.openUri(AppLinks.privacy(edition)) },
                     ),
                     AppTileItem(

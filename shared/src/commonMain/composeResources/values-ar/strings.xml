@@ -93,7 +93,11 @@
     <string name="privacy_policy">سياسة الخصوصية</string>
     <string name="credits">شكر وتقدير</string>
     <string name="credits_hint">المشاريع التي يقوم عليها هذا التطبيق</string>
+    <string name="rate_the_app_hint">يساعد مزيدًا من الناس على إيجاده</string>
+    <string name="share_the_app_hint">أرسله إلى الأهل والأصدقاء</string>
+    <string name="privacy_policy_hint">كيف تُعامَل بياناتك</string>
     <string name="share_app_message">%1$s — مواقيت الصلاة والقرآن والعبادة اليومية، مجاني وبلا إنترنت. %2$s</string>
+    <string name="share_app_message_quran">%1$s — القرآن للقراءة والمشاركة، مجاني وبلا إنترنت. %2$s</string>
     <string name="tap_to_count">انقر للعد</string>
 
     <!-- Focus feature (Test tool) -->
