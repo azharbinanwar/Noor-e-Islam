@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.kodeelite.nooreislam.core.components.AppBottomSheet
+import com.kodeelite.nooreislam.core.update.UpdateSheet
 import com.kodeelite.nooreislam.core.components.OverlayStyle
 import androidx.compose.material3.Slider
 import com.kodeelite.nooreislam.core.store.BackupStore
@@ -131,6 +132,7 @@ fun SandboxScreen() {
                     )
                     BackupLab()
                     SheetLab()
+                    UpdateSheetLab()
                 }
             }
             item { ThemeSwitcher() }
@@ -452,6 +454,19 @@ private fun TileVariantShowcase() {
             ),
         )
     }
+}
+
+/** Preview of the store-update sheet, with a no-op update action. */
+@Composable
+private fun UpdateSheetLab() {
+    var open by remember { mutableStateOf(false) }
+    AppButton(
+        text = "Update sheet",
+        onClick = { open = true },
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+        variant = AppButtonVariant.Outline,
+    )
+    if (open) UpdateSheet(onUpdate = { open = false }, onDismiss = { open = false })
 }
 
 /** Highlight color picker + a live preview of the tint drawn behind a sample ayah. */

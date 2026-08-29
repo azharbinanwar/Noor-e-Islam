@@ -98,6 +98,8 @@
     <string name="rate_the_app_hint">It helps more people find it</string>
     <string name="share_the_app_hint">Send it to family and friends</string>
     <string name="privacy_policy_hint">How your data is handled</string>
+    <string name="update_row_improvements">Improvements</string>
+    <string name="update_row_improvements_sub">Fixes, polish, and sometimes new things</string>
     <string name="share_app_message">%1$s — prayer times, Quran and daily worship, free and offline. %2$s</string>
     <string name="share_app_message_quran">%1$s — the Quran to read and share, free and offline. %2$s</string>
     <string name="tap_to_count">Tap to count</string>

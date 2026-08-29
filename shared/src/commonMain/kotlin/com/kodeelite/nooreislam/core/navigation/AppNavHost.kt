@@ -26,6 +26,7 @@ import com.kodeelite.nooreislam.core.components.AppContentHost
 import com.kodeelite.nooreislam.core.database.DatabaseRecovery
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.core.update.AppUpdateService
+import com.kodeelite.nooreislam.core.update.UpdateSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.a_new_version_is_available
 import com.kodeelite.nooreislam.resources.got_it
@@ -210,23 +211,10 @@ fun AppNavHost(
             // asked once per launch; dismissing the sheet is the "not now", so nobody gets trapped
             var updateAvailable by remember { mutableStateOf(false) }
             LaunchedEffect(Unit) { updateAvailable = AppUpdateService.isUpdateAvailable() }
-            if (updateAvailable) AppBottomSheet(
+            if (updateAvailable) UpdateSheet(
+                onUpdate = { updateAvailable = false; AppUpdateService.startUpdate() },
                 onDismiss = { updateAvailable = false },
-                title = stringResource(Res.string.a_new_version_is_available),
-                footer = {
-                    AppButton(
-                        text = stringResource(Res.string.update),
-                        onClick = { updateAvailable = false; AppUpdateService.startUpdate() },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                },
-            ) {
-                Text(
-                    stringResource(Res.string.update_now_for_the_latest_fixes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = AppTheme.colors.onSurfaceVariant,
-                )
-            }
+            )
         }
     }
 }

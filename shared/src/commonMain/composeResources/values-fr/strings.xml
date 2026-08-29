@@ -97,6 +97,8 @@
     <string name="rate_the_app_hint">Cela aide plus de gens à le découvrir</string>
     <string name="share_the_app_hint">Envoyez-le à vos proches</string>
     <string name="privacy_policy_hint">Comment vos données sont traitées</string>
+    <string name="update_row_improvements">Améliorations</string>
+    <string name="update_row_improvements_sub">Corrections, finitions, et parfois des nouveautés</string>
     <string name="share_app_message">%1$s — horaires de prière, Coran et adoration quotidienne, gratuit et hors ligne. %2$s</string>
     <string name="share_app_message_quran">%1$s — le Coran à lire et à partager, gratuit et hors ligne. %2$s</string>
     <string name="tap_to_count">Touchez pour compter</string>
