@@ -65,6 +65,7 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
@@ -110,6 +111,7 @@ private val MORE_GROUPS = listOf(
     ),
     QGroup(
         Res.string.action_sharing, listOf(
+            QAction(Lucide.Copy, Res.string.copy_ayah),
             QAction(Lucide.Share2, Res.string.share_as_text),
             QAction(Lucide.Image, Res.string.action_share_image),
             // QAction(Lucide.Link, Res.string.action_share_link), // hidden until real deep-link generation exists
@@ -134,6 +136,7 @@ fun AyahActionSheet(
     label: String,
     ayah: Ayah,
     onShareAsImage: () -> Unit,
+    onShareAsText: () -> Unit,
     onHighlight: () -> Unit,
     onNote: () -> Unit,
     onAddToCollection: () -> Unit,
@@ -238,10 +241,6 @@ fun AyahActionSheet(
                                 onHighlight()
                             },
                             AppActionItem(stringResource(Res.string.action_add_note), Lucide.Pencil, iconColor = colors.primary) { onNote() },
-                            AppActionItem(stringResource(Res.string.copy_ayah), Lucide.Copy, iconColor = colors.primary) {
-                                clipboard.setText(AnnotatedString("${ayah.textIn(script)}\n(${ayah.surah}:${ayah.ayah})"))
-                                onDismiss()
-                            },
                             AppActionItem(stringResource(Res.string.share), Lucide.Share2, iconColor = colors.primary) { onShareAsImage() },
                         ),
                     )
@@ -268,6 +267,8 @@ fun AyahActionSheet(
                                 leadingIcon = a.icon,
                                 onClick = {
                                     onDismiss()
+                                    if (a.icon == Lucide.Copy) clipboard.setText(AnnotatedString(shareTextOf(ayah, script)))
+                                    if (a.icon == Lucide.Share2) onShareAsText()
                                     if (a.icon == Lucide.Image) onShareAsImage()
                                     if (a.icon == Lucide.FolderPlus) onAddToCollection()
                                     if (a.icon == Lucide.House) onGoToSurahStart()
@@ -281,3 +282,6 @@ fun AyahActionSheet(
         }
     }
 }
+
+// what leaves the app for this ayah — the verse as rendered, then its reference
+private fun shareTextOf(ayah: Ayah, script: QuranScript) = "${ayah.textIn(script)}\n(${ayah.surah}:${ayah.ayah})"
