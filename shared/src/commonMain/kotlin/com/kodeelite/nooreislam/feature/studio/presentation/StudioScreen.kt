@@ -70,6 +70,7 @@ import com.kodeelite.nooreislam.core.util.GalleryService
 import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toPngBytes
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
@@ -149,6 +150,13 @@ fun StudioScreen(
     LaunchedEffect(Unit) { catalogRepo.refresh() }   // silent; the cached catalog covers a failed refresh
     val scope = rememberCoroutineScope()
     val store = remember { StudioStore(initialConfig, repo, scope) }
+    // arrived with nothing (drawer, home pin): draw a fresh verse every open — the daily-post habit.
+    // Only the arrival seeds; an empty canvas the user made with Reset stays theirs.
+    LaunchedEffect(Unit) {
+        if (ayahs.isEmpty()) QuranRepository.randomAyah()?.let { seeded ->
+            store.update(store.configState.value.copy(ayahs = listOf(seeded), fontFamily = readingFont))
+        }
+    }
     var config by store.configState
     var isEditing by store.isEditingState
     var studioMode by store.studioModeState

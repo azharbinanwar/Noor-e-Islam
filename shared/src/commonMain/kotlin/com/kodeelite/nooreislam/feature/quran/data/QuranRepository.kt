@@ -47,6 +47,11 @@ object QuranRepository {
         readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? ORDER BY id", number.toLong())
     }
 
+    /** Any ayah at all — the studio's blank-slate seed when nothing was asked for. */
+    suspend fun randomAyah(): Ayah? = lock.withLock {
+        readAyahs(db(), "SELECT $COLS FROM ayah WHERE id = ?", (1..TOTAL_AYAHS).random().toLong()).firstOrNull()
+    }
+
     /** A single ayah by its canonical ref (for jumps / deep links / bookmarks). */
     suspend fun ayah(surah: Int, ayah: Int): Ayah? = lock.withLock {
         readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? AND ayah = ?", surah.toLong(), ayah.toLong()).firstOrNull()
