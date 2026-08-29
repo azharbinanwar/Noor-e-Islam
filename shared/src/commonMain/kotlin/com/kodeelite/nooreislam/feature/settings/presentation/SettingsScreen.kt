@@ -86,6 +86,24 @@ import com.kodeelite.nooreislam.feature.tracker.presentation.components.Exemptio
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.ExemptionStartSheet
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.StreakOffSheet
 import com.kodeelite.nooreislam.feature.tracker.presentation.components.exemptionSubtitle
+import com.kodeelite.nooreislam.core.constants.AppLinks
+import com.kodeelite.nooreislam.core.util.ShareService
+import com.kodeelite.nooreislam.core.folderName
+import com.composables.icons.lucide.Star
+import com.composables.icons.lucide.Share2
+import com.composables.icons.lucide.Mail
+import com.composables.icons.lucide.Shield
+import com.composables.icons.lucide.Heart
+import com.kodeelite.nooreislam.resources.support
+import com.kodeelite.nooreislam.resources.rate_the_app
+import com.kodeelite.nooreislam.resources.share_the_app
+import com.kodeelite.nooreislam.resources.contact_us
+import com.kodeelite.nooreislam.resources.website
+import com.kodeelite.nooreislam.resources.privacy_policy
+import com.kodeelite.nooreislam.resources.credits
+import com.kodeelite.nooreislam.resources.credits_hint
+import com.kodeelite.nooreislam.resources.share_app_message
+import com.kodeelite.nooreislam.feature.settings.presentation.components.CreditsSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.about
 import com.kodeelite.nooreislam.resources.all_alerts_off
@@ -137,6 +155,8 @@ fun SettingsScreen(open: String? = null) {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
     val uriHandler = LocalUriHandler.current
+    var creditsOpen by remember { mutableStateOf(false) }
+    val shareAppMessage = stringResource(Res.string.share_app_message, edition.displayName(), AppLinks.page(edition))
 
     // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
     val theme by SettingsStore.theme.collectAsState()
@@ -382,6 +402,28 @@ fun SettingsScreen(open: String? = null) {
                 ),
             )
             AppTileGroup(
+                title = stringResource(Res.string.support),
+                items = listOf(
+                    AppTileItem(
+                        leadingIcon = Lucide.Star,
+                        title = stringResource(Res.string.rate_the_app),
+                        onClick = { uriHandler.openUri(AppLinks.store(edition)) },
+                    ),
+                    AppTileItem(
+                        leadingIcon = Lucide.Share2,
+                        title = stringResource(Res.string.share_the_app),
+                        onClick = { ShareService.shareText(shareAppMessage) },
+                    ),
+                    AppTileItem(
+                        leadingIcon = Lucide.Mail,
+                        title = stringResource(Res.string.contact_us),
+                        subtitle = AppLinks.CONTACT_EMAIL,
+                        // the subject carries app + version, so a report arrives debuggable
+                        onClick = { uriHandler.openUri("mailto:${AppLinks.CONTACT_EMAIL}?subject=${edition.folderName} $appVersion") },
+                    ),
+                ),
+            )
+            AppTileGroup(
                 modifier = anchored(Anchor.ABOUT_GROUP),
                 title = stringResource(Res.string.about),
                 items = listOf(
@@ -391,18 +433,30 @@ fun SettingsScreen(open: String? = null) {
                         subtitle = stringResource(Res.string.version_summary, appVersion),
                         leadingIcon = Lucide.Info
                     ),
-                    // Tanzil's terms: name the source and link out so readers can check for text updates
                     AppTileItem(
-                        title = stringResource(Res.string.quran_text_source),
-                            selected = highlight == Anchor.TEXT_SOURCE,
-                        subtitle = "Tanzil Project · tanzil.net",
-                        leadingIcon = Lucide.BookOpen,
-                        onClick = { uriHandler.openUri("https://tanzil.net") },
+                        leadingIcon = Lucide.Globe,
+                        title = stringResource(Res.string.website),
+                        subtitle = "noor.kodeelite.com",
+                        onClick = { uriHandler.openUri(AppLinks.page(edition)) },
+                    ),
+                    AppTileItem(
+                        leadingIcon = Lucide.Shield,
+                        title = stringResource(Res.string.privacy_policy),
+                        onClick = { uriHandler.openUri(AppLinks.privacy(edition)) },
+                    ),
+                    AppTileItem(
+                        leadingIcon = Lucide.Heart,
+                        title = stringResource(Res.string.credits),
+                        selected = highlight == Anchor.TEXT_SOURCE,
+                        subtitle = stringResource(Res.string.credits_hint),
+                        onClick = { creditsOpen = true },
                     ),
                 ),
             )
         }
     }
+
+    if (creditsOpen) CreditsSheet(onDismiss = { creditsOpen = false })
 
     if (sheet == Anchor.APPEARANCE) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); close() }, onDismiss = ::close)
     if (sheet == Anchor.DATE_FORMAT) GregorianDateFormatPickerSheet(
