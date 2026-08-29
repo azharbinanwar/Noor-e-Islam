@@ -58,10 +58,13 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Settings2
 import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
+import com.kodeelite.nooreislam.core.displayName
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.AppRoute
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toJuzKey
 import com.kodeelite.nooreislam.core.util.toSurahKey
@@ -80,11 +83,13 @@ import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranCalli
 import com.kodeelite.nooreislam.feature.quran.presentation.components.QuranThemePickerSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.ReaderSettingsSheet
 import com.kodeelite.nooreislam.feature.quran.presentation.components.RukuBlock
+import com.kodeelite.nooreislam.feature.studio.presentation.ShareSheet
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.back
 import com.kodeelite.nooreislam.resources.quran_juz
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.reading_settings
+import com.kodeelite.nooreislam.resources.shared_with
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.delay
@@ -101,10 +106,12 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val nav = LocalAppNavigator.current
+    val store = koinInject<QuranStore>()
+    val edition = koinInject<AppEdition>()
     val ayahs = remember { mutableStateListOf<Ayah>() }
     val listState = rememberLazyListState()
-
-    // load the whole Quran once; LazyColumn only renders what's on screen, so this stays cheap
+    // the whole Quran in one read; LazyColumn only renders what's on screen, so this stays cheap.
+    // Every verse carries both spellings, so a script change redraws from what is already here.
     LaunchedEffect(Unit) {
         if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all())
     }
@@ -113,7 +120,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     var scrolled by remember { mutableStateOf(false) }
 
     val colors = AppTheme.colors
-    val store = koinInject<QuranStore>()
+    val script by store.script.collectAsState()
     val autoScrollEnabled by store.autoScrollEnabled.collectAsState()
     val autoScrollPaused by store.autoScrollPaused.collectAsState()
     val autoScrollPxPerTick by store.autoScrollPxPerTick.collectAsState()
@@ -158,7 +165,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
     val topBarHeight = with(LocalDensity.current) { topBarHeightPx.toDp() }
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
-    val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
+    val rukus by remember { derivedStateOf { groupByRuku(ayahs) } }
     // for each ruku: its number within its surah, and whether it's the surah's last ruku (then no "next")
     val rukuMeta = remember(rukus) {
         val meta = ArrayList<Pair<Int, Boolean>>(rukus.size)
@@ -217,6 +224,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
 
     var selected by remember { mutableStateOf<Ayah?>(null) }
     var quickHighlight by remember { mutableStateOf<Ayah?>(null) } // long-press → floating color strip
+    var sharingText by remember { mutableStateOf<Ayah?>(null) } // share as text → review sheet, then the platform picker
     var viewingNote by remember { mutableStateOf<Ayah?>(null) } // tap the note glyph → stub preview, real editor later
     var pickingCollectionFor by remember { mutableStateOf<Ayah?>(null) }
     var showSettings by remember { mutableStateOf(false) }
@@ -344,6 +352,7 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
                 label = stringResource(Res.string.surah_number_ayah_number, ayah.surah, ayah.ayah),
                 ayah = ayah,
                 onShareAsImage = { nav.navigate(AppRoute.Studio(ayah.surah, ayah.ayah)) },
+                onShareAsText = { sharingText = ayah; selected = null },
                 onHighlight = { quickHighlight = ayah; selected = null },
                 onNote = { viewingNote = ayah; selected = null },
                 onAddToCollection = { pickingCollectionFor = ayah; selected = null },
@@ -380,6 +389,17 @@ fun QuranReaderScreen(surah: Int = 1, ayah: Int = 1) {
 
         if (showTheme) {
             QuranThemePickerSheet(onDismiss = { showTheme = false })
+        }
+
+        sharingText?.let { a ->
+            // the same review the image share gets: edit the message, keep or drop the ayah, then the picker
+            ShareSheet(
+                ayahText = a.textIn(script),
+                otherText = "(${a.surah}:${a.ayah})\n${stringResource(Res.string.shared_with, edition.displayName())}",
+                onDismiss = { sharingText = null },
+                onShare = { ShareService.shareText(it); sharingText = null },
+                allowHidingAyah = false,
+            )
         }
 
         if (selected == null && quickHighlight == null && viewingNote == null && pickingCollectionFor == null && !showSettings && !showTheme) {

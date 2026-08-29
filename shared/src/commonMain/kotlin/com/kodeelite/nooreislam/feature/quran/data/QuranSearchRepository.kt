@@ -16,11 +16,25 @@ import kotlinx.coroutines.withContext
 // normalizeArabic runs over that text again on load. The build-time pass is older and narrower, and
 // re-running is idempotent, so this is what actually guarantees the stored side and the query side
 // fold identically — they call one function. Widening the rules never needs the asset regenerated.
+//
+// One row carries every script, because what a reader types is their own spelling and not whichever
+// text happens to be on screen. The spellings genuinely differ after normalizing — Uthmani folds to
+// صرط where Simple and Indopak keep صراط — so a single column would miss most of the Quran for
+// anyone typing the other one. Search covers scripts the reader is not currently reading in, on
+// purpose: results are looked up by id and drawn in whatever script is set.
 object QuranSearchRepository {
 
     private const val DB_NAME = "quran_search.db"
     private const val DB_ASSET = "files/quran/quran_search.db"
-    private const val COLS = "id,surah,ayah,text,juz,endsRuku,sajda"
+
+    // read by index, so the order is fixed on purpose; the script columns trail so adding one is one entry
+    private const val COLS = "id,surah,ayah,juz,endsRuku,text,textUthmani,textIndopak"
+    private const val FIRST_SCRIPT = 5
+    private val COL_COUNT = COLS.count { it == ',' } + 1
+
+    // separates the scripts inside one searchable string. A query can never contain it: normalizeArabic
+    // folds every whitespace run to a single space, so no match can straddle two scripts.
+    private const val SCRIPT_SEP = '\n'
 
     private val lock = Mutex()
     private var conn: SQLiteConnection? = null
@@ -31,7 +45,11 @@ object QuranSearchRepository {
         BundledSQLiteDriver().open(path).also { conn = it }
     }
 
-    /** Every ayah, text already normalized — read once, then just an in-memory substring filter per query. */
+    /**
+     * Every ayah, every script, already normalized — read once, then just an in-memory substring filter
+     * per query. The text here is not one verse to show; it is every spelling of that verse, joined,
+     * placed in both fields so it reads the same whichever script asks.
+     */
     suspend fun all(): List<Ayah> = cache ?: withContext(Dispatchers.Default) {
         lock.withLock { cache ?: readAyahs(db()).also { cache = it } }
     }
@@ -41,13 +59,23 @@ object QuranSearchRepository {
         try {
             val out = ArrayList<Ayah>(QuranRepository.TOTAL_AYAHS)
             while (st.step()) {
+                val scripts = StringBuilder()
+                for (i in FIRST_SCRIPT until COL_COUNT) {
+                    if (st.isNull(i)) continue
+                    if (scripts.isNotEmpty()) scripts.append(SCRIPT_SEP)
+                    scripts.append(st.getText(i).normalizeArabic())
+                }
+                // the same joined string in both, because this Ayah is a haystack and never drawn:
+                // whichever script is active, `text` has to resolve to everything searchable
+                val haystack = scripts.toString()
                 out += Ayah(
                     id = st.getLong(0).toInt(),
                     surah = st.getLong(1).toInt(),
                     ayah = st.getLong(2).toInt(),
-                    text = st.getText(3).normalizeArabic(),
-                    juz = st.getLong(4).toInt(),
-                    endsRuku = st.getLong(5) != 0L,
+                    textTanzil = haystack,
+                    textIndopak = haystack,
+                    juz = st.getLong(3).toInt(),
+                    endsRuku = st.getLong(4) != 0L,
                     sajda = null, // not needed for search; the real Ayah (with sajda) is fetched via QuranRepository on open
                 )
             }

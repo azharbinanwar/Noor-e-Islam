@@ -2,13 +2,19 @@ package com.kodeelite.nooreislam.feature.quran.data
 
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.kodeelite.nooreislam.core.util.NameMatch
+import com.kodeelite.nooreislam.core.util.fromArabicIndicDigits
+import com.kodeelite.nooreislam.core.util.latinKeys
+import com.kodeelite.nooreislam.core.util.nameMatch
+import com.kodeelite.nooreislam.core.util.normalizeArabic
 import com.kodeelite.nooreislam.resources.Res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
-// Reads quran.db and returns raw verses/surahs. Layout (headers, basmalah, grouping) is the UI's job.
+// Reads quran.db and serves verses/surahs. The db is a faithful copy of each source; AyahTextRules
+// is applied here, once, so every consumer downstream gets clean text and no one cleans their own.
 object QuranRepository {
 
     const val TOTAL_AYAHS = 6236
@@ -16,8 +22,10 @@ object QuranRepository {
     private const val DB_NAME = "quran.db"
     private const val DB_ASSET = "files/quran/quran.db"
 
-    // read by index, so the column order here is fixed on purpose (kept explicit for stable positions)
-    private const val COLS = "id,surah,ayah,text,juz,endsRuku,sajda"
+    // read by index, so the column order here is fixed on purpose (kept explicit for stable positions).
+    // Every spelling comes back in the row: switching script is then a render-time choice, and no
+    // screen has to notice, re-read or invalidate anything.
+    private const val COLS = "id,surah,ayah,text,textIndopak,juz,endsRuku,sajda"
 
     private val lock = Mutex()
     private var conn: SQLiteConnection? = null
@@ -39,6 +47,11 @@ object QuranRepository {
         readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? ORDER BY id", number.toLong())
     }
 
+    /** Any ayah at all — the studio's blank-slate seed when nothing was asked for. */
+    suspend fun randomAyah(): Ayah? = lock.withLock {
+        readAyahs(db(), "SELECT $COLS FROM ayah WHERE id = ?", (1..TOTAL_AYAHS).random().toLong()).firstOrNull()
+    }
+
     /** A single ayah by its canonical ref (for jumps / deep links / bookmarks). */
     suspend fun ayah(surah: Int, ayah: Int): Ayah? = lock.withLock {
         readAyahs(db(), "SELECT $COLS FROM ayah WHERE surah = ? AND ayah = ?", surah.toLong(), ayah.toLong()).firstOrNull()
@@ -47,6 +60,38 @@ object QuranRepository {
     /** The 114-row surah table (names, counts, revelation) — read once, for the header and picker. */
     suspend fun surahs(): List<Surah> = surahCache ?: lock.withLock {
         surahCache ?: readSurahs(db()).also { surahCache = it }
+    }
+
+    /**
+     * Surahs matching what someone typed: a number in any digits, or a name in any of the spellings
+     * people actually use — transliterated with or without its article, English, Arabic, and one or
+     * two typos off. Ranked so an exact spelling always beats a fuzzy one. Blank returns everything.
+     */
+    suspend fun findSurahs(query: String): List<Surah> {
+        val all = surahs()
+        val q = query.trim().fromArabicIndicDigits()
+        if (q.isEmpty()) return all
+        q.toIntOrNull()?.let { n -> return all.filter { it.number.toString().startsWith(n.toString()) } }
+
+        val keys = latinKeys(q)
+        // Latin letters pass through normalizeArabic untouched, so the Arabic side only exists
+        // when the query actually carries Arabic — otherwise "surah" pretends to be an Arabic name
+        val arabic = if (q.any { it in '؀'..'ۿ' }) q.normalizeArabic().removePrefix("سوره").trim() else ""
+        // "surah" alone folds away entirely — nothing left to filter by is not the same as no hits
+        if (keys.isEmpty() && arabic.isEmpty()) return all
+        val noMatch = NameMatch.entries.size
+        return all.mapNotNull { s ->
+            val latin = minOf(
+                nameMatch(keys, s.nameTransliterated)?.ordinal ?: noMatch,
+                nameMatch(keys, s.nameEnglish)?.ordinal ?: noMatch,
+            )
+            val tier = when {
+                latin < noMatch -> latin
+                arabic.isNotEmpty() && s.nameArabic.normalizeArabic().contains(arabic) -> NameMatch.PARTIAL.ordinal
+                else -> return@mapNotNull null
+            }
+            s to tier
+        }.sortedWith(compareBy({ it.second }, { it.first.number })).map { it.first }
     }
 
     /** The 30 juz, each with the ayah it starts at and the surahs it spans — for the juz list. */
@@ -66,14 +111,17 @@ object QuranRepository {
             args.forEachIndexed { i, v -> st.bindLong(i + 1, v) }
             val out = ArrayList<Ayah>()
             while (st.step()) {
+                val surah = st.getLong(1).toInt()
+                val ayah = st.getLong(2).toInt()
                 out += Ayah(
                     id = st.getLong(0).toInt(),
-                    surah = st.getLong(1).toInt(),
-                    ayah = st.getLong(2).toInt(),
-                    text = st.getText(3),
-                    juz = st.getLong(4).toInt(),
-                    endsRuku = st.getLong(5) != 0L,
-                    sajda = if (st.isNull(6)) null else sajdaOf(st.getText(6)),
+                    surah = surah,
+                    ayah = ayah,
+                    textTanzil = AyahTextRules.cleanTanzil(st.getText(3), surah, ayah),
+                    textIndopak = AyahTextRules.cleanIndopak(st.getText(4)),
+                    juz = st.getLong(5).toInt(),
+                    endsRuku = st.getLong(6) != 0L,
+                    sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
                 )
             }
             return out
@@ -108,18 +156,21 @@ object QuranRepository {
 
     private fun readJuzs(c: SQLiteConnection, surahs: List<Surah>): List<Juz> {
         val st =
-            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
+            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.textIndopak, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
         val starts = ArrayList<Pair<Int, Ayah>>(30)
         try {
             while (st.step()) {
+                val surah = st.getLong(2).toInt()
+                val ayah = st.getLong(3).toInt()
                 starts += st.getLong(0).toInt() to Ayah(
                     id = st.getLong(1).toInt(),
-                    surah = st.getLong(2).toInt(),
-                    ayah = st.getLong(3).toInt(),
-                    text = st.getText(4),
-                    juz = st.getLong(5).toInt(),
-                    endsRuku = st.getLong(6) != 0L,
-                    sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
+                    surah = surah,
+                    ayah = ayah,
+                    textTanzil = AyahTextRules.cleanTanzil(st.getText(4), surah, ayah),
+                    textIndopak = AyahTextRules.cleanIndopak(st.getText(5)),
+                    juz = st.getLong(6).toInt(),
+                    endsRuku = st.getLong(7) != 0L,
+                    sajda = if (st.isNull(8)) null else sajdaOf(st.getText(8)),
                 )
             }
         } finally {

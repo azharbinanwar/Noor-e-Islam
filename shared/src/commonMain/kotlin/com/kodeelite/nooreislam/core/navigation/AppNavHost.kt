@@ -143,10 +143,11 @@ fun AppNavHost(
                     }
                     composable<AppRoute.Studio> { entry ->
                         val r = entry.toRoute<AppRoute.Studio>()
-                        val ayah by produceState<Ayah?>(null, r.surah, r.ayah) {
-                            value = QuranRepository.ayah(r.surah, r.ayah)
+                        // a 0:0 doorway open simply finds no ayah — the studio seeds itself from empty
+                        val ayahs by produceState<List<Ayah>?>(null, r.surah, r.ayah) {
+                            value = listOfNotNull(QuranRepository.ayah(r.surah, r.ayah))
                         }
-                        ayah?.let { StudioScreen(ayahs = listOf(it)) }
+                        ayahs?.let { StudioScreen(ayahs = it) }
                     }
                     composable<AppRoute.CollectionDetails> { entry ->
                         val r = entry.toRoute<AppRoute.CollectionDetails>()

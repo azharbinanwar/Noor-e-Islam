@@ -57,10 +57,12 @@ import org.jetbrains.compose.resources.stringResource
 fun TemplatePicker(current: StudioConfig, onPick: (StudioConfig) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth()) {
-        SectionHeader(
+        StudioSectionHeader(
             stringResource(Res.string.mode_templates),
-            actionLabel = if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all),
-            onAction = { expanded = !expanded })
+            actions = listOf(
+                StudioHeaderAction(if (expanded) stringResource(Res.string.show_less) else stringResource(Res.string.view_all)) { expanded = !expanded },
+            ),
+        )
         if (!expanded) {
             LazyRow(
                 Modifier.fillMaxWidth(),
@@ -101,10 +103,12 @@ private fun GenerateTemplates(current: StudioConfig, onPick: (StudioConfig) -> U
     var seed by remember { mutableStateOf(0) }
     var batch by remember { mutableStateOf<List<StudioTemplate>>(emptyList()) }
     Column(Modifier.fillMaxWidth()) {
-        SectionHeader(
+        StudioSectionHeader(
             stringResource(Res.string.generate),
-            actionLabel = if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again),
-            onAction = { seed++; batch = TemplateStore.generate(seed = 1000 + seed) })
+            actions = listOf(
+                StudioHeaderAction(if (batch.isEmpty()) stringResource(Res.string.generate) else stringResource(Res.string.generate_again)) { seed++; batch = TemplateStore.generate(seed = 1000 + seed) },
+            ),
+        )
         if (batch.isEmpty()) {
             Text(
                 stringResource(Res.string.tap_generate_for_fresh_looks),

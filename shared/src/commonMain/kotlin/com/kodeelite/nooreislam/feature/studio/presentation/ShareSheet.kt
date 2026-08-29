@@ -38,6 +38,9 @@ internal fun ShareSheet(
     otherText: String,   // reference + app line — kept even when the ayah is hidden
     onDismiss: () -> Unit,
     onShare: (caption: String) -> Unit,
+    // an image still carries the verse without its text; a text share would be left with a bare
+    // reference, so that caller keeps the toggle off the sheet
+    allowHidingAyah: Boolean = true,
 ) {
     val colors = AppTheme.colors
     var includeAyah by remember { mutableStateOf(true) }
@@ -50,7 +53,7 @@ internal fun ShareSheet(
             AppButton(stringResource(Res.string.share), onClick = { onShare(message.trim()) }, modifier = Modifier.fillMaxWidth())
         },
     ) {
-        Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (allowHidingAyah) Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(Res.string.include_ayah_text), color = colors.onSurface, fontSize = 13.sp, modifier = Modifier.weight(1f))
             AppSwitch(includeAyah, { checked ->
                 includeAyah = checked

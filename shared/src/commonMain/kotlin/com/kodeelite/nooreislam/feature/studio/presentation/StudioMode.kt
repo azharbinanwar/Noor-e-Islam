@@ -9,6 +9,7 @@ import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Layers
 import com.composables.icons.lucide.LayoutTemplate
+import com.composables.icons.lucide.ListOrdered
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Maximize
 import com.composables.icons.lucide.Palette
@@ -30,6 +31,7 @@ import com.kodeelite.nooreislam.resources.mode_layout
 import com.kodeelite.nooreislam.resources.mode_size
 import com.kodeelite.nooreislam.resources.mode_style
 import com.kodeelite.nooreislam.resources.mode_templates
+import com.kodeelite.nooreislam.resources.surahs
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -37,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 // Localized strings applied.
 enum class StudioMode(val labelRes: StringResource, val icon: ImageVector) {
     Templates(Res.string.mode_templates, Lucide.LayoutTemplate),
+    Verses(Res.string.surahs, Lucide.ListOrdered),
     Layout(Res.string.mode_layout, Lucide.Maximize),
     BgImage(Res.string.mode_background, Lucide.Image),
     BgGradient(Res.string.mode_gradient, Lucide.Palette),

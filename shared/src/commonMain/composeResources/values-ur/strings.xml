@@ -93,6 +93,19 @@
     <string name="rounds">راؤنڈ</string>
     <string name="total">کل</string>
     <string name="reset">ری سیٹ</string>
+    <string name="support">معاونت</string>
+    <string name="rate_the_app">ایپ کی درجہ بندی کریں</string>
+    <string name="share_the_app">ایپ شیئر کریں</string>
+    <string name="contact_us">ہم سے رابطہ کریں</string>
+    <string name="website">ویب سائٹ</string>
+    <string name="privacy_policy">رازداری کی پالیسی</string>
+    <string name="credits">اعتراف</string>
+    <string name="credits_hint">وہ منصوبے جن پر یہ ایپ قائم ہے</string>
+    <string name="rate_the_app_hint">اس سے مزید لوگ اسے پا سکتے ہیں</string>
+    <string name="share_the_app_hint">اپنوں اور دوستوں کو بھیجیں</string>
+    <string name="privacy_policy_hint">آپ کے ڈیٹا سے کیسے معاملہ ہوتا ہے</string>
+    <string name="share_app_message">%1$s — نماز کے اوقات، قرآن اور روزانہ کی عبادت، مفت اور آف لائن۔ %2$s</string>
+    <string name="share_app_message_quran">%1$s — قرآن پڑھنے اور شیئر کرنے کے لیے، مفت اور آف لائن۔ %2$s</string>
     <string name="tap_to_count">گننے کے لیے ٹیپ کریں</string>
 
     <!-- Focus feature (Test tool) -->
@@ -419,6 +432,11 @@
     <string name="collections">مجموعے</string>
     <string name="favorites">پسندیدہ</string>
     <string name="surahs">سورتیں</string>
+    <string name="surah">سورت</string>
+    <string name="ayah">آیت</string>
+    <string name="studio">اسٹوڈیو</string>
+    <string name="try_a_surah_name_or_number">سورت کا نام یا نمبر آزمائیں</string>
+    <string name="pick_an_ayah_to_begin">شروع کرنے کے لیے سورتوں میں سے کوئی آیت چنیں</string>
     <string name="surahs_label">سورتیں</string>
     <string name="n_duas">%1$d دعائیں</string>
     <string name="morning">صبح</string>
@@ -678,7 +696,18 @@
     <string name="font_naskh">نسخ</string>
     <string name="font_madani">مدنی</string>
     <string name="font_scheherazade">شیہرازاد</string>
-    <string name="font_indopak">انڈو پاک</string>
+    <string name="font_saleem">سلیم</string>
+    <string name="font_nastaleeq">نستعلیق</string>
+    <string name="font">فونٹ</string>
+    <string name="script_uthmani">عثمانی</string>
+    <string name="script_indopak">انڈو پاک</string>
+    <string name="script_tanzil">تنزیل</string>
+    <string name="script_indopak_hint">ہر حرکت لکھی ہوئی، جیسے جنوبی ایشیا میں پڑھائی جاتی ہے</string>
+    <string name="script_tanzil_hint">عربی رسم الخط، صرف ضروری علامات کے ساتھ</string>
+    <string name="script_uthmani_hint">مکمل عربی رسم الخط، جیسے مصحف مدینہ میں</string>
+    <string name="font_hint_indopak">صرف یہی فونٹ انڈو پاک درست لکھ سکتے ہیں</string>
+    <string name="font_hint_tanzil">ان میں سے کوئی بھی فونٹ اسے لکھ سکتا ہے</string>
+    <string name="font_hint_uthmani">ان میں سے کوئی بھی فونٹ اسے لکھ سکتا ہے</string>
     <!-- Studio (share editor) -->
     <string name="mode_templates">ٹیمپلیٹس</string>
     <string name="mode_layout">لے آؤٹ</string>

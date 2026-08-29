@@ -46,6 +46,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Palette
+import com.composables.icons.lucide.Sparkles
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.kodeelite.nooreislam.config.theme.AppTheme
@@ -68,6 +69,7 @@ import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.resume
 import com.kodeelite.nooreislam.resources.search
 import com.kodeelite.nooreislam.resources.settings
+import com.kodeelite.nooreislam.resources.studio
 import com.kodeelite.nooreislam.resources.theme
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -171,6 +173,8 @@ fun QuranIndexScreen() {
                             AppActionItem(label = stringResource(Res.string.jump_to), icon = Lucide.Navigation, onClick = { showJumpTo = true }),
                             AppActionItem(label = stringResource(Res.string.search), icon = Lucide.Search, onClick = { showSearchQuran = true }),
                             AppActionItem(label = stringResource(Res.string.theme), icon = Lucide.Palette, onClick = { showTheme = true }),
+                            // no args: the route seeds itself from the last-read ayah
+                            AppActionItem(label = stringResource(Res.string.studio), icon = Lucide.Sparkles, onClick = { nav.navigate(AppRoute.Studio()) }),
                         ),
                     )
                 }

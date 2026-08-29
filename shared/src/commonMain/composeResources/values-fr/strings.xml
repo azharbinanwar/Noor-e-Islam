@@ -86,6 +86,19 @@
     <string name="rounds">Tours</string>
     <string name="total">Total</string>
     <string name="reset">Réinitialiser</string>
+    <string name="support">Assistance</string>
+    <string name="rate_the_app">Noter l'application</string>
+    <string name="share_the_app">Partager l'application</string>
+    <string name="contact_us">Nous contacter</string>
+    <string name="website">Site web</string>
+    <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="credits">Crédits</string>
+    <string name="credits_hint">Les projets derrière cette application</string>
+    <string name="rate_the_app_hint">Cela aide plus de gens à le découvrir</string>
+    <string name="share_the_app_hint">Envoyez-le à vos proches</string>
+    <string name="privacy_policy_hint">Comment vos données sont traitées</string>
+    <string name="share_app_message">%1$s — horaires de prière, Coran et adoration quotidienne, gratuit et hors ligne. %2$s</string>
+    <string name="share_app_message_quran">%1$s — le Coran à lire et à partager, gratuit et hors ligne. %2$s</string>
     <string name="tap_to_count">Touchez pour compter</string>
 
     <!-- Fonction Focus (outil de test) -->
@@ -412,6 +425,11 @@
     <string name="collections">Collections</string>
     <string name="favorites">Favoris</string>
     <string name="surahs">Sourates</string>
+    <string name="surah">Sourate</string>
+    <string name="ayah">Verset</string>
+    <string name="studio">Studio</string>
+    <string name="try_a_surah_name_or_number">Essayez un nom ou un numéro de sourate</string>
+    <string name="pick_an_ayah_to_begin">Choisissez un verset dans Sourates pour commencer</string>
     <string name="surahs_label">Sourates</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Matin</string>
@@ -671,7 +689,18 @@
     <string name="font_naskh">Naskh</string>
     <string name="font_madani">Madani</string>
     <string name="font_scheherazade">Scheherazade</string>
-    <string name="font_indopak">IndoPak</string>
+    <string name="font_saleem">Saleem</string>
+    <string name="font_nastaleeq">Nastaleeq</string>
+    <string name="font">Police</string>
+    <string name="script_uthmani">Uthmani</string>
+    <string name="script_indopak">IndoPak</string>
+    <string name="script_tanzil">Tanzil</string>
+    <string name="script_indopak_hint">Chaque voyelle écrite, comme on l'enseigne en Asie du Sud</string>
+    <string name="script_tanzil_hint">L'écriture arabe, avec les seules marques nécessaires</string>
+    <string name="script_uthmani_hint">L'écriture arabe complète, comme le mushaf de Médine</string>
+    <string name="font_hint_indopak">Seules ces polices écrivent l'IndoPak correctement</string>
+    <string name="font_hint_tanzil">N'importe laquelle de ces polices convient</string>
+    <string name="font_hint_uthmani">N'importe laquelle de ces polices convient</string>
     <!-- Studio (éditeur de partage) -->
     <string name="mode_templates">Modèles</string>
     <string name="mode_layout">Disposition</string>

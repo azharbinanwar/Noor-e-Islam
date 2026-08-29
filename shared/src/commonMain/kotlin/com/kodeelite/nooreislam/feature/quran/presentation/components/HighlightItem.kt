@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -39,6 +40,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Highlight
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.hue
 import com.kodeelite.nooreislam.feature.quran.data.tint
 import com.kodeelite.nooreislam.resources.Res
@@ -46,6 +48,7 @@ import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 /**
  * Highlight Item: A premium, model-driven card for highlighted ayahs.
@@ -56,13 +59,14 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HighlightItem(highlight: Highlight, index: Int, total: Int, onLongClick: () -> Unit, onClick: () -> Unit) {
+    val script by koinInject<QuranStore>().script.collectAsState()
     val colors = AppTheme.colors
     val hue = highlight.color.hue
     // Use the professional tint logic for a consistent "wash" feel
     val wash = highlight.color.tint(colors.background).copy(alpha = 0.05f)
 
-    val text by produceState("") {
-        value = QuranRepository.ayah(highlight.surah, highlight.ayah)?.text ?: ""
+    val text by produceState("", script) {
+        value = QuranRepository.ayah(highlight.surah, highlight.ayah)?.textIn(script) ?: ""
     }
     val timestamp = remember(highlight.createdAt) { Now.formattedDateTime(highlight.createdAt) }
 

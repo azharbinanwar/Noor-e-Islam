@@ -87,6 +87,19 @@
     <string name="rounds">Rounds</string>
     <string name="total">Total</string>
     <string name="reset">Reset</string>
+    <string name="support">Support</string>
+    <string name="rate_the_app">Rate the app</string>
+    <string name="share_the_app">Share the app</string>
+    <string name="contact_us">Contact us</string>
+    <string name="website">Website</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="credits">Credits</string>
+    <string name="credits_hint">The projects behind this app</string>
+    <string name="rate_the_app_hint">It helps more people find it</string>
+    <string name="share_the_app_hint">Send it to family and friends</string>
+    <string name="privacy_policy_hint">How your data is handled</string>
+    <string name="share_app_message">%1$s — prayer times, Quran and daily worship, free and offline. %2$s</string>
+    <string name="share_app_message_quran">%1$s — the Quran to read and share, free and offline. %2$s</string>
     <string name="tap_to_count">Tap to count</string>
 
     <!-- Focus feature (Test tool) -->
@@ -421,6 +434,8 @@
     <string name="collections">Collections</string>
     <string name="favorites">Favorites</string>
     <string name="surahs">Surahs</string>
+    <string name="try_a_surah_name_or_number">Try a surah name or number</string>
+    <string name="pick_an_ayah_to_begin">Pick an ayah from Surahs to begin</string>
     <string name="surahs_label">Surahs</string>
     <string name="n_duas">%1$d duas</string>
     <string name="morning">Morning</string>
@@ -719,9 +734,23 @@
     <string name="font_naskh">Naskh</string>
     <string name="font_madani">Madani</string>
     <string name="font_scheherazade">Scheherazade</string>
-    <string name="font_indopak">IndoPak</string>
+    <string name="font_saleem">Saleem</string>
+    <string name="font_nastaleeq">Nastaleeq</string>
+    <string name="font">Font</string>
+    <string name="script_uthmani">Uthmani</string>
+    <string name="script_indopak">IndoPak</string>
+    <string name="script_tanzil">Tanzil</string>
+    <string name="script_indopak_hint">Every vowel written out, as taught in South Asia</string>
+    <string name="script_tanzil_hint">The Arab script, carrying only the marks you need</string>
+    <string name="script_uthmani_hint">The Arab script in full, as in the Madinah mushaf</string>
+    <string name="font_hint_indopak">Only these fonts can draw IndoPak correctly</string>
+    <string name="font_hint_tanzil">Any of these fonts can draw it</string>
+    <string name="font_hint_uthmani">Any of these fonts can draw it</string>
     <!-- Studio (share editor) -->
     <string name="mode_templates">Templates</string>
+    <string name="studio">Studio</string>
+    <string name="surah">Surah</string>
+    <string name="ayah">Ayah</string>
     <string name="mode_layout">Layout</string>
     <string name="mode_background">Background</string>
     <string name="studio_images_offline">Connect to the internet to load backgrounds</string>

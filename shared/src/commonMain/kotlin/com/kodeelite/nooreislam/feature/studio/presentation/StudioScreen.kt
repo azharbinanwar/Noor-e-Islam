@@ -70,6 +70,8 @@ import com.kodeelite.nooreislam.core.util.GalleryService
 import com.kodeelite.nooreislam.core.util.ShareService
 import com.kodeelite.nooreislam.core.util.toPngBytes
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.studio.data.GradientStore
 import com.kodeelite.nooreislam.feature.studio.data.ImageStore
 import com.kodeelite.nooreislam.feature.studio.data.StudioAspectRatio
@@ -84,6 +86,7 @@ import com.kodeelite.nooreislam.feature.studio.presentation.components.TemplateP
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.BrandingPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.CardPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.ContentPanel
+import com.kodeelite.nooreislam.feature.studio.presentation.panels.VersesPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.DatesPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.EffectsPanel
 import com.kodeelite.nooreislam.feature.studio.presentation.panels.TextSizePanel
@@ -127,14 +130,17 @@ fun StudioScreen(
     ayahs: List<Ayah>,
 ) {
 
-    val fullText = ayahs.joinToString(" ") { it.text }
+    // a new design opens in the font the mushaf is being read in, so what the r                eader sees is what
+    // they share; their pick in the studio then belongs to the design and never writes back
+    val readingFont = koinInject<QuranStore>().font.value
+    val fullText = ayahs.joinToString(" ") { it.textIn(readingFont.script) }
     val initialConfig = remember(fullText) {
         val size = when {
             fullText.length < StudioDefaults.SHORT_LEN -> StudioDefaults.FONT_SHORT
             fullText.length < StudioDefaults.MEDIUM_LEN -> StudioDefaults.FONT_MEDIUM
             else -> StudioDefaults.FONT_LONG
         }
-        StudioConfig.default(ayahs).copy(fontSize = size)
+        StudioConfig.default(ayahs).copy(fontFamily = readingFont, fontSize = size)
     }
 
     // all editing state + history now lives in the holder; the screen delegates to it (read + write)
@@ -144,6 +150,13 @@ fun StudioScreen(
     LaunchedEffect(Unit) { catalogRepo.refresh() }   // silent; the cached catalog covers a failed refresh
     val scope = rememberCoroutineScope()
     val store = remember { StudioStore(initialConfig, repo, scope) }
+    // arrived with nothing (drawer, home pin): draw a fresh verse every open — the daily-post habit.
+    // Only the arrival seeds; an empty canvas the user made with Reset stays theirs.
+    LaunchedEffect(Unit) {
+        if (ayahs.isEmpty()) QuranRepository.randomAyah()?.let { seeded ->
+            store.update(store.configState.value.copy(ayahs = listOf(seeded), fontFamily = readingFont))
+        }
+    }
     var config by store.configState
     var isEditing by store.isEditingState
     var studioMode by store.studioModeState
@@ -187,7 +200,8 @@ fun StudioScreen(
     // auto-save the in-progress design as a draft once editing settles (only after real edits)
     LaunchedEffect(config) {
         if (config != initialConfig) {
-            delay(800.milliseconds); store.saveDraft()
+            delay(800.milliseconds)
+            if (config.ayahs.isNotEmpty()) store.saveDraft()
         }
     }
 
@@ -252,9 +266,10 @@ fun StudioScreen(
                     onBack = { requestBack() },
                     onUndo = { undo() },
                     onRedo = { redo() },
-                    onSave = { saveCurrent() },
+                    // an empty canvas has nothing to save, show or share — the card says why
+                    onSave = { if (config.ayahs.isNotEmpty()) saveCurrent() },
                     onGallery = { galleryOpen = true },
-                    onDone = { isEditing = false },
+                    onDone = { if (config.ayahs.isNotEmpty()) isEditing = false },
                 )
             }
 
@@ -279,6 +294,7 @@ fun StudioScreen(
 
                         StudioMode.Align -> AlignmentToggle(config.textAlign) { updateConfig(config.copy(textAlign = it)) }
                         StudioMode.Content -> ContentPanel(config) { updateConfig(it) }
+                        StudioMode.Verses -> VersesPanel(config) { updateConfig(it) }
 
                         // TODO(studio): stickers not ready — re-enable with StudioMode.Stickers
                         // StudioMode.Stickers -> StickerPicker { type ->
@@ -302,7 +318,7 @@ fun StudioScreen(
                     onEdit = { isEditing = true },
                     savingToGallery = savingToGallery,
                     onSaveToGallery = {
-                        if (!savingToGallery) {
+                        if (!savingToGallery && config.ayahs.isNotEmpty()) {
                             savingToGallery = true
                             scope.launch {
                                 try {
@@ -333,7 +349,7 @@ fun StudioScreen(
                         }
                     },
                     sharing = sharing,
-                    onShare = { if (!sharing) shareSheetOpen = true },
+                    onShare = { if (!sharing && config.ayahs.isNotEmpty()) shareSheetOpen = true },
                     onExport = { /* placeholder: export sizes + preview */ },
                 )
 
@@ -355,8 +371,9 @@ fun StudioScreen(
             if (shareSheetOpen) {
                 ShareSheet(
                     // ayah text + its reference travel together — hiding the ayah hides the number too
-                    ayahText = "${config.ayahs.joinToString("\n") { it.text }}\n\n" +
-                            "(${config.ayahs.first().surah}:${config.ayahs.joinToString(",") { it.ayah.toString() }})",
+                    ayahText = "${config.ayahs.joinToString("\n") { it.textIn(config.fontFamily.script) }}\n\n" +
+                            "(${config.ayahs.first().surah}:" +
+                                (if (config.ayahs.size == 1) "${config.ayahs.first().ayah}" else "${config.ayahs.first().ayah}-${config.ayahs.last().ayah}") + ")",
                     otherText = stringResource(Res.string.shared_with, edition.displayName()),
                     onDismiss = { shareSheetOpen = false },
                     onShare = { caption ->

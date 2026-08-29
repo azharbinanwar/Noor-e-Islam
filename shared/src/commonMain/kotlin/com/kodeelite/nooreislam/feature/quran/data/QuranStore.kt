@@ -39,13 +39,33 @@ class QuranStore(
         .map { QuranDefaults.BASE_LINE_HEIGHT_RATIO * (it / 100f) }
         .stateIn(scope, SharingStarted.WhileSubscribed(5000), QuranDefaults.BASE_LINE_HEIGHT_RATIO)
 
+    private val _script = MutableStateFlow(QuranScript.saved())
+    val script: StateFlow<QuranScript> = _script.asStateFlow()
+
     private val _font = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.QURAN_FONT)
             ?.let { runCatching { QuranFont.valueOf(it) }.getOrNull() } ?: QuranDefaults.FONT,
     )
     val font: StateFlow<QuranFont> = _font.asStateFlow()
 
+    init {
+        // a font saved under the other script would draw the wrong glyphs, or none at all
+        if (_script.value !in _font.value.scripts) applyFont(QuranDefaults.fontFor(_script.value))
+    }
+
+    fun setScript(value: QuranScript) {
+        PrefsService.putString(PrefConst.QURAN_SCRIPT, value.name)
+        _script.value = value
+        if (value !in _font.value.scripts) applyFont(QuranDefaults.fontFor(value))
+    }
+
+    /** Picking a font from the other script moves the script with it, so no tap is a dead end. */
     fun setFont(value: QuranFont) {
+        if (_script.value !in value.scripts) setScript(value.scripts.first())
+        applyFont(value)
+    }
+
+    private fun applyFont(value: QuranFont) {
         PrefsService.putString(PrefConst.QURAN_FONT, value.name)
         _font.value = value
     }

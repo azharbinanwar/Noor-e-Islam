@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -59,7 +60,9 @@ import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranSearchRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.clear_search
 import com.kodeelite.nooreislam.resources.no_ayahs_found
@@ -73,6 +76,7 @@ import com.kodeelite.nooreislam.resources.try_a_different_search
 import com.kodeelite.nooreislam.resources.x_results
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 // separate from Jump To on purpose — different intent (I don't know where, but I remember a phrase)
 // and a different result shape (ayah previews, not a single navigation target). Matches with or
@@ -130,7 +134,8 @@ fun QuranSearchSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
             val surahJumps = byTier
                 .filter { it.second < NameMatch.FUZZY.ordinal || bestTier == NameMatch.FUZZY.ordinal }
                 .mapNotNull { bySurahAyah[it.first.number to 1] }
-            val bodyMatches = searchAyahs.filter { it.text.contains(textQuery) }
+            // the search rows carry every spelling joined in both fields, so either one is the haystack
+            val bodyMatches = searchAyahs.filter { it.textIn(QuranScript.Tanzil).contains(textQuery) }
                 .mapNotNull { realById[it.id] }
             surahJumps + bodyMatches
         }
@@ -224,9 +229,11 @@ private fun QuranSearchResultItem(ayah: Ayah, highlight: List<String>, position:
     // matched words get a tinted background. Whole words, not character offsets: the match ran on
     // normalized text and the row shows full tashkeel, so positions don't line up — words do.
     val tint = colors.primary.copy(alpha = 0.15f)
-    val ayahText = remember(ayah.text, highlight) {
-        if (highlight.isEmpty()) AnnotatedString(ayah.text) else buildAnnotatedString {
-            ayah.text.split(' ').forEachIndexed { i, word ->
+    val script by koinInject<QuranStore>().script.collectAsState()
+    val text = ayah.textIn(script)
+    val ayahText = remember(text, highlight) {
+        if (highlight.isEmpty()) AnnotatedString(text) else buildAnnotatedString {
+            text.split(' ').forEachIndexed { i, word ->
                 if (i > 0) append(' ')
                 val hit = highlight.any { word.normalizeArabic().contains(it) }
                 if (hit) withStyle(SpanStyle(background = tint)) { append(word) } else append(word)

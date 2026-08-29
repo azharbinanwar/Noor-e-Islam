@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -38,11 +39,13 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.util.toSurahKey
 import com.kodeelite.nooreislam.feature.quran.data.Bookmark
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.quran_surah_name
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 /**
  * Bookmark Item: Locked to LTR card layout with RTL text handling.
@@ -51,11 +54,12 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BookmarkItem(bookmark: Bookmark, index: Int, total: Int, onLongClick: () -> Unit, onClick: () -> Unit) {
+    val script by koinInject<QuranStore>().script.collectAsState()
     val colors = AppTheme.colors
     val timestamp = remember(bookmark.createdAt) { Now.formattedDateTime(bookmark.createdAt) }
 
-    val text by produceState("") {
-        value = QuranRepository.ayah(bookmark.surah, bookmark.ayah)?.text ?: ""
+    val text by produceState("", script) {
+        value = QuranRepository.ayah(bookmark.surah, bookmark.ayah)?.textIn(script) ?: ""
     }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {

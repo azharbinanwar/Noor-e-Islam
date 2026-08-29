@@ -16,16 +16,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 
+/** One header action: what it says and what it does. All actions draw alike, in primary. */
+data class StudioHeaderAction(val label: String, val onClick: () -> Unit)
+
 /**
- * Panel section header: uppercase title on the left, one optional action on the right.
- * The caller decides the label ("View all" / "Show less" / "Generate" …) and what it does —
- * pass both [actionLabel] and [onAction], or neither for a plain title.
+ * Panel section header: uppercase title on the left, actions on the right — "Reset | View all".
+ * A light divider separates actions and only exists when there is more than one.
  */
 @Composable
-fun SectionHeader(
+fun StudioSectionHeader(
     title: String,
-    actionLabel: String? = null,
-    onAction: (() -> Unit)? = null,
+    actions: List<StudioHeaderAction> = emptyList(),
     modifier: Modifier = Modifier,
 ) {
     val colors = AppTheme.colors
@@ -41,14 +42,17 @@ fun SectionHeader(
             fontWeight = FontWeight.Bold,
             letterSpacing = 0.5.sp,
         )
-        if (actionLabel != null && onAction != null) {
-            Text(
-                actionLabel,
-                color = colors.primary,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clip(RoundedCornerShape(6.dp)).clickable(onClick = onAction).padding(horizontal = 6.dp, vertical = 2.dp),
-            )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            actions.forEachIndexed { i, action ->
+                if (i > 0) Text("|", color = colors.onSurfaceVariant.copy(alpha = 0.4f), fontSize = 11.sp)
+                Text(
+                    action.label,
+                    color = colors.primary,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clip(RoundedCornerShape(6.dp)).clickable(onClick = action.onClick).padding(horizontal = 6.dp, vertical = 2.dp),
+                )
+            }
         }
     }
 }

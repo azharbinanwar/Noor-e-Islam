@@ -1,0 +1,273 @@
+package com.kodeelite.nooreislam.feature.studio.presentation.panels
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
+import com.kodeelite.nooreislam.config.theme.AppTheme
+import com.kodeelite.nooreislam.core.components.StateView
+import com.kodeelite.nooreislam.core.constants.defaults.StudioDefaults
+import com.kodeelite.nooreislam.core.util.toSurahKey
+import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.Surah
+import com.kodeelite.nooreislam.feature.studio.data.StudioConfig
+import com.kodeelite.nooreislam.feature.studio.presentation.components.StudioHeaderAction
+import com.kodeelite.nooreislam.feature.studio.presentation.components.StudioSectionHeader
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.ayah
+import com.kodeelite.nooreislam.resources.quran_surah_name
+import com.kodeelite.nooreislam.resources.nothing_matches
+import com.kodeelite.nooreislam.resources.reset
+import com.kodeelite.nooreislam.resources.try_a_surah_name_or_number
+import com.kodeelite.nooreislam.resources.search
+import com.kodeelite.nooreislam.resources.show_less
+import com.kodeelite.nooreislam.resources.surah
+import com.kodeelite.nooreislam.resources.view_all
+import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
+
+// Which verses are on the canvas. A surah strip (calligraphic names, View all expands to a searchable
+// grid) and that surah's ayah numbers (View all expands to a grid). Tap one ayah for a single, tap a
+// second to close the range between — the canvas re-renders on every tap. Contiguous within one
+// surah on purpose: a share image is a passage, not a scrapbook.
+@Composable
+fun VersesPanel(config: StudioConfig, onChange: (StudioConfig) -> Unit) {
+    val colors = AppTheme.colors
+    val surahs by produceState(emptyList<Surah>()) { value = QuranRepository.surahs() }
+    val nameFont = FontFamily(Font(Res.font.quran_surah_name))
+
+    // the surah being browsed outlives the selection: Reset empties the canvas but the strip stays
+    // where the reader was, waiting for the one tap that starts a fresh design
+    var browseSurah by remember { mutableStateOf(config.ayahs.firstOrNull()?.surah ?: 1) }
+    LaunchedEffect(config.ayahs) { config.ayahs.firstOrNull()?.let { browseSurah = it.surah } }
+    val currentSurah = browseSurah
+    val start = config.ayahs.firstOrNull()?.ayah ?: 0
+    val end = config.ayahs.lastOrNull()?.ayah ?: -1
+
+    // the whole surah once per surah change; a tap then slices it synchronously. Fetching per tap
+    // raced: a later tap's query could land first and throw the selection backwards.
+    val surahAyahs by produceState(config.ayahs, browseSurah) { value = QuranRepository.surah(browseSurah) }
+
+    // a new selection re-sizes the text to fit, same thresholds the studio opens with;
+    // the size slider still overrides afterwards
+    fun sized(ayahs: List<Ayah>): StudioConfig {
+        val len = ayahs.sumOf { it.textIn(config.fontFamily.script).length }
+        val size = when {
+            len < StudioDefaults.SHORT_LEN -> StudioDefaults.FONT_SHORT
+            len < StudioDefaults.MEDIUM_LEN -> StudioDefaults.FONT_MEDIUM
+            else -> StudioDefaults.FONT_LONG
+        }
+        return config.copy(ayahs = ayahs, fontSize = size)
+    }
+
+    fun select(from: Int, to: Int) {
+        val range = surahAyahs.filter { it.ayah in from..to }
+        if (range.isNotEmpty()) onChange(sized(range))
+    }
+
+    // switching surah clears the selection: the canvas says pick an ayah, and the first tap is it
+    fun moveToSurah(surah: Int) {
+        browseSurah = surah
+        if (config.ayahs.isNotEmpty()) onChange(config.copy(ayahs = emptyList()))
+    }
+
+    // toggle at the edges: an unselected tap extends the range to reach it, a tapped edge drops just
+    // that one, a tapped middle is already selected and changes nothing. Shrinking is one edge at a
+    // time, so nothing ever collapses by surprise. From empty, the first tap is the selection.
+    fun tapAyah(n: Int) = when {
+        config.ayahs.isEmpty() -> select(n, n)
+        n < start -> select(n, end.coerceAtMost(n + StudioDefaults.MAX_AYAHS - 1))
+        n > end -> select(maxOf(start, n - StudioDefaults.MAX_AYAHS + 1), n)
+        n == start && start != end -> select(start + 1, end)
+        n == end && start != end -> select(start, end - 1)
+        else -> Unit
+    }
+
+    var surahsExpanded by remember { mutableStateOf(false) }
+    var ayahsExpanded by remember { mutableStateOf(false) }
+    var query by remember { mutableStateOf("") }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
+        StudioSectionHeader(
+            stringResource(Res.string.surah),
+            actions = listOf(
+                // one grid at a time, so the open one gets the panel's full height
+                StudioHeaderAction(stringResource(if (surahsExpanded) Res.string.show_less else Res.string.view_all)) {
+                    surahsExpanded = !surahsExpanded; ayahsExpanded = false; query = ""
+                },
+            ),
+        )
+        if (!surahsExpanded) {
+            val surahRow = rememberLazyListState()
+            LaunchedEffect(surahs, currentSurah) {
+                if (surahs.isEmpty()) return@LaunchedEffect
+                val i = (currentSurah - 1).coerceAtLeast(0)
+                // already on screen (a tap inside the strip): leave the hand where it is.
+                // Off screen (first open, View all, a seed): glide there, never teleport
+                val visible = surahRow.layoutInfo.visibleItemsInfo.any { it.index == i }
+                if (!visible) surahRow.animateScrollToItem(i)
+            }
+            LazyRow(state = surahRow, contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(surahs, key = { it.number }) { s ->
+                    SurahChip(s, s.number == currentSurah, nameFont, Modifier) { if (s.number != currentSurah) moveToSurah(s.number) }
+                }
+            }
+        } else {
+            // search matches the name or the number, so "kah" and "18" both land on Al-Kahf
+            BasicTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                textStyle = TextStyle(color = colors.onSurface, fontSize = 13.sp),
+                decorationBox = { field ->
+                    Box(
+                        Modifier.fillMaxWidth().padding(horizontal = 16.dp).clip(RoundedCornerShape(10.dp))
+                            .background(colors.onSurface.copy(alpha = 0.08f))
+                            .height(40.dp).padding(horizontal = 12.dp),
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
+                        if (query.isEmpty()) Text(stringResource(Res.string.search), color = colors.onSurfaceVariant, fontSize = 13.sp)
+                        field()
+                    }
+                },
+            )
+            // the repo does the finding: any digits, any spelling, a typo or two — ranked
+            val hits by produceState(surahs, query) { value = QuranRepository.findSurahs(query) }
+            // fixed height: a narrowing search must not resize the panel under the keyboard
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(360.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (hits.isEmpty()) {
+                    StateView(
+                        title = stringResource(Res.string.nothing_matches, query.trim()),
+                        message = stringResource(Res.string.try_a_surah_name_or_number),
+                        icon = { Icon(Lucide.Search, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(28.dp)) },
+                        modifier = Modifier.padding(top = 24.dp),
+                    )
+                }
+                hits.chunked(3).forEach { row ->
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        row.forEach { s ->
+                            SurahChip(s, s.number == currentSurah, nameFont, Modifier.weight(1f)) {
+                                if (s.number != currentSurah) moveToSurah(s.number)
+                                surahsExpanded = false
+                            }
+                        }
+                        repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
+        }
+
+        val count = surahs.firstOrNull { it.number == currentSurah }?.ayahCount ?: 0
+        StudioSectionHeader(
+            stringResource(Res.string.ayah),
+            actions = listOfNotNull(
+                // back to the single ayah the range grew from — only offered while there is a range
+                if (config.ayahs.isNotEmpty()) StudioHeaderAction(stringResource(Res.string.reset)) { onChange(config.copy(ayahs = emptyList())) } else null,
+                if (count > StudioDefaults.MAX_AYAHS) StudioHeaderAction(stringResource(if (ayahsExpanded) Res.string.show_less else Res.string.view_all)) {
+                    ayahsExpanded = !ayahsExpanded; surahsExpanded = false
+                } else null,
+            ),
+        )
+        if (!ayahsExpanded) {
+            val ayahRow = rememberLazyListState()
+            LaunchedEffect(currentSurah, count) {
+                if (count > 0 && start > 0) ayahRow.animateScrollToItem((start - 1).coerceAtLeast(0))
+            }
+            LazyRow(state = ayahRow, contentPadding = PaddingValues(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                items((1..count).toList(), key = { it }) { n -> AyahDot(n, n in start..end, Modifier.size(34.dp)) { tapAyah(n) } }
+            }
+        } else {
+            // stays open across taps — closing a range takes two of them
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                (1..count).toList().chunked(6).forEach { row ->
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        row.forEach { n -> AyahDot(n, n in start..end, Modifier.weight(1f).height(40.dp)) { tapAyah(n) } }
+                        repeat(6 - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SurahChip(s: Surah, active: Boolean, nameFont: FontFamily, modifier: Modifier, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    Row(
+        modifier.clip(RoundedCornerShape(10.dp))
+            .background(if (active) colors.primary else colors.onSurface.copy(alpha = 0.08f))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        // number holds the left edge, the calligraphic name the right — never both bunched left
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text("${s.number}", color = if (active) colors.onPrimary else colors.onSurfaceVariant, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.size(8.dp))
+        // the same calligraphic glyph the canvas draws, so the chip previews the design itself
+        Text(s.number.toSurahKey(), fontFamily = nameFont, fontSize = 20.sp, color = if (active) colors.onPrimary else colors.onSurface, maxLines = 1)
+    }
+}
+
+@Composable
+private fun AyahDot(n: Int, inRange: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    val colors = AppTheme.colors
+    Box(
+        modifier.clip(CircleShape)
+            .background(if (inRange) colors.primary else colors.onSurface.copy(alpha = 0.08f))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            "$n",
+            color = if (inRange) colors.onPrimary else colors.onSurface,
+            fontSize = 12.sp,
+            fontWeight = if (inRange) FontWeight.Bold else FontWeight.Normal,
+        )
+    }
+}
+

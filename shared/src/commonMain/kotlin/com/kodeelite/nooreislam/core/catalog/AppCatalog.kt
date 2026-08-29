@@ -19,6 +19,7 @@ import com.composables.icons.lucide.Moon
 import com.composables.icons.lucide.Palette
 import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Settings
+import com.composables.icons.lucide.Sparkles
 import com.composables.icons.lucide.SquareCheck
 import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.navigation.AppRoute
@@ -48,6 +49,7 @@ import com.kodeelite.nooreislam.resources.quran
 import com.kodeelite.nooreislam.resources.quran_text_source
 import com.kodeelite.nooreislam.resources.reading_marks
 import com.kodeelite.nooreislam.resources.settings
+import com.kodeelite.nooreislam.resources.studio
 import com.kodeelite.nooreislam.resources.tasbih
 import com.kodeelite.nooreislam.resources.time_format
 import com.kodeelite.nooreislam.resources.widgets
@@ -98,6 +100,11 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
         Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker,
         editions = MAIN, surfaces = DRAWER_HOME,
         available = { SettingsStore.streakEnabled.value },
+    ),
+    AppFeature(
+        Res.string.studio, Lucide.Sparkles, AppRoute.Studio(),
+        surfaces = DRAWER_HOME,
+        keywords = listOf("studio", "share", "ayah art", "image", "design"),
     ),
     AppFeature(Res.string.settings, Lucide.Settings, AppRoute.Settings(), surfaces = DRAWER_HOME),
     // reached from the reader, where the marks are. Nothing lists it: a home shortcut to a legend

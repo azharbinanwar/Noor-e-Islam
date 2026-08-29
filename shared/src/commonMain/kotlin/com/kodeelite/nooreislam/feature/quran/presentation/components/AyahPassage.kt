@@ -24,6 +24,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -35,6 +36,7 @@ import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
 import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranSymbols
 import com.kodeelite.nooreislam.feature.quran.data.tint
@@ -43,7 +45,6 @@ import com.kodeelite.nooreislam.resources.tanzil_hafs
 import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 
-private const val BISMALAH_WORD_COUNT = 4
 private const val RTL_MARKER = "‏"
 
 private const val SELECTION_ALPHA = 0.10f
@@ -91,9 +92,10 @@ fun AyahPassage(
     val fontSize by store.fontSize.collectAsState()
     val autoScrolling by store.autoScrollEnabled.collectAsState()
     val lineHeightRatio by store.lineHeightRatio.collectAsState()
-    val script by store.font.collectAsState()
+    val font by store.font.collectAsState()
+    val script by store.script.collectAsState()
     val justify by store.justifyText.collectAsState()
-    val bodyFont = FontFamily(Font(script.res))
+    val bodyFont = FontFamily(Font(font.res))
     val markerFont = FontFamily(Font(Res.font.tanzil_hafs))
 
     val highlights by highlightStore.colors.collectAsState()
@@ -114,7 +116,7 @@ fun AyahPassage(
     }
 
     // Build the text and its ranges atomically so a tap always matches what's on screen
-    val passageData = remember(ayahs, highlights, bookmarks, noteMap, bodyFont, markerFont, colors, highlightedAyah, fontSize, highlightAlpha.value) {
+    val passageData = remember(ayahs, script, highlights, bookmarks, noteMap, bodyFont, markerFont, colors, highlightedAyah, fontSize, highlightAlpha.value) {
         val ranges = mutableListOf<Pair<Ayah, IntRange>>()
         val noteIconRanges = mutableMapOf<String, IntRange>()
         val annotatedString = buildAnnotatedString {
@@ -142,7 +144,7 @@ fun AyahPassage(
                 }
 
                 withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)) {
-                    append(ayahText(ayah))
+                    append(ayah.textIn(script))
                 }
 
                 withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
@@ -211,16 +213,14 @@ fun AyahPassage(
                 )
             },
         fontSize = fontSize.sp,
+        fontFamily = bodyFont,
+        // a bare style on purpose: left to default, the theme's typography leaks into the paragraph,
+        // and on iOS that flips which lam-alif form Skia draws — the studio passes its own style and
+        // never had the problem
+        style = TextStyle(),
         lineHeight = (fontSize * lineHeightRatio).sp,
         textAlign = if (justify) TextAlign.Justify else TextAlign.Center,
         onTextLayout = { layout = it }
     )
 }
 
-// Drops embedded basmalah on non-Fatiha surah starts
-private fun ayahText(ayah: Ayah): String {
-    val words = ayah.text.split(' ').filter { it.isNotBlank() }
-    val body = if (ayah.ayah == 1 && ayah.surah != 1 && words.size > BISMALAH_WORD_COUNT && words.first().startsWith("بِسْم"))
-        words.drop(BISMALAH_WORD_COUNT) else words
-    return body.joinToString(" ")
-}

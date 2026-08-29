@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.feature.quran.data.Note
 import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.copy_ayah
 import com.kodeelite.nooreislam.resources.edit_note
@@ -32,6 +34,7 @@ import com.kodeelite.nooreislam.resources.remove_note
 import com.kodeelite.nooreislam.resources.share_to_studio
 import com.kodeelite.nooreislam.resources.surah_number_ayah_number
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 
 @Composable
 fun NoteActionSheet(
@@ -42,10 +45,11 @@ fun NoteActionSheet(
     onEdit: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val script by koinInject<QuranStore>().script.collectAsState()
     val colors = AppTheme.colors
     val clipboard = LocalClipboardManager.current
-    val ayahText by produceState("") {
-        value = QuranRepository.ayah(note.surah, note.ayah)?.text ?: ""
+    val ayahText by produceState("", script) {
+        value = QuranRepository.ayah(note.surah, note.ayah)?.textIn(script) ?: ""
     }
 
     AppBottomSheet(

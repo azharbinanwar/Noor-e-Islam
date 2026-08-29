@@ -40,10 +40,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Bookmark
+import com.composables.icons.lucide.Copy
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.FolderPlus
 import com.composables.icons.lucide.Highlighter
@@ -62,9 +65,12 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.SHEET_SCRIM_ALPHA
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.QuranScript
+import com.kodeelite.nooreislam.feature.quran.data.QuranStore
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
 import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.copy_ayah
 import com.kodeelite.nooreislam.resources.action_add_note
 import com.kodeelite.nooreislam.resources.action_add_to_collection
 import com.kodeelite.nooreislam.resources.action_bookmark
@@ -105,6 +111,7 @@ private val MORE_GROUPS = listOf(
     ),
     QGroup(
         Res.string.action_sharing, listOf(
+            QAction(Lucide.Copy, Res.string.copy_ayah),
             QAction(Lucide.Share2, Res.string.share_as_text),
             QAction(Lucide.Image, Res.string.action_share_image),
             // QAction(Lucide.Link, Res.string.action_share_link), // hidden until real deep-link generation exists
@@ -129,6 +136,7 @@ fun AyahActionSheet(
     label: String,
     ayah: Ayah,
     onShareAsImage: () -> Unit,
+    onShareAsText: () -> Unit,
     onHighlight: () -> Unit,
     onNote: () -> Unit,
     onAddToCollection: () -> Unit,
@@ -138,6 +146,8 @@ fun AyahActionSheet(
     onDismiss: () -> Unit,
 ) {
     val colors = AppTheme.colors
+    val clipboard = LocalClipboardManager.current
+    val script by koinInject<QuranStore>().script.collectAsState()
     val density = LocalDensity.current
     val winPx = LocalWindowInfo.current.containerSize.height
     val peekPx = with(density) { 172.dp.toPx() }
@@ -257,6 +267,8 @@ fun AyahActionSheet(
                                 leadingIcon = a.icon,
                                 onClick = {
                                     onDismiss()
+                                    if (a.icon == Lucide.Copy) clipboard.setText(AnnotatedString(shareTextOf(ayah, script)))
+                                    if (a.icon == Lucide.Share2) onShareAsText()
                                     if (a.icon == Lucide.Image) onShareAsImage()
                                     if (a.icon == Lucide.FolderPlus) onAddToCollection()
                                     if (a.icon == Lucide.House) onGoToSurahStart()
@@ -270,3 +282,6 @@ fun AyahActionSheet(
         }
     }
 }
+
+// what leaves the app for this ayah — the verse as rendered, then its reference
+private fun shareTextOf(ayah: Ayah, script: QuranScript) = "${ayah.textIn(script)}\n(${ayah.surah}:${ayah.ayah})"

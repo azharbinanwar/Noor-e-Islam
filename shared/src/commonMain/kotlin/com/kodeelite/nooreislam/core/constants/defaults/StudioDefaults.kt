@@ -16,6 +16,8 @@ object StudioDefaults {
     const val AUTO_CONTRAST = false
     val EMPHASIS_COLOR = Color(0xFFFBC02D)
     val TEXT_COLOR = Color.White
+    const val MAX_AYAHS = 10   // a share image, not a page; past this the text is unreadably small
+
     val TEXT_ALIGN = TextAlign.Center
 
     // auto initial size by ayah length
