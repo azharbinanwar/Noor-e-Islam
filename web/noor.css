@@ -63,6 +63,12 @@ body > .wrap { padding-top: 104px; padding-bottom: 60px; }
 .btn.soft:hover { background: rgba(255,255,255,.1); }
 
 .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 30px; }
+@media (max-width: 700px) {
+  .gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px; margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; }
+  .gallery figure { flex: 0 0 64vw; scroll-snap-align: center; }
+  .gallery::-webkit-scrollbar { display: none; }
+}
 .gallery figure { margin: 0; }
 .gallery img { border-radius: 20px; border: 5px solid #070b16; outline: 1px solid rgba(255,255,255,.18);
   box-shadow: 0 12px 30px rgba(0,0,0,.4); }
