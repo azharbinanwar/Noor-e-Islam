@@ -18,9 +18,10 @@ object AppLinks {
         AppEdition.QURAN -> "$SITE/noor-e-quran/"
     }
 
+    // ?app=1 hides the site's own appbar and footer, content only
     fun privacy(edition: AppEdition) = when (edition) {
-        AppEdition.MAIN -> "$SITE/noor-e-islam/privacy/"
-        AppEdition.QURAN -> "$SITE/quran/privacy/"
+        AppEdition.MAIN -> "$SITE/noor-e-islam/privacy/?app=1"
+        AppEdition.QURAN -> "$SITE/noor-e-quran/privacy/?app=1"
     }
 
     fun store(edition: AppEdition) = when (edition) {

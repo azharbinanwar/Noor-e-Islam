@@ -46,8 +46,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.BookOpen
@@ -99,9 +102,19 @@ import com.kodeelite.nooreislam.core.enums.onColor
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.tint
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightColorRow
+import com.kodeelite.nooreislam.resources.Res
+import com.kodeelite.nooreislam.resources.indopak_nastaleeq
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.offset
 
 private enum class Section { Geo, Notices, Tiles, Formats, Light, Dark }
 
@@ -133,6 +146,7 @@ fun SandboxScreen() {
                     BackupLab()
                     SheetLab()
                     UpdateSheetLab()
+                    WaqfLab()
                 }
             }
             item { ThemeSwitcher() }
@@ -453,6 +467,46 @@ private fun TileVariantShowcase() {
                 AppTileItem(title = "Says Error", variant = AppTileVariant.Error, leadingIcon = Lucide.Info, onClick = {}),
             ),
         )
+    }
+}
+
+/** Standalone-waqf lab: the sign as its own inline run, tuned live with sliders. */
+@Composable
+private fun WaqfLab() {
+    val fam = FontFamily(Font(Res.font.indopak_nastaleeq))
+    val size = 40.sp
+    var widthEm by remember { mutableStateOf(0.8f) }
+    var xOffset by remember { mutableStateOf(0f) }
+    var yOffset by remember { mutableStateOf(0f) }
+    val inline = mapOf(
+        "waqf" to InlineTextContent(Placeholder(widthEm.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
+            Box(Modifier.fillMaxSize().offset(x = xOffset.dp, y = yOffset.dp), contentAlignment = Alignment.Center) {
+                Text(
+                    "\u0020\u06DA", // space + jeem, the font's own seated form
+                    fontFamily = fam, fontSize = size, maxLines = 1, softWrap = false,
+                    overflow = TextOverflow.Visible,
+                    modifier = Modifier.wrapContentSize(unbounded = true),
+                )
+            }
+        }
+    )
+    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Waqf lab", fontSize = 12.sp)
+
+        Text("raw", fontSize = 10.sp)
+        Text("هُوَ ۚ اَلْحَیُّ الْقَیُّوْمُ", fontFamily = fam, fontSize = size)
+
+        Text("inline run", fontSize = 10.sp)
+        Text(buildAnnotatedString {
+            append("هُوَ")
+            appendInlineContent("waqf", "\u06DA")
+            append("اَلْحَیُّ الْقَیُّوْمُ")
+        }, inlineContent = inline, fontFamily = fam, fontSize = size)
+
+        Text("width ${"$"}{(widthEm * 100).toInt()} / 100 em", fontSize = 10.sp)
+        Slider(widthEm, { widthEm = it }, valueRange = 0.2f..2f)
+        Text("y offset ${"$"}{yOffset.toInt()} dp", fontSize = 10.sp)
+        Slider(yOffset, { yOffset = it }, valueRange = -40f..40f)
     }
 }
 

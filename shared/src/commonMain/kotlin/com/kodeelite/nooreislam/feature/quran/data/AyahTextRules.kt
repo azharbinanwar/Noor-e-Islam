@@ -15,6 +15,7 @@ object AyahTextRules {
     // embedded basmalah on ayah 1 outside Al-Fatihah; the reader draws it as a header
     val STRIP_EMBEDDED_BASMALAH = true
 
+
     private const val BASMALAH_WORDS = 4
     private const val AYAH_END_CIRCLE = '۟'
     private const val RUKU_SIGN = '۠'
@@ -41,4 +42,12 @@ object AyahTextRules {
         if (STRIP_INDOPAK_RUKU_MARKER) t = t.trimEnd().removeSuffix(RUKU_SIGN.toString())
         return t.trim()
     }
+
+    /**
+     * A waqf sign standing alone between words — the font ships it as space+mark and positions it
+     * on that space. Long single-run text on Android loses that seat, so the renderers give these
+     * clusters extra advance (a letterSpacing span), the same room quran.com adds with css margins.
+     * The text itself is never rewritten: it stays exactly as the font's makers ship it.
+     */
+    val STANDALONE_WAQF = Regex("(?<= )[\u0610-\u061A\u06D6-\u06ED]+(?= |$)")
 }

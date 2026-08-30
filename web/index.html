@@ -3,279 +3,409 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Noor e Islam — prayer times, qibla, tracker and a calm Quran reader</title>
-<meta name="description" content="Two calm, private Islamic apps by KodeElite: Noor e Islam for prayer times, qibla, tracker and reminders, and Noor e Quran for reading. No account, no ads, no tracking.">
+<title>Noor e Islam: prayer times, qibla, tracker and a calm Quran reader</title>
+<meta name="description" content="Prayer times for your city, qibla, a prayer tracker, reminders and Prayer Focus, with the full Quran built in. No account, no ads, no tracking.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Noor e Islam">
 <meta property="og:url" content="https://noor.kodeelite.com/">
-<meta property="og:title" content="Noor e Islam — prayer times, qibla, tracker and a calm Quran reader">
+<meta property="og:title" content="Noor e Islam: prayer times, qibla, tracker and a calm Quran reader">
 <meta property="og:description" content="Prayer times for your city, qibla, a prayer tracker, reminders and Prayer Focus, with the full Quran built in. No account, no ads, no tracking.">
 <meta property="og:image" content="https://noor.kodeelite.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Noor e Islam — prayer times, qibla, tracker and a calm Quran reader">
+<meta name="twitter:title" content="Noor e Islam: prayer times, qibla, tracker and a calm Quran reader">
 <meta name="twitter:description" content="Prayer times for your city, qibla, a prayer tracker, reminders and Prayer Focus, with the full Quran built in. No account, no ads, no tracking.">
 <meta name="twitter:image" content="https://noor.kodeelite.com/assets/og.png">
 <link rel="canonical" href="https://noor.kodeelite.com/">
 <link rel="icon" href="/assets/icon-islam.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500&display=swap">
-<link rel="stylesheet" href="/site.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Figtree:wght@400;500;600&family=Amiri:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  /* The page lives one whole day: Fajr at the top, Isha at the bottom.
+     The sky is painted from these tokens, retuned by scroll. */
+  :root {
+    --sky-a: #0e1528; --sky-b: #141d33; --sky-c: #1a2440;
+    --ink: #f4f2ec; --ink-soft: rgba(244,242,236,.72); --ink-faint: rgba(244,242,236,.45);
+    --card: rgba(255,255,255,.07); --card-line: rgba(255,255,255,.12);
+    --green: #7fc8a9; --green-deep: #1f6f54;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Figtree", system-ui, -apple-system, sans-serif;
+    --arabic: "Amiri", "Scheherazade New", serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans); color: var(--ink);
+    background: linear-gradient(180deg, var(--sky-a), var(--sky-b) 55%, var(--sky-c));
+    background-attachment: fixed; min-height: 100vh;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  /* stars live behind everything, fading with the sky */
+  #stars { position: fixed; inset: 0; pointer-events: none; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; }
+
+  header.top {
+    position: fixed; inset: 0 0 auto; z-index: 10; backdrop-filter: blur(14px);
+    background: color-mix(in srgb, #0d1526 35%, transparent);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .top img { width: 30px; border-radius: 8px; }
+  .top .name { font-weight: 600; letter-spacing: .2px; }
+  .top nav { margin-left: auto; display: flex; gap: 22px; font-size: 14px; }
+  .top nav a { text-decoration: none; color: var(--ink-soft); }
+  .top nav a:hover, .top nav a:focus-visible { color: var(--ink); }
+
+  /* ——— hero: Fajr ——— */
+  .hero { min-height: 96vh; display: grid; place-items: center; text-align: center; padding: 120px 0 60px; }
+  .hero .bismillah {
+    font-family: var(--arabic); font-size: clamp(26px, 4vw, 40px); color: var(--ink-soft);
+    margin-bottom: 26px;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 380; font-size: clamp(44px, 7.5vw, 92px);
+    line-height: 1.04; letter-spacing: -.01em; text-wrap: balance;
+  }
+  .hero h1 em { font-style: italic; color: var(--green); }
+  .hero p.sub { max-width: 34em; margin: 26px auto 0; font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
+  .hero .apps { display: flex; gap: 14px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+  .appchip {
+    display: flex; align-items: center; gap: 12px; padding: 12px 22px 12px 12px;
+    border-radius: 18px; border: 1px solid rgba(127,200,169,.45); background: rgba(127,200,169,.14);
+    box-shadow: 0 6px 24px rgba(0,0,0,.25);
+    text-decoration: none; backdrop-filter: blur(8px); transition: transform .25s, background .25s, box-shadow .25s;
+  }
+  .appchip:hover { transform: translateY(-2px); background: rgba(127,200,169,.22); box-shadow: 0 10px 30px rgba(127,200,169,.18); }
+  .appchip img { width: 40px; border-radius: 12px; }
+  .appchip b { display: block; font-size: 15px; }
+  .appchip span { font-size: 12.5px; color: var(--ink-soft); }
+  .daymark { margin-top: 64px; font-size: 12px; letter-spacing: .28em; color: var(--ink-faint); text-transform: uppercase; }
+
+  /* ——— chapters ——— */
+  section.chapter { padding: 110px 0; }
+  .miqat { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+  .chapter h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 4.4vw, 48px); text-wrap: balance; }
+  .chapter .lede { max-width: 36em; margin: 14px 0 36px; color: var(--ink-soft); line-height: 1.65; }
+
+  /* bento: cards of unequal weight, because features are not all equal */
+  .bento { display: grid; gap: 12px; margin-top: 40px; grid-template-columns: repeat(6, 1fr); }
+  .cell {
+    border: 1px solid rgba(255,255,255,.16);
+    background: linear-gradient(160deg, rgba(48,64,100,.66), rgba(26,36,60,.72));
+    backdrop-filter: blur(10px);
+    border-radius: 20px; padding: 18px; grid-column: span 2; min-height: 108px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;
+    opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s;
+  }
+  .cell.in { opacity: 1; transform: none; }
+  .cell.wide { grid-column: span 4; }
+  .cell.tall { grid-row: span 2; }
+  .cell.shot { padding: 0; justify-content: stretch; position: relative; cursor: pointer; }
+  .cell.shot img { border-radius: 27px; }
+  .cell.shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: 0; transition: opacity .7s; }
+  .cell.shot img.on { opacity: 1; }
+  .cell.shot .dots { position: absolute; bottom: -38px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2;
+    align-items: center; background: rgba(10,16,30,.55); border-radius: 999px; padding: 4px 8px; backdrop-filter: blur(4px); }
+  .cell.shot .dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.85); transition: background .3s, transform .3s; }
+  .cell.shot .dots i.on { background: var(--green); transform: scale(1.35); box-shadow: 0 0 6px rgba(127,200,169,.8); }
+  .cell.shot .nav { border: 0; padding: 0; width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+    background: transparent; color: #fff; display: grid; place-items: center; opacity: .7; transition: opacity .25s; }
+  .cell.shot .nav:hover { opacity: 1; }
+  .cell.shot .nav svg { width: 13px; height: 13px; }
+  .cell .ic { width: 32px; height: 32px; border-radius: 10px; background: rgba(127,200,169,.22); color: var(--green); display: grid; place-items: center; margin-bottom: auto; }
+  .cell .ic svg { width: 17px; height: 17px; }
+  .cell h3 { font-size: 16px; font-weight: 600; margin-top: 12px; }
+  .cell p { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+  .cell .big { font-family: var(--serif); font-size: 28px; font-weight: 350; color: var(--green); }
+  .split { display: grid; grid-template-columns: 260px 1fr; gap: 26px; align-items: start; }
+  .split.flip { grid-template-columns: 1fr 260px; }
+  .split.flip .phoneCar { order: 2; }
+  .split .bento { margin-top: 0; grid-template-columns: repeat(4, 1fr); }
+  .phoneCar { aspect-ratio: 540 / 1200; width: 260px; min-height: 0; grid-column: auto; grid-row: auto;
+    border: 7px solid #070b16; border-radius: 34px; outline: 1px solid rgba(255,255,255,.18);
+    box-shadow: 0 18px 44px rgba(0,0,0,.45); }
+  @media (max-width: 860px) {
+    .bento, .split .bento { grid-template-columns: repeat(2, 1fr); }
+    .cell, .cell.wide { grid-column: span 2; }
+    .split { grid-template-columns: 1fr; }
+    .split.flip .phoneCar { order: 0; }
+    .phoneCar { position: static; max-width: 300px; margin: 0 auto; width: 100%; }
+  }
+
+  /* ——— ayah interlude ——— */
+  .interlude { text-align: center; padding: 130px 0; }
+  .interlude .ayah { font-family: var(--arabic); font-size: clamp(30px, 5vw, 52px); line-height: 2; direction: rtl; }
+  .interlude .ref { margin-top: 18px; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); }
+
+  /* ——— pledge: Isha ——— */
+  .pledge { text-align: center; padding: 120px 0 90px; }
+  .pledge h2 { font-family: var(--serif); font-weight: 380; font-size: clamp(28px, 4vw, 44px); }
+  .pledge p { max-width: 34em; margin: 18px auto 0; color: var(--ink-soft); line-height: 1.65; }
+  .pledge .vows { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .vow { border: 1px solid rgba(127,200,169,.4); background: rgba(127,200,169,.12); border-radius: 999px; padding: 9px 18px; font-size: 13.5px; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 34px; justify-content: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 14px;
+    font-size: 14px; font-weight: 600; text-decoration: none; transition: transform .2s, background .2s; }
+  .btn.primary { background: var(--green); color: #0d1526; }
+  .btn.primary:hover { transform: translateY(-1px); }
+  .btn.primary.soon { background: rgba(127,200,169,.18); color: var(--ink-soft); cursor: default; pointer-events: none; }
+  .btn.soft { border: 1px solid rgba(255,255,255,.2); color: var(--ink); background: rgba(255,255,255,.05); }
+  .btn.soft:hover { background: rgba(255,255,255,.1); }
+
+  /* faq */
+  .faq { max-width: 640px; margin: 40px auto 0; text-align: left; interpolate-size: allow-keywords; }
+  .faq details { border: 1px solid rgba(255,255,255,.14); background: linear-gradient(160deg, rgba(48,64,100,.5), rgba(26,36,60,.6));
+    border-radius: 14px; padding: 4px 18px; margin-bottom: 10px; }
+  .faq summary { cursor: pointer; padding: 12px 0; font-weight: 600; font-size: 15px; list-style: none;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: ""; width: 8px; height: 8px; flex: none;
+    border-right: 2px solid var(--green); border-bottom: 2px solid var(--green);
+    transform: rotate(45deg); transition: transform .3s; }
+  .faq details[open] summary::after { transform: rotate(225deg); }
+  .faq details::details-content { opacity: 0; height: 0; overflow: clip;
+    transition: opacity .35s, height .35s, content-visibility .35s allow-discrete; }
+  .faq details[open]::details-content { opacity: 1; height: auto; }
+  .faq p { margin: 0; max-width: none; padding: 0 0 14px; text-align: left;
+    color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+
+  footer { border-top: 1px solid rgba(255,255,255,.08); padding: 30px 0 46px; }
+  footer .wrap { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-faint); }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+  footer .spacer { flex: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cell { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
+<canvas id="stars"></canvas>
 
-<nav id="nav">
-  <a class="brand" href="/"><img src="/assets/icon-islam.webp" alt="">Noor e Islam</a>
-  <ul>
-    <li><a href="/noor-e-islam/">Noor e Islam</a></li>
-    <li><a href="/noor-e-quran/">Noor e Quran</a></li>
-    <li><a href="/#about">About</a></li>
-    <li><a href="/support/">Support</a></li>
-  </ul>
-</nav>
-
-<header class="hero">
-  <canvas id="sky"></canvas>
-  <div class="inner">
-    <h1>Prayer, on time.<br>Quran, in peace.</h1>
-    <p>Two calm apps. Noor e Islam keeps your prayers in view: times for your city, the qibla, a tracker and reminders. Noor e Quran is a quiet place to read.</p>
-    <div class="cta">
-      <a class="btn light" href="#noor-e-islam">Noor e Islam</a>
-      <a class="btn ghost" href="#noor-e-quran">Noor e Quran</a>
-    </div>
+<header class="top">
+  <div class="wrap">
+    <img src="/assets/icon-islam.webp" alt="">
+    <span class="name">Noor e Islam</span>
+    <nav>
+      <a href="#noor-e-islam">Noor e Islam</a>
+      <a href="#noor-e-quran">Noor e Quran</a>
+      <a href="#pledge">Privacy</a>
+    </nav>
   </div>
-  <div class="scroll-hint">Scroll</div>
 </header>
 
-<main>
-  <section class="chapter" id="noor-e-islam">
-    <div class="wrap">
-      <div class="head">
-        <img src="/assets/icon-islam.webp" alt="">
-        <div><h2>Noor e Islam</h2><p>Prayer times, qibla, tracker and reminders, with the Quran built in</p></div>
-      </div>
-      <p class="lede">It finds your city, works out today's prayers on the device, and shows what is happening now with a countdown to the next. Everything else is one tap from the home screen.</p>
-      <div class="split">
-        <div class="stage">
-          <div class="phone" data-tilt><img id="islam-shot" src="/assets/islam-home.webp" alt="Noor e Islam home screen"></div>
-          <div class="strip" role="tablist" aria-label="Noor e Islam screens" data-for="islam-shot">
-            <button role="tab" aria-selected="true" data-src="/assets/islam-home.webp"><img src="/assets/islam-home.webp" alt="Home"></button>
-            <button role="tab" data-src="/assets/islam-prayer-times.webp"><img src="/assets/islam-prayer-times.webp" alt="Prayer times"></button>
-            <button role="tab" data-src="/assets/islam-qibla.webp"><img src="/assets/islam-qibla.webp" alt="Qibla"></button>
-            <button role="tab" data-src="/assets/islam-tracker.webp"><img src="/assets/islam-tracker.webp" alt="Tracker"></button>
-            <button role="tab" data-src="/assets/islam-notifications.webp"><img src="/assets/islam-notifications.webp" alt="Reminders"></button>
-            <button role="tab" data-src="/assets/islam-focus.webp"><img src="/assets/islam-focus.webp" alt="Prayer Focus"></button>
-          </div>
-        </div>
-        <div>
-          <div class="features">
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h3>Prayer times, anywhere</h3><p>Any city, your method, Hanafi or Shafi‘i. Fajr to Isha with sunrise, Ishraq and Zawal.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.2 6.2-6.2 2.2 2.2-6.2z"/></svg></div><h3>Qibla</h3><p>A compass that points to the Kaaba, with the distance to Makkah.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg></div><h3>Prayer tracker</h3><p>Mark each prayer, keep a streak, and see the whole month at a glance.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div><h3>Reminders on time</h3><p>A notification at each prayer, Jumu‘ah on Friday, dhikr and Quran when you want them.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg></div><h3>Prayer Focus</h3><p>Your phone goes quiet around each prayer and comes back by itself.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h3>The full Quran</h3><p>The same reader as Noor e Quran, with Studio to share an ayah as an image.</p></div>
-          </div>
-          <div class="actions">
-            <a class="btn primary soon" href="#" data-store="islam">Google Play · coming soon</a>
-            <a class="btn soft" href="/noor-e-islam/privacy/">Privacy policy</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="chapter" id="noor-e-quran">
-    <div class="wrap">
-      <div class="head">
-        <img src="/assets/icon-quran.webp" alt="">
-        <div><h2>Noor e Quran</h2><p>A calm place to read</p></div>
-      </div>
-      <p class="lede">Built for people who want to read more and be interrupted less. Fourteen reading themes, a page that remembers where you stopped, and nothing that leaves your device.</p>
-      <div class="split">
-        <div>
-          <div class="features">
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 0 0 0 20"/></svg></div><h3>Read comfortably</h3><p>Fourteen themes tuned for long sessions, with adjustable text, spacing and script.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><h3>Auto-scroll</h3><p>Set the pace and read hands-free. Hold the page to pause, lift to carry on.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><h3>Keep your place</h3><p>Bookmarks, notes, highlights and collections, and it resumes exactly where you left off.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><h3>Find any ayah</h3><p>Full-text search, jump to a surah or verse, search by reference or name.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg></div><h3>Share a verse</h3><p>Studio turns any ayah into an image worth sending.</p></div>
-            <div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg></div><h3>Gentle reminders</h3><p>Surah Al-Mulk, Al-Kahf on Friday, and a daily reading reminder, all off until you ask.</p></div>
-          </div>
-          <div class="actions">
-            <a class="btn primary soon" href="#" data-store="quran">Google Play · coming soon</a>
-            <a class="btn soft" href="/quran/privacy/">Privacy policy</a>
-          </div>
-        </div>
-        <div class="stage">
-          <div class="phone" data-tilt><img id="quran-shot" src="/assets/quran-reading.webp" alt="Noor e Quran reader"></div>
-          <div class="strip" role="tablist" aria-label="Noor e Quran screens" data-for="quran-shot">
-            <button role="tab" aria-selected="true" data-src="/assets/quran-reading.webp"><img src="/assets/quran-reading.webp" alt="Reading"></button>
-            <button role="tab" data-src="/assets/quran-home.webp"><img src="/assets/quran-home.webp" alt="Home"></button>
-            <button role="tab" data-src="/assets/quran-themes.webp"><img src="/assets/quran-themes.webp" alt="Themes"></button>
-            <button role="tab" data-src="/assets/quran-notes.webp"><img src="/assets/quran-notes.webp" alt="Notes"></button>
-            <button role="tab" data-src="/assets/quran-studio.webp"><img src="/assets/quran-studio.webp" alt="Studio"></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band" id="privacy">
-    <div class="wrap">
-      <div>
-        <h2>Private by design</h2>
-        <p>Nothing about you is stored anywhere. There is no account to make, no analytics, no advertising, and no third-party service inside either app.</p>
-        <p>Noor e Islam uses your location on the device for prayer times and asks our own server only for your city's name. Noor e Quran never goes online at all.</p>
-      </div>
-      <ul>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Bookmarks, notes, highlights and your tracker stay on your phone</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Every reminder is off until you turn it on</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Quran text from the <a href="https://tanzil.net">Tanzil Project</a>, used unmodified</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>English, Arabic, Urdu and French, with proper right-to-left layout</li>
-      </ul>
-    </div>
-  </section>
-  <section class="chapter" id="about">
-    <div class="wrap">
-      <h2 style="font-size:clamp(26px,3.5vw,34px);margin:0 0 12px">About</h2>
-      <p class="lede" style="margin-bottom:12px">Noor e Islam is made by KodeElite, a small independent studio. We wanted the apps we use every day for prayer and reading to be calm, honest and free of anything that watches: no account, no ads, no analytics, nothing to sell.</p>
-      <p class="lede" style="margin-bottom:12px">Noor e Islam is the main app. Noor e Quran is its reader on its own, for people who only want to read.</p>
-      <p class="lede" style="margin:0">Questions, mistakes in a prayer time, or a feature you miss: write to <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>. We read every message.</p>
-    </div>
-  </section>
-</main>
-
-<footer class="site-footer">
+<!-- FAJR -->
+<section class="hero" data-day="0">
   <div class="wrap">
-    <div class="cols">
-      <div class="col brandcol">
-        <a class="brand" href="/"><img src="/assets/icon-islam.webp" alt="">Noor e Islam</a>
-        <p>Calm, private apps for prayer and the Quran. No account, no ads, nothing that follows you.</p>
-      </div>
-      <div class="col">
-        <h4>Apps</h4>
-        <a href="/noor-e-islam/">Noor e Islam</a>
-        <a href="/noor-e-quran/">Noor e Quran</a>
-      </div>
-      <div class="col">
-        <h4>Privacy</h4>
-        <a href="/noor-e-islam/privacy/">Noor e Islam</a>
-        <a href="/quran/privacy/">Noor e Quran</a>
-      </div>
-      <div class="col">
-        <h4>Help</h4>
-        <a href="/support/">Support</a>
-        <a href="mailto:contact@kodeelite.com">contact@kodeelite.com</a>
-      </div>
+    <div class="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+    <h1>A day shaped by <em>prayer</em>,<br>a page kept for the <em>Quran</em>.</h1>
+    <p class="sub">Two quiet apps. Noor e Islam keeps every prayer in view: times, qibla, a tracker, reminders. Noor e Quran is a reading room with nothing else in it.</p>
+    <div class="apps">
+      <a class="appchip" href="#noor-e-islam"><img src="/assets/icon-islam.webp" alt=""><span><b>Noor e Islam</b><span>The daily companion</span></span></a>
+      <a class="appchip" href="#noor-e-quran"><img src="/assets/icon-quran.webp" alt=""><span><b>Noor e Quran</b><span>A calm place to read</span></span></a>
     </div>
-    <div class="legal">
-      <span>© <span id="year"></span> KodeElite</span>
-      <span>Quran text by the <a href="https://tanzil.net">Tanzil Project</a>, used unmodified</span>
+    <div class="daymark">Fajr to Isha, one quiet companion</div>
+  </div>
+</section>
+
+<!-- DHUHR -->
+<section class="chapter" id="noor-e-islam" data-day="1">
+  <div class="wrap">
+    <div class="miqat">The daily companion</div>
+    <h2>Noor e Islam, the whole day held gently.</h2>
+    <p class="lede">Times for any city with your method and madhhab, and everything the day asks for around them.</p>
+    <div class="split flip">
+      <div class="cell shot phoneCar" data-shots="/assets/islam-home.webp,/assets/islam-prayer-times.webp,/assets/islam-qibla.webp,/assets/islam-tracker.webp,/assets/islam-notifications.webp,/assets/islam-focus.webp" aria-label="Noor e Islam screens"></div>
+      <div class="bento">
+      <div class="cell wide">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div class="big">Every prayer, every city</div>
+        <h3>Prayer times, anywhere</h3>
+        <p>The five prayers plus sunrise, Ishraq and Zawal. Any city in the world, Hanafi or Shafi‘i, your calculation method.</p>
+      </div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2.2 6.2-6.2 2.2 2.2-6.2z"/></svg></div><h3>Qibla</h3><p>A compass to the Kaaba, with the distance to Makkah.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg></div><h3>Prayer tracker</h3><p>Mark each prayer, keep a streak, see the month at a glance.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div><h3>Reminders on time</h3><p>Each prayer, Jumu‘ah on Friday, dhikr and Quran when you want them.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg></div><h3>Prayer Focus</h3><p>The phone goes quiet around each prayer and comes back by itself.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 9-9c0 1-1 2-2 2h-3a2 2 0 0 0-2 2v3c0 1-1 2-2 2"/><circle cx="12" cy="8" r="1"/></svg></div><h3>Azkar and tasbih</h3><p>Morning and evening adhkar, and a counter that remembers.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></div><h3>Islamic calendar</h3><p>Hijri beside your calendar, important days marked.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><h3>Widgets</h3><p>The next prayer on the home screen.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h3>The full Quran</h3><p>The same reader as Noor e Quran, Studio included.</p></div>
     </div>
+    </div>
+    <div class="actions">
+      <a class="btn primary soon" href="#" data-store="islam">Google Play · coming soon</a>
+      <a class="btn soft" href="/noor-e-islam/privacy/">Privacy policy</a>
+    </div>
+  </div>
+</section>
+
+<!-- ASR / MAGHRIB -->
+<section class="interlude" data-day="2">
+  <div class="wrap">
+    <div class="ayah">اَلَا بِذِكْرِ اللّٰهِ تَطْمَىِٕنُّ الْقُلُوْبُ</div>
+    <div class="ref">Surah Ar-Ra‘d · 13:28</div>
+  </div>
+</section>
+
+<section class="chapter" id="noor-e-quran" data-day="3">
+  <div class="wrap">
+    <div class="miqat">A calm place to read</div>
+    <h2>Noor e Quran, built to be read, not managed.</h2>
+    <p class="lede">Fourteen themes tuned for long sessions, a page that remembers where you stopped, and nothing that leaves your device.</p>
+    <div class="split">
+      <div class="cell shot phoneCar" data-shots="/assets/quran-reading.webp,/assets/quran-home.webp,/assets/quran-notes.webp,/assets/quran-studio.webp,/assets/quran-themes.webp" aria-label="Noor e Quran screens"></div>
+      <div class="bento">
+      <div class="cell wide">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 0 0 0 20"/></svg></div>
+        <div class="big">14 themes</div>
+        <h3>Read comfortably</h3>
+        <p>Fourteen reading themes, adjustable text, spacing and script: IndoPak Nastaleeq or Uthmani, each with fonts made for it.</p>
+      </div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div><h3>Auto-scroll</h3><p>Set the pace and read hands-free. Hold to pause, lift to carry on.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div><h3>Keep your place</h3><p>Bookmarks, notes, highlights, collections. It resumes where you left off.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div><h3>Find any ayah</h3><p>Full-text search, or jump by surah, reference or name.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg></div><h3>Share a verse</h3><p>Studio turns any ayah into an image worth sending.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg></div><h3>Translations</h3><p>A translation beside the Arabic, or Arabic alone.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><path d="M6 8h2M6 12h2"/></svg></div><h3>Juz and ruku</h3><p>Browse by surah, juz, manzil or page, the way you already read.</p></div>
+      <div class="cell"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg></div><h3>Gentle reminders</h3><p>Al-Mulk at night, Al-Kahf on Friday, all off until you ask.</p></div>
+    </div>
+    </div>
+    <div class="actions">
+      <a class="btn primary soon" href="#" data-store="quran">Google Play · coming soon</a>
+      <a class="btn soft" href="/noor-e-quran/privacy/">Privacy policy</a>
+    </div>
+  </div>
+</section>
+
+<!-- ISHA -->
+<section class="pledge" id="pledge" data-day="4">
+  <div class="wrap">
+    <h2>What we will never do.</h2>
+    <p>Both apps are complete on the device. Nothing is collected, nothing is sold, nothing needs an account. The Quran should not watch you back.</p>
+    <div class="vows">
+      <span class="vow">No account</span>
+      <span class="vow">No ads</span>
+      <span class="vow">No tracking</span>
+      <span class="vow">Works fully offline</span>
+    </div>
+    <div class="faq">
+      <details><summary>Is it free?</summary><p>Yes. Both apps are free, with no ads and no purchases.</p></details>
+      <details><summary>Does it work without internet?</summary><p>Yes. Prayer times, the full Quran, azkar and everything else work completely offline once installed.</p></details>
+      <details><summary>Which languages are supported?</summary><p>English, Urdu, Arabic and French, with Quran scripts in IndoPak Nastaleeq and Uthmani.</p></details>
+      <details><summary>What data do you collect?</summary><p>None. There is no account, no analytics and no tracking. Your bookmarks, notes and streaks stay on your device.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year"></span> KodeElite</span>
+    <span class="spacer"></span>
+    <a href="/noor-e-islam/privacy/">Noor e Islam privacy</a>
+    <a href="/noor-e-quran/privacy/">Noor e Quran privacy</a>
+    <a href="/support/">Support</a>
+    <a href="mailto:contact@kodeelite.com">Contact</a>
   </div>
 </footer>
 
-<script src="/site.js"></script>
 <script>
-(() => {
-  // Sky: the same idea as the app's header. The colour follows the visitor's clock; the sun and moon ride one loop.
-  const cv = document.getElementById("sky"), ctx = cv.getContext("2d");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const stars = Array.from({ length: 90 }, () => [Math.random(), Math.random() * .7, .4 + Math.random() * 1.3, Math.random() * 6.28]);
-  const stops = [ // hour -> [top, bottom]
-    [0,  ["#0B1024", "#1A1F3A"]], [5,  ["#1D2547", "#7C5E7B"]], [6.5, ["#4C6BA8", "#F0A87A"]],
-    [9,  ["#5D93D6", "#BFD9F2"]], [15, ["#5A8FD0", "#C8DDF0"]], [18, ["#3E4E8C", "#E2856E"]],
-    [19.5, ["#1A2148", "#6B3F5C"]], [21, ["#0E1430", "#25294A"]], [24, ["#0B1024", "#1A1F3A"]],
-  ];
-  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
-  const rgb = c => `rgb(${c.join(",")})`;
-  function skyAt(h) {
-    let i = 0; while (stops[i + 1][0] <= h) i++;
-    const [h0, c0] = stops[i], [h1, c1] = stops[i + 1], t = (h - h0) / (h1 - h0);
-    return [rgb(mix(hex(c0[0]), hex(c1[0]), t)), rgb(mix(hex(c0[1]), hex(c1[1]), t)), mix(hex(c0[1]), hex(c1[1]), t)];
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Store links: fill these in when each listing is live and every "coming soon" button wakes up.
+  const STORES = { islam: "", quran: "" };
+  document.querySelectorAll("[data-store]").forEach(a => {
+    const url = STORES[a.dataset.store];
+    if (url) { a.href = url; a.classList.remove("soon"); a.textContent = "Get it on Google Play"; }
+  });
+
+  // Noor lattice: an eight point star screen, lit softly where the light wanders.
+  const cv = document.getElementById("stars"), cx = cv.getContext("2d");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const CELL = 96;
+  function size() { cv.width = innerWidth; cv.height = innerHeight; }
+  function starPath(x, y, R) {
+    const r = R * .42;
+    cx.beginPath();
+    for (let i = 0; i < 16; i++) {
+      const a = i * Math.PI / 8 - Math.PI / 2, rad = i % 2 ? r : R;
+      const px = x + rad * Math.cos(a), py = y + rad * Math.sin(a);
+      i ? cx.lineTo(px, py) : cx.moveTo(px, py);
+    }
+    cx.closePath();
   }
-  function draw(now) {
-    const w = cv.width = cv.clientWidth * devicePixelRatio, hgt = cv.height = cv.clientHeight * devicePixelRatio;
-    const d = new Date(), h = d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
-    const [top, bot, botRgb] = skyAt(h);
-    const g = ctx.createLinearGradient(0, 0, 0, hgt); g.addColorStop(0, top); g.addColorStop(1, bot);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, w, hgt);
-    // stars fade in after dusk
-    const night = h < 5.5 ? 1 : h < 7 ? (7 - h) / 1.5 : h > 19 ? Math.min(1, (h - 19) / 1.5) : 0;
-    if (night > 0) {
-      ctx.fillStyle = "#fff";
-      for (const [x, y, r, p] of stars) {
-        ctx.globalAlpha = night * (0.35 + 0.35 * Math.sin(now / 900 + p));
-        ctx.beginPath(); ctx.arc(x * w, y * hgt, r * devicePixelRatio, 0, 6.28); ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
-    // one loop, sun and moon half a turn apart; the sun is highest at 13:00.
-    // Same picture as the app: horizon at 66%, disc = solid 24 + soft 36 + breathing 56 halo, three mountain layers.
-    const dp = devicePixelRatio, horizon = hgt * 0.66, cx = w / 2, rx = Math.min(w, 1400 * dp) * 0.38, ry = horizon - 90 * dp;
-    const a = ((h - 13) / 24) * 6.28, glow = 0.2 + 0.15 * (1 + Math.sin(now / 700));
-    const pos = ang => [cx + Math.sin(ang) * rx, horizon - Math.cos(ang) * ry];
-    const disc = (x, y, r, col) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.28); ctx.fill(); };
-    const [sx, sy] = pos(a), [mx, my] = pos(a + 3.14);
-    if (sy < horizon + 40 * dp) {
-      disc(sx, sy, 56 * dp, `rgba(255,213,79,${(glow * 0.5).toFixed(3)})`);
-      disc(sx, sy, 36 * dp, `rgba(255,213,79,${glow.toFixed(3)})`);
-      disc(sx, sy, 24 * dp, "#FFD54F");
-    }
-    if (my < horizon + 40 * dp) {
-      disc(mx, my, 30 * dp, `rgba(232,234,246,${(0.18 * Math.max(night, .3)).toFixed(3)})`);
-      disc(mx, my, 22 * dp, "#EEF0F6");
-    }
-    // mountains: base tone darkens with night, back layer lifted toward the sky, front pushed toward black
-    const mixc = (p, q, t) => p.map((v, i) => Math.round(v + (q[i] - v) * t));
-    const base = mixc([26, 42, 58], [7, 11, 22], night);
-    const layers = [
-      [mixc(base, botRgb, 0.45), [[0, .03], [.18, -.04], [.38, .04], [.60, -.05], [.82, .02], [1, -.02]]],
-      [base, [[0, .09], [.25, .02], [.50, .10], [.72, .01], [1, .07]]],
-      [mixc(base, [0, 0, 0], 0.35), [[0, .16], [.30, .08], [.55, .17], [.80, .09], [1, .15]]],
+  function frame(t) {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    const L = [
+      { x: cv.width * (.5 + .42 * Math.sin(t * .00009)), y: cv.height * (.5 + .4 * Math.cos(t * .00007)) },
+      { x: cv.width * (.5 + .42 * Math.cos(t * .00006)), y: cv.height * (.5 + .4 * Math.sin(t * .00011)) },
     ];
-    for (const [col, pts] of layers) {
-      ctx.fillStyle = rgb(col); ctx.beginPath(); ctx.moveTo(0, hgt);
-      for (const [fx, fy] of pts) ctx.lineTo(fx * w, horizon + fy * hgt);
-      ctx.lineTo(w, hgt); ctx.closePath(); ctx.fill();
+    const off = (scrollY * .15) % CELL;
+    cx.lineWidth = 1;
+    for (let gy = -1; gy * CELL - off < cv.height + CELL; gy++) {
+      for (let gx = -1; gx * CELL < cv.width + CELL; gx++) {
+        const x = gx * CELL + (gy % 2 ? CELL / 2 : 0), y = gy * CELL - off;
+        let lit = 0;
+        for (const l of L) {
+          const d = Math.hypot(x - l.x, y - l.y);
+          lit = Math.max(lit, Math.max(0, 1 - d / (cv.width * .3)));
+        }
+        const breathe = .5 + .5 * Math.sin(t * .0004 + gx * 1.7 + gy * 2.3);
+        const a = .028 + lit * lit * (.14 + .05 * breathe);
+        cx.strokeStyle = `rgba(127,200,169,${a})`;
+        starPath(x, y, CELL * .46);
+        cx.stroke();
+      }
     }
+    if (!reduced) requestAnimationFrame(frame);
   }
-  let raf; const loop = t => { draw(t); if (!reduce) raf = requestAnimationFrame(loop); };
-  loop(0); addEventListener("resize", () => draw(0));
+  size(); requestAnimationFrame(frame);
+  addEventListener("resize", () => { size(); if (reduced) requestAnimationFrame(frame); });
 
-  // "Now" line: local time and a rough period name, so the hero reads as alive
-  const periodOf = h => h < 5 ? "Night" : h < 6.5 ? "Fajr" : h < 12 ? "Morning" : h < 15.5 ? "Dhuhr" : h < 18 ? "Asr" : h < 19.5 ? "Maghrib" : "Isha";
-  const tick = () => { const d = new Date(); document.getElementById("clock").textContent = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); document.getElementById("period").textContent = periodOf(d.getHours() + d.getMinutes() / 60); };
-  tick(); setInterval(tick, 15000);
-
-  // nav goes solid once the sky scrolls away
-  const nav = document.getElementById("nav"), hero = document.querySelector(".hero");
-  new IntersectionObserver(([e]) => nav.classList.toggle("solid", !e.isIntersecting), { rootMargin: "-60px 0px 0px 0px" }).observe(hero);
-
-  // features rise in as they arrive
-  const io = new IntersectionObserver(es => es.forEach((e, i) => { if (e.isIntersecting) { e.target.style.transitionDelay = `${(e.target.dataset.i || 0) * 60}ms`; e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .2 });
-  document.querySelectorAll(".features").forEach(g => [...g.children].forEach((f, i) => { f.dataset.i = i; io.observe(f); }));
-
-  // screenshot strips swap the phone's screen
-  document.querySelectorAll(".strip").forEach(strip => {
-    const shot = document.getElementById(strip.dataset.for);
-    strip.addEventListener("click", e => {
-      const b = e.target.closest("button"); if (!b) return;
-      strip.querySelectorAll("button").forEach(x => x.setAttribute("aria-selected", x === b));
-      shot.style.opacity = 0; setTimeout(() => { shot.src = b.dataset.src; shot.style.opacity = 1; }, 120);
+  // screenshot carousels: fade on a timer, tap to jump ahead
+  document.querySelectorAll(".cell.shot[data-shots]").forEach(cell => {
+    const srcs = cell.dataset.shots.split(",");
+    const dots = document.createElement("div"); dots.className = "dots";
+    const imgs = srcs.map((src, i) => {
+      const im = new Image(); im.src = src; im.alt = ""; im.loading = "lazy"; cell.appendChild(im);
+      const d = document.createElement("i"); dots.appendChild(d);
+      return im;
     });
-    shot.style.transition = "opacity .12s";
+    cell.appendChild(dots);
+    const mkNav = (cls, d) => {
+      const b = document.createElement("button"); b.className = "nav " + cls; b.type = "button";
+      b.setAttribute("aria-label", cls === "prev" ? "Previous screen" : "Next screen");
+      b.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+      return b;
+    };
+    const prev = mkNav("prev", "m15 18-6-6 6-6"), next = mkNav("next", "m9 18 6-6-6-6");
+    dots.prepend(prev); dots.appendChild(next);
+    let at = 0, timer;
+    const show = n => {
+      at = (n + srcs.length) % srcs.length;
+      imgs.forEach((im, i) => im.classList.toggle("on", i === at));
+      dots.querySelectorAll("i").forEach((d, i) => d.classList.toggle("on", i === at));
+    };
+    const arm = () => { clearInterval(timer); timer = setInterval(() => show(at + 1), 3500); };
+    prev.addEventListener("click", e => { e.stopPropagation(); show(at - 1); arm(); });
+    next.addEventListener("click", e => { e.stopPropagation(); show(at + 1); arm(); });
+    cell.addEventListener("click", () => { show(at + 1); arm(); });
+    show(0); arm();
   });
 
-  // the phone leans toward the pointer
-  if (!reduce) document.querySelectorAll("[data-tilt]").forEach(el => {
-    el.addEventListener("pointermove", e => { const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; el.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`; });
-    el.addEventListener("pointerleave", () => el.style.transform = "");
-  });
-})();
+  // reveal bento cells
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }), { threshold: .12 });
+  document.querySelectorAll(".cell").forEach(el => io.observe(el));
 </script>
 </body>
 </html>
