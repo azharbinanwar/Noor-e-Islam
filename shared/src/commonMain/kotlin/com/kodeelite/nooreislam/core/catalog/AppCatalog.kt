@@ -95,7 +95,7 @@ fun appCatalog(debug: Boolean): List<AppFeature> = listOf(
     AppFeature(Res.string.prayer_times, Lucide.Clock, AppRoute.PrayerTimes, editions = MAIN, surfaces = DRAWER_HOME),
     AppFeature(Res.string.qibla_compass, Lucide.Compass, AppRoute.Qibla, editions = MAIN, surfaces = DRAWER_HOME),
     AppFeature(Res.string.quran, Lucide.BookOpen, AppRoute.Quran, surfaces = DRAWER_HOME),
-    AppFeature(Res.string.tasbih, Lucide.Flame, AppRoute.Tasbih, editions = MAIN, surfaces = DRAWER_HOME),
+    AppFeature(Res.string.tasbih, Lucide.Flame, AppRoute.Tasbih, editions = MAIN, surfaces = DRAWER_HOME, available = { debug }),
     AppFeature(
         Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker,
         editions = MAIN, surfaces = DRAWER_HOME,

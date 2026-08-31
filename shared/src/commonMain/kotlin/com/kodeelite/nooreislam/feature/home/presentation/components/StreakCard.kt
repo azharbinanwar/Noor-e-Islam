@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.feature.home.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,6 +31,8 @@ import com.composables.icons.lucide.Lucide
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.components.AppCard
 import com.kodeelite.nooreislam.core.enums.DayProgress
+import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatTimesStore
@@ -66,7 +70,13 @@ fun StreakCard() {
     val onTimePct = stats.onTimePercent
     val todayExempt = owed.isEmpty()
 
-    AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    val nav = LocalAppNavigator.current
+    AppCard(
+        // clip first so the ripple stays inside the card's corners
+        modifier = Modifier.clip(RoundedCornerShape(16.dp)).clickable { nav.navigate(AppRoute.Tracker) },
+        padding = 18.dp,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
