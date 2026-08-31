@@ -21,7 +21,7 @@ object QuranDefaults {
     // the face each script opens in before the user has ever picked one — enum order stays free to
     // be display order, never a hidden default
     fun fontFor(script: QuranScript) = when (script) {
-        QuranScript.Indopak -> QuranFont.Nastaleeq
+        QuranScript.Indopak -> QuranFont.Saleem
         QuranScript.Tanzil -> QuranFont.Hafs
     }
 

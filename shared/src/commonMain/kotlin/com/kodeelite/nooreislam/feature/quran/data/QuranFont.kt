@@ -23,7 +23,8 @@ import org.jetbrains.compose.resources.stringResource
  * text, Nastaleeq is the IndoPak hand. A list because a font may serve more than one, not because
  * any does today.
  *
- * Saleem is IndoPak-styled but draws the Tanzil texts: it is a subcontinental look, not a script.
+ * Saleem serves both scripts: it seats the Taj-style waqf marks and is the printed-mushaf look,
+ * so it opens the IndoPak script, while staying pickable for the Tanzil texts it always drew.
  */
 @kotlinx.serialization.Serializable
 enum class QuranFont(
@@ -37,7 +38,7 @@ enum class QuranFont(
     Naskh(Res.string.font_naskh, "بِسْمِ اللَّهِ", Res.font.tanzil_naskh, listOf(QuranScript.Tanzil)),
     MeQuran(Res.string.font_madani, "بِسْمِ اللَّهِ", Res.font.tanzil_me_quran, listOf(QuranScript.Tanzil)),
     Scheherazade(Res.string.font_scheherazade, "بِسْمِ اللَّهِ", Res.font.tanzil_scheherazade, listOf(QuranScript.Tanzil)),
-    Saleem(Res.string.font_saleem, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem, listOf(QuranScript.Tanzil));
+    Saleem(Res.string.font_saleem, "بِسْمِ اللَّهِ", Res.font.tanzil_saleem, listOf(QuranScript.Indopak, QuranScript.Tanzil));
 
     val label: String @Composable get() = stringResource(labelRes)
 

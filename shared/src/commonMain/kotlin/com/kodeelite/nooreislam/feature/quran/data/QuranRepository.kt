@@ -25,7 +25,8 @@ object QuranRepository {
     // read by index, so the column order here is fixed on purpose (kept explicit for stable positions).
     // Every spelling comes back in the row: switching script is then a render-time choice, and no
     // screen has to notice, re-read or invalidate anything.
-    private const val COLS = "id,surah,ayah,text,textIndopak,juz,endsRuku,sajda"
+    // textIndopakTaj: QUL's Taj-style Indopak (script 90), waqf seated on the word itself
+    private const val COLS = "id,surah,ayah,text,textIndopakTaj,juz,endsRuku,sajda"
 
     private val lock = Mutex()
     private var conn: SQLiteConnection? = null
@@ -156,7 +157,7 @@ object QuranRepository {
 
     private fun readJuzs(c: SQLiteConnection, surahs: List<Surah>): List<Juz> {
         val st =
-            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.textIndopak, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
+            c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.textIndopakTaj, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
         val starts = ArrayList<Pair<Int, Ayah>>(30)
         try {
             while (st.step()) {

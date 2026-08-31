@@ -17,3 +17,6 @@ into the app, so a stray copy ships to every user.
 - [2026-08-28-tanzil-uthmani-plus-indopak](2026-08-28-tanzil-uthmani-plus-indopak/) — the
   Tanzil Uthmani text, plus the first IndoPak import. Replaced by the earlier Simple
   Enhanced text.
+- [2026-08-31-before-mqp-indopak-column](2026-08-31-before-mqp-indopak-column/) — quran.db
+  before the `textIndopakMqp` trial column was filled from the Muslim & Quran Pro database
+  (`mqp_quran.db` beside this folder, with their `mqp_noorehuda.ttf`).

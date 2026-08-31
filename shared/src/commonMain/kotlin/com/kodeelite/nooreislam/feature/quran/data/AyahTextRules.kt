@@ -6,8 +6,9 @@ package com.kodeelite.nooreislam.feature.quran.data
  */
 object AyahTextRules {
 
-    // ayah number glyph (PUA) + its circle; the reader draws its own badge. Waqf marks stay.
-    val STRIP_INDOPAK_AYAH_MARKER = true
+    // The Taj-style script carries no ayah-number glyphs, and its PUA chars are waqf seats
+    // the font needs — stripping them orphans the signs. Only the old QuranWBW text wanted this.
+    val STRIP_INDOPAK_AYAH_MARKER = false
 
     // trailing ruku sign; endsRuku + RukuBlock own rukus for both scripts
     val STRIP_INDOPAK_RUKU_MARKER = true

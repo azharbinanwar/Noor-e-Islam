@@ -18,27 +18,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.kodeelite.nooreislam.core.components.AppBottomSheet
-import com.kodeelite.nooreislam.core.update.UpdateSheet
-import com.kodeelite.nooreislam.core.components.OverlayStyle
-import androidx.compose.material3.Slider
-import com.kodeelite.nooreislam.core.store.BackupStore
-import org.koin.compose.koinInject
-import kotlinx.datetime.minus
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.coroutines.launch
-import com.kodeelite.nooreislam.feature.tracker.data.TrackerRepository
-import com.kodeelite.nooreislam.feature.quran.data.NotesStore
-import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
-import com.kodeelite.nooreislam.core.enums.TimeFormat
-import com.kodeelite.nooreislam.core.datetime.Now
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,11 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.BookOpen
@@ -74,6 +60,7 @@ import com.kodeelite.nooreislam.core.components.ActionWidth
 import com.kodeelite.nooreislam.core.components.AppAction
 import com.kodeelite.nooreislam.core.components.AppActionGroup
 import com.kodeelite.nooreislam.core.components.AppActionItem
+import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonSize
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
@@ -83,11 +70,10 @@ import com.kodeelite.nooreislam.core.components.AppTileGroup
 import com.kodeelite.nooreislam.core.components.AppTileItem
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.kodeelite.nooreislam.core.components.LocalNotice
+import com.kodeelite.nooreislam.core.components.OverlayStyle
 import com.kodeelite.nooreislam.core.components.StateView
 import com.kodeelite.nooreislam.core.constants.defaults.QuranDefaults
-import com.kodeelite.nooreislam.core.navigation.AppRoute
-import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.format
 import com.kodeelite.nooreislam.core.enums.AdhanRoundingStyle
 import com.kodeelite.nooreislam.core.enums.CalculationMethod
@@ -96,25 +82,32 @@ import com.kodeelite.nooreislam.core.enums.Madhab
 import com.kodeelite.nooreislam.core.enums.Miqat
 import com.kodeelite.nooreislam.core.enums.MiqatTimeStatus
 import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
+import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.enums.onColor
+import com.kodeelite.nooreislam.core.navigation.AppRoute
+import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
+import com.kodeelite.nooreislam.core.store.SettingsStore
+import com.kodeelite.nooreislam.core.update.UpdateSheet
+import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
+import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.tint
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightColorRow
+import com.kodeelite.nooreislam.feature.tracker.data.TrackerRepository
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.indopak_nastaleeq
+import com.kodeelite.nooreislam.resources.mq
+import com.kodeelite.nooreislam.resources.noorehuda
+import com.kodeelite.nooreislam.resources.tanzil_saleem
+import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.minus
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.text.PlaceholderVerticalAlign
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.offset
+import org.koin.compose.koinInject
 
 private enum class Section { Geo, Notices, Tiles, Formats, Light, Dark }
 
@@ -146,7 +139,7 @@ fun SandboxScreen() {
                     BackupLab()
                     SheetLab()
                     UpdateSheetLab()
-                    WaqfLab()
+                    TajLab()
                 }
             }
             item { ThemeSwitcher() }
@@ -470,43 +463,29 @@ private fun TileVariantShowcase() {
     }
 }
 
-/** Standalone-waqf lab: the sign as its own inline run, tuned live with sliders. */
+/** Taj-style script (QUL Indopak): the waqf sits on the word itself, no standalone sign. */
 @Composable
-private fun WaqfLab() {
-    val fam = FontFamily(Font(Res.font.indopak_nastaleeq))
-    val size = 40.sp
-    var widthEm by remember { mutableStateOf(0.8f) }
-    var xOffset by remember { mutableStateOf(0f) }
-    var yOffset by remember { mutableStateOf(0f) }
-    val inline = mapOf(
-        "waqf" to InlineTextContent(Placeholder(widthEm.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
-            Box(Modifier.fillMaxSize().offset(x = xOffset.dp, y = yOffset.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    "\u0020\u06DA", // space + jeem, the font's own seated form
-                    fontFamily = fam, fontSize = size, maxLines = 1, softWrap = false,
-                    overflow = TextOverflow.Visible,
-                    modifier = Modifier.wrapContentSize(unbounded = true),
-                )
-            }
-        }
-    )
+private fun TajLab() {
+    val current = FontFamily(Font(Res.font.indopak_nastaleeq))
+    val saleem = FontFamily(Font(Res.font.tanzil_saleem))
+    // 2:255 opening, verbatim from the Taj-style script: sign seated on الۡقَيُّوۡمُ
+    val sample = "اللّٰهُ لَاۤ اِلٰهَ اِلَّا هُوَ الۡحَـىُّ الۡقَيُّوۡمُ\uE021\u06DA\u0020\u2002لَا تَاۡخُذُهٗ سِنَةٌ وَّلَا نَوۡمٌ"
+    val rtl = TextStyle(textDirection = TextDirection.Rtl)
     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Waqf lab", fontSize = 12.sp)
-
-        Text("raw", fontSize = 10.sp)
-        Text("هُوَ ۚ اَلْحَیُّ الْقَیُّوْمُ", fontFamily = fam, fontSize = size)
-
-        Text("inline run", fontSize = 10.sp)
-        Text(buildAnnotatedString {
-            append("هُوَ")
-            appendInlineContent("waqf", "\u06DA")
-            append("اَلْحَیُّ الْقَیُّوْمُ")
-        }, inlineContent = inline, fontFamily = fam, fontSize = size)
-
-        Text("width ${"$"}{(widthEm * 100).toInt()} / 100 em", fontSize = 10.sp)
-        Slider(widthEm, { widthEm = it }, valueRange = 0.2f..2f)
-        Text("y offset ${"$"}{yOffset.toInt()} dp", fontSize = 10.sp)
-        Slider(yOffset, { yOffset = it }, valueRange = -40f..40f)
+        Text("Taj script", fontSize = 12.sp)
+        Text("current app font", fontSize = 10.sp)
+        Text(sample, fontFamily = current, fontSize = 34.sp, style = rtl)
+        Text("PDMS Saleem", fontSize = 10.sp)
+        Text(sample, fontFamily = saleem, fontSize = 34.sp, style = rtl)
+        // 2:255 in the Noorehuda encoding: waqf seated on the ۝۰ ayah-marker cluster
+        val noorehuda = FontFamily(Font(Res.font.noorehuda))
+        val nhSample = "اَللہُ لَاۗ اِلٰہَ اِلَّا ھُوَ۝۰ۚ اَلْـحَيُّ الْقَيُّوْمُ۝۰ۥۚ لَا تَاْخُذُہٗ سِـنَۃٌ وَّلَا نَوْمٌ۝۰ۭ"
+        Text("Noorehuda script + font", fontSize = 10.sp)
+        Text(nhSample, fontFamily = noorehuda, fontSize = 34.sp, style = rtl)
+        // MQ (Muhammadi Enterprises): composes the ۝+digit+waqf cluster in-font. Test only, proprietary.
+        val mq = FontFamily(Font(Res.font.mq))
+        Text("MQ font, same script", fontSize = 10.sp)
+        Text(nhSample, fontFamily = mq, fontSize = 34.sp, style = rtl)
     }
 }
 
