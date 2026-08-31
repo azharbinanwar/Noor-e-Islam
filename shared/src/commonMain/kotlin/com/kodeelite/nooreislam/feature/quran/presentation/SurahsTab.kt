@@ -54,7 +54,7 @@ fun SurahsTab() {
             items(favs.size) { i ->
                 SurahItem(
                     favs[i],
-                    TilePosition.at(i, favs.size),
+                    position = TilePosition.at(i, favs.size),
                     onLongClick = { actionSurah = favs[i] }) { nav.navigate(AppRoute.QuranReader(favs[i].number, 1)) }
             }
             item { SectionLabel(stringResource(Res.string.surahs_label)) }
@@ -62,7 +62,7 @@ fun SurahsTab() {
         items(rest.size) { i ->
             SurahItem(
                 rest[i],
-                TilePosition.at(i, rest.size),
+                position = TilePosition.at(i, rest.size),
                 onLongClick = { actionSurah = rest[i] }) { nav.navigate(AppRoute.QuranReader(rest[i].number, 1)) }
         }
     }

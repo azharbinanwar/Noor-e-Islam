@@ -2,6 +2,7 @@ package com.kodeelite.nooreislam.feature.quran.presentation.components
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
@@ -21,9 +22,10 @@ import org.jetbrains.compose.resources.stringResource
 
 // one surah tile — the calligraphic name (trailing) is the identity; meaning is the title, transliteration demoted below
 @Composable
-fun SurahItem(surah: Surah, position: TilePosition = TilePosition.Single, onLongClick: (() -> Unit)? = null, onClick: () -> Unit) {
+fun SurahItem(surah: Surah, modifier: Modifier = Modifier, position: TilePosition = TilePosition.Single, onLongClick: (() -> Unit)? = null, onClick: () -> Unit) {
     val nameFont = FontFamily(Font(Res.font.quran_surah_name))
     AppTile(
+        modifier = modifier,
         // localized meaning from the surah_meanings array — add a language = drop a values-xx array, no code change
         title = surah.number.toSurahMeaning(),
         // each unit localized on its own so the order is set here; Arabic-Indic digits keep the line RTL-safe

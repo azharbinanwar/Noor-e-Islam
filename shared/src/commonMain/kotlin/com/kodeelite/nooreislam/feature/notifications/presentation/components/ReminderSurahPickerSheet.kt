@@ -71,7 +71,7 @@ fun ReminderSurahPickerSheet(surahs: List<Surah>, onPick: (Surah) -> Unit, onDis
         } else {
             Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 shown.forEachIndexed { i, s ->
-                    SurahItem(s, TilePosition.at(i, shown.size), onClick = { onPick(s) })
+                    SurahItem(s, position = TilePosition.at(i, shown.size), onClick = { onPick(s) })
                 }
             }
         }

@@ -1,6 +1,8 @@
 package com.kodeelite.nooreislam.feature.quran.presentation.components
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,7 +47,9 @@ import org.jetbrains.compose.resources.stringResource
 fun JuzRow(juz: Juz, onOpen: () -> Unit, onOpenSurah: (Surah) -> Unit) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val nameFont = FontFamily(Font(Res.font.quran_juz))
-    Column(Modifier.animateContentSize(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    // no spacedBy: a collapsed surah is still a child and the arrangement would keep its gap.
+    // The 4dp rides inside each tile (before the clip), so it folds away with the row.
+    Column {
         AppTile(
             title = stringResource(Res.string.juz_number, juz.number),
             subtitle = stringResource(Res.string.juz_start_summary, juz.startsAt.surah, juz.startsAt.ayah),
@@ -54,9 +58,13 @@ fun JuzRow(juz: Juz, onOpen: () -> Unit, onOpenSurah: (Surah) -> Unit) {
             position = if (expanded) TilePosition.First else TilePosition.Single,
             onClick = onOpen,
         )
-        if (expanded) juz.surahs.forEachIndexed { i, s ->
-            // +1: the juz tile above is the group's first item, so the surahs are its middle/last members
-            SurahItem(s, TilePosition.at(i + 1, juz.surahs.size + 1)) { onOpenSurah(s) }
+        juz.surahs.forEachIndexed { i, s ->
+            // own AnimatedVisibility, born collapsed — AppTile's visible skips composing until first
+            // shown, which made the first expand pop instead of animate
+            AnimatedVisibility(expanded, enter = expandVertically(), exit = shrinkVertically()) {
+                // +1: the juz tile above is the group's first item, so the surahs are its middle/last members
+                SurahItem(s, Modifier.padding(top = 4.dp), TilePosition.at(i + 1, juz.surahs.size + 1)) { onOpenSurah(s) }
+            }
         }
     }
 }

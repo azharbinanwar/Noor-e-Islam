@@ -21,6 +21,16 @@ Newest first. Dates are the release date, not the merge date.
 
 ## [Unreleased]
 
+### Changed
+
+- `[islam]` The streak card on Home is one tap target into the prayer tracker.
+- `[both]` The juz list's surahs fold in and out with the same animation every tile group uses, including the very first tap.
+
+### Fixed
+
+- `[both]` A surah tapped under a juz opens where it enters that juz: Al-Baqarah under juz 2 lands at 2:142, not back at the surah's start.
+- `[islam]` Tasbih slipped into release builds' Home and drawer; it waits behind the debug gate with the sandbox until it's ready.
+
 ## [1.0.0+12] - 2026-08-29
 
 ### Added

@@ -147,7 +147,7 @@ fun SurahPickerSheet(onOpen: (surah: Int, ayah: Int) -> Unit, onDismiss: () -> U
             JumpToSectionLabel(stringResource(Res.string.favorites_and_common))
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 shortcuts.forEachIndexed { i, s ->
-                    SurahItem(s, TilePosition.at(i, shortcuts.size), onClick = { pick(s) })
+                    SurahItem(s, position = TilePosition.at(i, shortcuts.size), onClick = { pick(s) })
                 }
             }
         }
@@ -301,7 +301,7 @@ private fun SurahListPickerSheet(surahs: List<Surah>, onPick: (Surah) -> Unit, o
         } else {
             Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 shown.forEachIndexed { i, s ->
-                    SurahItem(s, TilePosition.at(i, shown.size), onClick = { onPick(s) })
+                    SurahItem(s, position = TilePosition.at(i, shown.size), onClick = { onPick(s) })
                 }
             }
         }

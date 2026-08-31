@@ -29,7 +29,11 @@ fun JuzsTab() {
             JuzRow(
                 juz,
                 onOpen = { nav.navigate(AppRoute.QuranReader(juz.startsAt.surah, juz.startsAt.ayah)) },
-                onOpenSurah = { nav.navigate(AppRoute.QuranReader(it.number, 1)) },
+                // the juz's opening surah may begin mid-way: land where it enters this juz, not at 1:1 of it
+                onOpenSurah = {
+                    val ayah = if (it.number == juz.startsAt.surah) juz.startsAt.ayah else 1
+                    nav.navigate(AppRoute.QuranReader(it.number, ayah))
+                },
             )
         }
     }
