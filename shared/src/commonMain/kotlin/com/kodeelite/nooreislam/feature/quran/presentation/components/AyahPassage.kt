@@ -2,9 +2,20 @@ package com.kodeelite.nooreislam.feature.quran.presentation.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -20,18 +33,23 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.kodeelite.nooreislam.config.theme.AppTheme
 import com.kodeelite.nooreislam.core.util.toArabicIndic
 import com.kodeelite.nooreislam.feature.quran.data.Ayah
+import com.kodeelite.nooreislam.feature.quran.data.AyahTextRules
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.HighlightsStore
@@ -46,6 +64,18 @@ import org.jetbrains.compose.resources.Font
 import org.koin.compose.koinInject
 
 private const val RTL_MARKER = "‏"
+
+private const val WAQF_INLINE = "waqf"
+
+// separates the sign from the hit colour inside the placeholder's alternate text
+private const val WAQF_SEP = "\u0000"
+
+/** The waqf slot's knobs, tuned on device against 2:1-3. The sandbox Waqf lab turns them live. */
+object WaqfTuning {
+    var widthEm by mutableStateOf(0.5f)
+    var stackY by mutableStateOf(waqfStackYDefault)
+    var lineRatio by mutableStateOf(0.4f)
+}
 
 private const val SELECTION_ALPHA = 0.10f
 
@@ -121,7 +151,6 @@ fun AyahPassage(
         val noteIconRanges = mutableMapOf<String, IntRange>()
         val annotatedString = buildAnnotatedString {
             ayahs.forEach { ayah ->
-                val start = length
                 val key = "${ayah.surah}:${ayah.ayah}"
 
                 val hlColor = highlights[key]?.let { tints[it] }
@@ -132,6 +161,9 @@ fun AyahPassage(
                 }
 
                 append(RTL_MARKER)
+                // the range opens after the direction marker: a band that starts on it swallows the
+                // gap left by the previous ayah's closing waqf
+                val start = length
 
                 if (key in bookmarks) {
                     withStyle(SpanStyle(fontFamily = bodyFont, color = colors.primary, background = hit)) { append(QuranSymbols.BOOKMARK + " ") }
@@ -143,9 +175,24 @@ fun AyahPassage(
                     withStyle(SpanStyle(background = hit)) { append(" ") }
                 }
 
-                withStyle(SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)) {
-                    append(ayah.textIn(script))
-                }
+                val bodyStyle = SpanStyle(fontFamily = bodyFont, color = colors.onBackground, background = hit)
+                val body = ayah.textIn(script)
+                if (script == QuranScript.Indopak) {
+                    // Android orphans a waqf seated on a space; each one becomes an inline box that
+                    // draws the font's own space+sign form itself (see STANDALONE_WAQF). The slot sits
+                    // outside the styled run and paints the hit colour itself — a span background does
+                    // not reach a placeholder, and painting both stacked the alpha. Direction marks
+                    // fence the neutral placeholder so it cannot reorder into the next ayah's band.
+                    var last = 0
+                    for (m in AyahTextRules.STANDALONE_WAQF.findAll(body)) {
+                        withStyle(bodyStyle) { append(body.substring(last, m.range.first)) }
+                        append(RTL_MARKER)
+                        appendInlineContent(WAQF_INLINE, m.groupValues[1] + WAQF_SEP + hit.value.toString())
+                        append(RTL_MARKER)
+                        last = m.range.last + 1
+                    }
+                    withStyle(bodyStyle) { append(body.substring(last)) }
+                } else withStyle(bodyStyle) { append(body) }
 
                 withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
                     append(" " + QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
@@ -180,8 +227,40 @@ fun AyahPassage(
         onTargetLocated(coords.localToWindow(Offset(0f, lineTop)).y)
     }
 
+    // 0.8em slot from the sandbox Waqf lab; the sign rides the slot's right edge, snug against the
+    // word it stops (RTL: the word before it sits to the right). Absolute alignment, not an offset
+    // or End — both flip under RTL layout direction and drifted the sign left
+    val waqfInline = remember(bodyFont, fontSize, colors.onBackground, lineHeightRatio, WaqfTuning.widthEm) {
+        mapOf(WAQF_INLINE to InlineTextContent(Placeholder(WaqfTuning.widthEm.em, lineHeightRatio.em, PlaceholderVerticalAlign.Center)) { payload ->
+            val sign = payload.substringBefore(WAQF_SEP)
+            val hit = Color(payload.substringAfter(WAQF_SEP).toULong())
+            // the slot is only as wide as one sign needs; a stack raises but never widens it, so no
+            // empty gap opens on the left where the font already spaces the words
+            Box(Modifier.fillMaxSize().background(hit), contentAlignment = AbsoluteAlignment.CenterRight) {
+                // each mark gets a box of a known height and draws outside it: a multi-line Text
+                // let iOS collapse the tight lineHeight and the marks landed on each other
+                val step = (fontSize * WaqfTuning.lineRatio).dp
+                Column(
+                    Modifier.offset(y = WaqfTuning.stackY.dp),
+                    horizontalAlignment = Alignment.End,
+                ) {
+                    sign.forEach { mark ->
+                        Box(Modifier.height(step)) {
+                            Text(
+                                " $mark", fontFamily = bodyFont, fontSize = fontSize.sp, color = colors.onBackground,
+                                maxLines = 1, softWrap = false, overflow = TextOverflow.Visible,
+                                modifier = Modifier.wrapContentSize(unbounded = true),
+                            )
+                        }
+                    }
+                }
+            }
+        })
+    }
+
     Text(
         text = passageData.text,
+        inlineContent = waqfInline,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp)
             .onGloballyPositioned { textCoords = it }
             .pointerInput(passageData, autoScrolling) {

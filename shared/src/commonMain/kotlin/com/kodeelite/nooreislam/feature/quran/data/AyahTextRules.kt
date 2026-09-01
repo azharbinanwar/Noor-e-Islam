@@ -45,9 +45,10 @@ object AyahTextRules {
 
     /**
      * A waqf sign standing alone between words — the font ships it as space+mark and positions it
-     * on that space. Long single-run text on Android loses that seat, so the renderers give these
-     * clusters extra advance (a letterSpacing span), the same room quran.com adds with css margins.
-     * The text itself is never rewritten: it stays exactly as the font's makers ship it.
+     * on that space. Android's Minikin splits runs at spaces before shaping and orphans that seat,
+     * so the reader swaps each match for an inline box drawing the font's own space+sign form
+     * itself. The match swallows both surrounding spaces (the box provides the room); group 1 is the sign.
+     * The stored text is never rewritten: it stays exactly as the font's makers ship it.
      */
-    val STANDALONE_WAQF = Regex("(?<= )[\u0610-\u061A\u06D6-\u06ED]+(?= |$)")
+    val STANDALONE_WAQF = Regex(" ([\u0610-\u061A\u06D6-\u06ED]+)(?: |$)")
 }

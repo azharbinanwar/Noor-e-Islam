@@ -34,23 +34,30 @@ import com.kodeelite.nooreislam.feature.quran.data.NotesStore
 import com.kodeelite.nooreislam.feature.quran.data.BookmarksStore
 import com.kodeelite.nooreislam.core.enums.TimeFormat
 import com.kodeelite.nooreislam.core.datetime.Now
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.BookOpen
@@ -99,8 +106,12 @@ import com.kodeelite.nooreislam.core.enums.PrayerTrackerStatus
 import com.kodeelite.nooreislam.core.enums.color
 import com.kodeelite.nooreislam.core.enums.label
 import com.kodeelite.nooreislam.core.enums.onColor
+import com.kodeelite.nooreislam.feature.quran.data.AyahTextRules
+import com.kodeelite.nooreislam.feature.quran.data.QuranRepository
 import com.kodeelite.nooreislam.feature.quran.data.HighlightColor
 import com.kodeelite.nooreislam.feature.quran.data.tint
+import com.kodeelite.nooreislam.feature.quran.presentation.components.AyahPassage
+import com.kodeelite.nooreislam.feature.quran.presentation.components.WaqfTuning
 import com.kodeelite.nooreislam.feature.quran.presentation.components.HighlightColorRow
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.indopak_nastaleeq
@@ -112,6 +123,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.offset
@@ -473,40 +485,23 @@ private fun TileVariantShowcase() {
 /** Standalone-waqf lab: the sign as its own inline run, tuned live with sliders. */
 @Composable
 private fun WaqfLab() {
-    val fam = FontFamily(Font(Res.font.indopak_nastaleeq))
-    val size = 40.sp
-    var widthEm by remember { mutableStateOf(0.8f) }
-    var xOffset by remember { mutableStateOf(0f) }
-    var yOffset by remember { mutableStateOf(0f) }
-    val inline = mapOf(
-        "waqf" to InlineTextContent(Placeholder(widthEm.em, 1.em, PlaceholderVerticalAlign.TextCenter)) {
-            Box(Modifier.fillMaxSize().offset(x = xOffset.dp, y = yOffset.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    "\u0020\u06DA", // space + jeem, the font's own seated form
-                    fontFamily = fam, fontSize = size, maxLines = 1, softWrap = false,
-                    overflow = TextOverflow.Visible,
-                    modifier = Modifier.wrapContentSize(unbounded = true),
-                )
-            }
-        }
-    )
+    // the real reader on surah 2's first three ayat; the sliders turn WaqfTuning live on it
+    val ayahs by produceState(emptyList<com.kodeelite.nooreislam.feature.quran.data.Ayah>()) {
+        value = listOfNotNull(QuranRepository.ayah(2, 1), QuranRepository.ayah(2, 2), QuranRepository.ayah(2, 3))
+    }
     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text("Waqf lab", fontSize = 12.sp)
+        // the reader draws its page RTL; without the same wrapper the lab lied about alignment
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            AyahPassage(ayahs, selected = null, onSelect = {}, onLongSelect = {})
+        }
 
-        Text("raw", fontSize = 10.sp)
-        Text("هُوَ ۚ اَلْحَیُّ الْقَیُّوْمُ", fontFamily = fam, fontSize = size)
-
-        Text("inline run", fontSize = 10.sp)
-        Text(buildAnnotatedString {
-            append("هُوَ")
-            appendInlineContent("waqf", "\u06DA")
-            append("اَلْحَیُّ الْقَیُّوْمُ")
-        }, inlineContent = inline, fontFamily = fam, fontSize = size)
-
-        Text("width ${"$"}{(widthEm * 100).toInt()} / 100 em", fontSize = 10.sp)
-        Slider(widthEm, { widthEm = it }, valueRange = 0.2f..2f)
-        Text("y offset ${"$"}{yOffset.toInt()} dp", fontSize = 10.sp)
-        Slider(yOffset, { yOffset = it }, valueRange = -40f..40f)
+        Text("slot width " + (WaqfTuning.widthEm * 100).toInt() + " / 100 em", fontSize = 10.sp)
+        Slider(WaqfTuning.widthEm, { WaqfTuning.widthEm = it }, valueRange = 0.2f..2f)
+        Text("stack y " + WaqfTuning.stackY.toInt() + " dp", fontSize = 10.sp)
+        Slider(WaqfTuning.stackY, { WaqfTuning.stackY = it }, valueRange = -40f..20f)
+        Text("stack line " + (WaqfTuning.lineRatio * 100).toInt() + " / 100", fontSize = 10.sp)
+        Slider(WaqfTuning.lineRatio, { WaqfTuning.lineRatio = it }, valueRange = 0.3f..1.5f)
     }
 }
 
