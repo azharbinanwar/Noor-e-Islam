@@ -26,6 +26,10 @@ import com.kodeelite.nooreislam.core.enums.QiblaStyle
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.compass_style
 import org.jetbrains.compose.resources.stringResource
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.text.style.TextAlign
 
 /** The single place that maps a [QiblaStyle] to its dial composable — screen and picker both use it. */
 @Composable
@@ -57,19 +61,26 @@ fun QiblaStyleSheet(
     onDismiss: () -> Unit,
 ) {
     AppBottomSheet(onDismiss = onDismiss, title = stringResource(Res.string.compass_style)) {
-        Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        // IntrinsicSize.Min: every card measures to the tallest label, so a name that wraps to two
+        // lines no longer leaves its neighbours short
+        Row(
+            Modifier.fillMaxWidth().padding(top = 4.dp).height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             QiblaStyle.entries.forEach { style ->
                 val selected = style == current
                 Column(
                     Modifier
                         .weight(1f)
+                        .fillMaxHeight()
                         .clip(RoundedCornerShape(16.dp))
                         .border(
                             width = if (selected) 2.dp else 1.dp,
                             color = if (selected) AppTheme.colors.primary else AppTheme.colors.outline.copy(alpha = 0.4f),
                             shape = RoundedCornerShape(16.dp),
                         )
-                        .clickable { onSelect(style) }
+                        // picking is the whole errand: commit and close, no confirm step
+                        .clickable { onSelect(style); onDismiss() }
                         .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -89,6 +100,8 @@ fun QiblaStyleSheet(
                     Text(
                         style.label,
                         style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
                         color = if (selected) AppTheme.colors.primary else AppTheme.colors.onSurfaceVariant,
                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                     )
