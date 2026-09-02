@@ -786,6 +786,9 @@
     <string name="done">Terminé</string>
     <string name="pick_a_color">Choisir une couleur</string>
     <string name="compass_style">Style de boussole</string>
+    <string name="qibla_style_modern">Moderne</string>
+    <string name="qibla_style_classic">Classique</string>
+    <string name="qibla_style_compass_rose">Rose des vents</string>
     <string name="calibrate_compass">Calibrer la boussole</string>
     <string name="direction">Direction</string>
     <string name="distance_to_makkah">Distance jusqu’à La Mecque</string>
@@ -996,6 +999,19 @@
     <string name="focus_dnd_use_vibrate">Utiliser le vibreur à la place</string>
     <string name="location_permission_sub">Les horaires de prière et la Qibla dépendent de votre position.</string>
     <string name="photo_access_declined">L'accès aux photos a été refusé</string>
+    <string name="qibla_needs_location">La boussole a besoin de votre position</string>
+    <string name="qibla_needs_location_sub">Elle calcule la direction depuis l'endroit où vous vous tenez ; une ville enregistrée peut donc pointer à faux une fois en voyage.</string>
+    <string name="qibla_location_off">La localisation est désactivée</string>
+    <string name="qibla_location_off_sub">Sans elle, la boussole n'a rien à mesurer. Activez-la et l'aiguille vous suivra.</string>
+    <string name="qibla_location_blocked">La localisation est bloquée pour cette application</string>
+    <string name="qibla_location_blocked_sub">Autorisez-la dans les Paramètres pour que la boussole pointe depuis votre vraie position.</string>
+    <string name="qibla_allow_location">Autoriser la localisation</string>
+    <string name="qibla_turn_on_location">Activer la localisation</string>
+    <string name="qibla_continue_with">Viser depuis %1$s</string>
+    <string name="qibla_aiming_from_place">Visée depuis %1$s</string>
+    <string name="qibla_aiming_from_you">Mesurée depuis votre position</string>
+    <string name="qibla_finding_you">Recherche de votre position</string>
+    <string name="qibla_only_right_here">Juste seulement si vous y êtes. Touchez pour corriger.</string>
     <string name="location_is_off">La localisation est désactivée</string>
     <string name="location_is_off_sub">Activez-la pour que les horaires de prière suivent votre position.</string>
 

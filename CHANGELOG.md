@@ -25,11 +25,15 @@ Newest first. Dates are the release date, not the merge date.
 
 - `[islam]` The streak card on Home is one tap target into the prayer tracker.
 - `[both]` The juz list's surahs fold in and out with the same animation every tile group uses, including the very first tap.
+- `[islam]` The compass names the point it is aiming from, and it always aims from a live fix when it has one. A row under the dial reads the place your position resolves to, or turns amber when the direction is only as good as your saved city — tapping it reopens the way to fix that.
+- `[islam]` Picking a compass style applies it and closes the sheet, and the three styles sit in cards of one height with their names centred.
 
 ### Fixed
 
 - `[both]` A surah tapped under a juz opens where it enters that juz: Al-Baqarah under juz 2 lands at 2:142, not back at the surah's start.
 - `[islam]` Tasbih slipped into release builds' Home and drawer; it waits behind the debug gate with the sandbox until it's ready.
+- `[islam]` The qibla needle used to point from whichever city was saved in settings, so travelling left it confidently wrong. It now asks for location on the way in — the switch first, then the permission — and holds the needle still until it has a real position to measure from.
+- `[islam]` Refusing location twice kept re-offering a prompt Android no longer shows; the compass now routes to Settings instead, and picks up a permission or a switch the moment it is granted, without leaving the screen.
 
 ## [1.0.0+12] - 2026-08-29
 

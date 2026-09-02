@@ -1,6 +1,7 @@
 package com.kodeelite.nooreislam.feature.qibla.store
 
 import com.kodeelite.nooreislam.core.constants.PrefConst
+import com.kodeelite.nooreislam.core.constants.defaults.QiblaDefaults
 import com.kodeelite.nooreislam.core.enums.QiblaStyle
 import com.kodeelite.nooreislam.core.prefs.PrefsService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 object QiblaStyleStore {
 
     private val _style = MutableStateFlow(
-        QiblaStyle.fromName(PrefsService.getStringOrNull(PrefConst.QIBLA_STYLE)) ?: QiblaStyle.Modern,
+        QiblaStyle.fromName(PrefsService.getStringOrNull(PrefConst.QIBLA_STYLE)) ?: QiblaDefaults.STYLE,
     )
     val style: StateFlow<QiblaStyle> = _style.asStateFlow()
 

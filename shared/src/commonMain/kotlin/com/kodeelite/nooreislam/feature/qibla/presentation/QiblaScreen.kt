@@ -63,8 +63,29 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-
-private const val ALIGN_TOLERANCE_DEG = 5f
+import com.kodeelite.nooreislam.resources.qibla_aiming_from_you
+import com.kodeelite.nooreislam.resources.qibla_aiming_from_place
+import com.kodeelite.nooreislam.feature.qibla.presentation.components.QiblaLocationSheet
+import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
+import com.kodeelite.nooreislam.core.location.rememberGeoLocator
+import com.composables.icons.lucide.MapPin
+import com.composables.icons.lucide.LocateFixed
+import androidx.compose.ui.draw.alpha
+import androidx.compose.foundation.clickable
+import com.kodeelite.nooreislam.core.components.AppTile
+import com.composables.icons.lucide.ChevronRight
+import com.kodeelite.nooreislam.core.components.AppTileVariant
+import com.composables.icons.lucide.MapPinOff
+import com.kodeelite.nooreislam.resources.qibla_only_right_here
+import com.kodeelite.nooreislam.resources.qibla_finding_you
+import com.kodeelite.nooreislam.core.location.LocationRepository
+import com.kodeelite.nooreislam.core.location.rememberGeoCoder
+import org.koin.compose.koinInject
+import androidx.compose.material3.CircularProgressIndicator
+import com.kodeelite.nooreislam.core.constants.defaults.QiblaDefaults
+import androidx.compose.runtime.DisposableEffect
+import com.kodeelite.nooreislam.feature.qibla.store.QiblaOriginStore
+import com.kodeelite.nooreislam.feature.qibla.store.QiblaGate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +94,30 @@ fun QiblaScreen() {
     val scope = rememberCoroutineScope()
 
     val place by LocationStore.activePlace.collectAsState()
-    val qiblaDeg = qiblaBearing(place.latitude, place.longitude).toFloat()
-    val distance = distanceToMakkahKm(place.latitude, place.longitude)
+
+    val perms = rememberPermissionService()
+    val geo = rememberGeoLocator()
+    val geoCoder = rememberGeoCoder()
+    val locations = koinInject<LocationRepository>()
+    val origins = remember { QiblaOriginStore(perms, geo, locations, geoCoder, scope) }
+    DisposableEffect(Unit) {
+        origins.start()
+        onDispose { origins.stop() }
+    }
+
+    val gate by origins.gateState
+    val fix by origins.fixState
+    val fixName by origins.fixNameState
+    val sheetOpen by origins.sheetOpenState
+
+    val origin = fix
+    val lat = origin?.latitude ?: place.latitude
+    val lng = origin?.longitude ?: place.longitude
+    val qiblaDeg = qiblaBearing(lat, lng).toFloat()
+    val distance = distanceToMakkahKm(lat, lng)
+    // amber only when access is missing; a fix still on its way is not a fault
+    val unproven = gate != null
+    val locating = origins.locating
 
     val heading = rememberHeading()
     val qiblaStyle by QiblaStyleStore.style.collectAsState()
@@ -108,17 +151,61 @@ fun QiblaScreen() {
 
             // angle from current facing to qibla, normalized to -180..180
             val delta = (((qiblaDeg - heading.degrees) + 540f) % 360f) - 180f
-            val aligned = abs(delta) <= ALIGN_TOLERANCE_DEG
+            val aligned = abs(delta) <= QiblaDefaults.ALIGN_TOLERANCE_DEG
 
             Column(
                 Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
-                QiblaDialFor(qiblaStyle, heading.degrees, qiblaDeg, aligned)
+                Box(Modifier.alpha(if (origin == null) 0.35f else 1f)) {
+                    QiblaDialFor(qiblaStyle, heading.degrees, qiblaDeg, aligned)
+                }
 
-                // the reading — the hero
-                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                // where this direction is measured from, and the way back into the flow
+                AppTile(
+                    title = when {
+                        unproven -> stringResource(Res.string.qibla_aiming_from_place, place.name)
+                        locating -> stringResource(Res.string.qibla_finding_you)
+                        else -> fixName?.let { stringResource(Res.string.qibla_aiming_from_place, it) }
+                            ?: stringResource(Res.string.qibla_aiming_from_you)
+                    },
+                    // amber only while access is missing; a fix still arriving is not a fault
+                    variant = if (unproven) AppTileVariant.Warning else AppTileVariant.Normal,
+                    leadingIcon = if (unproven) Lucide.MapPinOff else Lucide.LocateFixed,
+                    subtitle = if (unproven) stringResource(Res.string.qibla_only_right_here) else null,
+                    // a spinner while the fix is on its way, the way the home header's pin spins:
+                    // movement says "working" to someone who never reads the row
+                    trailing = when {
+                        unproven -> {
+                            {
+                                Icon(
+                                    Lucide.ChevronRight,
+                                    null,
+                                    tint = AppTheme.colors.warning,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            }
+                        }
+                        locating -> {
+                            {
+                                CircularProgressIndicator(
+                                    Modifier.size(16.dp),
+                                    color = AppTheme.colors.primary,
+                                    strokeWidth = 2.dp,
+                                )
+                            }
+                        }
+                        else -> null
+                    },
+                    onClick = if (unproven) ({ origins.openSheet() }) else null,
+                )
+
+                // the reading — the hero, degree and instruction on one line
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
                         "${qiblaDeg.roundToInt()}°",
                         style = MaterialTheme.typography.displaySmall,
@@ -155,6 +242,16 @@ fun QiblaScreen() {
                 ) {
                     CompassCalibration(Modifier.padding(vertical = 8.dp))
                 }
+            }
+
+            gate?.takeIf { sheetOpen }?.let { g ->
+                QiblaLocationSheet(
+                    gate = g,
+                    placeName = place.name,
+                    onPrimary = { origins.resolve() },
+                    onUsePlace = { origins.useSavedPlace() },
+                    onDismiss = { origins.dismissSheet() },
+                )
             }
 
             if (showStyleSheet) {

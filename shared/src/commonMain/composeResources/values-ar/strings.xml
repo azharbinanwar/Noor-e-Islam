@@ -786,6 +786,9 @@
     <string name="done">تم</string>
     <string name="pick_a_color">اختر لونًا</string>
     <string name="compass_style">شكل البوصلة</string>
+    <string name="qibla_style_modern">حديثة</string>
+    <string name="qibla_style_classic">كلاسيكية</string>
+    <string name="qibla_style_compass_rose">وردة البوصلة</string>
     <string name="calibrate_compass">معايرة البوصلة</string>
     <string name="direction">الاتجاه</string>
     <string name="distance_to_makkah">المسافة إلى مكة</string>
@@ -1001,6 +1004,19 @@
     <string name="focus_dnd_use_vibrate">استخدم الاهتزاز بدلاً من ذلك</string>
     <string name="location_permission_sub">مواقيت الصلاة والقبلة تعتمد على مكانك.</string>
     <string name="photo_access_declined">تم رفض الوصول إلى الصور</string>
+    <string name="qibla_needs_location">البوصلة تحتاج موقعك</string>
+    <string name="qibla_needs_location_sub">تحسب الاتجاه من حيث تقف، فالمدينة المحفوظة قد تشير إلى جهة خاطئة بعد السفر.</string>
+    <string name="qibla_location_off">خدمة الموقع مغلقة</string>
+    <string name="qibla_location_off_sub">بدونها لا تجد البوصلة نقطة تقيس منها. شغّلها ليتبعك المؤشر.</string>
+    <string name="qibla_location_blocked">الوصول إلى الموقع محجوب لهذا التطبيق</string>
+    <string name="qibla_location_blocked_sub">اسمح به في الإعدادات لتشير البوصلة من مكانك الحقيقي.</string>
+    <string name="qibla_allow_location">السماح بالوصول إلى الموقع</string>
+    <string name="qibla_turn_on_location">تشغيل خدمة الموقع</string>
+    <string name="qibla_continue_with">التوجيه من %1$s</string>
+    <string name="qibla_aiming_from_place">التوجيه من %1$s</string>
+    <string name="qibla_aiming_from_you">محسوب من موقعك</string>
+    <string name="qibla_finding_you">جارٍ تحديد موقعك</string>
+    <string name="qibla_only_right_here">صحيح فقط إن كنت هناك. اضغط للتصحيح.</string>
     <string name="location_is_off">خدمة الموقع مغلقة</string>
     <string name="location_is_off_sub">شغّلها لتتبع مواقيت الصلاة مكانك.</string>
 

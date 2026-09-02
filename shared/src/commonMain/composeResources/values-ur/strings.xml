@@ -793,6 +793,9 @@
     <string name="done">ہو گیا</string>
     <string name="pick_a_color">رنگ منتخب کریں</string>
     <string name="compass_style">قطب نما کا انداز</string>
+    <string name="qibla_style_modern">جدید</string>
+    <string name="qibla_style_classic">روایتی</string>
+    <string name="qibla_style_compass_rose">قطب نما گلاب</string>
     <string name="calibrate_compass">قطب نما کیلیبریٹ کریں</string>
     <string name="direction">سمت</string>
     <string name="distance_to_makkah">مکہ تک فاصلہ</string>
@@ -1003,6 +1006,19 @@
     <string name="focus_dnd_use_vibrate">اس کے بجائے ارتعاش استعمال کریں</string>
     <string name="location_permission_sub">نماز کے اوقات اور قبلہ آپ کے مقام پر منحصر ہیں۔</string>
     <string name="photo_access_declined">تصاویر تک رسائی مسترد کر دی گئی</string>
+    <string name="qibla_needs_location">قبلہ نما کو آپ کے مقام کی ضرورت ہے</string>
+    <string name="qibla_needs_location_sub">یہ سمت وہیں سے نکالتا ہے جہاں آپ کھڑے ہیں، اس لیے محفوظ شہر سفر کے بعد غلط رخ دکھا سکتا ہے۔</string>
+    <string name="qibla_location_off">مقام کی سہولت بند ہے</string>
+    <string name="qibla_location_off_sub">اس کے بغیر قبلہ نما کے پاس ناپنے کو کچھ نہیں۔ آن کریں تو سوئی آپ کے ساتھ چلے گی۔</string>
+    <string name="qibla_location_blocked">اس ایپ کے لیے مقام کی رسائی بند ہے</string>
+    <string name="qibla_location_blocked_sub">ترتیبات میں اجازت دیں تاکہ قبلہ نما آپ کی اصل جگہ سے سمت بتائے۔</string>
+    <string name="qibla_allow_location">مقام کی اجازت دیں</string>
+    <string name="qibla_turn_on_location">مقام آن کریں</string>
+    <string name="qibla_continue_with">%1$s سے سمت لیں</string>
+    <string name="qibla_aiming_from_place">%1$s سے سمت</string>
+    <string name="qibla_aiming_from_you">آپ کے مقام سے ناپا گیا</string>
+    <string name="qibla_finding_you">آپ کا مقام تلاش کیا جا رہا ہے</string>
+    <string name="qibla_only_right_here">درست صرف اسی صورت میں جب آپ وہیں ہوں۔ درست کرنے کے لیے دبائیں۔</string>
     <string name="location_is_off">مقام کی سہولت بند ہے</string>
     <string name="location_is_off_sub">اسے آن کریں تاکہ نماز کے اوقات آپ کے مقام کے مطابق ہوں۔</string>
 
