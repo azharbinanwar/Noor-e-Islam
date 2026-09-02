@@ -786,6 +786,9 @@
     <string name="done">Terminé</string>
     <string name="pick_a_color">Choisir une couleur</string>
     <string name="compass_style">Style de boussole</string>
+    <string name="qibla_style_modern">Moderne</string>
+    <string name="qibla_style_classic">Classique</string>
+    <string name="qibla_style_compass_rose">Rose des vents</string>
     <string name="calibrate_compass">Calibrer la boussole</string>
     <string name="direction">Direction</string>
     <string name="distance_to_makkah">Distance jusqu’à La Mecque</string>
@@ -1009,7 +1012,6 @@
     <string name="qibla_aiming_from_you">Mesurée depuis votre position</string>
     <string name="qibla_finding_you">Recherche de votre position</string>
     <string name="qibla_only_right_here">Juste seulement si vous y êtes. Touchez pour corriger.</string>
-    <string name="qibla_use_my_location">Toucher pour viser depuis votre position</string>
     <string name="location_is_off">La localisation est désactivée</string>
     <string name="location_is_off_sub">Activez-la pour que les horaires de prière suivent votre position.</string>
 

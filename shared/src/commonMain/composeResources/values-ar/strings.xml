@@ -786,6 +786,9 @@
     <string name="done">تم</string>
     <string name="pick_a_color">اختر لونًا</string>
     <string name="compass_style">شكل البوصلة</string>
+    <string name="qibla_style_modern">حديثة</string>
+    <string name="qibla_style_classic">كلاسيكية</string>
+    <string name="qibla_style_compass_rose">وردة البوصلة</string>
     <string name="calibrate_compass">معايرة البوصلة</string>
     <string name="direction">الاتجاه</string>
     <string name="distance_to_makkah">المسافة إلى مكة</string>
@@ -1014,7 +1017,6 @@
     <string name="qibla_aiming_from_you">محسوب من موقعك</string>
     <string name="qibla_finding_you">جارٍ تحديد موقعك</string>
     <string name="qibla_only_right_here">صحيح فقط إن كنت هناك. اضغط للتصحيح.</string>
-    <string name="qibla_use_my_location">اضغط للتوجيه من مكانك</string>
     <string name="location_is_off">خدمة الموقع مغلقة</string>
     <string name="location_is_off_sub">شغّلها لتتبع مواقيت الصلاة مكانك.</string>
 

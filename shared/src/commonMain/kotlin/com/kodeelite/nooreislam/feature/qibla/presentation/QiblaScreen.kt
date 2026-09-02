@@ -65,17 +65,11 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import com.kodeelite.nooreislam.resources.qibla_aiming_from_you
 import com.kodeelite.nooreislam.resources.qibla_aiming_from_place
-import com.kodeelite.nooreislam.resources.qibla_use_my_location
 import com.kodeelite.nooreislam.feature.qibla.presentation.components.QiblaLocationSheet
-import com.kodeelite.nooreislam.feature.qibla.presentation.components.QiblaGate
 import com.kodeelite.nooreislam.core.permissions.rememberPermissionService
-import com.kodeelite.nooreislam.core.permissions.PermissionStatus
-import com.kodeelite.nooreislam.core.permissions.AppPermission
 import com.kodeelite.nooreislam.core.location.rememberGeoLocator
-import com.kodeelite.nooreislam.core.location.Coordinates
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.LocateFixed
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.compose.ui.draw.alpha
 import androidx.compose.foundation.clickable
 import com.kodeelite.nooreislam.core.components.AppTile
@@ -83,16 +77,15 @@ import com.composables.icons.lucide.ChevronRight
 import com.kodeelite.nooreislam.core.components.AppTileVariant
 import com.composables.icons.lucide.MapPinOff
 import com.kodeelite.nooreislam.resources.qibla_only_right_here
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
-import androidx.compose.runtime.LaunchedEffect
 import com.kodeelite.nooreislam.resources.qibla_finding_you
 import com.kodeelite.nooreislam.core.location.LocationRepository
 import com.kodeelite.nooreislam.core.location.rememberGeoCoder
-import com.kodeelite.nooreislam.core.network.dataOrNull
 import org.koin.compose.koinInject
-
-private const val ALIGN_TOLERANCE_DEG = 5f
+import androidx.compose.material3.CircularProgressIndicator
+import com.kodeelite.nooreislam.core.constants.defaults.QiblaDefaults
+import androidx.compose.runtime.DisposableEffect
+import com.kodeelite.nooreislam.feature.qibla.store.QiblaOriginStore
+import com.kodeelite.nooreislam.feature.qibla.store.QiblaGate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,72 +95,29 @@ fun QiblaScreen() {
 
     val place by LocationStore.activePlace.collectAsState()
 
-    // The bearing is only as true as the point it is measured from, so the compass asks for a live
-    // fix rather than trusting a city the reader may have left. Until it has one it says so, and
-    // aiming from the saved city stays available as a deliberate choice.
     val perms = rememberPermissionService()
     val geo = rememberGeoLocator()
-    var fix by remember { mutableStateOf<Coordinates?>(null) }
-    // the fix's own place name, resolved the way Home resolves it — "your location" tells the reader
-    // nothing they can check, and checking is the whole point of naming the origin
-    val locations = koinInject<LocationRepository>()
     val geoCoder = rememberGeoCoder()
-    var fixName by remember { mutableStateOf<String?>(null) }
-    var gate by remember { mutableStateOf<QiblaGate?>(null) }
-    var sheetOpen by remember { mutableStateOf(false) }
-    var usingPlace by remember { mutableStateOf(false) }
-    // a refusal the OS will no longer prompt for. Android's status() cannot report it — only a
-    // request can — and afterwards it reads as "never asked", so the answer is remembered here or
-    // the sheet keeps offering a prompt that never appears.
-    var blocked by remember { mutableStateOf(false) }
-    // the sheet leads on arrival; after that the row under the dial is how it comes back
-    var sheetShown by remember { mutableStateOf(false) }
+    val locations = koinInject<LocationRepository>()
+    val origins = remember { QiblaOriginStore(perms, geo, locations, geoCoder, scope) }
+    DisposableEffect(Unit) {
+        origins.start()
+        onDispose { origins.stop() }
+    }
 
-    // Polled, not resume-only: the location switch is granted through an in-app system dialog that
-    // never pauses the activity, so a resume check never fires and the screen keeps asking for
-    // something already given. The permission tiles poll for the same reason.
-    var tick by remember { mutableStateOf(0) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1200.milliseconds); tick++
-        }
-    }
-    LaunchedEffect(fix) {
-        val at = fix ?: return@LaunchedEffect
-        fixName = locations.resolve(at, geoCoder).dataOrNull()?.name
-    }
-    LaunchedEffect(tick, blocked) {
-        val status = perms.status(AppPermission.Location)
-        if (status == PermissionStatus.Granted) blocked = false
-        val next = when {
-            !geo.servicesEnabled() -> QiblaGate.ServiceOff
-            blocked || status == PermissionStatus.DeniedPermanently -> QiblaGate.Blocked
-            status != PermissionStatus.Granted -> QiblaGate.Ask
-            else -> {
-                if (fix == null) fix = geo.current()
-                if (fix == null) QiblaGate.ServiceOff else null
-            }
-        }
-        if (next == null) {
-            fix = fix ?: geo.current()
-            usingPlace = false; sheetOpen = false
-        } else if (gate == null && !usingPlace && !sheetShown) {
-            sheetOpen = true; sheetShown = true
-        }
-        if (next != gate) gate = next
-        if (next != null) fix = null
-    }
+    val gate by origins.gateState
+    val fix by origins.fixState
+    val fixName by origins.fixNameState
+    val sheetOpen by origins.sheetOpenState
 
     val origin = fix
     val lat = origin?.latitude ?: place.latitude
     val lng = origin?.longitude ?: place.longitude
     val qiblaDeg = qiblaBearing(lat, lng).toFloat()
     val distance = distanceToMakkahKm(lat, lng)
-    // two different things, and only one of them is a warning: the origin is a guess because access
-    // is missing (amber), or a fix is simply still on its way (quiet). A needle is a claim either
-    // way, so it waits for the fix in both.
+    // amber only when access is missing; a fix still on its way is not a fault
     val unproven = gate != null
-    val locating = gate == null && origin == null
+    val locating = origins.locating
 
     val heading = rememberHeading()
     val qiblaStyle by QiblaStyleStore.style.collectAsState()
@@ -201,7 +151,7 @@ fun QiblaScreen() {
 
             // angle from current facing to qibla, normalized to -180..180
             val delta = (((qiblaDeg - heading.degrees) + 540f) % 360f) - 180f
-            val aligned = abs(delta) <= ALIGN_TOLERANCE_DEG
+            val aligned = abs(delta) <= QiblaDefaults.ALIGN_TOLERANCE_DEG
 
             Column(
                 Modifier.padding(horizontal = 24.dp).fillMaxWidth(),
@@ -224,17 +174,31 @@ fun QiblaScreen() {
                     variant = if (unproven) AppTileVariant.Warning else AppTileVariant.Normal,
                     leadingIcon = if (unproven) Lucide.MapPinOff else Lucide.LocateFixed,
                     subtitle = if (unproven) stringResource(Res.string.qibla_only_right_here) else null,
-                    trailing = if (!unproven) null else {
-                        {
-                            Icon(
-                                Lucide.ChevronRight,
-                                null,
-                                tint = AppTheme.colors.warning,
-                                modifier = Modifier.size(18.dp),
-                            )
+                    // a spinner while the fix is on its way, the way the home header's pin spins:
+                    // movement says "working" to someone who never reads the row
+                    trailing = when {
+                        unproven -> {
+                            {
+                                Icon(
+                                    Lucide.ChevronRight,
+                                    null,
+                                    tint = AppTheme.colors.warning,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            }
                         }
+                        locating -> {
+                            {
+                                CircularProgressIndicator(
+                                    Modifier.size(16.dp),
+                                    color = AppTheme.colors.primary,
+                                    strokeWidth = 2.dp,
+                                )
+                            }
+                        }
+                        else -> null
                     },
-                    onClick = if (unproven) ({ sheetOpen = true }) else null,
+                    onClick = if (unproven) ({ origins.openSheet() }) else null,
                 )
 
                 // the reading — the hero, degree and instruction on one line
@@ -284,25 +248,9 @@ fun QiblaScreen() {
                 QiblaLocationSheet(
                     gate = g,
                     placeName = place.name,
-                    onPrimary = {
-                        sheetOpen = false
-                        when (g) {
-                            QiblaGate.Ask -> scope.launch {
-                                when (perms.request(AppPermission.Location)) {
-                                    PermissionStatus.Granted -> { fix = geo.current(); gate = null }
-                                    // out of prompts: the only way left is Settings, so say that
-                                    PermissionStatus.DeniedPermanently -> {
-                                        blocked = true; gate = QiblaGate.Blocked; sheetOpen = true
-                                    }
-                                    else -> Unit
-                                }
-                            }
-                            QiblaGate.ServiceOff -> geo.requestLocationOn()
-                            QiblaGate.Blocked -> perms.openAppSettings()
-                        }
-                    },
-                    onUsePlace = { usingPlace = true; sheetOpen = false },
-                    onDismiss = { sheetOpen = false },
+                    onPrimary = { origins.resolve() },
+                    onUsePlace = { origins.useSavedPlace() },
+                    onDismiss = { origins.dismissSheet() },
                 )
             }
 

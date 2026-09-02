@@ -793,6 +793,9 @@
     <string name="done">ہو گیا</string>
     <string name="pick_a_color">رنگ منتخب کریں</string>
     <string name="compass_style">قطب نما کا انداز</string>
+    <string name="qibla_style_modern">جدید</string>
+    <string name="qibla_style_classic">روایتی</string>
+    <string name="qibla_style_compass_rose">قطب نما گلاب</string>
     <string name="calibrate_compass">قطب نما کیلیبریٹ کریں</string>
     <string name="direction">سمت</string>
     <string name="distance_to_makkah">مکہ تک فاصلہ</string>
@@ -1016,7 +1019,6 @@
     <string name="qibla_aiming_from_you">آپ کے مقام سے ناپا گیا</string>
     <string name="qibla_finding_you">آپ کا مقام تلاش کیا جا رہا ہے</string>
     <string name="qibla_only_right_here">درست صرف اسی صورت میں جب آپ وہیں ہوں۔ درست کرنے کے لیے دبائیں۔</string>
-    <string name="qibla_use_my_location">اپنی جگہ سے سمت لینے کے لیے دبائیں</string>
     <string name="location_is_off">مقام کی سہولت بند ہے</string>
     <string name="location_is_off_sub">اسے آن کریں تاکہ نماز کے اوقات آپ کے مقام کے مطابق ہوں۔</string>
 

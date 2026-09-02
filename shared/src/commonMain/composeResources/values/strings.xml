@@ -339,7 +339,6 @@
     <string name="qibla_continue_with">Aim from %1$s</string>
     <string name="qibla_finding_you">Finding your location</string>
     <string name="qibla_only_right_here">Right only if you are there. Tap to fix.</string>
-    <string name="qibla_use_my_location">Tap to aim from where you are</string>
     <string name="qibla_aiming_from_place">Aiming from %1$s</string>
     <string name="qibla_aiming_from_you">Measured from your location</string>
     <string name="search_city">Search for a city</string>
@@ -850,6 +849,9 @@
     <string name="done">Done</string>
     <string name="pick_a_color">Pick a color</string>
     <string name="compass_style">Compass style</string>
+    <string name="qibla_style_modern">Modern</string>
+    <string name="qibla_style_classic">Classic</string>
+    <string name="qibla_style_compass_rose">Compass rose</string>
     <string name="calibrate_compass">Calibrate compass</string>
     <string name="direction">Direction</string>
     <string name="distance_to_makkah">Distance to Makkah</string>

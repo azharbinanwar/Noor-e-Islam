@@ -23,6 +23,7 @@ import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.components.AppButton
 import com.kodeelite.nooreislam.core.components.AppButtonVariant
 import com.kodeelite.nooreislam.core.components.StateView
+import com.kodeelite.nooreislam.feature.qibla.store.QiblaGate
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.open_settings
 import com.kodeelite.nooreislam.resources.qibla_allow_location
@@ -36,14 +37,7 @@ import com.kodeelite.nooreislam.resources.qibla_needs_location_sub
 import com.kodeelite.nooreislam.resources.qibla_turn_on_location
 import org.jetbrains.compose.resources.stringResource
 
-/** Why the compass has no position to measure from. Each one has its own way out. */
-enum class QiblaGate { Ask, ServiceOff, Blocked }
-
-/**
- * The sheet while the compass cannot prove where it is. The primary action is whatever actually
- * unblocks this state — a prompt, the location switch, or app settings — and the quiet one aims
- * from the saved city instead, which is a choice the reader makes rather than a silent fallback.
- */
+/** The sheet while the compass has no position. Its primary action is whatever is actually blocking. */
 @Composable
 fun QiblaLocationSheet(
     gate: QiblaGate,
