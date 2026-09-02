@@ -126,16 +126,6 @@ object PrefConst {
     const val BACKUP_MINUTE = "backup_minute"
     const val BACKUP_WEEKDAY = "backup_weekday"         // DayOfWeek name, weekly only
 
-    /**
-     * Keys that describe this device right now, not the person's settings. They stay out of a backup
-     * and are left alone by a restore: the linked account and last-backup record belong to the phone
-     * doing the restoring, and a mid-window focus state must never travel to another phone.
-     */
-    val BACKUP_EXCLUDED: Set<String> = setOf(
-        BACKUP_ACCOUNT, BACKUP_ACCOUNT_NAME, BACKUP_ACCOUNT_PHOTO, BACKUP_LAST_AT, BACKUP_LAST_SIZE_KB,
-        FOCUS_SAVED_RINGER, FOCUS_SILENCE_END, FOCUS_SILENCE_MODE, FOCUS_SILENCE_LABEL,
-    )
-
     object Field {
         const val ENABLED = "enabled"
         const val REMIND_BEFORE_ON = "remind_before_on"

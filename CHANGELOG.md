@@ -34,6 +34,8 @@ Newest first. Dates are the release date, not the merge date.
 - `[islam]` Tasbih slipped into release builds' Home and drawer; it waits behind the debug gate with the sandbox until it's ready.
 - `[islam]` The qibla needle used to point from whichever city was saved in settings, so travelling left it confidently wrong. It now asks for location on the way in — the switch first, then the permission — and holds the needle still until it has a real position to measure from.
 - `[islam]` Refusing location twice kept re-offering a prompt Android no longer shows; the compass now routes to Settings instead, and picks up a permission or a switch the moment it is granted, without leaving the screen.
+- `[both]` **Android.** Restoring a backup no longer moves you to the city the backup was made in. The phone keeps where it is, so prayer times and the qibla stay right on the first launch after a restore; your saved cities still come back, so the old one is one tap away.
+- `[islam]` **Android.** A restore no longer carries over home-screen widget styling from the phone the backup came from. Widget looks are keyed to ids that phone's launcher handed out, so they described widgets that do not exist here while leaving the real ones plain.
 
 ## [1.0.0+12] - 2026-08-29
 

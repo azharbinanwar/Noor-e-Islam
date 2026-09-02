@@ -30,7 +30,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.BackupFrequency
 import com.kodeelite.nooreislam.core.enums.TimeFormat
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.auto_backup

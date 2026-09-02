@@ -9,7 +9,7 @@ import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.enums.BackupFrequency
 import com.kodeelite.nooreislam.core.enums.BackupNetwork
 import com.kodeelite.nooreislam.core.platform.AppCtx
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
