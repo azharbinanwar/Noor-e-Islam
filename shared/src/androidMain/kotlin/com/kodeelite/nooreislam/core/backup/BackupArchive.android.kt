@@ -2,7 +2,7 @@ package com.kodeelite.nooreislam.core.backup
 
 import android.content.Context
 import com.kodeelite.nooreislam.core.constants.AppConst
-import com.kodeelite.nooreislam.core.constants.PrefConst
+import com.kodeelite.nooreislam.core.constants.defaults.BackupDefaults
 import com.kodeelite.nooreislam.core.database.AppDatabase
 import com.kodeelite.nooreislam.core.datetime.Now
 import com.kodeelite.nooreislam.core.platform.AppCtx
@@ -51,7 +51,7 @@ actual object BackupArchive {
             zip.write(json.encodeToString(Manifest(FORMAT, ctx.packageName, appVersion, AppConst.DB_VERSION, Now.epochMillis(), android.os.Build.MODEL)).encodeToByteArray())
             zip.closeEntry()
             zip.putNextEntry(ZipEntry(PREFS))
-            val map = prefs(ctx).all.filterKeys { it !in PrefConst.BACKUP_EXCLUDED }.mapValues { (_, v) ->
+            val map = prefs(ctx).all.filterKeys { !BackupDefaults.excludesPref(it) }.mapValues { (_, v) ->
                 when (v) {
                     is Boolean -> JsonPrimitive(v)
                     is Int -> JsonPrimitive(v)
@@ -91,12 +91,12 @@ actual object BackupArchive {
         val restored = entries[PREFS]?.let { json.parseToJsonElement(it.decodeToString()) as? JsonObject } ?: JsonObject(emptyMap())
         // this phone's own device-state keys survive; everything else is replaced by the backup's
         val sp = prefs(ctx)
-        val kept = sp.all.filterKeys { it in PrefConst.BACKUP_EXCLUDED }
+        val kept = sp.all.filterKeys { BackupDefaults.excludesPref(it) }
         sp.edit().clear().apply {
             kept.forEach { (k, v) ->
                 when (v) { is Boolean -> putBoolean(k, v); is Int -> putInt(k, v); is Long -> putLong(k, v); is Float -> putFloat(k, v); is String -> putString(k, v); else -> Unit }
             }
-            restored.filterKeys { it !in PrefConst.BACKUP_EXCLUDED }.forEach { (k, v) ->
+            restored.filterKeys { !BackupDefaults.excludesPref(it) }.forEach { (k, v) ->
                 val p = v.jsonPrimitive
                 when {
                     p.isString -> putString(k, p.content)

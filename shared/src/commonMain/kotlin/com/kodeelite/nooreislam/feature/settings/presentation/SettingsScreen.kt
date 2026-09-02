@@ -75,7 +75,7 @@ import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
 import com.kodeelite.nooreislam.core.platform.Platform
 import com.kodeelite.nooreislam.core.platform.appVersion
 import com.kodeelite.nooreislam.core.store.LocationStore
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import com.kodeelite.nooreislam.core.store.SettingsStore
 import com.kodeelite.nooreislam.feature.miqat.store.MiqatCalculationStore
 import com.kodeelite.nooreislam.feature.notifications.store.NotificationStore

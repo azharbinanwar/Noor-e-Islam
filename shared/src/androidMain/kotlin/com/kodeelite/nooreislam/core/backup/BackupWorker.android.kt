@@ -13,7 +13,7 @@ import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.Scope
 import com.kodeelite.nooreislam.core.platform.AppCtx
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import com.kodeelite.nooreislam.feature.backup.data.BackupRepository
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.backing_up

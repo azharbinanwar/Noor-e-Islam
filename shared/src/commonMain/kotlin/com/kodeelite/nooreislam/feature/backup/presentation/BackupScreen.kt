@@ -55,7 +55,7 @@ import com.kodeelite.nooreislam.core.datetime.labelRes
 import com.kodeelite.nooreislam.core.enums.BackupFrequency
 import com.kodeelite.nooreislam.core.locale.tr
 import com.kodeelite.nooreislam.core.navigation.LocalAppNavigator
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import com.kodeelite.nooreislam.core.util.asFileSize
 import com.kodeelite.nooreislam.resources.Res
 import com.kodeelite.nooreislam.resources.actions

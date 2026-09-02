@@ -24,7 +24,7 @@ import com.kodeelite.nooreislam.core.components.AppBottomSheet
 import com.kodeelite.nooreislam.core.update.UpdateSheet
 import com.kodeelite.nooreislam.core.components.OverlayStyle
 import androidx.compose.material3.Slider
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import org.koin.compose.koinInject
 import kotlinx.datetime.minus
 import kotlinx.datetime.DateTimeUnit

@@ -44,7 +44,7 @@ import com.kodeelite.nooreislam.core.AppEdition
 import com.kodeelite.nooreislam.core.BuildType
 import com.kodeelite.nooreislam.core.backup.BackupScheduler
 import com.kodeelite.nooreislam.core.permissions.BatteryStepsHost
-import com.kodeelite.nooreislam.core.store.BackupStore
+import com.kodeelite.nooreislam.feature.backup.data.BackupStore
 import com.kodeelite.nooreislam.core.components.AppDrawer
 import com.kodeelite.nooreislam.core.components.AppNotice
 import com.kodeelite.nooreislam.core.components.LocalNotice
